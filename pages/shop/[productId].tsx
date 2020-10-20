@@ -1,43 +1,53 @@
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+
 import {useRouter} from "next/router";
 import React from "react";
-import {Container, Grid} from "@material-ui/core";
-import {getModelIndex, productIdsToModel} from "../../configs/Products";
-import ImageGallery from 'react-image-gallery';
+import {Box, Container, Grid, Typography} from "@material-ui/core";
+import {getModelIndex, ModelIndex, productIdsToModel} from "../../configs/Products";
+import {Model, Product} from "../../src/model/Model";
+import {Carousel, Thumbs} from "react-responsive-carousel";
+import Image from 'material-ui-image';
 
 export default function ProductPage() {
     const router = useRouter();
     const {productId} = router.query;
-    const images = [
-        {
-            original: 'https://picsum.photos/id/1018/1000/600/',
-            thumbnail: 'https://picsum.photos/id/1018/250/150/',
-        },
-        {
-            original: 'https://picsum.photos/id/1015/1000/600/',
-            thumbnail: 'https://picsum.photos/id/1015/250/150/',
-        },
-        {
-            original: 'https://picsum.photos/id/1019/1000/600/',
-            thumbnail: 'https://picsum.photos/id/1019/250/150/',
-        },
-    ];
-    let model, modelIndex, res;
+
+    let model: Model;
+    let modelIndex: ModelIndex;
+    let images: string[];
+    let res;
+    let product: Product;
     if (productId) {
         model = productIdsToModel.get(productId as string);
+        product = model.products.find((product) => product.id === productId)
         modelIndex = getModelIndex(model);
+        images = model.products.map((p) => p.image);
     }
+
+    let [selectedItem, setSelectedItem] = React.useState(null);
+
     if (modelIndex) {
         res = <Container>
-            <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                    <ImageGallery showPlayButton={false} items={images} />
+            <Box className={"w-full"}>
+              <Typography className={"py-4"} variant={'h4'}>
+                  {product.displayName}
+              </Typography>
+            </Box>
+            <Grid container={true} spacing={3}>
+                <Grid item={true} xs={12} md={6} spacing={3}>
+                    <Carousel selectedItem={selectedItem} showThumbs={false}>
+                        {images.map((image) => <Image aspectRatio={16/9} src={image}/>)}
+                    </Carousel>
+                    <Thumbs selectedItem={selectedItem} onSelectItem={setSelectedItem} thumbWidth={60}>
+                        {images.map((image) => <img src={image}/>)}
+                    </Thumbs>
                 </Grid>
                 <Grid item xs={12} md={6}>
                     Hello
                 </Grid>
             </Grid>
         </Container>
-    } else if(productId) {
+    } else if (productId) {
         res = <h1>Page Not Found</h1>;
     } else {
         res = false;
