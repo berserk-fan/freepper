@@ -1,7 +1,7 @@
-import {beds} from "../../configs/Products";
+import {beds} from "../../../configs/Products";
 import React from "react";
 import {Container, Grid, Typography} from "@material-ui/core";
-import ItemView from "../../src/components/ItemView";
+import ItemView from "../../components/ItemView";
 
 export default function Shop() {
     const categories = [beds];

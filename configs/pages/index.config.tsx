@@ -1,5 +1,5 @@
 import {ru} from "../Translations";
-import {CardData} from "../../pages";
+import {CardData} from "../../src/pages";
 
 export const carouselImages = [
     "https://picsum.photos/2000/900?random=1",

@@ -1,22 +1,13 @@
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import {useRouter} from "next/router";
 import React from "react";
-import {
-    Box,
-    Button,
-    Container,
-    Fade,
-    Grid,
-    Paper,
-    styled,
-    Typography
-} from "@material-ui/core";
-import {getModelIndex, ModelIndex, productIdsToModel} from "../../configs/Products";
-import {Color, Model, Product} from "../../src/model/Model";
+import {Box, Button, Container, Fade, Grid, Paper, styled, Typography} from "@material-ui/core";
+import {getModelIndex, productIdsToModel} from "../../../configs/Products";
+import {Color, Model} from "../../model/Model";
 import {Carousel, Thumbs} from "react-responsive-carousel";
 import Image from 'material-ui-image';
-import ColorPicker from "../../src/components/ColorPicker";
-import ProductPrice from "../../src/components/ProductPrice";
+import ColorPicker from "../../components/ColorPicker";
+import ProductPrice from "../../components/ProductPrice";
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 const BuyButton = styled(Button)({});
@@ -57,7 +48,8 @@ export default function ProductPage() {
     const galleryHeight = 300;
     const gallery =
         <Paper>
-            <Carousel swipeable showStatus={false} onChange={setSelectedItem} selectedItem={selectedItem} showThumbs={false}>
+            <Carousel swipeable showStatus={false} onChange={setSelectedItem} selectedItem={selectedItem}
+                      showThumbs={false}>
                 {images.map((image) =>
                     <Box style={{height: galleryHeight}}>
                         <img className={"object-scale-down"} style={{height: galleryHeight}} src={image}/>

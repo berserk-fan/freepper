@@ -1,4 +1,4 @@
-import ModelView from "../src/components/ModelView";
+import ModelView from "../components/ModelView";
 
 require('react-responsive-carousel/lib/styles/carousel.min.css');
 import React from "react";
@@ -6,8 +6,8 @@ import {Box, Container, Grid} from "@material-ui/core";
 import {Carousel} from "react-responsive-carousel";
 import Typography from "@material-ui/core/Typography";
 import Image from 'material-ui-image';
-import {beds, getModelIndex} from "../configs/Products";
-import {cardsData, carouselImages} from "../configs/pages/index.config";
+import {beds, getModelIndex} from "../../configs/Products";
+import {cardsData, carouselImages} from "../../configs/pages/index.config";
 
 export type CardData = {
     id: string
