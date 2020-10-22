@@ -9,6 +9,7 @@ import Image from 'material-ui-image';
 import ColorPicker from "../../components/ColorPicker";
 import ProductPrice from "../../components/ProductPrice";
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
 
 const BuyButton = styled(Button)({});
 
@@ -96,19 +97,23 @@ export default function ProductPage() {
         </Paper>;
 
 
-    return <Container>
-        <Box className={"w-full"}>
-            <Typography className={`py-4`} variant={'h4'}>
-                {product.displayName}
-            </Typography>
-        </Box>
-        <Grid container={true} spacing={3}>
-            <Grid item={true} xs={12} md={6} spacing={3}>
-                {gallery}
-            </Grid>
-            <Grid item xs={12} md={6}>
-                {actionsBlock}
-            </Grid>
-        </Grid>
-    </Container>
+    return (
+        <LayoutWithHeader>
+            <Container>
+                <Box className={"w-full"}>
+                    <Typography className={`py-4`} variant={'h4'}>
+                        {product.displayName}
+                    </Typography>
+                </Box>
+                <Grid container={true} spacing={3}>
+                    <Grid item={true} xs={12} md={6} spacing={3}>
+                        {gallery}
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        {actionsBlock}
+                    </Grid>
+                </Grid>
+            </Container>
+        </LayoutWithHeader>
+    )
 }

@@ -1,16 +1,5 @@
 export type internalization = {
-    home_cards_card1_title: string,
-    home_cards_card1_text: string,
-    home_cards_card1_alt: string,
-    home_cards_card2_title: string,
-    home_cards_card2_text: string,
-    home_cards_card2_alt: string,
-    home_cards_card3_title: string,
-    home_cards_card3_text: string,
-    home_cards_card3_alt: string,
-    home_cards_card4_title: string,
-    home_cards_card4_text: string,
-    home_cards_card4_alt: string,
+    [propName: string]: string;
 };
 
 export const ru: internalization = {

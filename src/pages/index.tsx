@@ -1,6 +1,5 @@
 import ModelView from "../components/ModelView";
-
-require('react-responsive-carousel/lib/styles/carousel.min.css');
+import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import React from "react";
 import {Box, Container, Grid} from "@material-ui/core";
 import {Carousel} from "react-responsive-carousel";
@@ -8,6 +7,8 @@ import Typography from "@material-ui/core/Typography";
 import Image from 'material-ui-image';
 import {beds, getModelIndex} from "../../configs/Products";
 import {cardsData, carouselImages} from "../../configs/pages/index.config";
+import LayoutWithHeader from "../components/Layout/LayoutWithHeader";
+import HomeCard from "../components/Home/HomeCard";
 
 export type CardData = {
     id: string
@@ -17,32 +18,20 @@ export type CardData = {
     alt: string,
 };
 
-function HomeCard(props: { cardData: CardData, center: boolean }) {
-    const {src, alt, title, text} = props.cardData;
-    return (
-        <Box
-            className={"max-w-sm rounded overflow-hidden shadow-lg" + (props.center ? " mx-auto" : "")}>
-            <Image disableSpinner src={src} aspectRatio={2.0}/>
-            <div className="px-6 py-4">
-                <Typography gutterBottom={true} variant={"h6"}> {title} </Typography>
-                <Typography color={"textSecondary"} variant={"body2"}> {text} </Typography>
-            </div>
-        </Box>)
-}
-
 export default function Home() {
     return (
-        <div>
+        <LayoutWithHeader>
             <Container>
                 <Box className="hidden md:block">
                     <Carousel autoPlay infiniteLoop showStatus={false} showThumbs={false}>
-                        {carouselImages.map(imageSrc =>
-                            <Box key={imageSrc}><Image disableSpinner src={imageSrc} aspectRatio={2.3}/></Box>)}
+                        {carouselImages.map(imageSrc => (
+                            <Box key={imageSrc}><Image disableSpinner src={imageSrc} aspectRatio={2.3}/></Box>
+                        ))}
                     </Carousel>
                 </Box>
                 <Box className="mt-4">
                     <Grid container={true} spacing={3} justify="space-between">
-                        {cardsData.map((cardData_: CardData, index: number) =>
+                        {cardsData.map((cardData_: CardData) =>
                             (<Grid key={cardData_.id} item={true} xs={12} sm={6} md={3}>
                                 <HomeCard key={cardData_.title} cardData={cardData_} center={true}/>
                             </Grid>))}
@@ -60,5 +49,6 @@ export default function Home() {
                     </Grid>
                 </Box>
             </Container>
-        </div>)
+        </LayoutWithHeader>
+    )
 }
