@@ -8,6 +8,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {Product} from "../model/Model";
+import Link from "next/link";
 
 const useStyles = makeStyles({
     root: {
@@ -18,10 +19,10 @@ const useStyles = makeStyles({
     },
 });
 
-export default function ItemView(props: { item: Product, className?: string }) {
+export default function ItemView(props: { product: Product, className?: string }) {
     const classes = useStyles();
-    const {item, className} = props;
-    const {displayName, description, id, image, color, size} = item;
+    const {product, className} = props;
+    const {displayName, description, id, image, color, size} = product;
 
     return (
         <Card className={`${classes.root} ${className || ''}`}>
@@ -38,10 +39,14 @@ export default function ItemView(props: { item: Product, className?: string }) {
             </CardActionArea>
             <CardActions>
                 <Button size="small" color="primary">
-                    Купить
+                    <Link href={`/shop/${product.id}`}>
+                        Купить
+                    </Link>
                 </Button>
                 <Button size="small" color="primary">
-                    Подробнее
+                    <Link href={`/shop/${product.id}`}>
+                        Подробнее
+                    </Link>
                 </Button>
             </CardActions>
         </Card>

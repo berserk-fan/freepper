@@ -13,7 +13,7 @@ export default function Shop() {
                 {currentCategory.models.flatMap(p => p.products)
                     .map(item => (
                         <Grid key={item.id} item={true} xs={12} sm={6} md={3}>
-                            <ItemView item={item} className={"mx-auto"}/>
+                            <ItemView product={item} className={"mx-auto"}/>
                         </Grid>))}
             </Grid>
         </Container>)
