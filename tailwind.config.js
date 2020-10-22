@@ -7,7 +7,7 @@ module.exports = {
   },
   plugins: [],
   purge: {
-    content: ["./src/**/*.html", "./src/**/*.re", "./src/**/*.bs.js"],
+    content: ["./src/**/*.html", "./src/**/*.ts", "./src/**/*.jsx", "./src/**/*.tsx", "./src/**/*.js"],
   },
 };
 
