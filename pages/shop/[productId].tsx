@@ -94,7 +94,7 @@ export default function ProductPage() {
             </Box>
 
             <Paper className={"m-1"}>
-                <Box p={2} text className="flex flex-row gap-2">
+                <Box p={2} className="flex flex-row gap-2">
                     <ProductPrice price={product.size.price}/>
                     <Box pl={3}>
                         {buyButton}
