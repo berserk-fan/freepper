@@ -22,7 +22,7 @@ function HomeCard(props: { cardData: CardData, center: boolean }) {
     return (
         <Box
             className={"max-w-sm rounded overflow-hidden shadow-lg" + (props.center ? " mx-auto" : "")}>
-            <Image src={src} aspectRatio={2.0}/>
+            <Image disableSpinner src={src} aspectRatio={2.0}/>
             <div className="px-6 py-4">
                 <Typography gutterBottom={true} variant={"h6"}> {title} </Typography>
                 <Typography color={"textSecondary"} variant={"body2"}> {text} </Typography>
@@ -34,10 +34,10 @@ export default function Home() {
     return (
         <div>
             <Container>
-                <Box className="hidden md:block mt-4">
-                    <Carousel showArrows={true} showThumbs={false}>
+                <Box className="hidden md:block">
+                    <Carousel autoPlay infiniteLoop showStatus={false} showThumbs={false}>
                         {carouselImages.map(imageSrc =>
-                            <Box key={imageSrc}><Image src={imageSrc} aspectRatio={2.3}/></Box>)}
+                            <Box key={imageSrc}><Image disableSpinner src={imageSrc} aspectRatio={2.3}/></Box>)}
                     </Carousel>
                 </Box>
                 <Box className="mt-4">

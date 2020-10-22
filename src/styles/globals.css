@@ -20,3 +20,7 @@ body {
 .carousel .thumb  {
   border: 1px solid white !important;
 }
+.carousel .slide {
+  background: #FFF !important;
+}
+

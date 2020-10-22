@@ -88,32 +88,32 @@ export const beds: Category = {
                     id: 'lukoshko3-grey-xs',
                     displayName: 'Лукошко серое XS',
                     description: 'Хорошая лежанка',
-                    image: "https://picsum.photos/300/300?random=1",
-                    color: {id: "1", value: "#445566", displayName: "q"},
+                    image: "https://picsum.photos/1600/1600?random=1",
+                    color: {id: "1", value: "#445566", displayName: "Grey"},
                     size: {id: "xs", displayName: "XS", price: 1400.0}
                 },
                 {
                     id: 'lukoshko3-red-xs',
                     displayName: 'Лукошко красное XS',
                     description: 'Хорошая лежанка',
-                    image: "https://picsum.photos/300/300?random=2",
-                    color: {id: "2", value: "#FA1233", displayName: "w"},
+                    image: "https://picsum.photos/1600/900?random=2",
+                    color: {id: "2", value: "#FA1233", displayName: "Red"},
                     size: {id: "xs", displayName: "XS", price: 1400.0}
                 },
                 {
                     id: 'lukoshko3-violet-xs',
                     displayName: 'Лукошко зеленое XS',
                     description: 'Хорошая лежанка',
-                    image: "https://picsum.photos/300/300?random=3",
-                    color: {id: "3", value: "#912376", displayName: "r"},
+                    image: "https://picsum.photos/1600/900?random=3",
+                    color: {id: "3", value: "#912376", displayName: "Red"},
                     size: {id: "xs", displayName: "XS", price: 1400.0}
                 },
                 {
                     id: 'lukoshko3-violet-M',
                     displayName: 'Лукошко зеленое M',
                     description: 'Хорошая лежанка',
-                    image: "https://picsum.photos/300/300?random=3",
-                    color: {id: "3", value: "#912376", displayName: "r"},
+                    image: "https://picsum.photos/1600/1600?random=3",
+                    color: {id: "3", value: "#912376", displayName: "Red"},
                     size: {id: "m", displayName: "M", price: 1400.0}
                 }
             ]
@@ -129,7 +129,7 @@ export const beds: Category = {
                     displayName: 'Лукошко серое XS',
                     description: 'Хорошая лежанка',
                     image: "https://picsum.photos/300/300?random=1",
-                    color: {id: "1", value: "#445566", displayName: "q"},
+                    color: {id: "1", value: "#445566", displayName: "Grey"},
                     size: {id: "xs", displayName: "XS", price: 1400.0}
                 }
             ]

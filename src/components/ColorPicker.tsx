@@ -24,7 +24,7 @@ function ColoredRadio(props: { radioColor: Color } & RadioProps) {
 type ColorPickerProps = {
     colors: Color[],
     itemId: string,
-    onChange?: (colorId: string) => void
+    onChange?: (colorId: Color) => void
 }
 
 export default function ColorPicker(props: ColorPickerProps) {
@@ -33,7 +33,7 @@ export default function ColorPicker(props: ColorPickerProps) {
 
     const handleColor = (event, newColorId) => {
         if(onChange) {
-            onChange(newColorId);
+            onChange(colors.find((color) => color.id === newColorId));
         }
         setColorId(newColorId);
     };

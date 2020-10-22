@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import ColorPicker from "./ColorPicker";
 import {Box} from "@material-ui/core";
 import {ModelIndex} from "../../configs/Products";
+import {Color} from "../model/Model";
 
 const useStyles = makeStyles({
     root: {
@@ -24,10 +25,10 @@ export default function ModelView(props: { modelIndex: ModelIndex, className?: s
     const classes = useStyles();
     const {modelIndex, className} = props;
     const {displayName, description, id, image, colors, colorIdToImage} = modelIndex;
-
     const [currentImage, setCurrentImage] = React.useState(image);
 
-    function setImage(colorId: string) {
+    function setImage(color: Color) {
+        const colorId = color.id;
         if (colorIdToImage) {
             const image = colorIdToImage.get(colorId) || currentImage;
             setCurrentImage(image);
