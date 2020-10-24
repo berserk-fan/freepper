@@ -1,4 +1,4 @@
-import {Category, Color, Product, Model} from "../src/model/Model";
+import {Category, Color, Product, OldModel} from "../src/model/OldModel";
 
 export const beds: Category = {
     id: 'beds-category',
@@ -159,7 +159,7 @@ function groupBy<T, K extends keyof any>(list: T[], getKey: (item: T) => K): Rec
 
 const indexes = new Map<string, ModelIndex>();
 
-export function getModelIndex(model: Model): ModelIndex {
+export function getModelIndex(model: OldModel): ModelIndex {
     let cached = indexes.get(model.id);
     if (!!cached) {
         return cached;
@@ -184,8 +184,8 @@ export function getModelIndex(model: Model): ModelIndex {
     return res;
 }
 
-function getProductIdToModel(): Map<string, Model> {
-    const res = new Map<string, Model>();
+function getProductIdToModel(): Map<string, OldModel> {
+    const res = new Map<string, OldModel>();
     for(const category of categories) {
         for(const model of category.models) {
             for(const product of model.products) {
@@ -196,4 +196,4 @@ function getProductIdToModel(): Map<string, Model> {
     return res;
 }
 
-export const productIdsToModel: Map<string, Model> = getProductIdToModel();
+export const productIdsToModel: Map<string, OldModel> = getProductIdToModel();

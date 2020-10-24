@@ -1,0 +1,18 @@
+syntax = "proto3";
+package pogladitMozhno.shop.v1;
+
+import "shop_model.proto";
+import "google/api/http.proto";
+
+service ShopService {
+    rpc GetCategory (GetCategoryRequest) returns (Category) {
+        option (google.api.http) = {
+           // Note the URL template variable which captures the multi-segment resource
+           // name of the requested book, such as "shelves/shelf1/books/book2"
+           get: "/v1/{name=categories/*}"
+        };
+    }
+
+    rpc GetProduct (GetProductRequest) returns (Product);
+    rpc ListProducts (ListProductsRequest) returns (ListProductsResponse);
+}

@@ -1,12 +1,14 @@
+//deprecated
+
 export type Category = {
     id: string,
     displayName: string,
     description: string,
     image: string,
-    models: Model[]
+    models: OldModel[]
 }
 
-export type Model = {
+export type OldModel = {
     id: string,
     displayName: string,
     description: string,
