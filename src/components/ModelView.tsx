@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import ColorPicker from "./ColorPicker";
 import {Box} from "@material-ui/core";
 import {ModelIndex} from "../../configs/Products";
-import {Color} from "../model/Model";
+import {Color} from "../model/OldModel";
 
 const useStyles = makeStyles({
     root: {

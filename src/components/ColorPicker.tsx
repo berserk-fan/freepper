@@ -5,7 +5,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Radio, {RadioProps} from "@material-ui/core/Radio";
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Box from "@material-ui/core/Box";
-import {Color} from "../model/Model";
+import {Color} from "../model/OldModel";
 
 const useStyles = makeStyles({
     root: {
