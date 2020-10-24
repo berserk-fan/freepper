@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import React from "react";
 import {Box, Button, Container, Fade, Grid, Paper, styled, Typography} from "@material-ui/core";
 import {getModelIndex, productIdsToModel} from "../../../configs/Products";
-import {Color, Model} from "../../model/OldModel";
+import {Color, OldModel} from "../../model/OldModel";
 import {Carousel, Thumbs} from "react-responsive-carousel";
 import Image from 'material-ui-image';
 import ColorPicker from "../../components/ColorPicker";
@@ -19,7 +19,7 @@ export default function ProductPage() {
     if (!productId) {
         return false;
     }
-    const model: Model = productIdsToModel.get(productId as string);
+    const model: OldModel = productIdsToModel.get(productId as string);
     if (!model) {
         return <h1>Page Not Found</h1>
     }
