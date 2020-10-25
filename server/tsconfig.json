@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "declaration": true
+  },
+  "include": [
+    "*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "*.d.ts",
+    "*.js"
+  ]
+}

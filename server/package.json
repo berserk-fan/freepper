@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "sh ./proto_gen.sh && npx tsc --declaration *.ts"
+    "build": "sh ./proto_gen.sh && npx tsc"
   },
   "repository": "https://github.com/mamat14/pogladit-mozhno",
   "dependencies": {
