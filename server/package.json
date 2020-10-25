@@ -19,6 +19,8 @@
     "shop_model.d.ts",
     "shop_service.js",
     "shop_service.d.ts",
+    "shop_service_impl.d.ts",
+    "shop_service_impl.js",
     "index.js",
     "index.d.ts"
   ]
