@@ -2,7 +2,6 @@ syntax = "proto3";
 package pogladitMozhno.shop.v1;
 
 import "shop_model.proto";
-import "google/api/http.proto";
 import "google/api/annotations.proto";
 
 service ShopService {
