@@ -1,5 +1,5 @@
 import {Product} from "@mamat14/shop-server/shop_model";
-import {CART, cartStateKey, initialCartState, SHOP_CLIENT} from "../../store";
+import {CART, cartStateKey, SHOP_CLIENT} from "../../store";
 import {Box, Container, Grid, Typography} from "@material-ui/core";
 import React, {useEffect, useState} from "react";
 import CartItem from "../../components/Cart/CartItem";
@@ -11,8 +11,7 @@ export type CartState = {
 }
 
 function parseCartData(cookieHeader?: string): CartState {
-    console.log("COOKIE: " + cookieHeader);
-    return JSON.parse(Cookie.parse(cookieHeader || `${cartStateKey}=${initialCartState}`)[cartStateKey]);
+    return JSON.parse(Cookie.parse(cookieHeader || '')[cartStateKey]) || {productIds: []};
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {

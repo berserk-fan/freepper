@@ -28,11 +28,12 @@ type DELETE_PRODUCT = {
 type CartUpdate = ADD_PRODUCT | DELETE_PRODUCT;
 
 export const cartStateKey = "cartState";
-export const initialCartState = '{"productIds": []}';
 
 function readStoredCartState(): CartState {
-    return JSON.parse(Cookies.get(cartStateKey) || initialCartState)
+    const cartCookie = Cookies.get(cartStateKey);
+    return cartCookie ? JSON.parse(cartCookie) : {productIds: []}
 }
+
 function storeCartState(cartState: CartState): void {
     Cookies.set(cartStateKey, JSON.stringify(cartState));
 }

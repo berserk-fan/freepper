@@ -8,7 +8,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Link from "next/link";
-import {Product} from "@mamat14/shop-server/shop_model";
+import {BriefProduct} from "../types";
 
 const useStyles = makeStyles({
     root: {
@@ -19,7 +19,7 @@ const useStyles = makeStyles({
     },
 });
 
-export default function ItemView(props: { product: Omit<Product, "details">, className?: string }) {
+export default function ItemView(props: { product: BriefProduct, className?: string }) {
     const classes = useStyles();
     const {product, className} = props;
     const {displayName, description, image} = product;
