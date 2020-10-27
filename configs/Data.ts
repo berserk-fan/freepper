@@ -186,8 +186,8 @@ export const shopProducts: Product[] = [
 
 
 export const category = {
-    id: 'beds-category',
-    name: `/categories/beds-category`,
+    id: 'beds',
+    name: `/categories/beds`,
     displayName: 'Лежанки',
     description: 'Лежанки для питомцев',
     image: {
