@@ -8,14 +8,16 @@ import React from "react";
 
 export async function getStaticProps() {
     const shopClient = new ShopClient({categories: [category], products: shopProducts});
-    const response = await shopClient.listProducts({
+    const request = {
         parent: '/categories/beds/products',
         pageSize: 25,
-        pageToken: ""});
+        pageToken: ""
+    };
+    const {products} = await shopClient.listProducts(request);
     const categories = [await shopClient.getCategory({name: '/categories/beds'})];
     return {
         props: {
-            products: response.products,
+            products: products,
             categories: categories
         },
     }
