@@ -1,5 +1,29 @@
 import {DogBed_Variant, Fabric, Product, Size} from "@mamat14/shop-server/shop_model";
 
+const sizes: Size[] = [
+    {
+        id: '1',
+        displayName: 'XS',
+        description: '80x40'
+    },
+    {
+        id: '2',
+        displayName: 'S',
+        description: '90x60'
+    },
+    {
+        id: '3',
+        displayName: 'M',
+        description: '120x90'
+    },
+    {
+        id: '4',
+        displayName: 'L',
+        description: '150x100'
+    }
+];
+
+
 const avroFabrics: Fabric[] = [
     {
         id: 'avro-500',
@@ -65,34 +89,12 @@ function getVariants(): DogBed_Variant[] {
 }
 const lukoshkoVariants: DogBed_Variant[] = getVariants();
 
-const sizes: Size[] = [
-    {
-        id: '1',
-        displayName: 'XS',
-        description: '80x40'
-    },
-    {
-        id: '2',
-        displayName: 'S',
-        description: '90x60'
-    },
-    {
-        id: '3',
-        displayName: 'M',
-        description: '120x90'
-    },
-    {
-        id: '4',
-        displayName: 'L',
-        description: '150x100'
-    }
-];
 
-export const products: Product[] = [
+export const shopProducts: Product[] = [
     {
-        id: 'lukoshko-grey-xs',
-        name: 'categories/beds-category/products/lukoshko-grey-xs',
-        displayName: 'Лукошко серое XS',
+        id: 'lukoshko-grey',
+        name: 'categories/beds-category/products/lukoshko-grey',
+        displayName: 'Лукошко - Серый',
         description: 'Хорошая лежанка',
         image: {
             src: "https://picsum.photos/300/300?random=1",
@@ -111,7 +113,75 @@ export const products: Product[] = [
                 variants: lukoshkoVariants,
             }
         },
+    },{
+        id: 'lukoshko-white',
+        name: 'categories/beds-category/products/lukoshko-white',
+        displayName: 'Лукошко серое - White',
+        description: 'Хорошая лежанка',
+        image: {
+            src: "https://picsum.photos/300/300?random=66",
+            alt: "лежанка"
+        },
+        price: {
+            price: 999
+        },
+        details: {
+            $case: 'dogBed',
+            dogBed: {
+                sizeId: '1',
+                fabricId: 'avro-500',
+                fabrics: avroFabrics,
+                sizes: sizes,
+                variants: lukoshkoVariants,
+            }
+        },
     },
+    {
+        id: 'lukoshko-red',
+        name: 'categories/beds-category/products/lukoshko-red',
+        displayName: 'Лукошко - Красный',
+        description: 'Хорошая лежанка',
+        image: {
+            src: "https://picsum.photos/300/300?random=2",
+            alt: "лежанка"
+        },
+        price: {
+            price: 1100
+        },
+        details: {
+            $case: 'dogBed',
+            dogBed: {
+                sizeId: '1',
+                fabricId: 'avro-500',
+                fabrics: avroFabrics,
+                sizes: sizes,
+                variants: lukoshkoVariants,
+            }
+        },
+    },
+    {
+        id: 'lukoshko-blue',
+        name: 'categories/beds-category/products/lukoshko-blue',
+        displayName: 'Лукошко - Синий',
+        description: 'Хорошая лежанка',
+        image: {
+            src: "https://picsum.photos/300/300?random=4",
+            alt: "лежанка"
+        },
+        price: {
+            price: 1299
+        },
+        details: {
+            $case: 'dogBed',
+            dogBed: {
+                sizeId: '1',
+                fabricId: 'avro-500',
+                fabrics: avroFabrics,
+                sizes: sizes,
+                variants: lukoshkoVariants,
+            }
+        },
+    }
 ];
 
 

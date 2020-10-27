@@ -7,8 +7,8 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import {Product} from "../model/Model";
 import Link from "next/link";
+import {Product} from "@mamat14/shop-server/shop_model";
 
 const useStyles = makeStyles({
     root: {
@@ -22,12 +22,12 @@ const useStyles = makeStyles({
 export default function ItemView(props: { product: Product, className?: string }) {
     const classes = useStyles();
     const {product, className} = props;
-    const {displayName, description, id, image, color, size} = product;
+    const {displayName, description, image} = product;
 
     return (
         <Card className={`${classes.root} ${className || ''}`}>
             <CardActionArea>
-                <CardMedia image={image} className={`${classes.media}`} title={displayName}/>
+                <CardMedia image={image.src} className={`${classes.media}`} title={displayName}/>
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="h2">
                         {displayName}
