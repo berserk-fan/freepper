@@ -8,22 +8,20 @@ import React from "react";
 
 export async function getStaticProps() {
     const shopClient = new ShopClient({categories: [category], products: shopProducts});
-    const products = await shopClient.listProducts({
+    const response = await shopClient.listProducts({
         parent: '/categories/beds/products',
         pageSize: 25,
-        pageToken: ""
-    }).then((response) => response.products);
+        pageToken: ""});
     const categories = [await shopClient.getCategory({name: '/categories/beds'})];
     return {
         props: {
-            products: products,
+            products: response.products,
             categories: categories
         },
     }
 }
 
-export default function Shop(props: { products: Product[], categories: Category[] }) {
-    const {products, categories} = props;
+export default function Shop({products, categories}: { products: Product[], categories: Category[] }) {
     const currentCategory = categories[0];
     return <LayoutWithHeader>
         <Container>

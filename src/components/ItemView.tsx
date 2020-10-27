@@ -19,7 +19,7 @@ const useStyles = makeStyles({
     },
 });
 
-export default function ItemView(props: { product: Product, className?: string }) {
+export default function ItemView(props: { product: Omit<Product, "details">, className?: string }) {
     const classes = useStyles();
     const {product, className} = props;
     const {displayName, description, image} = product;
