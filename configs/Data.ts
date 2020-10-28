@@ -97,7 +97,7 @@ export const shopProducts: Product[] = [
         displayName: 'Лукошко - Серый',
         description: 'Хорошая лежанка',
         image: {
-            src: "https://picsum.photos/300/300?random=1",
+            src: "/Dogs-7248.jpg",
             alt: "лежанка"
         },
         price: {
@@ -119,7 +119,7 @@ export const shopProducts: Product[] = [
         displayName: 'Лукошко серое - White',
         description: 'Хорошая лежанка',
         image: {
-            src: "https://picsum.photos/300/300?random=66",
+            src: "/Dogs-7254.jpg",
             alt: "лежанка"
         },
         price: {
@@ -142,7 +142,7 @@ export const shopProducts: Product[] = [
         displayName: 'Лукошко - Красный',
         description: 'Хорошая лежанка',
         image: {
-            src: "https://picsum.photos/300/300?random=2",
+            src: "/Dogs-7255.jpg",
             alt: "лежанка"
         },
         price: {
@@ -165,7 +165,7 @@ export const shopProducts: Product[] = [
         displayName: 'Лукошко - Синий',
         description: 'Хорошая лежанка',
         image: {
-            src: "https://picsum.photos/300/300?random=4",
+            src: "/Dogs-7078.jpg",
             alt: "лежанка"
         },
         price: {
