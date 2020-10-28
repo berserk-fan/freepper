@@ -25,16 +25,35 @@ export type CartState = {
     productIds: string[]
 }
 
+function getAdditionalInfo({details}: Product) {
+    switch (details.$case) {
+        case "dogBed":
+            const size= details.dogBed.sizes.find((s) => s.id == details.dogBed.sizeId);
+            return (<div>
+                <Typography display={'inline'} variant={'caption'}>Размер: </Typography>
+                <Typography display={'inline'} variant={'h6'}>
+                    {size.displayName}
+                </Typography>
+            </div>)
+    }
+}
+
 function CartItem(props: { product: Product }) {
-    const {displayName, price, image} = props.product;
+    const {displayName, price, image, details} = props.product;
+    switch (details.$case) {
+        case "dogBed":
+    }
     return (
-        <div className={"m-4 grid grid-cols-4 gap-4"}>
+        <div className={"m-4 grid grid-flow-col auto-cols-auto gap-4"}>
             <div>
                 <Image width={100} height={100} src={image.src} alt={image.alt}/>
             </div>
             <div className={"col-span-3 flex flex-col justify-between"}>
-                <Typography variant={'h4'}>{displayName}</Typography>
-                <div>
+                <Typography variant={'h5'}>{displayName}</Typography>
+                <div className={"flex flex-row justify-between"}>
+                    <div>
+                        {getAdditionalInfo(props.product)}
+                    </div>
                     <Typography align='right' color='primary' variant={'h5'}>{price.price} ₴</Typography>
                 </div>
             </div>
@@ -43,11 +62,13 @@ function CartItem(props: { product: Product }) {
 }
 
 export default function Cart({products}: { products: Product[] }) {
+    const totalPrice = products.map(p => p.price.price).reduce((a, b) => a + b, 0);
     return (
         <LayoutWithHeader>
-            <Container maxWidth={"md"}>
+            <Container maxWidth={"sm"}>
                 <Card>
-                    <CardHeader id="scroll-dialog-title">Корзина</CardHeader>
+                    <CardHeader title={'Корзина'}/>
+                    <Divider/>
                     <CardContent>
                         {products.length === 0
                             ? <Typography variant={'h2'}>Корзина пуста</Typography>
@@ -61,7 +82,7 @@ export default function Cart({products}: { products: Product[] }) {
                     <CardActions className={"flex flex-row items-center"}>
                         <Box border={2} borderColor={'primary.main'} bgcolor={'primary.light'} className={"flex flex-row items-center rounded p-6"} style={{marginLeft: 'auto'}}>
                             <div className={"mr-6"}>
-                                <Typography variant='h5' align='center' >1999 ₴</Typography>
+                                <Typography variant='h5' align='center'>{totalPrice} ₴</Typography>
                             </div>
                             <Button color={'primary'} variant='contained' size='large'>Оформить заказ</Button>
                         </Box>
