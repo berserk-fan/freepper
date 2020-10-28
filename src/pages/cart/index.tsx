@@ -1,32 +1,16 @@
 import {Product} from "@mamat14/shop-server/shop_model";
-import {CART, cartStateKey, SHOP_CLIENT} from "../../store";
+import {cartStateKey, SHOP_CLIENT} from "../../store";
 import {Box, Container, Grid, Typography} from "@material-ui/core";
-import React, {useEffect, useState} from "react";
-import CartItem from "../../components/Cart/CartItem";
+import React from "react";
 import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
 import {GetServerSideProps} from "next";
 import Cookie from 'cookie';
+
 export type CartState = {
     productIds: string[]
 }
 
-function parseCartData(cookieHeader?: string): CartState {
-    return JSON.parse(Cookie.parse(cookieHeader || '')[cartStateKey]) || {productIds: []};
-}
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const cartState = parseCartData(context.req.headers.cookie);
-    const productPromises = cartState.productIds
-        .map((id) => SHOP_CLIENT.getProduct({name: `categories/beds-category/products/${id}`}));
-    const products = await Promise.all(productPromises);
-    return {
-        props: {
-            products: products
-        }
-    }
-};
-
-export default function Cart({products}: {products: Product[]}) {
+export default function Cart({products}: { products: Product[] }) {
     return (
         <LayoutWithHeader>
             <Container>
@@ -39,7 +23,12 @@ export default function Cart({products}: {products: Product[]}) {
                                 : <Box>
                                     <Typography variant={'h2'}>Товары:</Typography>
                                     {
-                                        products.map(p => <CartItem key={p.id} product={p}/>)
+                                        products.map(({displayName}) => (
+                                                <Box>
+                                                    <Typography variant={'h3'}>{displayName}</Typography>
+                                                </Box>
+                                            )
+                                        )
                                     }
                                 </Box>
                         }
@@ -47,4 +36,18 @@ export default function Cart({products}: {products: Product[]}) {
                 </Grid>
             </Container>
         </LayoutWithHeader>);
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const {productIds} = parseCartData(context.req.headers.cookie);
+    const products = await Promise.all(
+        productIds.map(id => SHOP_CLIENT.getProduct({name: `categories/beds-category/products/${id}`}))
+    );
+    return {
+        props: {products}
+    }
+};
+
+function parseCartData(cookieHeader?: string): CartState {
+    return JSON.parse(Cookie.parse(cookieHeader || '')[cartStateKey]) || {productIds: []};
 }
