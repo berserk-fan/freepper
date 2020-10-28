@@ -1,5 +1,5 @@
 import {Product} from "@mamat14/shop-server/shop_model";
-import {cartStateKey, SHOP_CLIENT} from "../../store";
+import {cartStateKey, shopClient} from "../../store";
 import {Box, Container, Grid, Typography} from "@material-ui/core";
 import React from "react";
 import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
@@ -49,5 +49,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 function parseCartData(cookieHeader?: string): CartState {
-    return JSON.parse(Cookie.parse(cookieHeader || '')[cartStateKey]) || {productIds: []};
+    const defaultCartState = {productIds: []};
+    const actualCartState = JSON.parse(Cookie.parse(cookieHeader || '')[cartStateKey] || '{}');
+    return Object.assign(defaultCartState, actualCartState);
 }
