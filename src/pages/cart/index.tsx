@@ -38,18 +38,26 @@ export default function Cart({products}: { products: Product[] }) {
         </LayoutWithHeader>);
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const {productIds} = parseCartData(context.req.headers.cookie);
-    const products = await Promise.all(
-        productIds.map(id => SHOP_CLIENT.getProduct({name: `categories/beds-category/products/${id}`}))
-    );
-    return {
-        props: {products}
-    }
-};
-
 function parseCartData(cookieHeader?: string): CartState {
     const defaultCartState = {productIds: []};
-    const actualCartState = JSON.parse(Cookie.parse(cookieHeader || '')[cartStateKey] || '{}');
-    return Object.assign(defaultCartState, actualCartState);
+    try {
+        const actualCartState = JSON.parse(Cookie.parse(cookieHeader || '')[cartStateKey] || '{}');
+        return Object.assign(defaultCartState, actualCartState);
+    } catch (e) {
+        //consider error recovery
+        //1.log.error 2.reset-cookies
+        return defaultCartState;
+    }
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const cartState = parseCartData(context.req.headers.cookie);
+    const productPromises = cartState.productIds
+        .map((id) => shopClient.getProduct({name: `categories/beds-category/products/${id}`}));
+    const products = await Promise.all(productPromises);
+    return {
+        props: {
+            products: products
+        }
+    }
+};

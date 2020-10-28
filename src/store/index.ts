@@ -47,4 +47,4 @@ CART.subscribe(() => {
     storeCartState(CART.getState());
 });
 
-export const SHOP_CLIENT = new ShopClient({products: shopProducts, categories: [category]});
+export const shopClient = new ShopClient({products: shopProducts, categories: [category]});
