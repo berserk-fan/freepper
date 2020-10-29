@@ -4,47 +4,58 @@ import {category, shopProducts} from '../../configs/Data'
 import {CartState} from "../pages/cart";
 import Cookies from 'js-cookie';
 
-type ADD_PRODUCT = {
-    type: "ADD_PRODUCT",
-    productId: string
-}
-type DELETE_PRODUCT = {
-    type: "DELETE_PRODUCT",
-    productId: string
-}
-
-type CartUpdate = ADD_PRODUCT | DELETE_PRODUCT;
-
 export const cartStateKey = "cartState";
 
 function readStoredCartState(): CartState {
     const cartCookie = Cookies.get(cartStateKey);
-    return cartCookie ? JSON.parse(cartCookie) : {productIds: []}
+    const parsed = JSON.parse(cartCookie || '{}');
+    if(parsed.selectedProducts) {
+        return parsed
+    }
+    return {selectedProducts: []};
 }
 
 function storeCartState(cartState: CartState): void {
     Cookies.set(cartStateKey, JSON.stringify(cartState));
 }
 
-function reducer({productIds}: CartState = readStoredCartState(), action: CartUpdate): CartState {
+type SET_PRODUCT_COUNT = {
+    type: "SET_PRODUCT_COUNT",
+    productId: string,
+    count: number
+}
+
+type CartUpdate = SET_PRODUCT_COUNT
+
+function reducer({selectedProducts}: CartState = readStoredCartState(), action: CartUpdate): CartState {
     switch (action.type) {
-        case 'ADD_PRODUCT': {
-            return {productIds: [...productIds, action.productId]};
-        }
-        case 'DELETE_PRODUCT': {
-            const newIds = new Set(productIds);
-            newIds.delete(action.productId);
-            return {productIds: [...newIds]};
+        case 'SET_PRODUCT_COUNT': {
+            let res = [...selectedProducts]
+                .filter(p => p.id !== action.productId);
+            if (action.count >= 1) {
+                res.push({id: action.productId, count: action.count});
+            }
+            return {selectedProducts: res}
         }
         default:
-            return {productIds}
+            return {selectedProducts: selectedProducts}
     }
 }
 
-export const CART: Store<CartState, CartUpdate> = createStore(reducer);
+export const cartReducer = createStore(reducer);
 
-CART.subscribe(() => {
-    storeCartState(CART.getState());
+export const CART = {
+    setProductCount: function (productId: string, count: number): void {
+        cartReducer.dispatch({type: 'SET_PRODUCT_COUNT', count: count, productId: productId})
+    },
+    getProductCount: function (productId: string): number {
+        return cartReducer.getState().selectedProducts
+                .find(p => p.id === productId)?.count || 0;
+    }
+};
+
+cartReducer.subscribe(() => {
+    storeCartState(cartReducer.getState());
 });
 
 export const shopClient = new ShopClient({products: shopProducts, categories: [category]});
