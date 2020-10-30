@@ -55,7 +55,7 @@ export function ActionsPopover(productId: string) {
                              }}>
                         <div className={"flex flex-col"}>
                             <Button onClick={() => {
-                                CART.delete(productId);
+                                CART.setProductCount(productId, 0);
                                 popupState.close()
                             }}
                                     fullWidth
