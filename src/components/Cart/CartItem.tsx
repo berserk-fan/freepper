@@ -3,16 +3,13 @@ import {
     Box,
     Button,
     Card,
-    CardActions,
     CardContent,
-    CardMedia, Divider, FormControl, FormHelperText,
-    IconButton, InputLabel, NativeSelect,
-    Paper, Popover,
-    Theme,
+    IconButton,
+    Popover,
     Typography
 } from "@material-ui/core";
 import Image from "next/image";
-import PopupState, {bindPopover, bindToggle, bindTrigger} from "material-ui-popup-state";
+import PopupStateComponent, {bindPopover, bindToggle, bindTrigger} from "material-ui-popup-state";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CloseIcon from "@material-ui/icons/Close";
@@ -22,6 +19,7 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import theme from "../../theme";
 import {CART, cartReducer} from "../../store";
+import {PopupState} from "material-ui-popup-state/core";
 
 function getAdditionalInfo({details}: Product) {
     switch (details.$case) {
@@ -32,7 +30,7 @@ function getAdditionalInfo({details}: Product) {
                     <Typography noWrap display={'inline'} variant={'caption'}>
                         Размер:
                     </Typography>
-                    <Typography noWrap aria-label-by={'size'} display={'inline'} variant={'h6'}>
+                    <Typography noWrap display={'inline'} variant={'h6'}>
                         {' ' + size.displayName}
                     </Typography>
                 </div>
@@ -40,9 +38,9 @@ function getAdditionalInfo({details}: Product) {
     }
 }
 
-export function ActionsPopover() {
+export function ActionsPopover(productId: string) {
     return (
-        <PopupState variant="popover" popupId="cart-action-popover">
+        <PopupStateComponent variant="popover" popupId="cart-action-popover">
             {(popupState) => (
                 <div>
                     <IconButton size={'small'} color={'primary'} {...bindTrigger(popupState)}><MoreVertIcon/></IconButton>
@@ -56,19 +54,24 @@ export function ActionsPopover() {
                                  horizontal: 'right',
                              }}>
                         <div className={"flex flex-col"}>
-                            <Button fullWidth startIcon={<DeleteIcon/>}>
+                            <Button onClick={() => {
+                                CART.delete(productId);
+                                popupState.close()
+                            }}
+                                    fullWidth
+                                    startIcon={<DeleteIcon/>}>
                                 <Typography>
                                     Удалить из корзины
                                 </Typography>
                             </Button>
-                            <Button {...bindToggle(popupState)} fullWidth startIcon={<CloseIcon/>}>
+                            <Button onClick={popupState.close} fullWidth startIcon={<CloseIcon/>}>
                                 <Typography>Закрыть</Typography>
                             </Button>
                         </div>
                     </Popover>
                 </div>)
             }
-        </PopupState>);
+        </PopupStateComponent>);
 
 }
 
@@ -103,9 +106,10 @@ export default function CartItem(props: { product: Product }) {
     cartReducer.subscribe(() => {
         setCount(CART.getProductCount(id))
     });
+
     function handleChange(change: number) {
         return () => {
-            CART.setProductCount(id, count + change)
+            CART.setProductCount(id, CART.getProductCount(id) + change)
         }
     }
 
@@ -135,7 +139,7 @@ export default function CartItem(props: { product: Product }) {
                         <IconButton size={'small'} onClick={handleChange(1)}>
                             <AddCircleOutlineIcon fontSize={'large'}/>
                         </IconButton>
-                        {ActionsPopover()}
+                        {ActionsPopover(id)}
                     </Box>
                 </Box>
             </div>
