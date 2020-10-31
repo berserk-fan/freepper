@@ -91,7 +91,7 @@ export default function Header() {
                             <Typography variant="h5">
                                 Корзина
                             </Typography>
-                            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close-cart-window">
+                            <IconButton edge="start" color="secondary" onClick={handleClose} aria-label="close-cart-window">
                                 <CloseIcon fontSize={'large'}/>
                             </IconButton>
                         </Toolbar>
