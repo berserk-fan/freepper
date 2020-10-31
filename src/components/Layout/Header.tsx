@@ -44,7 +44,8 @@ export default function Header() {
         setOpen(false);
     };
 
-    const lessThanMedium = useMediaQuery(theme.breakpoints.down('md'));
+    //TODO: fix behaves like md
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     return (
             <div className={classes.container}>
@@ -69,7 +70,7 @@ export default function Header() {
                         <IconButton size={'medium'} onClick={handleClickOpen}>
                             <ShoppingCartTwoToneIcon fontSize={'large'} />
                         </IconButton>
-                        <Dialog scroll={'body'} fullScreen={lessThanMedium} fullWidth maxWidth={'md'} onClose={handleClose} aria-labelledby="cart-window" open={open}>
+                        <Dialog scroll={isSmallScreen ? 'body': 'paper'} fullScreen={isSmallScreen} fullWidth maxWidth={'md'} onClose={handleClose} aria-labelledby="cart-window" open={open}>
                             <CustomAppBar>
                                 <Toolbar className={"flex justify-between"}>
                                     <Typography variant="h5">
