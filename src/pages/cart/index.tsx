@@ -6,12 +6,13 @@ import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
 import {GetServerSideProps} from "next";
 import Cookie from 'cookie';
 import {Cart, CartState} from "../../components/Cart/Cart";
+import CartNoProps from "../../components/Cart/CartNoProps";
 
 export default function CartPage({products}: { products: Product[] }) {
     return (
         <LayoutWithHeader>
             <Container maxWidth={"sm"}>
-                <Cart products={products}/>
+                <CartNoProps initialProducts={products}/>
             </Container>
         </LayoutWithHeader>
     );

@@ -6,8 +6,8 @@ import {Cart} from "./Cart";
 import retry from 'promise-retry';
 
 type CartNoPropsState = "PENDING" | "COMPLETED" | "FAILED"
-export default function CartNoProps() {
-    const [products, setProducts] = useState<Product[]>([]);
+export default function CartNoProps({initialProducts}: {initialProducts: Product[]} = {initialProducts: []}) {
+    const [products, setProducts] = useState<Product[]>(initialProducts);
     const [state, setState] = useState<CartNoPropsState>("PENDING");
     cartReducer.subscribe(() => {
         setState("PENDING");
