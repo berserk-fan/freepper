@@ -3,16 +3,30 @@ import {Product} from "@mamat14/shop-server/shop_model";
 import {requestCartProducts} from "../../pages/cart";
 import {cartReducer} from "../../store";
 import {Cart} from "./Cart";
-import {Box} from "@material-ui/core";
+import retry from 'promise-retry';
 
+type CartNoPropsState = "PENDING" | "COMPLETED" | "FAILED"
 export default function CartNoProps() {
     const [products, setProducts] = useState<Product[]>([]);
-    useEffect(() => {
-        requestCartProducts(cartReducer.getState())
-            .then(setProducts)
-    }, []);
+    const [state, setState] = useState<CartNoPropsState>("PENDING");
+    cartReducer.subscribe(() => {
+        setState("PENDING");
+    });
 
-    return (<Box padding={1}>
-        <Cart products={products}/>
-    </Box>)
+    useEffect(() => {
+        if (state === "PENDING") {
+            retry((retry, number) =>
+                requestCartProducts(cartReducer.getState())
+                    .then((products) => {
+                        setProducts(products);
+                        setState("COMPLETED")
+                    })
+            ).catch((err) => {
+                console.error(err);
+                setState("FAILED")
+            })
+        }
+    });
+
+    return (<Cart products={products}/>)
 }

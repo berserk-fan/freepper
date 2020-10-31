@@ -60,7 +60,7 @@ export default function Header() {
                                 <ShoppingCartTwoToneIcon fontSize={'large'} />
                             </IconButton>
                         </ButtonGroup>
-                        <Dialog onClose={handleClose} aria-labelledby="open-cart-button" open={open}>
+                        <Dialog onClose={handleClose} aria-labelledby="cart-window" open={open}>
                             <CartNoProps/>
                         </Dialog>
                     </Toolbar>
