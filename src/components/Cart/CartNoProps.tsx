@@ -6,7 +6,10 @@ import {Cart} from "./Cart";
 import retry from 'promise-retry';
 
 type CartNoPropsState = "PENDING" | "COMPLETED" | "FAILED"
-export default function CartNoProps({initialProducts}: {initialProducts: Product[]} = {initialProducts: []}) {
+export default function CartNoProps({initialProducts}: {initialProducts?: Product[]}) {
+    if(!initialProducts) {
+        initialProducts = []
+    }
     const [products, setProducts] = useState<Product[]>(initialProducts);
     const [state, setState] = useState<CartNoPropsState>("PENDING");
     cartReducer.subscribe(() => {
@@ -21,6 +24,7 @@ export default function CartNoProps({initialProducts}: {initialProducts: Product
                         setProducts(products);
                         setState("COMPLETED")
                     })
+                    .catch(retry)
             ).catch((err) => {
                 console.error(err);
                 setState("FAILED")

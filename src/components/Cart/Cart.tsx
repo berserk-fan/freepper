@@ -70,16 +70,12 @@ export function Cart({products}: { products: Product[] }) {
         setTotalPrice(calcTotalPrice(cartReducer.getState()));
     });
     useEffect(() => {
-       setTotalPrice(calcTotalPrice(cartReducer.getState()))
+        setTotalPrice(calcTotalPrice(cartReducer.getState()))
     });
     const defaultTotalPrice = calcTotalPrice(cartReducer.getState());
     const [totalPrice, setTotalPrice] = useState(defaultTotalPrice);
 
     return <div>
-        <Box paddingBottom={1}>
-            <Typography variant={'h4'}>Корзина</Typography>
-        </Box>
-        <Divider/>
         <Box marginTop={2}>
             {products.length === 0
                 ? <Typography variant={'h2'}>Корзина пуста</Typography>

@@ -6,12 +6,12 @@ import Typography from "@material-ui/core/Typography";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Button from "@material-ui/core/Button";
 import Link from "next/link";
-import {Box, Dialog, IconButton} from "@material-ui/core";
+import {Box, Dialog, Divider, IconButton} from "@material-ui/core";
 import ShoppingCartTwoToneIcon from '@material-ui/icons/ShoppingCartTwoTone';
-import CartPage, {requestCartProducts} from "../../pages/cart";
-import {Product} from "@mamat14/shop-server/shop_model";
-import {cartReducer, shopClient} from "../../store";
+import CloseIcon from '@material-ui/icons/Close';
 import CartNoProps from "../Cart/CartNoProps";
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import theme from "../../theme";
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -27,6 +27,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const CustomAppBar = ({children}) => {
+    return <AppBar elevation={1} position="relative" color="transparent">
+        {children}
+    </AppBar>
+};
+
 export default function Header() {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
@@ -37,9 +43,12 @@ export default function Header() {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const lessThanMedium = useMediaQuery(theme.breakpoints.down('md'));
+
     return (
             <div className={classes.container}>
-                <AppBar elevation={0} position="relative" color="transparent">
+                <CustomAppBar>
                     <Toolbar>
                         <Box className={`${classes.title} absolute cursor-default uppercase`}>
                             <Typography variant="h5" noWrap>
@@ -56,15 +65,27 @@ export default function Header() {
                             <Link href={"/about"}>
                                 <Button>О нас</Button>
                             </Link>
-                            <IconButton size={'medium'} onClick={handleClickOpen}>
-                                <ShoppingCartTwoToneIcon fontSize={'large'} />
-                            </IconButton>
                         </ButtonGroup>
-                        <Dialog onClose={handleClose} aria-labelledby="cart-window" open={open}>
-                            <CartNoProps/>
+                        <IconButton size={'medium'} onClick={handleClickOpen}>
+                            <ShoppingCartTwoToneIcon fontSize={'large'} />
+                        </IconButton>
+                        <Dialog scroll={'body'} fullScreen={lessThanMedium} fullWidth maxWidth={'md'} onClose={handleClose} aria-labelledby="cart-window" open={open}>
+                            <CustomAppBar>
+                                <Toolbar className={"flex justify-between"}>
+                                    <Typography variant="h5">
+                                        Корзина
+                                    </Typography>
+                                    <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close-cart-window">
+                                        <CloseIcon fontSize={'large'} />
+                                    </IconButton>
+                                </Toolbar>
+                            </CustomAppBar>
+                            <Box paddingX={2} paddingBottom={2}>
+                                <CartNoProps/>
+                            </Box>
                         </Dialog>
                     </Toolbar>
-                </AppBar>
+                </CustomAppBar>
             </div>
     );
 }
