@@ -44,8 +44,7 @@ export default function Header() {
         setOpen(false);
     };
 
-    //TODO: fix behaves like md
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const isSmallScreen = !useMediaQuery(theme.breakpoints.up('sm'));
 
     return (
             <div className={classes.container}>
