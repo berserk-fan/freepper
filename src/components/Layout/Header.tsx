@@ -34,7 +34,6 @@ const useStyles = makeStyles(({
             marginLeft: 'auto'
         }
     },
-    cartButton: {},
     toolbar: {
         position: 'relative',
         display: 'flex',
@@ -83,7 +82,7 @@ export default function Header() {
                         <Button>О нас</Button>
                     </Link>
                 </ButtonGroup>
-                <IconButton size={'medium'} onClick={handleClickOpen}>
+                <IconButton color={'primary'} size={'medium'} onClick={handleClickOpen}>
                     <ShoppingCartTwoToneIcon fontSize={'large'}/>
                 </IconButton>
                 <Dialog scroll={isSmallScreen ? 'body' : 'paper'} fullScreen={isSmallScreen} fullWidth maxWidth={'md'} onClose={handleClose} aria-labelledby="cart-window" open={open}>
