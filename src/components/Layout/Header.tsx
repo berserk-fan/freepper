@@ -13,7 +13,7 @@ import CartNoProps from "../Cart/CartNoProps";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import theme from "../../theme";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(({
     title: {
         display: "none",
         [theme.breakpoints.up("md")]: {
@@ -21,15 +21,18 @@ const useStyles = makeStyles((theme) => ({
         }
     },
     mainButtonGroup: {
-            position: 'absolute',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            left: 0,
-            right: 0,
-            textAlign: 'center',
-            display: 'flex',
-            justifyContent: 'center'
-
+        position: 'absolute',
+        width: 220,
+        marginLeft: theme.spacing(2),
+        marginRight: 'auto',
+        left: 0,
+        right: 0,
+        textAlign: 'center',
+        display: 'flex',
+        justifyContent: 'center',
+        [theme.breakpoints.up("sm")]: {
+            marginLeft: 'auto'
+        }
     },
     cartButton: {},
     toolbar: {
