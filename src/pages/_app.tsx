@@ -4,6 +4,8 @@ import 'fontsource-roboto';
 import React from "react";
 import {AppProps} from "next/app";
 import Head from "next/head";
+import {cartReducer} from "../store";
+import { Provider } from 'react-redux'
 
 function MyApp({Component, pageProps}: AppProps) {
     return (
@@ -11,7 +13,9 @@ function MyApp({Component, pageProps}: AppProps) {
             <Head>
                 <title>Магазин</title>
             </Head>
-            <Component {...pageProps} />
+            <Provider store={cartReducer}>
+                <Component {...pageProps} />
+            </Provider>
         </>
     )
 }

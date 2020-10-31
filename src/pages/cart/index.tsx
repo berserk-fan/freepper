@@ -5,14 +5,14 @@ import React from "react";
 import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
 import {GetServerSideProps} from "next";
 import Cookie from 'cookie';
-import {Cart, CartState} from "../../components/Cart/Cart";
+import {CartState} from "../../components/Cart/Cart";
 import CartNoProps from "../../components/Cart/CartNoProps";
 
 export default function CartPage({products}: { products: Product[] }) {
     return (
         <LayoutWithHeader>
             <Container maxWidth={"sm"}>
-                <CartNoProps initialProducts={products}/>
+                <CartNoProps initialProducts={new Map(products.map(p => [p.id, p]))}/>
             </Container>
         </LayoutWithHeader>
     );
@@ -30,20 +30,21 @@ export function parseCartData(cookieHeader?: string): CartState {
     }
 }
 
-export async function requestCartProducts(cartState: CartState) {
+export async function requestCartProducts(cartState: CartState): Promise<Map<string, Product>> {
     const productPromises = cartState.selectedProducts
         .map((p) => shopClient.getProduct(
-            {name: `categories/beds-category/products/${p.id}`}));
-    return await Promise.all(productPromises);
+            {name: `categories/beds-category/products/${p.id}`}
+        ).then((product): [string, Product] => [p.id, product]));
+    return new Map(await Promise.all(productPromises));
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const cartState = parseCartData(context.req.headers.cookie);
     console.log(JSON.stringify(cartState));
-    const products =  await requestCartProducts(cartState);
+    const products: Map<string, Product> = await requestCartProducts(cartState);
     return {
         props: {
-            products: products
+            products: [...products.values()]
         }
     }
 };

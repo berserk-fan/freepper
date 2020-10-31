@@ -2,23 +2,18 @@ import React, {useEffect, useState} from "react";
 import {Product} from "@mamat14/shop-server/shop_model";
 import {requestCartProducts} from "../../pages/cart";
 import {cartReducer} from "../../store";
-import {Cart} from "./Cart";
+import Cart, {CartState} from "./Cart";
 import retry from 'promise-retry';
 
 type CartNoPropsState = "PENDING" | "COMPLETED" | "FAILED"
-export default function CartNoProps({initialProducts}: {initialProducts?: Product[]}) {
-    if(!initialProducts) {
-        initialProducts = []
-    }
-    const [products, setProducts] = useState<Product[]>(initialProducts);
+export default function CartNoProps({initialProducts = new Map()}: {initialProducts?: Map<string, Product>}) {
+    const [products, setProducts] = useState<Map<string, Product>>(initialProducts);
     const [state, setState] = useState<CartNoPropsState>("PENDING");
-    cartReducer.subscribe(() => {
-        setState("PENDING");
-    });
 
-    useEffect(() => {
+    function fetchProducts() {
         if (state === "PENDING") {
-            retry((retry, number) =>
+            console.log('fetching');
+            retry((retry) =>
                 requestCartProducts(cartReducer.getState())
                     .then((products) => {
                         setProducts(products);
@@ -30,7 +25,16 @@ export default function CartNoProps({initialProducts}: {initialProducts?: Produc
                 setState("FAILED")
             })
         }
+    }
+
+    cartReducer.subscribe(() => {
+        setState("PENDING");
+        fetchProducts()
     });
+
+    useEffect(() => {
+        fetchProducts()
+    }, []);
 
     return (<Cart products={products}/>)
 }

@@ -44,16 +44,6 @@ function reducer({selectedProducts}: CartState = readStoredCartState(), action: 
 
 export const cartReducer = createStore(reducer);
 
-export const CART = {
-    setProductCount: function (productId: string, count: number): void {
-        cartReducer.dispatch({type: 'SET_PRODUCT_COUNT', count: count, productId: productId})
-    },
-    getProductCount: function (productId: string): number {
-        return cartReducer.getState().selectedProducts
-                .find(p => p.id === productId)?.count || 0;
-    }
-};
-
 cartReducer.subscribe(() => {
     storeCartState(cartReducer.getState());
 });

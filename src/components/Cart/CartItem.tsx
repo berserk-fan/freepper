@@ -17,60 +17,8 @@ import React, {useState} from "react";
 import {makeStyles} from "@material-ui/styles";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
-import {CART, cartReducer} from "../../store";
-
-function getAdditionalInfo({details}: Product) {
-    switch (details.$case) {
-        case "dogBed":
-            const size = details.dogBed.sizes.find((s) => s.id == details.dogBed.sizeId);
-            return (
-                <div>
-                    <Typography noWrap display={'inline'} variant={'caption'}>
-                        Размер:
-                    </Typography>
-                    <Typography noWrap display={'inline'} variant={'h6'}>
-                        {' ' + size.displayName}
-                    </Typography>
-                </div>
-            )
-    }
-}
-
-export function ActionsPopover(productId: string) {
-    return (
-        <PopupStateComponent variant="popover" popupId="cart-action-popover">
-            {(popupState) => (
-                <div>
-                    <IconButton size={'small'} color={'primary'} {...bindTrigger(popupState)}><MoreVertIcon/></IconButton>
-                    <Popover {...bindPopover(popupState)}
-                             anchorOrigin={{
-                                 vertical: 'top',
-                                 horizontal: 'left',
-                             }}
-                             transformOrigin={{
-                                 vertical: 'top',
-                                 horizontal: 'right',
-                             }}>
-                        <div className={"flex flex-col"}>
-                            <Button onClick={() => {
-                                CART.setProductCount(productId, 0);
-                                popupState.close()
-                            }}
-                                    fullWidth
-                                    startIcon={<DeleteIcon/>}>
-                                <Typography>
-                                    Удалить из корзины
-                                </Typography>
-                            </Button>
-                            <Button onClick={popupState.close} fullWidth startIcon={<CloseIcon/>}>
-                                <Typography>Закрыть</Typography>
-                            </Button>
-                        </div>
-                    </Popover>
-                </div>)
-            }
-        </PopupStateComponent>);
-}
+import {CartState} from "./Cart";
+import {connect} from 'react-redux'
 
 const useStyles = makeStyles(({
     root: {
@@ -96,20 +44,9 @@ const useStyles = makeStyles(({
     }
 }));
 
-export default function CartItem(props: { product: Product }) {
-    const {displayName, price, image, id} = props.product;
+const cartItem = function CartItem({product, count, setProductCount}: { product: Product, count: number, setProductCount: (x: number, id: string) => void }) {
+    const {displayName, price, image, id} = product;
     const classes = useStyles();
-    const [count, setCount] = useState(CART.getProductCount(id));
-    cartReducer.subscribe(() => {
-        setCount(CART.getProductCount(id))
-    });
-
-    function handleChange(change: number) {
-        return () => {
-            CART.setProductCount(id, CART.getProductCount(id) + change)
-        }
-    }
-
     return (
         <Card variant={'outlined'} className={classes.root}>
             <div className={`${classes.imageContainer}`}>
@@ -126,20 +63,93 @@ export default function CartItem(props: { product: Product }) {
                 </CardContent>
                 <Box marginBottom={1} paddingLeft={1} paddingRight={2} className={"flex justify-between items-center"}>
                     <Box marginLeft={1}>
-                        {getAdditionalInfo(props.product)}
+                        {getAdditionalInfo(product)}
                     </Box>
                     <Box marginLeft={1} className={"flex place-items-center"}>
-                        <IconButton size={'small'} disabled={count <= 1} onClick={handleChange(-1)}>
+                        <IconButton size={'small'} disabled={count <= 1} onClick={() => setProductCount(count-1, id)}>
                             <RemoveCircleOutlineIcon fontSize={'large'}/>
                         </IconButton>
-                        <Typography variant={'h6'} classes={{root: 'select-none'}}>{CART.getProductCount(id)}</Typography>
-                        <IconButton size={'small'} onClick={handleChange(1)}>
+                        <Typography variant={'h6'} classes={{root: 'select-none'}}>{count}</Typography>
+                        <IconButton size={'small'} onClick={() => setProductCount(count+1, id)}>
                             <AddCircleOutlineIcon fontSize={'large'}/>
                         </IconButton>
-                        {ActionsPopover(id)}
+                        {ActionsPopover(id, setProductCount)}
                     </Box>
                 </Box>
             </div>
         </Card>
     );
+};
+
+
+function mapStateToProps(state: CartState, {product}: {product: Product}) {
+    return {
+        count: state.selectedProducts
+            .find(p => p.id === product.id)?.count || 0
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        setProductCount: (count: number, productId: string) => dispatch({
+            type: 'SET_PRODUCT_COUNT',
+            count: count,
+            productId: productId
+        })
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(cartItem)
+
+function getAdditionalInfo({details}: Product) {
+    switch (details.$case) {
+        case "dogBed":
+            const size = details.dogBed.sizes.find((s) => s.id == details.dogBed.sizeId);
+            return (
+                <div>
+                    <Typography noWrap display={'inline'} variant={'caption'}>
+                        Размер:
+                    </Typography>
+                    <Typography noWrap display={'inline'} variant={'h6'}>
+                        {' ' + size.displayName}
+                    </Typography>
+                </div>
+            )
+    }
+}
+
+export function ActionsPopover(productId: string, setProductCount: (x: number, id: string) => void) {
+    return (
+        <PopupStateComponent variant="popover" popupId="cart-action-popover">
+            {(popupState) => (
+                <div>
+                    <IconButton size={'small'} color={'primary'} {...bindTrigger(popupState)}><MoreVertIcon/></IconButton>
+                    <Popover {...bindPopover(popupState)}
+                             anchorOrigin={{
+                                 vertical: 'top',
+                                 horizontal: 'left',
+                             }}
+                             transformOrigin={{
+                                 vertical: 'top',
+                                 horizontal: 'right',
+                             }}>
+                        <div className={"flex flex-col"}>
+                            <Button onClick={() => {
+                                setProductCount(0, productId);
+                                popupState.close()
+                            }}
+                                    fullWidth
+                                    startIcon={<DeleteIcon/>}>
+                                <Typography>
+                                    Удалить из корзины
+                                </Typography>
+                            </Button>
+                            <Button onClick={popupState.close} fullWidth startIcon={<CloseIcon/>}>
+                                <Typography>Закрыть</Typography>
+                            </Button>
+                        </div>
+                    </Popover>
+                </div>)
+            }
+        </PopupStateComponent>);
 }

@@ -5,6 +5,7 @@ import {cartReducer} from "../../store";
 import React, {useEffect, useState} from "react";
 import {Box, Button, Divider, Typography} from "@material-ui/core";
 import CartItem from "./CartItem";
+import {connect} from "react-redux";
 
 export type CartState = {
     selectedProducts: { id: string, count: number }[]
@@ -56,30 +57,14 @@ const useStyles = makeStyles(({
     }
 }));
 
-export function Cart({products}: { products: Product[] }) {
+const cart = function Cart({products, totalPrice}: { products: Map<string, Product>, totalPrice: number | undefined }) {
     const classes = useStyles();
-    const productsMap = new Map(products.map(p => [p.id, p]));
-
-    function calcTotalPrice(cartState: CartState) {
-        return cartState.selectedProducts
-            .map(p => p.count * (productsMap.get(p.id)?.price?.price || 0))
-            .reduce((a, b) => a + b, 0)
-    }
-
-    cartReducer.subscribe(() => {
-        setTotalPrice(calcTotalPrice(cartReducer.getState()));
-    });
-    useEffect(() => {
-        setTotalPrice(calcTotalPrice(cartReducer.getState()))
-    });
-    const defaultTotalPrice = calcTotalPrice(cartReducer.getState());
-    const [totalPrice, setTotalPrice] = useState(defaultTotalPrice);
-
+    const productsList = [...products.values()];
     return <div>
         <Box marginTop={2}>
-            {products.length === 0
+            {productsList.length === 0
                 ? <Typography variant={'h2'}>Корзина пуста</Typography>
-                : products.map(product => (
+                : productsList.map(product => (
                     <Box key={product.id} marginY={1}>
                         <CartItem product={product}/>
                     </Box>))
@@ -97,4 +82,19 @@ export function Cart({products}: { products: Product[] }) {
             </div>
         </Box>
     </div>
+};
+
+function calcTotalPrice(productsMap: Map<string, Product>, cartState: CartState) {
+    return cartState.selectedProducts
+        .map(p => p.count * (productsMap.get(p.id)?.price?.price || 0))
+        .reduce((a, b) => a + b, 0)
 }
+
+
+function mapStateToProps(state: CartState, {products}: {products: Map<string, Product>}) {
+    return {
+        totalPrice: calcTotalPrice(products, state)
+    }
+}
+
+export default connect(mapStateToProps)(cart)
