@@ -6,12 +6,14 @@ import Typography from "@material-ui/core/Typography";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Button from "@material-ui/core/Button";
 import Link from "next/link";
-import {Box, Dialog, Divider, IconButton} from "@material-ui/core";
+import {Badge, Box, Dialog, Divider, IconButton} from "@material-ui/core";
 import ShoppingCartTwoToneIcon from '@material-ui/icons/ShoppingCartTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
 import CartNoProps from "../Cart/CartNoProps";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import theme from "../../theme";
+import {cartReducer} from "../../store";
+import {withStyles} from "@material-ui/styles";
 
 const useStyles = makeStyles(({
     title: {
@@ -50,9 +52,27 @@ const CustomAppBar = ({children}) => {
     </AppBar>
 };
 
+const StyledBadge = withStyles(({
+    badge: {
+        right: 6,
+        top: 21,
+        border: `1px solid ${theme.palette.background.paper}`,
+        padding: '0 4px',
+    },
+}))(Badge);
+
+
 export default function Header() {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
+    function calcCartSize() {
+        return cartReducer.getState().selectedProducts
+            .reduce((a,b) => (a + b.count), 0)
+    }
+    const [cartSize, setCartSize] = useState<number>(calcCartSize());
+    cartReducer.subscribe(() => {
+        setCartSize(calcCartSize())
+    });
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -82,9 +102,11 @@ export default function Header() {
                         <Button>О нас</Button>
                     </Link>
                 </ButtonGroup>
-                <IconButton color={'primary'} size={'medium'} onClick={handleClickOpen}>
-                    <ShoppingCartTwoToneIcon fontSize={'large'}/>
-                </IconButton>
+                    <IconButton color={'primary'} size={'medium'} onClick={handleClickOpen}>
+                        <StyledBadge max={9} badgeContent={cartSize} color="primary">
+                            <ShoppingCartTwoToneIcon fontSize={'large'}/>
+                        </StyledBadge>
+                    </IconButton>
                 <Dialog scroll={isSmallScreen ? 'body' : 'paper'} fullScreen={isSmallScreen} fullWidth maxWidth={'md'} onClose={handleClose} aria-labelledby="cart-window" open={open}>
                     <CustomAppBar>
                         <Toolbar className={"flex justify-between"}>
