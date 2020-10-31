@@ -14,17 +14,32 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import theme from "../../theme";
 
 const useStyles = makeStyles((theme) => ({
-    container: {
-        flexGrow: 1,
-        position: "relative"
-    },
     title: {
-        position: "absolute",
         display: "none",
         [theme.breakpoints.up("md")]: {
             display: "block"
         }
     },
+    mainButtonGroup: {
+            position: 'absolute',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            left: 0,
+            right: 0,
+            textAlign: 'center',
+            display: 'flex',
+            justifyContent: 'center'
+
+    },
+    cartButton: {},
+    toolbar: {
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'end',
+        [theme.breakpoints.up("md")]: {
+            justifyContent: 'space-between',
+        }
+    }
 }));
 
 const CustomAppBar = ({children}) => {
@@ -47,45 +62,43 @@ export default function Header() {
     const isSmallScreen = !useMediaQuery(theme.breakpoints.up('sm'));
 
     return (
-            <div className={classes.container}>
-                <CustomAppBar>
-                    <Toolbar>
-                        <Box className={`${classes.title} absolute cursor-default uppercase`}>
-                            <Typography variant="h5" noWrap>
-                                Погладить можно?
+        <CustomAppBar>
+            <Toolbar className={classes.toolbar}>
+                <Box className={`${classes.title} cursor-default uppercase justify-self-start`}>
+                    <Typography variant="h5" noWrap>
+                        Погладить можно?
+                    </Typography>
+                </Box>
+                <ButtonGroup className={`${classes.mainButtonGroup}`} color="primary" aria-label="page tabs">
+                    <Link href={"/"}>
+                        <Button>Домой</Button>
+                    </Link>
+                    <Link href={"/shop"}>
+                        <Button>Магазин</Button>
+                    </Link>
+                    <Link href={"/about"}>
+                        <Button>О нас</Button>
+                    </Link>
+                </ButtonGroup>
+                <IconButton size={'medium'} onClick={handleClickOpen}>
+                    <ShoppingCartTwoToneIcon fontSize={'large'}/>
+                </IconButton>
+                <Dialog scroll={isSmallScreen ? 'body' : 'paper'} fullScreen={isSmallScreen} fullWidth maxWidth={'md'} onClose={handleClose} aria-labelledby="cart-window" open={open}>
+                    <CustomAppBar>
+                        <Toolbar className={"flex justify-between"}>
+                            <Typography variant="h5">
+                                Корзина
                             </Typography>
-                        </Box>
-                        <ButtonGroup className="mx-auto" color="primary" aria-label="contained primary button group">
-                            <Link href={"/"}>
-                                <Button>Домой</Button>
-                            </Link>
-                            <Link href={"/shop"}>
-                                <Button>Магазин</Button>
-                            </Link>
-                            <Link href={"/about"}>
-                                <Button>О нас</Button>
-                            </Link>
-                        </ButtonGroup>
-                        <IconButton size={'medium'} onClick={handleClickOpen}>
-                            <ShoppingCartTwoToneIcon fontSize={'large'} />
-                        </IconButton>
-                        <Dialog scroll={isSmallScreen ? 'body': 'paper'} fullScreen={isSmallScreen} fullWidth maxWidth={'md'} onClose={handleClose} aria-labelledby="cart-window" open={open}>
-                            <CustomAppBar>
-                                <Toolbar className={"flex justify-between"}>
-                                    <Typography variant="h5">
-                                        Корзина
-                                    </Typography>
-                                    <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close-cart-window">
-                                        <CloseIcon fontSize={'large'} />
-                                    </IconButton>
-                                </Toolbar>
-                            </CustomAppBar>
-                            <Box paddingX={2} paddingBottom={2}>
-                                <CartNoProps/>
-                            </Box>
-                        </Dialog>
-                    </Toolbar>
-                </CustomAppBar>
-            </div>
+                            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close-cart-window">
+                                <CloseIcon fontSize={'large'}/>
+                            </IconButton>
+                        </Toolbar>
+                    </CustomAppBar>
+                    <Box paddingX={2} paddingBottom={2}>
+                        <CartNoProps/>
+                    </Box>
+                </Dialog>
+            </Toolbar>
+        </CustomAppBar>
     );
 }
