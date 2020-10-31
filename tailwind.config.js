@@ -3,7 +3,8 @@ module.exports = {
   variants: {
     borderOpacity: ['hover'],
     borderWidth: ['checked'],
-    borderColor: ['hover', 'checked']
+    borderColor: ['hover', 'checked'],
+    display: ['last']
   },
   plugins: [],
   purge: {

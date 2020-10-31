@@ -8,20 +8,27 @@
     "start": "next start"
   },
   "dependencies": {
+    "@mamat14/shop-server": "latest",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "cookie": "^0.4.1",
     "fontsource-roboto": "^3.0.3",
+    "js-cookie": "^2.2.1",
     "material-ui-image": "^3.3.0",
-    "next": "9.5.5",
+    "material-ui-popup-state": "^1.7.0",
+    "next": "10.0.0",
+    "promise-retry": "^2.0.1",
     "react": "16.14.0",
     "react-dom": "16.14.0",
+    "react-redux": "^7.2.2",
     "react-responsive-carousel": "^3.2.10",
-    "tailwindcss": "^1.9.4",
-    "@mamat14/shop-server": "latest"
+    "redux": "^4.0.5",
+    "tailwindcss": "^1.9.4"
   },
   "devDependencies": {
     "@types/node": "^14.11.10",
     "@types/react": "^16.9.53",
+    "@types/react-redux": "^7.1.9",
     "css-loader": "^5.0.0",
     "postcss-flexbugs-fixes": "^4.2.1",
     "postcss-import": "^12.0.1",

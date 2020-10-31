@@ -27,7 +27,7 @@ export default function Shop({products, categories}: { products: Product[], cate
     const currentCategory = categories[0];
     return <LayoutWithHeader>
         <Container>
-            <Typography align={'center'} variant={'h1'}>{currentCategory.displayName}</Typography>
+            <Typography align={'center'} variant={'h3'}>{currentCategory.displayName}</Typography>
             <Grid container={true} spacing={3} justify={"space-between"}>
                 {products.map(item => (
                     <Grid key={item.id} item={true} xs={12} sm={6} md={3}>

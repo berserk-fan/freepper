@@ -6,6 +6,10 @@
 /.pnp
 .pnp.js
 
+#custom
+.npmrc
+/src/pages/test.tsx
+
 # testing
 /coverage
 
