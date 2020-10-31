@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -6,7 +6,12 @@ import Typography from "@material-ui/core/Typography";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Button from "@material-ui/core/Button";
 import Link from "next/link";
-import {Box} from "@material-ui/core";
+import {Box, Dialog, IconButton} from "@material-ui/core";
+import ShoppingCartTwoToneIcon from '@material-ui/icons/ShoppingCartTwoTone';
+import CartPage, {requestCartProducts} from "../../pages/cart";
+import {Product} from "@mamat14/shop-server/shop_model";
+import {cartReducer, shopClient} from "../../store";
+import CartNoProps from "../Cart/CartNoProps";
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -22,9 +27,16 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-
 export default function Header() {
     const classes = useStyles();
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+    const handleClose = () => {
+        setOpen(false);
+    };
     return (
             <div className={classes.container}>
                 <AppBar elevation={0} position="relative" color="transparent">
@@ -44,7 +56,13 @@ export default function Header() {
                             <Link href={"/about"}>
                                 <Button>О нас</Button>
                             </Link>
+                            <IconButton size={'medium'} onClick={handleClickOpen}>
+                                <ShoppingCartTwoToneIcon fontSize={'large'} />
+                            </IconButton>
                         </ButtonGroup>
+                        <Dialog onClose={handleClose} aria-labelledby="open-cart-button" open={open}>
+                            <CartNoProps/>
+                        </Dialog>
                     </Toolbar>
                 </AppBar>
             </div>

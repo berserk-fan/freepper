@@ -9,7 +9,7 @@ import {
     Typography
 } from "@material-ui/core";
 import Image from "next/image";
-import PopupStateComponent, {bindPopover, bindToggle, bindTrigger} from "material-ui-popup-state";
+import PopupStateComponent, {bindPopover, bindTrigger} from "material-ui-popup-state";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CloseIcon from "@material-ui/icons/Close";
@@ -17,9 +17,7 @@ import React, {useState} from "react";
 import {makeStyles} from "@material-ui/styles";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
-import theme from "../../theme";
 import {CART, cartReducer} from "../../store";
-import {PopupState} from "material-ui-popup-state/core";
 
 function getAdditionalInfo({details}: Product) {
     switch (details.$case) {
@@ -72,7 +70,6 @@ export function ActionsPopover(productId: string) {
                 </div>)
             }
         </PopupStateComponent>);
-
 }
 
 const useStyles = makeStyles(({

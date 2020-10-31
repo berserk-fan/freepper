@@ -1,8 +1,8 @@
 import {createStore, Store} from 'redux'
 import ShopClient from '@mamat14/shop-server'
 import {category, shopProducts} from '../../configs/Data'
-import {CartState} from "../pages/cart";
 import Cookies from 'js-cookie';
+import {CartState} from "../components/Cart/Cart";
 
 export const cartStateKey = "cartState";
 
