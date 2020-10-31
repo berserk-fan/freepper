@@ -13,6 +13,13 @@ const useStyles = makeStyles(({
         paddingBottom: theme.spacing(1)
     },
     valueText: {
+        fontSize: '0.65rem',
+        [theme.breakpoints.up("sm")]: {
+            fontSize: '0.75rem',
+        },
+        [theme.breakpoints.up("md")]: {
+            fontSize: '0.8rem',
+        },
         color: theme.palette.text.disabled,
         textTransform: 'uppercase',
         fontWeight: theme.typography.fontWeightLight

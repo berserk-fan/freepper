@@ -6,6 +6,8 @@ import {AppProps} from "next/app";
 import Head from "next/head";
 import {cartReducer} from "../store";
 import { Provider } from 'react-redux'
+import {ThemeProvider} from "@material-ui/styles";
+import theme from "../theme";
 
 function MyApp({Component, pageProps}: AppProps) {
     return (
@@ -13,9 +15,11 @@ function MyApp({Component, pageProps}: AppProps) {
             <Head>
                 <title>Магазин</title>
             </Head>
-            <Provider store={cartReducer}>
-                <Component {...pageProps} />
-            </Provider>
+            <ThemeProvider theme={theme}>
+                <Provider store={cartReducer}>
+                    <Component {...pageProps} />
+                </Provider>
+            </ThemeProvider>
         </>
     )
 }
