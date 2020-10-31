@@ -41,7 +41,7 @@ const useStyles = makeStyles(({
 }));
 
 export const CustomAppBar = ({children}) => {
-    return <AppBar elevation={1} position="relative" color="transparent">
+    return <AppBar elevation={0} position="sticky" color={'inherit'}>
         {children}
     </AppBar>
 };

@@ -20,7 +20,7 @@ export type CardData = {
 
 export default function Home() {
     return (
-        <LayoutWithHeader>
+        <LayoutWithHeader value>
             <Container>
                 <Box className="hidden md:block">
                     <Carousel autoPlay infiniteLoop showStatus={false} showThumbs={false}>
