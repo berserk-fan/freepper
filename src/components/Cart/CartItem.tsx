@@ -19,6 +19,7 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import {CartState} from "./Cart";
 import {connect} from 'react-redux'
+import theme from "../../theme";
 
 const useStyles = makeStyles(({
     root: {
@@ -69,7 +70,9 @@ const cartItem = function CartItem({product, count, setProductCount}: { product:
                         <IconButton size={'small'} disabled={count <= 1} onClick={() => setProductCount(count-1, id)}>
                             <RemoveCircleOutlineIcon fontSize={'large'}/>
                         </IconButton>
-                        <Typography variant={'h6'} classes={{root: 'select-none'}}>{count}</Typography>
+                        <Box fontFamily={'Monospace'}>
+                            <Typography variant={'h6'} classes={{root: 'select-none'}}>{count}</Typography>
+                        </Box>
                         <IconButton size={'small'} onClick={() => setProductCount(count+1, id)}>
                             <AddCircleOutlineIcon fontSize={'large'}/>
                         </IconButton>

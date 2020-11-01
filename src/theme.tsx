@@ -26,7 +26,7 @@ const theme = createMuiTheme({
             lg: 1280,
             xl: 1920,
         },
-    },
+    }
 });
 
 export default responsiveFontSizes(theme);
