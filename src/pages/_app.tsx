@@ -13,7 +13,9 @@ function MyApp({Component, pageProps}: AppProps) {
     return (
         <>
             <Head>
-                <title>Магазин</title>
+                <title>Я поглажу?</title>
+                <meta name="theme-color" content="#FFFFFF"/>
+                <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
             </Head>
             <ThemeProvider theme={theme}>
                 <Provider store={cartReducer}>
