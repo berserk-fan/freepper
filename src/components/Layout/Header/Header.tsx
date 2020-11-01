@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {memo} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -46,7 +46,7 @@ export const CustomAppBar = ({children}) => {
     </AppBar>
 };
 
-export default function Header() {
+export default memo(function Header() {
     const classes = useStyles();
     return (
         <CustomAppBar>
@@ -72,4 +72,4 @@ export default function Header() {
             </Toolbar>
         </CustomAppBar>
     );
-}
+})

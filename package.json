@@ -14,6 +14,7 @@
     "cookie": "^0.4.1",
     "fontsource-roboto": "^3.0.3",
     "js-cookie": "^2.2.1",
+    "keen-slider": "^5.2.4",
     "material-ui-image": "^3.3.0",
     "material-ui-popup-state": "^1.7.0",
     "next": "10.0.0",
@@ -23,6 +24,7 @@
     "react-redux": "^7.2.2",
     "react-responsive-carousel": "^3.2.10",
     "redux": "^4.0.5",
+    "styled-components": "^5.2.1",
     "tailwindcss": "^1.9.4"
   },
   "devDependencies": {
