@@ -1,8 +1,7 @@
-import {useRouter} from "next/router";
 import React, {useState} from "react";
-import {Box, Button, Container, Fade, Grid, Paper, Typography} from "@material-ui/core";
-import {getModelIndex, productIdsToModel} from "../../../configs/Products";
-import {Color, Model} from "../../model/Model";
+import {Box, Button, Container, Fade, Grid, Typography} from "@material-ui/core";
+import {getModelIndex, ModelIndex, productIdsToModel} from "../../../configs/Products";
+import {Color, Model, Product} from "../../model/Model";
 import ColorPicker from "../../components/ColorPicker";
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
@@ -10,6 +9,7 @@ import "keen-slider/keen-slider.min.css";
 import {Carousel} from "../../components/Product/Carousel";
 import {Flex} from "../../components/styled";
 import styled from 'styled-components'
+import {GetStaticPaths, GetStaticProps} from "next";
 
 
 const ProductName = styled(Flex)`
@@ -35,20 +35,17 @@ const Price = styled(Flex)`
 	font-size:14px;
 `
 
-export default function ProductPage() {
-	const router = useRouter();
-	const {productId} = router.query;
-	if (!productId) {
-		return false;
-	}
-	const model: Model = productIdsToModel.get(productId as string);
-	if (!model) {
-		return <h1>Page Not Found</h1>
-	}
-	const {colors} = getModelIndex(model);
-	const images = model.products.map(({image}) => image);
-	const product = model.products.find(({id}) => id === productId);
-
+export default function ProductPage({
+										colors = [],
+										images,
+										product,
+										model
+									}: {
+	colors: ModelIndex['colors'],
+	images: Array<Product['image']>,
+	product: Product,
+	model: Model
+}) {
 	const colorTextTransitionTime = 200;
 
 	function colorChanged(color: Color) {
@@ -71,10 +68,10 @@ export default function ProductPage() {
 				<Flex m={[15, -15]}>
 					<Flex grow position={'relative'} p={[0, 15]}>
 						<ProductName>
-							{product.displayName}
+							{product?.displayName}
 						</ProductName>
 						<Price>
-							₴{product.size.price} UAH
+							₴{product?.size.price} UAH
 						</Price>
 						<Carousel images={images}/>
 					</Flex>
@@ -87,14 +84,14 @@ export default function ProductPage() {
 								<Fade in={showSelectedColorName} timeout={colorTextTransitionTime}>
 									<Box component='span' pl={"4px"}>
 										<Typography display={'inline'} variant={'subtitle1'} color={'textPrimary'}>
-											{selectedColor.displayName}
+											{selectedColor?.displayName}
 										</Typography>
 									</Box>
 								</Fade>
 							</Flex>
 							<ColorPicker
 								colors={colors}
-								itemId={model.id}
+								itemId={model?.id}
 								onChange={colorChanged}
 							/>
 						</Flex>
@@ -113,4 +110,23 @@ export default function ProductPage() {
 			</Container>
 		</LayoutWithHeader>
 	)
+}
+
+export const getStaticProps: GetStaticProps = async ({params: {productId}}) => {
+	const model: Model = productIdsToModel.get(productId as string);
+	const {colors} = getModelIndex(model);
+	const images = model.products.map(({image}) => image);
+	const product = model.products.find(({id}) => id === productId);
+	return {
+		props: {colors, images, product, model}, // will be passed to the page component as props
+	}
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+	return {
+		paths: [
+			{params: {productId: 'lukoshko-grey-xs'}} // See the "paths" section below
+		],
+		fallback: true
+	};
 }

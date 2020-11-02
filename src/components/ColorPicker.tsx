@@ -30,7 +30,7 @@ type ColorPickerProps = {
 
 export default memo(function ColorPicker(props: ColorPickerProps) {
 	const {colors, itemId, onChange} = props;
-	const [selectedColorId, setColorId] = React.useState(colors[0].id);
+	const [selectedColorId, setColorId] = React.useState(colors[0]?.id);
 
 	const handleColor = (event, newColorId) => {
 		if (onChange) {

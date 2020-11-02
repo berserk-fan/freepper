@@ -3,7 +3,7 @@ import styles from "./[productId].module.css";
 import {useKeenSlider} from "keen-slider/react";
 import {Flex} from "../styled";
 
-export const Carousel = memo(({images}: { images: Array<string> }) => {
+export const Carousel = memo(({images = []}: { images: Array<string> }) => {
 	const [details, setDetails] = useState(null);
 	const [sliderRef, slider] = useKeenSlider({
 		loop: true,

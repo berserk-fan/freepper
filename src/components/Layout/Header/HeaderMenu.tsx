@@ -49,13 +49,11 @@ export default function HeaderMenu() {
 			</IconButton>
 			<Drawer classes={{paper: classes.drawer}} open={drawerOpen} onClose={toggleDrawer(false)}>
 				<ButtonGroup orientation={'vertical'} className={``} color="primary" aria-label="page tabs">
-					{
-						[['/', 'Домой'], ['/shop', 'Магазин'], ['/about', 'О наc']].map(([path, name]) => {
-							return (<Link href={path}>
-								<Button className={classes.menuButton}>{name}</Button>
-							</Link>)
-						})
-					}
+					{[['/', 'Домой'], ['/shop', 'Магазин'], ['/about', 'О наc']].map(([path, name]) => (
+						<Link key={path} href={path}>
+							<Button className={classes.menuButton}>{name}</Button>
+						</Link>
+					))}
 				</ButtonGroup>
 			</Drawer>
 		</>
