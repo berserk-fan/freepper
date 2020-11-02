@@ -2,6 +2,7 @@ import React, {memo, useCallback, useState} from "react";
 import styles from "./[productId].module.css";
 import {useKeenSlider} from "keen-slider/react";
 import {Flex} from "../styled";
+import Image from "next/image";
 
 export const Carousel = memo(({images = []}: { images: Array<string> }) => {
 	const [details, setDetails] = useState(null);
@@ -38,7 +39,10 @@ export const Carousel = memo(({images = []}: { images: Array<string> }) => {
 						style={positionStyle(index)}
 						className={`keen-slider__slide ${styles.zoomOut__slide}`}
 					>
-						<img src={src}/>
+						<Image
+							src={src}
+							unsized
+						/>
 					</div>
 				))}
 			</div>

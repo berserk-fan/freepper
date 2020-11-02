@@ -92,7 +92,7 @@ const lukoshkoVariants: DogBed_Variant[] = getVariants();
 
 export const shopProducts: Product[] = [
     {
-        id: 'lukoshko-grey',
+        id: 'lukoshko-grey-xs',
         name: 'categories/beds-category/products/lukoshko-grey',
         displayName: 'Лукошко - Серый',
         description: 'Хорошая лежанка',

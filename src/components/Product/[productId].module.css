@@ -1,26 +1,12 @@
 .zoomOut {
     perspective: 1000px;
     height: 50vh;
+    cursor: pointer;
 }
 
-@media (min-width: 768px) {
-    .zoomOut {
-        height: 300px;
-    }
-}
 
 .zoomOut__slide {
     position: absolute;
-}
-
-.zoomOut__slide img {
-    background-color: transparent;
-    height: auto;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateY(-50%) translateX(-50%);
-    -webkit-transform: translateY(-50%) translateX(-50%);
 }
 
 .dots {

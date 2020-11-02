@@ -10,13 +10,13 @@ export const beds: Category = {
 			id: 'lukoshko',
 			displayName: 'Лукошко',
 			description: 'Очень хорошая лежанка сделанная из качественных материалов.',
-			image: "https://picsum.photos/300/300?random=12",
+			image: "/Dogs-7051.jpg",
 			products: [
 				{
 					id: 'lukoshko-grey-xs',
 					displayName: 'Лукошко серое XS',
 					description: 'Хорошая лежанка',
-					image: "https://picsum.photos/1200/1200?random=1",
+					image: "/Dogs-7051.jpg",
 					color: {id: "1", value: "#445566", displayName: "q"},
 					size: {id: "xs", displayName: "XS", price: 1400.0}
 				},
@@ -24,7 +24,7 @@ export const beds: Category = {
 					id: 'lukoshko-red-xs',
 					displayName: 'Лукошко красное XS',
 					description: 'Хорошая лежанка',
-					image: "https://picsum.photos/300/300?random=2",
+					image: "/Dogs-7254.jpg",
 					color: {id: "2", value: "#FA1233", displayName: "w"},
 					size: {id: "xs", displayName: "XS", price: 1400.0}
 				},
@@ -32,7 +32,7 @@ export const beds: Category = {
 					id: 'lukoshko-violet-xs',
 					displayName: 'Лукошко зеленое XS',
 					description: 'Хорошая лежанка',
-					image: "https://picsum.photos/300/300?random=3",
+					image: "/Dogs-7078.jpg",
 					color: {id: "3", value: "#912376", displayName: "r"},
 					size: {id: "xs", displayName: "XS", price: 1400.0}
 				}
