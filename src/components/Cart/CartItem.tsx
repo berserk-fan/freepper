@@ -46,7 +46,7 @@ const useStyles = makeStyles(({
     }
 }));
 
-const cartItem = function CartItem({product, setProductCount, disableControls = false}: { product: CartProduct, setProductCount: (x: number, id: string) => void, disableControls?: boolean }) {
+const cartItem = function CartItem({product, setProductCount}: { product: CartProduct, setProductCount: (x: number, id: string) => void }) {
     const {displayName, price, image, id, count} = product;
     const classes = useStyles();
 
@@ -90,8 +90,8 @@ const cartItem = function CartItem({product, setProductCount, disableControls = 
                         {getAdditionalInfo(product)}
                     </Box>
                     <Box marginLeft={1} className={"flex place-items-center"}>
-                        {disableControls ? Quantity() : QuantityControls()}
-                        {disableControls ? false : ActionsPopover(id, setProductCount)}
+                        {QuantityControls()}
+                        {ActionsPopover(id, setProductCount)}
                     </Box>
                 </Box>
             </div>

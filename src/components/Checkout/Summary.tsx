@@ -8,9 +8,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import {DogBed, Product} from "@mamat14/shop-server/shop_model";
-import {Box, Typography} from "@material-ui/core";
+import {Box, Collapse, IconButton, Typography, useMediaQuery} from "@material-ui/core";
 import {CartProduct} from "../../pages/checkout";
 import CartItem from "../Cart/CartItem";
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import theme from "../../theme";
 
 const useStyles = makeStyles({
     table: {
@@ -68,7 +71,76 @@ function getDetailsColumns(productTypes: string[]): Column[] {
 
 const strcmp = (a, b) => (a < b ? -1 : (a > b ? 1 : 0));
 
-export const bigSummary = ({cartProducts}: { cartProducts: Row[] }) => {
+const useRowStyles = makeStyles({
+    root: {
+        '& > *': {
+            borderBottom: 'unset',
+        },
+    },
+});
+
+
+function StandardRow({row, detailsColumns}: { row: CartProduct, detailsColumns: Column[] }) {
+    return (
+        <TableRow key={row.displayName}>
+            <TableCell>{row.displayName}</TableCell>
+            {detailsColumns
+                .map(col =>
+                    <TableCell align="right">{col.extractor(row)}</TableCell>)
+            }
+            <TableCell align="right">{row.count}</TableCell>
+            <TableCell align="right">{ccyFormat(row.price.price)}</TableCell>
+        </TableRow>
+    )
+}
+
+function CompactRow({row, detailsColumns}: { row: CartProduct, detailsColumns: Column[] }) {
+    const [open, setOpen] = React.useState(false);
+    const classes = useRowStyles();
+    return (
+        <>
+            <TableRow key={row.id} className={classes.root}>
+                <TableCell>
+                    <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+                        {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
+                    </IconButton>
+                </TableCell>
+                <TableCell>{row.displayName}</TableCell>
+                <TableCell align={'right'}>{ccyFormat(row.price.price)}</TableCell>
+            </TableRow>
+            <TableRow>
+                <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={3}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                        <Box>
+                            <Typography variant="h6" gutterBottom component="div">
+                                Детали
+                            </Typography>
+                            <Table size="small" aria-label="purchases">
+                                <TableHead>
+                                    <TableRow>
+                                        {detailsColumns.map(col =>
+                                            <TableCell key={col.name} align="right">{col.name}</TableCell>)
+                                        }
+                                        <TableCell>Количество</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {detailsColumns
+                                        .map(col =>
+                                            <TableCell key={col.name} align="right">{col.extractor(row)}</TableCell>)
+                                    }
+                                    <TableCell align="right">{row.count}</TableCell>
+                                </TableBody>
+                            </Table>
+                        </Box>
+                    </Collapse>
+                </TableCell>
+            </TableRow>
+        </>
+    );
+}
+
+const bigSummary = ({cartProducts}: { cartProducts: Row[] }) => {
     const classes = useStyles();
     const invoiceShipping = 0;
     const invoiceSubtotal = subtotal(cartProducts);
@@ -76,32 +148,30 @@ export const bigSummary = ({cartProducts}: { cartProducts: Row[] }) => {
     const productTypes = [...new Set(cartProducts.map(p => p.details.$case))];
     const detailsColumns = getDetailsColumns(productTypes);
     const sortedProducts = cartProducts.sort((a, b) => strcmp(a.details.$case, b.details.$case));
-    const infoColumnsNumber = 2 + detailsColumns.length;
+    const fullWidth = useMediaQuery(theme.breakpoints.up('sm'));
+    const infoColumnsNumber = 2 + (fullWidth ? detailsColumns.length : 0);
+    const tableSize = fullWidth ? 'medium' : 'small';
     return (
         <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="spanning table">
+            <Table padding={'none'} size={tableSize} className={classes.table} aria-label="spanning table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Название</TableCell>
-                        {detailsColumns.map(col => <TableCell align="right">{col.name}</TableCell>)}
-                        <TableCell align="right">Количество</TableCell>
+                        {fullWidth ? false : <TableCell/>}
+                        <TableCell size='small'>Название</TableCell>
+                        {fullWidth && <>
+                            {detailsColumns.map(col => <TableCell key={col.name} align="right">{col.name}</TableCell>)}
+                            <TableCell align="right">Количество</TableCell>
+                        </>
+                        }
                         <TableCell align="right">Сумма</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {sortedProducts.map((row) => (
-                        <TableRow key={row.displayName}>
-                            <TableCell>{row.displayName}</TableCell>
-                            {detailsColumns
-                                .map(col => col.extractor)
-                                .map(e => e(row))
-                                .map(detailValue =>
-                                    <TableCell align="right">{detailValue}</TableCell>)
-                            }
-                            <TableCell align="right">{row.count}</TableCell>
-                            <TableCell align="right">{ccyFormat(row.price.price)}</TableCell>
-                        </TableRow>
-                    ))}
+                    {sortedProducts.map((row) => {
+                        const Row_ = fullWidth ? StandardRow : CompactRow;
+                        return <Row_ key={row.id} row={row} detailsColumns={detailsColumns}/>
+                    })
+                    }
                     <TableRow>
                         <TableCell rowSpan={2} colSpan={infoColumnsNumber - 1}/>
                         <TableCell>Без доставки</TableCell>
@@ -122,15 +192,22 @@ export const bigSummary = ({cartProducts}: { cartProducts: Row[] }) => {
 };
 
 const smallSummary = ({cartProducts}: { cartProducts: Row[] }) => {
-    return (<Box marginTop={2}>
-        {cartProducts.length === 0
-            ? <Typography variant={'h2'}>Корзина пуста</Typography>
-            : cartProducts.map(product => (
-                <Box key={product.id} marginY={1}>
-                    <CartItem disableControls product={product}/>
-                </Box>))
-        }
-    </Box>)
+    return (
+        <Box marginTop={2}>
+            {cartProducts.length === 0
+                ? <Typography variant={'h2'}>Корзина пуста</Typography>
+                : cartProducts.map(product => (
+                    <Box key={product.id} marginY={1}>
+                        <CartItem product={product}/>
+                    </Box>))
+            }
+        </Box>)
 };
 
-export default smallSummary
+export default function Summary(props: { cartProducts: Row[] }) {
+    if (props.cartProducts.length <= 2) {
+        return smallSummary(props)
+    } else {
+        return bigSummary(props)
+    }
+}

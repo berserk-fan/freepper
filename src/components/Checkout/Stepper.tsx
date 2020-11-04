@@ -15,6 +15,8 @@ import {CartSSProps} from "../Cart/Cart";
 import Summary from "./Summary";
 import UserDetailsForm from "./PostForm";
 import {CartProduct} from "../../pages/checkout";
+import {Container} from "@material-ui/core";
+import PaymentForm from "./Payment";
 
 const ColorlibConnector = withStyles({
     alternativeLabel: {
@@ -105,7 +107,7 @@ function getSteps() {
 }
 
 function getButtonTexts() {
-    return ['Проверить заказ', 'Перейти к оплате', 'Закончить']
+    return ['Подтвердить и перейти к проверке заказа', 'Подтвердить и перейти к оплате заказа', 'Оплатить заказ']
 }
 
 export default function Checkout({cartProducts}: {cartProducts: Record<string, CartProduct>}) {
@@ -116,7 +118,7 @@ export default function Checkout({cartProducts}: {cartProducts: Record<string, C
             case 1:
                 return <Summary cartProducts={Object.values(cartProducts)}/>;
             case 2:
-                return 'This is the bit I really care about!';
+                return <PaymentForm/>;
             default:
                 return 'Unknown step';
         }
@@ -139,7 +141,7 @@ export default function Checkout({cartProducts}: {cartProducts: Record<string, C
     };
 
     return (
-        <div className={classes.root}>
+        <Container maxWidth={"md"} className={classes.root}>
             <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
                 {steps.map((label) => (
                     <Step key={label}>
@@ -159,7 +161,7 @@ export default function Checkout({cartProducts}: {cartProducts: Record<string, C
                     </div>
                 ) : (
                     <div>
-                        <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
+                        {getStepContent(activeStep)}
                         <div>
                             <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
                                 Назад
@@ -176,7 +178,7 @@ export default function Checkout({cartProducts}: {cartProducts: Record<string, C
                     </div>
                 )}
             </div>
-        </div>
+        </Container>
     );
 }
 

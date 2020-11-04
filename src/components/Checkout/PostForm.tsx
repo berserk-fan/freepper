@@ -1,4 +1,4 @@
-import {Box, FormControl, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
+import {Box, FormControl, InputLabel, MenuItem, Select, TextField, Typography} from "@material-ui/core";
 import React from "react";
 
 export default function UserDetailsForm() {
@@ -9,6 +9,7 @@ export default function UserDetailsForm() {
     };
     return (
         <Box className={"flex flex-col gap-4"}>
+            <Typography variant={'h6'}>Введите информацию о заказе</Typography>
             <Box>
                 <TextField className={'w-full'}
                            required
