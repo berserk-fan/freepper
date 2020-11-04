@@ -20,6 +20,7 @@ import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import {CartState} from "./Cart";
 import {connect} from 'react-redux'
 import theme from "../../theme";
+import {CartProduct} from "../../pages/checkout";
 
 const useStyles = makeStyles(({
     root: {
@@ -45,9 +46,31 @@ const useStyles = makeStyles(({
     }
 }));
 
-const cartItem = function CartItem({product, count, setProductCount}: { product: Product, count: number, setProductCount: (x: number, id: string) => void }) {
-    const {displayName, price, image, id} = product;
+const cartItem = function CartItem({product, setProductCount, disableControls = false}: { product: CartProduct, setProductCount: (x: number, id: string) => void, disableControls?: boolean }) {
+    const {displayName, price, image, id, count} = product;
     const classes = useStyles();
+
+    function QuantityControls() {
+        return <>
+            <IconButton size={'small'} disabled={count <= 1} onClick={() => setProductCount(count - 1, id)}>
+                <RemoveCircleOutlineIcon fontSize={'large'}/>
+            </IconButton>
+            <Box fontFamily={'Monospace'}>
+                <Typography variant={'h6'} classes={{root: 'select-none'}}>{count}</Typography>
+            </Box>
+            <IconButton size={'small'} onClick={() => setProductCount(count + 1, id)}>
+                <AddCircleOutlineIcon fontSize={'large'}/>
+            </IconButton>
+        </>;
+    }
+
+    function Quantity() {
+        return (
+            <Box fontFamily={'Monospace'}>
+                <Typography variant={'h6'} classes={{root: 'select-none'}}>Количество: {count}</Typography>
+            </Box>);
+    }
+
     return (
         <Card variant={'outlined'} className={classes.root}>
             <div className={`${classes.imageContainer}`}>
@@ -67,16 +90,8 @@ const cartItem = function CartItem({product, count, setProductCount}: { product:
                         {getAdditionalInfo(product)}
                     </Box>
                     <Box marginLeft={1} className={"flex place-items-center"}>
-                        <IconButton size={'small'} disabled={count <= 1} onClick={() => setProductCount(count-1, id)}>
-                            <RemoveCircleOutlineIcon fontSize={'large'}/>
-                        </IconButton>
-                        <Box fontFamily={'Monospace'}>
-                            <Typography variant={'h6'} classes={{root: 'select-none'}}>{count}</Typography>
-                        </Box>
-                        <IconButton size={'small'} onClick={() => setProductCount(count+1, id)}>
-                            <AddCircleOutlineIcon fontSize={'large'}/>
-                        </IconButton>
-                        {ActionsPopover(id, setProductCount)}
+                        {disableControls ? Quantity() : QuantityControls()}
+                        {disableControls ? false : ActionsPopover(id, setProductCount)}
                     </Box>
                 </Box>
             </div>
@@ -84,13 +99,6 @@ const cartItem = function CartItem({product, count, setProductCount}: { product:
     );
 };
 
-
-function mapStateToProps(state: CartState, {product}: {product: Product}) {
-    return {
-        count: state.selectedProducts
-            .find(p => p.id === product.id)?.count || 0
-    }
-}
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -102,7 +110,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(cartItem)
+export default connect(null, mapDispatchToProps)(cartItem)
 
 function getAdditionalInfo({details}: Product) {
     switch (details.$case) {

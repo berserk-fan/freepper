@@ -1,15 +1,18 @@
 import {makeStyles} from "@material-ui/styles";
 import theme from "../../theme";
 import {Product} from "@mamat14/shop-server/shop_model";
-import {cartReducer} from "../../store";
-import React, {useEffect, useState} from "react";
-import {Box, Button, Divider, Typography} from "@material-ui/core";
+import {cartStateKey, shopClient} from "../../store";
+import React from "react";
+import {Box, Button, Typography} from "@material-ui/core";
 import CartItem from "./CartItem";
 import {connect} from "react-redux";
+import Cookie from 'cookie'
+import {CartProduct} from "../../pages/checkout";
 
 export type CartState = {
     selectedProducts: { id: string, count: number }[]
 }
+
 const useStyles = makeStyles(({
     textWrapper: {
         width: '100%',
@@ -57,9 +60,9 @@ const useStyles = makeStyles(({
     }
 }));
 
-const cart = function Cart({products, totalPrice}: { products: Map<string, Product>, totalPrice: number | undefined }) {
+const cart = function Cart({cartProducts, totalPrice}: CartSSProps & { totalPrice: number }) {
     const classes = useStyles();
-    const productsList = [...products.values()];
+    const productsList = Object.values(cartProducts).map(p => p[1]);
     return <div>
         <Box marginTop={2}>
             {productsList.length === 0
@@ -84,17 +87,41 @@ const cart = function Cart({products, totalPrice}: { products: Map<string, Produ
     </div>
 };
 
-function calcTotalPrice(productsMap: Map<string, Product>, cartState: CartState) {
+export function calcTotalPrice(products: Record<string, Product>, cartState: CartState) {
     return cartState.selectedProducts
-        .map(p => p.count * (productsMap.get(p.id)?.price?.price || 0))
+        .map(p => p.count * (products[p.id]?.price?.price || 0))
         .reduce((a, b) => a + b, 0)
 }
 
 
-function mapStateToProps(state: CartState, {products}: {products: Map<string, Product>}) {
+export function mapStateToCartProps(state: CartState, {products}: { products: Record<string, Product> }) {
     return {
         totalPrice: calcTotalPrice(products, state)
     }
 }
 
-export default connect(mapStateToProps)(cart)
+export default connect(mapStateToCartProps)(cart)
+
+export function parseCartData(cookieHeader?: string): CartState {
+    const defaultCartState = {selectedProducts: []};
+    try {
+        const actualCartState = JSON.parse(Cookie.parse(cookieHeader || '')[cartStateKey] || '{}');
+        return Object.assign(defaultCartState, actualCartState);
+    } catch (e) {
+        //consider error recovery
+        //1.log.error 2.reset-cookies
+        return defaultCartState;
+    }
+}
+
+export async function requestCartProducts(cartState: CartState): Promise<Record<string, CartProduct>> {
+    const productPromises = cartState.selectedProducts
+        .map(async (p) => ({
+            ...(await shopClient.getProduct({name: `categories/beds-category/products/${p.id}`})),
+            ...{count: p.count}
+        }));
+    return (await Promise.all(productPromises))
+        .reduce((res, product) => ({...res, ...{[product.id]: product}}), {});
+}
+
+export type CartSSProps = { cartProducts: Record<string, CartProduct> }

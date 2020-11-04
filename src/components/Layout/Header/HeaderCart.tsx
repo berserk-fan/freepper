@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import CartNoProps from "../../Cart/CartNoProps";
 import React, {useState} from "react";
-import {cartReducer} from "../../../store";
+import {cartStore} from "../../../store";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import theme from "../../../theme";
 import {makeStyles, withStyles} from "@material-ui/styles";
@@ -45,12 +45,12 @@ export default function HeaderCart() {
     const [open, setOpen] = useState(false);
 
     function calcCartSize() {
-        return cartReducer.getState().selectedProducts
+        return cartStore.getState().selectedProducts
             .reduce((a, b) => (a + b.count), 0)
     }
 
     const [cartSize, setCartSize] = useState<number>(calcCartSize());
-    cartReducer.subscribe(() => {
+    cartStore.subscribe(() => {
         setCartSize(calcCartSize())
     });
 

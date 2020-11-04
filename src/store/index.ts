@@ -6,16 +6,14 @@ import {CartState} from "../components/Cart/Cart";
 
 export const cartStateKey = "cartState";
 
-function readStoredCartState(): CartState {
+export function readStoredCartState(): CartState {
     const cartCookie = Cookies.get(cartStateKey);
+    console.log(`cookie ${JSON.stringify(cartCookie)}`)
     const parsed = JSON.parse(cartCookie || '{}');
-    if(parsed.selectedProducts) {
-        return parsed
-    }
-    return {selectedProducts: []};
+    return parsed.selectedProducts ? parsed : {selectedProducts: []}
 }
 
-function storeCartState(cartState: CartState): void {
+export function storeCartState(cartState: CartState): void {
     Cookies.set(cartStateKey, JSON.stringify(cartState));
 }
 
@@ -30,7 +28,7 @@ type CartUpdate = SET_PRODUCT_COUNT
 function reducer({selectedProducts}: CartState = readStoredCartState(), action: CartUpdate): CartState {
     switch (action.type) {
         case 'SET_PRODUCT_COUNT': {
-            let res = [...selectedProducts]
+            const res = [...selectedProducts]
                 .filter(p => p.id !== action.productId);
             if (action.count >= 1) {
                 res.push({id: action.productId, count: action.count});
@@ -42,10 +40,14 @@ function reducer({selectedProducts}: CartState = readStoredCartState(), action: 
     }
 }
 
-export const cartReducer = createStore(reducer);
+export const cartStore = createStore(reducer);
 
-cartReducer.subscribe(() => {
-    storeCartState(cartReducer.getState());
+cartStore.subscribe(() => {
+    storeCartState(cartStore.getState());
 });
 
-export const shopClient = new ShopClient({products: shopProducts, categories: [category]});
+export const shopClient = new ShopClient({
+    products: shopProducts,
+    categories: [category],
+    settings: {timeout: 100, errorPercentage: 0}
+});
