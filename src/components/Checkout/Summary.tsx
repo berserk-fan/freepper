@@ -9,6 +9,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { DogBed, Product } from "@mamat14/shop-server/shop_model";
 import {
+  Avatar,
   Box,
   Collapse,
   IconButton,
@@ -112,26 +113,33 @@ function DetailsTable({
   row: Product & { count: number };
 }) {
   return (
-    <Table padding={"none"} size="small" aria-label="purchases">
-      <TableHead>
-        <TableRow>
-          {detailsColumns.map((col) => (
-            <TableCell key={col.name} align="right">
-              {col.name}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        <TableRow>
-          {detailsColumns.map((col) => (
-            <TableCell key={col.name} align="right">
-              {col.extractor(row)}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableBody>
-    </Table>
+    <Box className={"flex"}>
+      <Avatar alt="Remy Sharp" src="/Dogs-7051.jpg" />
+      <Box className={'flex-grow'} paddingLeft={1}>
+        <Table padding={"none"}
+               size="small"
+               aria-label="purchases">
+          <TableHead>
+            <TableRow>
+              {detailsColumns.map((col) => (
+                  <TableCell key={col.name} align="right">
+                    {col.name}
+                  </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              {detailsColumns.map((col) => (
+                  <TableCell key={col.name} align="right">
+                    {col.extractor(row)}
+                  </TableCell>
+              ))}
+            </TableRow>
+          </TableBody>
+        </Table>
+      </Box>
+    </Box>
   );
 }
 
@@ -152,6 +160,7 @@ function CompactRow({
             aria-label="expand row"
             size="small"
             onClick={() => setOpen(!open)}
+            color={'secondary'}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
@@ -191,56 +200,102 @@ const bigSummary = ({ cartProducts }: { cartProducts: Row[] }) => {
   const fullWidth = useMediaQuery(theme.breakpoints.up("sm"));
   const infoColumnsNumber = 2 + (fullWidth ? detailsColumns.length : 0);
   const tableSize = fullWidth ? "medium" : "small";
-  return (
-    <TableContainer component={Paper}>
-      <Table size={tableSize} aria-label="spanning table">
-        <TableHead>
-          <TableRow>
-            {fullWidth ? false : <TableCell />}
-            <TableCell style={fullWidth ? {} : { paddingLeft: 0 }} size="small">
-              Название
-            </TableCell>
-            {fullWidth && (
-              <>
-                {detailsColumns.map((col) => (
-                  <TableCell key={col.name} align="right">
-                    {col.name}
+  return (<>
+        <Box>
+          <TableContainer component={(p) => (<Paper variant={'outlined'} {...p}/>)}>
+            <Table size={tableSize}>
+              <TableHead>
+                <TableRow>
+                  <TableCell colSpan={2}>
+                    <Typography variant={'h6'}>Данные для доставки</Typography>
                   </TableCell>
-                ))}
-                <TableCell align="right">Количество</TableCell>
-              </>
-            )}
-            <TableCell align="right">Сумма</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sortedProducts.map((row) => {
-            const Row_ = fullWidth ? StandardRow : CompactRow;
-            return (
-              <Row_ key={row.id} row={row} detailsColumns={detailsColumns} />
-            );
-          })}
-          <TableRow>
-            <TableCell
-              rowSpan={2}
-              colSpan={fullWidth ? infoColumnsNumber - 1 : 1}
-            />
-            <TableCell>Без доставки</TableCell>
-            <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Доставка</TableCell>
-            <TableCell align="right">
-              {invoiceShipping !== 0 ? ccyFormat(invoiceShipping) : "Бесплатно"}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={infoColumnsNumber}>Итого</TableCell>
-            <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </TableContainer>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>
+                    Имя
+                  </TableCell>
+                  <TableCell>
+                    Василий Кожемячко
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    Номер телефона
+                  </TableCell>
+                  <TableCell>
+                    +3806667777
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    Адрес/Отделение
+                  </TableCell>
+                  <TableCell>
+                    122 Киев
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+        <Box marginTop={1}>
+          <TableContainer component={(p) => (<Paper variant={'outlined'} {...p}/>)}>
+            <Table size={tableSize} aria-label="spanning table">
+              <TableHead>
+                <TableRow>
+                  <TableCell colSpan={fullWidth ? (detailsColumns.length + 2) : 3}>
+                    <Typography variant={'h6'}>Данные о заказе</Typography>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={fullWidth ? 1 : 2} >
+                    Название
+                  </TableCell>
+                  {fullWidth && (
+                      <>
+                        {detailsColumns.map((col) => (
+                            <TableCell key={col.name} align="right">
+                              {col.name}
+                            </TableCell>
+                        ))}
+                        <TableCell align="right">Количество</TableCell>
+                      </>
+                  )}
+                  <TableCell align="right">Сумма</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sortedProducts.map((row) => {
+                  const Row_ = fullWidth ? StandardRow : CompactRow;
+                  return (
+                      <Row_ key={row.id} row={row} detailsColumns={detailsColumns} />
+                  );
+                })}
+                <TableRow>
+                  <TableCell
+                      rowSpan={2}
+                      colSpan={fullWidth ? infoColumnsNumber - 1 : 1}
+                  />
+                  <TableCell>Без доставки</TableCell>
+                  <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Доставка</TableCell>
+                  <TableCell align="right">
+                    {invoiceShipping !== 0 ? ccyFormat(invoiceShipping) : "Бесплатно"}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={infoColumnsNumber}>Итого</TableCell>
+                  <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      </>
   );
 };
 

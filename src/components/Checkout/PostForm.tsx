@@ -37,7 +37,14 @@ export default function UserDetailsForm() {
         />
       </Box>
       <Box>
-
+          <TextField
+              className={"w-full"}
+              required
+              id="outlined-required"
+              label="Номер телефона"
+              variant="outlined"
+              type='tel'
+          />
       </Box>
       <Box>
         <FormControl variant="outlined" className={"w-full"}>
@@ -53,7 +60,6 @@ export default function UserDetailsForm() {
           >
             <MenuItem value={10}>Курьер</MenuItem>
             <MenuItem value={20}>В отделение</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
           </Select>
         </FormControl>
       </Box>
