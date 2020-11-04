@@ -15,12 +15,6 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import theme from "../../theme";
 
-const useStyles = makeStyles({
-    table: {
-        minWidth: 700,
-    },
-});
-
 type Row = CartProduct
 
 function rowPrice({price, count}: Row) {
@@ -100,48 +94,42 @@ function CompactRow({row, detailsColumns}: { row: CartProduct, detailsColumns: C
     return (
         <>
             <TableRow key={row.id} className={classes.root}>
-                <TableCell>
+                <TableCell padding={'none'} align={'center'}>
                     <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
                         {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                     </IconButton>
                 </TableCell>
-                <TableCell>{row.displayName}</TableCell>
+                <TableCell style={{paddingLeft: 0}}>{row.displayName}</TableCell>
                 <TableCell align={'right'}>{ccyFormat(row.price.price)}</TableCell>
             </TableRow>
-            {/*<TableRow>*/}
-            {/*    <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={3}>*/}
-            {/*        <Collapse in={open} timeout="auto" unmountOnExit>*/}
-            {/*            <Box>*/}
-            {/*                <Typography variant="h6" gutterBottom component="div">*/}
-            {/*                    Детали*/}
-            {/*                </Typography>*/}
-            {/*                <Table size="small" aria-label="purchases">*/}
-            {/*                    <TableHead>*/}
-            {/*                        <TableRow>*/}
-            {/*                            {detailsColumns.map(col =>*/}
-            {/*                                <TableCell key={col.name} align="right">{col.name}</TableCell>)*/}
-            {/*                            }*/}
-            {/*                            <TableCell>Количество</TableCell>*/}
-            {/*                        </TableRow>*/}
-            {/*                    </TableHead>*/}
-            {/*                    <TableBody>*/}
-            {/*                        {detailsColumns*/}
-            {/*                            .map(col =>*/}
-            {/*                                <TableCell key={col.name} align="right">{col.extractor(row)}</TableCell>)*/}
-            {/*                        }*/}
-            {/*                        <TableCell align="right">{row.count}</TableCell>*/}
-            {/*                    </TableBody>*/}
-            {/*                </Table>*/}
-            {/*            </Box>*/}
-            {/*        </Collapse>*/}
-            {/*    </TableCell>*/}
-            {/*</TableRow>*/}
+            <TableRow>
+                <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={3}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                        <Table size="small" aria-label="purchases">
+                            <TableHead>
+                                <TableRow>
+                                    {detailsColumns.map(col =>
+                                        <TableCell key={col.name} align="right">{col.name}</TableCell>)
+                                    }
+                                    <TableCell align="right">Количество</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {detailsColumns
+                                    .map(col =>
+                                        <TableCell key={col.name} align="right">{col.extractor(row)}</TableCell>)
+                                }
+                                <TableCell align="right">{row.count}</TableCell>
+                            </TableBody>
+                        </Table>
+                    </Collapse>
+                </TableCell>
+            </TableRow>
         </>
     );
 }
 
 const bigSummary = ({cartProducts}: { cartProducts: Row[] }) => {
-    const classes = useStyles();
     const invoiceShipping = 0;
     const invoiceSubtotal = subtotal(cartProducts);
     const invoiceTotal = invoiceShipping + invoiceSubtotal;
@@ -153,11 +141,11 @@ const bigSummary = ({cartProducts}: { cartProducts: Row[] }) => {
     const tableSize = fullWidth ? 'medium' : 'small';
     return (
         <TableContainer component={Paper}>
-            <Table size={tableSize} className={classes.table} aria-label="spanning table">
+            <Table size={tableSize} aria-label="spanning table">
                 <TableHead>
                     <TableRow>
                         {fullWidth ? false : <TableCell/>}
-                        <TableCell size='small'>Название</TableCell>
+                        <TableCell style={fullWidth ? {} : {paddingLeft: 0}} size='small'>Название</TableCell>
                         {fullWidth && <>
                             {detailsColumns.map(col => <TableCell key={col.name} align="right">{col.name}</TableCell>)}
                             <TableCell align="right">Количество</TableCell>
