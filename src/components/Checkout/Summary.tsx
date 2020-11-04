@@ -108,34 +108,34 @@ function CompactRow({row, detailsColumns}: { row: CartProduct, detailsColumns: C
                 <TableCell>{row.displayName}</TableCell>
                 <TableCell align={'right'}>{ccyFormat(row.price.price)}</TableCell>
             </TableRow>
-            <TableRow>
-                <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={3}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box>
-                            <Typography variant="h6" gutterBottom component="div">
-                                Детали
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        {detailsColumns.map(col =>
-                                            <TableCell key={col.name} align="right">{col.name}</TableCell>)
-                                        }
-                                        <TableCell>Количество</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {detailsColumns
-                                        .map(col =>
-                                            <TableCell key={col.name} align="right">{col.extractor(row)}</TableCell>)
-                                    }
-                                    <TableCell align="right">{row.count}</TableCell>
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
+            {/*<TableRow>*/}
+            {/*    <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={3}>*/}
+            {/*        <Collapse in={open} timeout="auto" unmountOnExit>*/}
+            {/*            <Box>*/}
+            {/*                <Typography variant="h6" gutterBottom component="div">*/}
+            {/*                    Детали*/}
+            {/*                </Typography>*/}
+            {/*                <Table size="small" aria-label="purchases">*/}
+            {/*                    <TableHead>*/}
+            {/*                        <TableRow>*/}
+            {/*                            {detailsColumns.map(col =>*/}
+            {/*                                <TableCell key={col.name} align="right">{col.name}</TableCell>)*/}
+            {/*                            }*/}
+            {/*                            <TableCell>Количество</TableCell>*/}
+            {/*                        </TableRow>*/}
+            {/*                    </TableHead>*/}
+            {/*                    <TableBody>*/}
+            {/*                        {detailsColumns*/}
+            {/*                            .map(col =>*/}
+            {/*                                <TableCell key={col.name} align="right">{col.extractor(row)}</TableCell>)*/}
+            {/*                        }*/}
+            {/*                        <TableCell align="right">{row.count}</TableCell>*/}
+            {/*                    </TableBody>*/}
+            {/*                </Table>*/}
+            {/*            </Box>*/}
+            {/*        </Collapse>*/}
+            {/*    </TableCell>*/}
+            {/*</TableRow>*/}
         </>
     );
 }
@@ -153,7 +153,7 @@ const bigSummary = ({cartProducts}: { cartProducts: Row[] }) => {
     const tableSize = fullWidth ? 'medium' : 'small';
     return (
         <TableContainer component={Paper}>
-            <Table padding={'none'} size={tableSize} className={classes.table} aria-label="spanning table">
+            <Table size={tableSize} className={classes.table} aria-label="spanning table">
                 <TableHead>
                     <TableRow>
                         {fullWidth ? false : <TableCell/>}

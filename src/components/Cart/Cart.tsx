@@ -60,9 +60,9 @@ const useStyles = makeStyles(({
     }
 }));
 
-const cart = function Cart({cartProducts, totalPrice}: CartSSProps & { totalPrice: number }) {
+const cart = function Cart({products, totalPrice}: {products: Record<string, Product>, totalPrice: number }) {
     const classes = useStyles();
-    const productsList = Object.values(cartProducts).map(p => p[1]);
+    const productsList = Object.values(products).map(p => p[1]);
     return <div>
         <Box marginTop={2}>
             {productsList.length === 0
@@ -100,7 +100,7 @@ export function mapStateToCartProps(state: CartState, {products}: { products: Re
     }
 }
 
-export default connect(mapStateToCartProps)(cart)
+export default connect(mapStateToCartProps)(cart);
 
 export function parseCartData(cookieHeader?: string): CartState {
     const defaultCartState = {selectedProducts: []};

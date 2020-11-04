@@ -1,17 +1,13 @@
-import {Product} from "@mamat14/shop-server/shop_model";
 import {Container} from "@material-ui/core";
 import React from "react";
 import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
 import {GetServerSideProps} from "next";
 import {
     CartSSProps,
-    getCartSSProps,
-    mapStateToCartProps,
     parseCartData,
     requestCartProducts
 } from "../../components/Cart/Cart";
 import CartNoProps from "../../components/Cart/CartNoProps";
-import {connect} from "react-redux";
 
 export default function CartPage({cartProducts}: CartSSProps) {
     return (

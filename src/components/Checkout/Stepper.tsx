@@ -110,13 +110,13 @@ function getButtonTexts() {
     return ['Подтвердить и перейти к проверке заказа', 'Подтвердить и перейти к оплате заказа', 'Оплатить заказ']
 }
 
-export default function Checkout({cartProducts}: {cartProducts: Record<string, CartProduct>}) {
+export default function Checkout({cartProducts}: {cartProducts: CartProduct[]}) {
     function getStepContent(step: number) {
         switch (step) {
             case 0:
                 return <UserDetailsForm/>;
             case 1:
-                return <Summary cartProducts={Object.values(cartProducts)}/>;
+                return <Summary cartProducts={cartProducts}/>;
             case 2:
                 return <PaymentForm/>;
             default:
