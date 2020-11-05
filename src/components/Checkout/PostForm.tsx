@@ -37,14 +37,14 @@ export default function UserDetailsForm() {
         />
       </Box>
       <Box>
-          <TextField
-              className={"w-full"}
-              required
-              id="outlined-required"
-              label="Номер телефона"
-              variant="outlined"
-              type='tel'
-          />
+        <TextField
+          className={"w-full"}
+          required
+          id="outlined-required"
+          label="Номер телефона"
+          variant="outlined"
+          type="tel"
+        />
       </Box>
       <Box>
         <FormControl variant="outlined" className={"w-full"}>
