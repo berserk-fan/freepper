@@ -3,7 +3,7 @@ import ShopClient from "@mamat14/shop-server";
 import { category, shopProducts } from "../../configs/Data";
 import Cookies from "js-cookie";
 import { CartState } from "../components/Cart/Cart";
-import { DeliveryOption, Order } from "../order-model";
+import {DeliveryOption, Order, OrderState} from "../order-model";
 
 export const cartStateKey = "cartState";
 
@@ -28,7 +28,7 @@ type CartUpdate = SET_PRODUCT_COUNT;
 
 function cartReducer(
   { selectedProducts }: CartState = readStoredCartState(),
-  action: CartUpdate
+  action: StoreUpdate
 ): CartState {
   switch (action.type) {
     case "SET_PRODUCT_COUNT": {
@@ -66,29 +66,59 @@ type OrderUpdate =
   | UPDATE_DELIVERY_OPTION;
 
 function orderReducer(
-  order: Partial<Order>,
-  action: OrderUpdate
-): Partial<Order> {
+  order: OrderState,
+  action: StoreUpdate
+): OrderState {
   switch (action.type) {
     case "UPDATE_FULL_NAME":
       return {
         ...order,
-        ...{
-          deliveryDetails: {
-            ...order.deliveryDetails,
-            ...{ fullName: action.fullName },
-          },
+        deliveryDetails: {
+            ...(order.deliveryDetails || {}),
+            fullName: action.fullName,
         },
+      };
+    case "UPDATE_SHIPPING_ADDRESS":
+      return {
+        ...order,
+        deliveryDetails: {
+          ...(order.deliveryDetails || {}),
+          address: action.address
+        }
+      };
+    case "UPDATE_DELIVERY_OPTION":
+      return {
+        ...order,
+        deliveryDetails: {
+          ...(order.deliveryDetails || {}),
+          option: action.deliveryOption
+        }
       };
     default:
       return order;
   }
 }
 
-export const cartStore = createStore(cartReducer);
+type StoreState = Partial<{
+  orderState: OrderState,
+  cartState: CartState
+}>
 
-cartStore.subscribe(() => {
-  storeCartState(cartStore.getState());
+type StoreUpdate = CartUpdate | OrderUpdate
+function storeReducer(
+    store: StoreState = {},
+    action: StoreUpdate
+): StoreState {
+  return {
+    cartState: cartReducer(store.cartState, action),
+    orderState: orderReducer(store.orderState, action)
+  }
+}
+
+export const store = createStore(storeReducer);
+
+store.subscribe(() => {
+  storeCartState(store.getState().cartState);
 });
 
 export const shopClient = new ShopClient({

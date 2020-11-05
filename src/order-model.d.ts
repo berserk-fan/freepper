@@ -39,6 +39,7 @@ interface DeliveryDetails {
   fullName: string;
   phone?: string;
   email?: string;
+  address: string
 }
 
 interface PaymentDetails {
@@ -46,9 +47,16 @@ interface PaymentDetails {
   option: PaymentOption;
 }
 
-export interface Order {
+interface Order {
   deliveryDetails: DeliveryDetails;
   paymentDetails: PaymentDetails;
   cart: CartProduct[];
   total: number;
 }
+
+type OrderState = Partial<{
+  deliveryDetails: Partial<DeliveryDetails>;
+  paymentDetails: Partial<PaymentDetails>;
+  cart: Partial<CartProduct[]>;
+  total: Partial<number>;
+}>

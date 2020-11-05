@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Product } from "@mamat14/shop-server/shop_model";
-import { cartStore } from "../../store";
+import { store } from "../../store";
 import Cart, { CartState, requestCartProducts } from "./Cart";
 import retry from "promise-retry";
 
@@ -17,9 +17,8 @@ export default function CartNoProps({
 
   function fetchProducts() {
     if (state === "PENDING") {
-      console.log("fetching");
       retry((retry) =>
-        requestCartProducts(cartStore.getState())
+        requestCartProducts(store.getState().cartState)
           .then((products) => {
             setProducts(products);
             setState("COMPLETED");
@@ -31,11 +30,6 @@ export default function CartNoProps({
       });
     }
   }
-
-  cartStore.subscribe(() => {
-    setState("PENDING");
-    fetchProducts();
-  });
 
   useEffect(() => {
     fetchProducts();
