@@ -112,6 +112,7 @@ function DetailsTable({
   detailsColumns: Column[];
   row: Product & { count: number };
 }) {
+  const classes = useRowStyles();
   return (
     <Box className={"flex"}>
       <Avatar alt="Remy Sharp" src="/Dogs-7051.jpg" />
@@ -129,7 +130,7 @@ function DetailsTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
+            <TableRow classes={classes}>
               {detailsColumns.map((col) => (
                   <TableCell key={col.name} align="right">
                     {col.extractor(row)}
@@ -165,7 +166,7 @@ function CompactRow({
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell style={{ paddingLeft: 0 }}>{row.displayName}</TableCell>
+        <TableCell style={{ paddingLeft: 0,paddingRight:0 }}>{row.displayName}</TableCell>
         <TableCell align={"right"}>{ccyFormat(row.price.price)}</TableCell>
       </TableRow>
       <TableRow>
@@ -282,8 +283,8 @@ const bigSummary = ({ cartProducts }: { cartProducts: Row[] }) => {
                   <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Доставка</TableCell>
-                  <TableCell align="right">
+                  <TableCell style={{paddingRight: 4}}>Доставка</TableCell>
+                  <TableCell style={{paddingLeft: 0}} align="right">
                     {invoiceShipping !== 0 ? ccyFormat(invoiceShipping) : "Бесплатно"}
                   </TableCell>
                 </TableRow>
