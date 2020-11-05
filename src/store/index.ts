@@ -3,6 +3,7 @@ import ShopClient from "@mamat14/shop-server";
 import { category, shopProducts } from "../../configs/Data";
 import Cookies from "js-cookie";
 import { CartState } from "../components/Cart/Cart";
+import { DeliveryOption, Order } from "../order-model";
 
 export const cartStateKey = "cartState";
 
@@ -25,7 +26,7 @@ type SET_PRODUCT_COUNT = {
 
 type CartUpdate = SET_PRODUCT_COUNT;
 
-function reducer(
+function cartReducer(
   { selectedProducts }: CartState = readStoredCartState(),
   action: CartUpdate
 ): CartState {
@@ -44,7 +45,47 @@ function reducer(
   }
 }
 
-export const cartStore = createStore(reducer);
+type UPDATE_FULL_NAME = {
+  type: "UPDATE_FULL_NAME";
+  fullName: string;
+};
+
+type UPDATE_DELIVERY_ADDRESS = {
+  type: "UPDATE_SHIPPING_ADDRESS";
+  address: string;
+};
+
+type UPDATE_DELIVERY_OPTION = {
+  type: "UPDATE_DELIVERY_OPTION";
+  deliveryOption: DeliveryOption;
+};
+
+type OrderUpdate =
+  | UPDATE_FULL_NAME
+  | UPDATE_DELIVERY_ADDRESS
+  | UPDATE_DELIVERY_OPTION;
+
+function orderReducer(
+  order: Partial<Order>,
+  action: OrderUpdate
+): Partial<Order> {
+  switch (action.type) {
+    case "UPDATE_FULL_NAME":
+      return {
+        ...order,
+        ...{
+          deliveryDetails: {
+            ...order.deliveryDetails,
+            ...{ fullName: action.fullName },
+          },
+        },
+      };
+    default:
+      return order;
+  }
+}
+
+export const cartStore = createStore(cartReducer);
 
 cartStore.subscribe(() => {
   storeCartState(cartStore.getState());
