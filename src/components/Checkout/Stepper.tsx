@@ -116,10 +116,6 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-function getSteps() {
-const steps = ["Доставка", "Проверка", "Оплата"];
-}
-
 function getButtonTexts() {
   return [
     "Подтвердить и перейти к проверке заказа",
@@ -228,8 +224,8 @@ export default function Checkout({
   cartProducts: CartProduct[];
 }) {
   const classes = useStyles();
+  const steps = ["Доставка", "Проверка", "Оплата"];
   const [activeStep, setActiveStep] = React.useState(0);
-  const steps = getSteps();
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
