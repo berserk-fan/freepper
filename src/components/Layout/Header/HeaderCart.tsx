@@ -45,8 +45,9 @@ export default function HeaderCart() {
   const [open, setOpen] = useState(false);
 
   function calcCartSize() {
-    return store.getState().cartState
-      .selectedProducts.reduce((a, b) => a + b.count, 0);
+    return store
+      .getState()
+      .cartState.selectedProducts.reduce((a, b) => a + b.count, 0);
   }
 
   const [cartSize, setCartSize] = useState<number>(calcCartSize());

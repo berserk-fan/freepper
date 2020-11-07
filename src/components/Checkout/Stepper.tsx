@@ -16,12 +16,21 @@ import { StepIconProps } from "@material-ui/core/StepIcon";
 import LocalShippingIcon from "@material-ui/icons/LocalShipping";
 import PaymentIcon from "@material-ui/icons/Payment";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import { CartSSProps } from "../Cart/Cart";
 import Summary from "./Summary";
 import UserDetailsForm from "./PostForm";
 import { CartProduct } from "../../pages/checkout";
 import { Container } from "@material-ui/core";
 import PaymentForm from "./Payment";
+import { Form } from "react-final-form";
+import { string, object, ObjectSchema, mixed, number, array } from "yup";
+import { makeValidate } from "mui-rff";
+import {
+  DeliveryDetails,
+  DeliveryOption,
+  DeliveryProvider,
+  Order,
+  PaymentOption,
+} from "../../order-model";
 
 const ColorlibConnector = withStyles({
   alternativeLabel: {
@@ -119,36 +128,114 @@ function getButtonTexts() {
   ];
 }
 
+export type OrderForm = Omit<Partial<Order>, "deliveryDetails"> & {
+  deliveryDetails: Partial<DeliveryDetails>;
+};
+
+function getStepContent(
+  step: number,
+  cartProducts: CartProduct[],
+  orderData: OrderForm
+) {
+  switch (step) {
+    case 0:
+      return <UserDetailsForm order={orderData} />;
+    case 1:
+      return <Summary cartProducts={cartProducts} orderForm={orderData}/>;
+    case 2:
+      return <PaymentForm />;
+    default:
+      return "Unknown step";
+  }
+}
+
+const deliveryDetailsSchema: ObjectSchema<DeliveryDetails> = object({
+  address: string()
+    .required("Пожалуйста, введите адрес")
+    .max(500, "Слишком длинный адрес"),
+  provider: mixed()
+    .oneOf([DeliveryProvider.NOVAYA_POCHTA])
+    .required()
+    .default(DeliveryProvider.NOVAYA_POCHTA),
+  fullName: string()
+    .required("Пожалуйста, введите имя")
+    .min(5, "Cлишком короткое имя")
+    .max(500, "Слишком длинное имя"),
+  phone: string()
+    .required("Пожалуйста, введите номер телефона")
+    .min(6, "Слишком короткий номер телефона")
+    .max(500, "Слишком длинный номер телефона"),
+  email: string()
+    .required("Вам нужно ввести имэйл")
+    .email("Неправильный электронный адресс")
+    .max(500, "Слишком длинный имэйл"),
+  option: mixed().oneOf([DeliveryOption.COURIER, DeliveryOption.TO_WAREHOUSE]),
+});
+
+const schema: ObjectSchema<OrderForm> = object({
+  deliveryDetails: deliveryDetailsSchema,
+  paymentOption: mixed().oneOf([PaymentOption.COD]).default(PaymentOption.COD),
+});
+
+const validate = makeValidate(schema);
+
+function CheckoutForm({
+  cartProducts,
+  activeStep,
+  handleBack,
+  handleNext,
+}: {
+  cartProducts: CartProduct[];
+  activeStep: number;
+  handleBack: () => void;
+  handleNext: () => void;
+}) {
+  const buttonTexts = getButtonTexts();
+  function onSubmit() {}
+
+  return (
+    <Form
+      onSubmit={onSubmit}
+      validate={validate}
+      render={({
+        handleSubmit,
+        values,
+      }: {
+        handleSubmit: any;
+        values: OrderForm;
+      }) => (
+        <form onSubmit={handleSubmit} noValidate>
+          <div>
+            {getStepContent(activeStep, cartProducts, values)}
+            <div>
+              <Button disabled={activeStep === 0} onClick={handleBack}>
+                Назад
+              </Button>
+              <Button variant="contained" color="primary" onClick={handleNext}>
+                {buttonTexts[activeStep]}
+              </Button>
+            </div>
+          </div>
+        </form>
+      )}
+    />
+  );
+}
+
 export default function Checkout({
   cartProducts,
 }: {
   cartProducts: CartProduct[];
 }) {
-  function getStepContent(step: number) {
-    switch (step) {
-      case 0:
-        return <UserDetailsForm />;
-      case 1:
-        return <Summary cartProducts={cartProducts} />;
-      case 2:
-        return <PaymentForm />;
-      default:
-        return "Unknown step";
-    }
-  }
-
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(1);
+  const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
-  const buttonTexts = getButtonTexts();
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
-
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
-
   const handleReset = () => {
     setActiveStep(0);
   };
@@ -177,26 +264,12 @@ export default function Checkout({
             </Button>
           </div>
         ) : (
-          <div>
-            {getStepContent(activeStep)}
-            <div>
-              <Button
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                className={classes.button}
-              >
-                Назад
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleNext}
-                className={classes.button}
-              >
-                {buttonTexts[activeStep]}
-              </Button>
-            </div>
-          </div>
+          <CheckoutForm
+            cartProducts={cartProducts}
+            activeStep={activeStep}
+            handleBack={handleBack}
+            handleNext={handleNext}
+          />
         )}
       </div>
     </Container>

@@ -21,14 +21,15 @@ import CartItem from "../Cart/CartItem";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import theme from "../../theme";
+import { OrderForm } from "./Stepper";
+import {Order} from "../../order-model";
+import {getDeliveryOptionName, getDeliveryProviderName} from "./PostForm";
 
-type Row = CartProduct;
-
-function rowPrice({ price, count }: Row) {
+function rowPrice({ price, count }: CartProduct) {
   return price.price * count;
 }
 
-function subtotal(cartProducts: Row[]) {
+function subtotal(cartProducts: CartProduct[]) {
   return cartProducts.reduce(
     (sum, cartProduct) => sum + rowPrice(cartProduct),
     0
@@ -39,9 +40,9 @@ function ccyFormat(num: number) {
   return `${num}`;
 }
 
-type Column = {
+type Column<T> = {
   name: string;
-  extractor: (product: Row) => string;
+  extractor: (product: T) => string;
 };
 
 function getSizeName(dogBed: DogBed): string {
@@ -52,7 +53,7 @@ function getFabricName(dogBed: DogBed): string {
   return dogBed.fabrics.find((f) => f.id === dogBed.fabricId).displayName;
 }
 
-function getColumns(productType: string): Column[] {
+function getColumns(productType: string): Column<CartProduct>[] {
   switch (productType) {
     case "dogBed":
       return [
@@ -72,7 +73,7 @@ function getColumns(productType: string): Column[] {
   }
 }
 
-function getDetailsColumns(productTypes: string[]): Column[] {
+function getDetailsColumns(productTypes: string[]): Column<CartProduct>[] {
   return productTypes.flatMap(getColumns);
 }
 
@@ -91,7 +92,7 @@ function StandardRow({
   detailsColumns,
 }: {
   row: CartProduct;
-  detailsColumns: Column[];
+  detailsColumns: Column<CartProduct>[];
 }) {
   return (
     <TableRow key={row.displayName}>
@@ -105,11 +106,11 @@ function StandardRow({
   );
 }
 
-function DetailsTable({
+function ProductDetailsTable({
   detailsColumns,
   row,
 }: {
-  detailsColumns: Column[];
+  detailsColumns: Column<CartProduct>[];
   row: Product & { count: number };
 }) {
   const classes = useRowStyles();
@@ -147,7 +148,7 @@ function CompactRow({
   detailsColumns,
 }: {
   row: CartProduct;
-  detailsColumns: Column[];
+  detailsColumns: Column<CartProduct>[];
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
@@ -175,7 +176,7 @@ function CompactRow({
           colSpan={detailsColumns.length}
         >
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <DetailsTable {...{ detailsColumns, row }} />
+            <ProductDetailsTable {...{ detailsColumns, row }} />
           </Collapse>
         </TableCell>
       </TableRow>
@@ -183,16 +184,50 @@ function CompactRow({
   );
 }
 
-const bigSummary = ({ cartProducts }: { cartProducts: Row[] }) => {
+const formSummaryColumns: Column<OrderForm>[] = [
+  { name: "Имя", extractor: (t: OrderForm) => t?.deliveryDetails?.fullName || 'Отсутствует' },
+  { name: "Телефон", extractor: (t: OrderForm) => t?.deliveryDetails?.phone || 'Отсутствует' },
+  {
+    name: "Способ доставки",
+    extractor: (t: OrderForm) => getDeliveryOptionName(t?.deliveryDetails?.option) || 'Отсутствует',
+  },
+  {
+    name: "Служба доставки",
+    extractor: (t: OrderForm) => getDeliveryProviderName(t?.deliveryDetails?.provider) || 'Отсутствует',
+  },
+  {
+    name: "Адрес",
+    extractor: (t: OrderForm) => {
+      const address = t?.deliveryDetails?.address;
+      if(!address) {
+        return "Отсутствует"
+      }
+      if(address.match(/[0-9]+/)) {
+        return `Отделение номер ${address}`
+      } else {
+        return address
+      }
+    }
+  }
+];
+
+const bigSummary = ({
+  cartProducts,
+  orderForm,
+}: {
+  cartProducts: CartProduct[];
+  orderForm: OrderForm;
+}) => {
+  console.log(orderForm);
   const invoiceShipping = 0;
   const invoiceSubtotal = subtotal(cartProducts);
   const invoiceTotal = invoiceShipping + invoiceSubtotal;
   const productTypes = [...new Set(cartProducts.map((p) => p.details.$case))];
-  const detailsColumns: Column[] = [
+  const detailsColumns: Column<CartProduct>[] = [
     ...getDetailsColumns(productTypes),
     {
       name: "Количество",
-      extractor: (p: Row) => p.count.toString(),
+      extractor: (p: CartProduct) => p.count.toString(),
     },
   ];
   const sortedProducts = cartProducts.sort((a, b) =>
@@ -210,24 +245,18 @@ const bigSummary = ({ cartProducts }: { cartProducts: Row[] }) => {
           <Table size={tableSize}>
             <TableHead>
               <TableRow>
-                <TableCell colSpan={2}>
+                <TableCell colSpan={4}>
                   <Typography variant={"h6"}>Данные для доставки</Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell>Имя</TableCell>
-                <TableCell>Василий Кожемячко</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Номер телефона</TableCell>
-                <TableCell>+3806667777</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Адрес/Отделение</TableCell>
-                <TableCell>122 Киев</TableCell>
-              </TableRow>
+                {formSummaryColumns.map((col) => (
+                    <TableRow>
+                      <TableCell style={{paddingLeft: theme.spacing(1), paddingRight: theme.spacing(0.5)}} colSpan={1}>{col.name}</TableCell>
+                      <TableCell style={{paddingLeft: theme.spacing(1)}} colSpan={3}>{col.extractor(orderForm)}</TableCell>
+                    </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -299,7 +328,7 @@ const bigSummary = ({ cartProducts }: { cartProducts: Row[] }) => {
   );
 };
 
-const smallSummary = ({ cartProducts }: { cartProducts: Row[] }) => {
+const smallSummary = ({ cartProducts }: { cartProducts: CartProduct[] }) => {
   return (
     <Box marginTop={2}>
       {cartProducts.length === 0 ? (
@@ -315,7 +344,7 @@ const smallSummary = ({ cartProducts }: { cartProducts: Row[] }) => {
   );
 };
 
-export default function Summary(props: { cartProducts: Row[] }) {
+export default function Summary(props: { cartProducts: CartProduct[], orderForm: OrderForm }) {
   if (props.cartProducts.length <= 2) {
     return smallSummary(props);
   } else {
