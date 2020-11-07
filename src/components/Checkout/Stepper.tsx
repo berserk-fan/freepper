@@ -117,7 +117,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function getSteps() {
-  return ["Доставка", "Проверка", "Оплата"];
+const steps = ["Доставка", "Проверка", "Оплата"];
 }
 
 function getButtonTexts() {
