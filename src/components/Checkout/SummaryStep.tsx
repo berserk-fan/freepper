@@ -21,9 +21,11 @@ import CartItem from "../Cart/CartItem";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import theme from "../../theme";
-import { OrderForm } from "./Stepper";
-import {Order} from "../../order-model";
-import {getDeliveryOptionName, getDeliveryProviderName} from "./PostForm";
+import { OrderForm } from "./CheckoutForm";
+import {
+  getDeliveryOptionName,
+  getDeliveryProviderName,
+} from "./DeliveryDetailsStep";
 
 function rowPrice({ price, count }: CartProduct) {
   return price.price * count;
@@ -185,30 +187,38 @@ function CompactRow({
 }
 
 const formSummaryColumns: Column<OrderForm>[] = [
-  { name: "Имя", extractor: (t: OrderForm) => t?.deliveryDetails?.fullName || 'Отсутствует' },
-  { name: "Телефон", extractor: (t: OrderForm) => t?.deliveryDetails?.phone || 'Отсутствует' },
+  {
+    name: "Имя",
+    extractor: (t: OrderForm) => t?.deliveryDetails?.fullName || "Отсутствует",
+  },
+  {
+    name: "Телефон",
+    extractor: (t: OrderForm) => t?.deliveryDetails?.phone || "Отсутствует",
+  },
   {
     name: "Способ доставки",
-    extractor: (t: OrderForm) => getDeliveryOptionName(t?.deliveryDetails?.option) || 'Отсутствует',
+    extractor: (t: OrderForm) =>
+      getDeliveryOptionName(t?.deliveryDetails?.option) || "Отсутствует",
   },
   {
     name: "Служба доставки",
-    extractor: (t: OrderForm) => getDeliveryProviderName(t?.deliveryDetails?.provider) || 'Отсутствует',
+    extractor: (t: OrderForm) =>
+      getDeliveryProviderName(t?.deliveryDetails?.provider) || "Отсутствует",
   },
   {
     name: "Адрес",
     extractor: (t: OrderForm) => {
       const address = t?.deliveryDetails?.address;
-      if(!address) {
-        return "Отсутствует"
+      if (!address) {
+        return "Отсутствует";
       }
-      if(address.match(/[0-9]+/)) {
-        return `Отделение номер ${address}`
+      if (address.match(/[0-9]+/)) {
+        return `Отделение номер ${address}`;
       } else {
-        return address
+        return address;
       }
-    }
-  }
+    },
+  },
 ];
 
 const bigSummary = ({
@@ -251,12 +261,25 @@ const bigSummary = ({
               </TableRow>
             </TableHead>
             <TableBody>
-                {formSummaryColumns.map((col) => (
-                    <TableRow>
-                      <TableCell style={{paddingLeft: theme.spacing(1), paddingRight: theme.spacing(0.5)}} colSpan={1}>{col.name}</TableCell>
-                      <TableCell style={{paddingLeft: theme.spacing(1)}} colSpan={3}>{col.extractor(orderForm)}</TableCell>
-                    </TableRow>
-                ))}
+              {formSummaryColumns.map((col) => (
+                <TableRow key={col.name}>
+                  <TableCell
+                    style={{
+                      paddingLeft: theme.spacing(1),
+                      paddingRight: theme.spacing(0.5),
+                    }}
+                    colSpan={1}
+                  >
+                    {col.name}
+                  </TableCell>
+                  <TableCell
+                    style={{ paddingLeft: theme.spacing(1) }}
+                    colSpan={3}
+                  >
+                    {col.extractor(orderForm)}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -344,7 +367,10 @@ const smallSummary = ({ cartProducts }: { cartProducts: CartProduct[] }) => {
   );
 };
 
-export default function Summary(props: { cartProducts: CartProduct[], orderForm: OrderForm }) {
+export default function SummaryStep(props: {
+  cartProducts: CartProduct[];
+  orderForm: OrderForm;
+}) {
   if (props.cartProducts.length <= 2) {
     return smallSummary(props);
   } else {

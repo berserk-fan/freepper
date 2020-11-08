@@ -1,14 +1,21 @@
-import {Box, Collapse, Container, MenuItem, SvgIcon, Typography,} from "@material-ui/core";
-import React, {useEffect} from "react";
-import {Radios, Select, TextField} from "mui-rff";
-import {DeliveryOption, DeliveryProvider, Order} from "../../order-model";
-import {PhoneNumber} from "../Inputs/PhoneNumber";
-import {pathName} from "../../utils";
-import {Field} from "react-final-form";
+import {
+  Box,
+  Collapse,
+  Container,
+  MenuItem,
+  SvgIcon,
+  Typography,
+} from "@material-ui/core";
+import React, { useEffect } from "react";
+import { Radios, Select, TextField } from "mui-rff";
+import { DeliveryOption, DeliveryProvider, Order } from "../../order-model";
+import { PhoneNumber } from "../Inputs/PhoneNumber";
+import { pathName } from "../../utils";
+import { Field } from "react-final-form";
 import Address from "../Inputs/Address";
-import {OrderForm} from "./Stepper";
+import { OrderForm } from "./CheckoutForm";
 import NovayaPochtaIcon from "./Nova_Poshta_2014_logo.svg";
-import {makeStyles} from "@material-ui/styles";
+import { makeStyles } from "@material-ui/styles";
 
 export function getDeliveryOptionName(option: DeliveryOption) {
   switch (option) {
@@ -26,7 +33,7 @@ export function getDeliveryProviderName(provider: DeliveryProvider) {
     case DeliveryProvider.NOVAYA_POCHTA:
       return "Новая почта";
     default:
-        return "Упс. Мы уточним ее по телефону";
+      return "Упс. Мы уточним ее по телефону";
   }
 }
 
@@ -76,7 +83,6 @@ export default function DeliveryDetailsForm({ order }: { order: OrderForm }) {
           label="Служба доставки"
           name={pathName({} as Order, "deliveryDetails", "provider")}
           required={true}
-          fieldProps={{ initialValue: DeliveryProvider.NOVAYA_POCHTA }}
           data={[
             {
               label: (

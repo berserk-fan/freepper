@@ -1,6 +1,6 @@
 import React from "react";
 import { Container } from "@material-ui/core";
-import Checkout from "../../components/Checkout/Stepper";
+import Checkout from "../../components/Checkout/CheckoutForm";
 import { parseCartData, requestCartProducts } from "../../components/Cart/Cart";
 import { Product } from "@mamat14/shop-server/shop_model";
 
