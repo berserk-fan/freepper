@@ -97,7 +97,7 @@ export default function Checkout({
   cartProducts: CartProduct[];
 }) {
   const classes = useStyles();
-  const steps = ["Доставка", "Проверка", "Оплата"];
+  const steps = ["Доставка", "Проверка"];
   const initialValues = {
     deliveryDetails: { provider: DeliveryProvider.NOVAYA_POCHTA },
     paymentOption: PaymentOption.COD,

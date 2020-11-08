@@ -5,6 +5,7 @@ export default function PaymentStep() {
   return (
     <Box>
       <Typography variant={"h6"}>Выберите способ оплаты:</Typography>
+      <Typography>Сейчас все заказы </Typography>
     </Box>
   );
 }

@@ -6,7 +6,7 @@ import { Box, Toolbar } from "@material-ui/core";
 export default function CheckoutHeader() {
   return (
     <CustomAppBar>
-      <Toolbar className={"flex flex-col"}>
+      <Toolbar>
         <Box className={"mx-auto"}>
           <HeaderLogo />
         </Box>

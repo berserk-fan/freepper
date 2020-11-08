@@ -9,6 +9,7 @@ import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import StepConnector from "@material-ui/core/StepConnector";
+import theme from "../../theme";
 
 const ColorlibConnector = withStyles({
   alternativeLabel: {
@@ -79,6 +80,12 @@ function ColorlibStepIcon(props: StepIconProps) {
   );
 }
 
+const useStyles = makeStyles({
+  c1: {
+    padding: theme.spacing(1),
+  },
+});
+
 export default function FormStepper({
   activeStep,
   steps,
@@ -86,11 +93,14 @@ export default function FormStepper({
   activeStep: number;
   steps: string[];
 }) {
+  const classes = useStyles();
+
   return (
     <Stepper
       alternativeLabel
       activeStep={activeStep}
       connector={<ColorlibConnector />}
+      className={classes.c1}
     >
       {steps.map((label) => (
         <Step key={label}>

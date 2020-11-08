@@ -7,7 +7,7 @@ import parse from "autosuggest-highlight/parse";
 import throttle from "lodash/throttle";
 import { TextField } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
-import {showErrorOnChange} from "mui-rff";
+import { showErrorOnChange } from "mui-rff";
 
 function loadScript(src: string, position: HTMLElement | null, id: string) {
   if (!position) {
@@ -59,7 +59,9 @@ export default function Address(props: any) {
   const { error, submitError } = meta;
   const isError = showError({ meta });
 
-  const [autoCompleteValue, setAutoCompleteValue] = React.useState<PlaceType>(null);
+  const [autoCompleteValue, setAutoCompleteValue] = React.useState<PlaceType>(
+    null
+  );
   const [options, setOptions] = React.useState<PlaceType[]>([]);
   const loaded = React.useRef(false);
 
@@ -143,7 +145,7 @@ export default function Address(props: any) {
       value={value}
       onChange={(event: any, newValue: PlaceType | null) => {
         setOptions(newValue ? [newValue, ...options] : options);
-        setAutoCompleteValue(newValue)
+        setAutoCompleteValue(newValue);
       }}
       onInputChange={(event, newInputValue) => {
         onChange(newInputValue);

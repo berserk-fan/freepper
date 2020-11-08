@@ -23,11 +23,12 @@ export const PhoneNumber = (props) => {
 
   function handleChange(value, country) {
     if (country.countryCode === "ua") {
-      onChange(value.replace("+3800", "+380"));
+      onChange(value.replace("+380 (0", "+380 ("));
       return;
     }
     onChange(value);
   }
+
   return (
     <PhoneInput
       required
