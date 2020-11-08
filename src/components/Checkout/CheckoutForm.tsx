@@ -4,7 +4,7 @@ import Button from "@material-ui/core/Button";
 import SummaryStep from "./SummaryStep";
 import DeliveryDetailsStep from "./DeliveryDetailsStep";
 import { CartProduct } from "../../pages/checkout";
-import { Container } from "@material-ui/core";
+import { Box, Container, Paper, useMediaQuery } from "@material-ui/core";
 import PaymentStep from "./Payment";
 import { Form } from "react-final-form";
 import { mixed, object, number, ObjectSchema, string } from "yup";
@@ -17,6 +17,8 @@ import {
   PaymentOption,
 } from "../../order-model";
 import FormStepper from "./FormStepper";
+import theme from "../../theme";
+import CheckoutHeader from "../Layout/Header/CheckoutHeader";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -115,22 +117,25 @@ export default function Checkout({
       setFormState(formState);
     };
   };
+
   const handleBack = (formState: OrderForm) => {
     return () => {
       setActiveStep((prevActiveStep) => prevActiveStep - 1);
       setFormState(formState);
     };
   };
+
   const handleReset = () => {
     setActiveStep(0);
   };
+
   function onSubmit() {}
 
   const buttonTexts = getButtonTexts();
-
+  const controlsTop = useMediaQuery(theme.breakpoints.up("md"));
   return (
-    <Container maxWidth={"md"} className={classes.root}>
-      {<FormStepper {...{ activeStep, steps }} />}
+    <>
+      <FormStepper {...{ activeStep, steps }} />
       <Form
         {...{ onSubmit, validate }}
         initialValues={formState}
@@ -152,8 +157,11 @@ export default function Checkout({
               ) : (
                 <div>
                   {getStepContent(activeStep, cartProducts, values)}
-                  <div>
-                    <Button disabled={activeStep === 0} onClick={handleBack(values)}>
+                  <Box className={"flex justify-between"}>
+                    <Button
+                      disabled={activeStep === 0}
+                      onClick={handleBack(values)}
+                    >
                       Назад
                     </Button>
                     <Button
@@ -163,13 +171,13 @@ export default function Checkout({
                     >
                       {buttonTexts[activeStep]}
                     </Button>
-                  </div>
+                  </Box>
                 </div>
               )}
             </div>
           </form>
         )}
       />
-    </Container>
+    </>
   );
 }

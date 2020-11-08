@@ -3,14 +3,17 @@ import { Container } from "@material-ui/core";
 import Checkout from "../../components/Checkout/CheckoutForm";
 import { parseCartData, requestCartProducts } from "../../components/Cart/Cart";
 import { Product } from "@mamat14/shop-server/shop_model";
+import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
 
 export type CartProduct = Product & { count: number };
 
 export default function CheckoutPage(props: { cartProducts: CartProduct[] }) {
   return (
-    <Container maxWidth={"md"}>
-      <Checkout {...props} />
-    </Container>
+    <LayoutWithHeader>
+      <Container maxWidth={"md"}>
+        <Checkout {...props} />
+      </Container>
+    </LayoutWithHeader>
   );
 }
 

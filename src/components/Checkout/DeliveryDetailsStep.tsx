@@ -61,62 +61,60 @@ export default function DeliveryDetailsForm({ order }: { order: OrderForm }) {
   useEffect(() => {}, [order]);
 
   return (
-    <Container>
-      <Box maxWidth={"md"} className={"flex flex-col gap-4"}>
-        <Typography variant={"h6"}>Введите информацию о заказе</Typography>
-        <TextField
-          name={pathName({} as Order, "deliveryDetails", "fullName")}
-          required
-          fullWidth
-          id="full-name-input"
-          label="Полное имя"
-          variant="filled"
-          type="text"
-        />
-        <Field
-          id={"phone-input"}
-          name={pathName({} as Order, "deliveryDetails", "phone")}
-          placeholder={"Номер телефона"}
-          component={PhoneNumber}
-        />
-        <Radios
-          label="Служба доставки"
-          name={pathName({} as Order, "deliveryDetails", "provider")}
+    <Box maxWidth={"md"} className={"flex flex-col gap-4"}>
+      <Typography variant={"h6"}>Введите информацию о заказе</Typography>
+      <TextField
+        name={pathName({} as Order, "deliveryDetails", "fullName")}
+        required
+        fullWidth
+        id="full-name-input"
+        label="Полное имя"
+        variant="filled"
+        type="text"
+      />
+      <Field
+        id={"phone-input"}
+        name={pathName({} as Order, "deliveryDetails", "phone")}
+        placeholder={"Номер телефона"}
+        component={PhoneNumber}
+      />
+      <Radios
+        label="Служба доставки"
+        name={pathName({} as Order, "deliveryDetails", "provider")}
+        required={true}
+        data={[
+          {
+            label: (
+              <SvgIcon className={classes.largeIcon} viewBox={"0 0 210 75"}>
+                <NovayaPochtaIcon />
+              </SvgIcon>
+            ),
+            value: DeliveryProvider.NOVAYA_POCHTA,
+          },
+        ]}
+      />
+      <Select
+        required
+        name={pathName({} as Order, "deliveryDetails", "option")}
+        fullWidth
+        labelId="select-devilery-option-label"
+        id="select-devilery-option"
+        label="Способ доставки"
+        variant="filled"
+      >
+        {deliveryOptions.map((option) => (
+          <MenuItem key={option} value={option}>
+            {getDeliveryOptionName(option)}
+          </MenuItem>
+        ))}
+      </Select>
+      <Collapse in={!!order?.deliveryDetails?.option}>
+        <Address
           required={true}
-          data={[
-            {
-              label: (
-                <SvgIcon className={classes.largeIcon} viewBox={"0 0 210 75"}>
-                  <NovayaPochtaIcon />
-                </SvgIcon>
-              ),
-              value: DeliveryProvider.NOVAYA_POCHTA,
-            },
-          ]}
+          label={getAddressLabel(order?.deliveryDetails?.option)}
+          name={pathName({} as Order, "deliveryDetails", "address")}
         />
-        <Select
-          required
-          name={pathName({} as Order, "deliveryDetails", "option")}
-          fullWidth
-          labelId="select-devilery-option-label"
-          id="select-devilery-option"
-          label="Способ доставки"
-          variant="filled"
-        >
-          {deliveryOptions.map((option) => (
-            <MenuItem key={option} value={option}>
-              {getDeliveryOptionName(option)}
-            </MenuItem>
-          ))}
-        </Select>
-        <Collapse in={!!order?.deliveryDetails?.option}>
-          <Address
-            required={true}
-            label={getAddressLabel(order?.deliveryDetails?.option)}
-            name={pathName({} as Order, "deliveryDetails", "address")}
-          />
-        </Collapse>
-      </Box>
-    </Container>
+      </Collapse>
+    </Box>
   );
 }

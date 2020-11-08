@@ -9,8 +9,8 @@ import { store } from "../../../store";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import theme from "../../../theme";
 import { makeStyles, withStyles } from "@material-ui/styles";
-import { CustomAppBar } from "./Header";
 import { TransitionProps } from "@material-ui/core/transitions";
+import { CustomAppBar } from "./CustomAppBar";
 
 const StyledBadge = withStyles({
   badge: {

@@ -10,6 +10,9 @@ import { Box } from "@material-ui/core";
 import theme from "../../../theme";
 import HeaderMenu from "./HeaderMenu";
 import HeaderCart from "./HeaderCart";
+import HeaderLogo from "./HeaderLogo";
+import HeaderActions from "./HeaderActions";
+import { CustomAppBar } from "./CustomAppBar";
 
 const useStyles = makeStyles({
   title: {
@@ -40,14 +43,6 @@ const useStyles = makeStyles({
   },
 });
 
-export const CustomAppBar = ({ children }) => {
-  return (
-    <AppBar elevation={0} position="sticky" color={"inherit"}>
-      {children}
-    </AppBar>
-  );
-};
-
 export default function Header() {
   const classes = useStyles();
   return (
@@ -55,25 +50,9 @@ export default function Header() {
       <Toolbar className={classes.toolbar}>
         <HeaderMenu />
         <Box className={`${classes.title} cursor-default uppercase`}>
-          <Typography variant="h5" noWrap>
-            Погладить можно?
-          </Typography>
+          <HeaderLogo />
         </Box>
-        <ButtonGroup
-          className={`${classes.mainButtonGroup}`}
-          color="primary"
-          aria-label="page tabs"
-        >
-          <Link href={"/"}>
-            <Button>Домой</Button>
-          </Link>
-          <Link href={"/shop"}>
-            <Button>Магазин</Button>
-          </Link>
-          <Link href={"/about"}>
-            <Button>О нас</Button>
-          </Link>
-        </ButtonGroup>
+        <HeaderActions className={`${classes.mainButtonGroup}`} />
         <HeaderCart />
       </Toolbar>
     </CustomAppBar>
