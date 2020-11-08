@@ -1,12 +1,13 @@
 import React from "react";
-import { TextField } from "mui-rff";
-import { Autocomplete } from "mui-rff";
 import LocationOnIcon from "@material-ui/icons/LocationOn";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import parse from "autosuggest-highlight/parse";
 import throttle from "lodash/throttle";
+import { TextField } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
+import {showErrorOnChange} from "mui-rff";
 
 function loadScript(src: string, position: HTMLElement | null, id: string) {
   if (!position) {
@@ -43,24 +44,36 @@ interface PlaceType {
   };
 }
 
-export default function Address(props: any & { name: string }) {
+export default function Address(props: any) {
   const classes = useStyles();
-  const [value, setValue] = React.useState<PlaceType | null>(null);
-  const [inputValue, setInputValue] = React.useState("");
+
+  const {
+    input: { name, value, type, onChange, ...restInput },
+    meta,
+    required,
+    helperText,
+    showError = showErrorOnChange,
+    ...rest
+  } = props;
+
+  const { error, submitError } = meta;
+  const isError = showError({ meta });
+
+  const [autoCompleteValue, setAutoCompleteValue] = React.useState<PlaceType>(null);
   const [options, setOptions] = React.useState<PlaceType[]>([]);
   const loaded = React.useRef(false);
 
-  if (typeof window !== "undefined" && !loaded.current) {
-    if (!document.querySelector("#google-maps")) {
-      loadScript(
-        "https://maps.googleapis.com/maps/api/js?key=AIzaSyBwRp1e12ec1vOTtGiA4fcCt2sCUS78Uc&libraries=places",
-        document.querySelector("head"),
-        "google-maps"
-      );
-    }
-
-    loaded.current = true;
-  }
+  // if (typeof window !== "undefined" && !loaded.current) {
+  //   if (!document.querySelector("#google-maps")) {
+  //     loadScript(
+  //       "https://maps.googleapis.com/maps/api/js?key=AIzaSyBwRp1e12ec1vOTtGiA4fcCt2sCUS78Uc&libraries=places",
+  //       document.querySelector("head"),
+  //       "google-maps"
+  //     );
+  //   }
+  //
+  //   loaded.current = true;
+  // }
 
   const fetch = React.useMemo(
     () =>
@@ -89,12 +102,12 @@ export default function Address(props: any & { name: string }) {
       return undefined;
     }
 
-    if (inputValue === "") {
+    if (value === "") {
       setOptions(value ? [value] : []);
       return undefined;
     }
 
-    fetch({ input: inputValue }, (results?: PlaceType[]) => {
+    fetch({ input: value }, (results?: PlaceType[]) => {
       if (active) {
         let newOptions = [] as PlaceType[];
 
@@ -113,7 +126,7 @@ export default function Address(props: any & { name: string }) {
     return () => {
       active = false;
     };
-  }, [value, inputValue, fetch]);
+  }, [value, autoCompleteValue, fetch]);
 
   return (
     <Autocomplete
@@ -130,15 +143,17 @@ export default function Address(props: any & { name: string }) {
       value={value}
       onChange={(event: any, newValue: PlaceType | null) => {
         setOptions(newValue ? [newValue, ...options] : options);
-        setValue(newValue);
+        setAutoCompleteValue(newValue)
       }}
       onInputChange={(event, newInputValue) => {
-        setInputValue(newInputValue);
+        onChange(newInputValue);
       }}
       renderInput={(params) => (
         <TextField
-          name={props.name}
+          value={value}
           label={props.label}
+          error={isError}
+          helperText={isError ? error || submitError : helperText}
           required={props.required}
           variant="filled"
           fullWidth

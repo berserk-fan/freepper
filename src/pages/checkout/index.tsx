@@ -1,19 +1,24 @@
 import React from "react";
 import { Container } from "@material-ui/core";
-import Checkout from "../../components/Checkout/CheckoutForm";
 import { parseCartData, requestCartProducts } from "../../components/Cart/Cart";
 import { Product } from "@mamat14/shop-server/shop_model";
-import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
+import CheckoutHeader from "../../components/Layout/Header/CheckoutHeader";
+import CheckoutForm from "../../components/Checkout/CheckoutForm";
 
 export type CartProduct = Product & { count: number };
 
-export default function CheckoutPage(props: { cartProducts: CartProduct[] }) {
+export default function CheckoutPage({
+  cartProducts,
+}: {
+  cartProducts: CartProduct[];
+}) {
   return (
-    <LayoutWithHeader>
-      <Container maxWidth={"md"}>
-        <Checkout {...props} />
+    <>
+      <CheckoutHeader />
+      <Container maxWidth={"sm"}>
+        <CheckoutForm cartProducts={cartProducts} />
       </Container>
-    </LayoutWithHeader>
+    </>
   );
 }
 

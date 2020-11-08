@@ -109,10 +109,15 @@ export default function DeliveryDetailsForm({ order }: { order: OrderForm }) {
         ))}
       </Select>
       <Collapse in={!!order?.deliveryDetails?.option}>
-        <Address
-          required={true}
-          label={getAddressLabel(order?.deliveryDetails?.option)}
+        <Field
           name={pathName({} as Order, "deliveryDetails", "address")}
+          render={(props) => (
+            <Address
+              required
+              label={getAddressLabel(order?.deliveryDetails?.option)}
+              {...props}
+            />
+          )}
         />
       </Collapse>
     </Box>

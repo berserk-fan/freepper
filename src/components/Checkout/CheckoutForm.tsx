@@ -8,7 +8,7 @@ import { Box, Container, Paper, useMediaQuery } from "@material-ui/core";
 import PaymentStep from "./Payment";
 import { Form } from "react-final-form";
 import { mixed, object, number, ObjectSchema, string } from "yup";
-import { makeValidate } from "mui-rff";
+import { makeValidate, makeValidateSync } from "mui-rff";
 import {
   DeliveryDetails,
   DeliveryOption,
@@ -43,7 +43,7 @@ function getButtonTexts() {
   ];
 }
 
-export type OrderForm = Omit<Order, "deliveryDetails"> & {
+export type OrderForm = Omit<Order, "deliveryDetails" | "cart" | "total"> & {
   deliveryDetails?: Partial<DeliveryDetails>;
 };
 
@@ -80,21 +80,16 @@ const deliveryDetailsSchema: ObjectSchema<DeliveryDetails> = object({
     .required("Пожалуйста, введите номер телефона")
     .min(6, "Слишком короткий номер телефона")
     .max(500, "Слишком длинный номер телефона"),
-  email: string()
-    .required("Вам нужно ввести имэйл")
-    .email("Неправильный электронный адресс")
-    .max(500, "Слишком длинный имэйл"),
+  email: string(),
   option: mixed().oneOf([DeliveryOption.COURIER, DeliveryOption.TO_WAREHOUSE]),
 });
 
 const schema: ObjectSchema<OrderForm> = object({
   deliveryDetails: deliveryDetailsSchema,
   paymentOption: mixed().oneOf([PaymentOption.COD]).default(PaymentOption.COD),
-  cart: object<CartProduct[]>().required(),
-  total: number().required(),
 });
 
-const validate = makeValidate(schema);
+const validate = makeValidateSync(schema);
 
 export default function Checkout({
   cartProducts,
@@ -106,8 +101,6 @@ export default function Checkout({
   const initialValues = {
     deliveryDetails: { provider: DeliveryProvider.NOVAYA_POCHTA },
     paymentOption: PaymentOption.COD,
-    cart: cartProducts,
-    total: cartProducts.reduce((a, b) => a + b.price.price, 0),
   };
   const [activeStep, setActiveStep] = React.useState(0);
   const [formState, setFormState] = useState<OrderForm>(initialValues);
@@ -132,7 +125,6 @@ export default function Checkout({
   function onSubmit() {}
 
   const buttonTexts = getButtonTexts();
-  const controlsTop = useMediaQuery(theme.breakpoints.up("md"));
   return (
     <>
       <FormStepper {...{ activeStep, steps }} />
@@ -168,6 +160,10 @@ export default function Checkout({
                       variant="contained"
                       color="primary"
                       onClick={handleNext(values)}
+                      disabled={(() => {
+                        console.log(validate(values));
+                        return !schema.isValidSync(values);
+                      })()}
                     >
                       {buttonTexts[activeStep]}
                     </Button>
