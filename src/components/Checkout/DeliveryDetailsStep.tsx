@@ -58,7 +58,6 @@ const useStyles = makeStyles({
 export default function DeliveryDetailsForm({ order }: { order: OrderForm }) {
   const classes = useStyles();
   const deliveryOptions = [DeliveryOption.TO_WAREHOUSE, DeliveryOption.COURIER];
-  useEffect(() => {}, [order]);
 
   return (
     <Box maxWidth={"md"} className={"flex flex-col gap-4"}>
