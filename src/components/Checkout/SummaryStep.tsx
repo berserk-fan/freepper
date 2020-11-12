@@ -1,4 +1,4 @@
-import React from "react";
+import React, {memo} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -17,6 +17,9 @@ import {
   getDeliveryProviderName,
 } from "./DeliveryDetailsStep";
 import Image from "next/image";
+import {StoreState} from "../../store";
+import {CartState} from "../Cart/Cart";
+import {connect} from "react-redux";
 
 function subtotal(cartProducts: CartProduct[]) {
   return cartProducts.reduce(
@@ -101,16 +104,17 @@ function FormSummaryTable({ orderForm }: { orderForm: OrderForm }) {
   );
 }
 
-export default function Summary({
-  cartProducts,
+
+function Summary({
+  cartState,
   orderForm,
 }: {
-  cartProducts: CartProduct[];
+  cartState: CartState;
   orderForm: OrderForm;
 }) {
-  console.log(orderForm);
+  const cartProducts = Object.values(cartState.selectedProducts)
   const invoiceShipping = 0;
-  const invoiceSubtotal = subtotal(cartProducts);
+  const invoiceSubtotal = cartState.total;
   const invoiceTotal = invoiceShipping + invoiceSubtotal;
   const columns: Column<CartProduct>[] = [
     {
@@ -204,3 +208,10 @@ export default function Summary({
     </>
   );
 }
+function mapStateToProps(state: StoreState) {
+  return {
+    cartState: state.cartState
+  }
+}
+
+export default connect(mapStateToProps, null)(memo(Summary))

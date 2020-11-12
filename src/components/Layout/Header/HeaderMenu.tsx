@@ -68,7 +68,7 @@ export default function HeaderMenu() {
             ["/about", "О наc"],
           ].map(([path, name]) => {
             return (
-              <Link href={path}>
+              <Link key={name + path} href={path}>
                 <Button className={classes.menuButton}>{name}</Button>
               </Link>
             );

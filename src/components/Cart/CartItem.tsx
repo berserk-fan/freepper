@@ -24,6 +24,7 @@ import { CartState } from "./Cart";
 import { connect } from "react-redux";
 import theme from "../../theme";
 import { CartProduct } from "../../pages/checkout";
+import {deleteProductAction, setProductCountAction, StoreState} from "../../store";
 
 const useStyles = makeStyles({
   root: {
@@ -52,9 +53,11 @@ const useStyles = makeStyles({
 const cartItem = function CartItem({
   product,
   setProductCount,
+    deleteProduct
 }: {
   product: CartProduct;
-  setProductCount: (x: number, id: string) => void;
+  setProductCount: (id: string, x: number) => void;
+  deleteProduct: (id) => void
 }) {
   const { displayName, price, image, id, count } = product;
   const classes = useStyles();
@@ -65,7 +68,7 @@ const cartItem = function CartItem({
         <IconButton
           size={"small"}
           disabled={count <= 1}
-          onClick={() => setProductCount(count - 1, id)}
+          onClick={() => setProductCount(id, count - 1)}
         >
           <RemoveCircleOutlineIcon fontSize={"large"} />
         </IconButton>
@@ -76,7 +79,7 @@ const cartItem = function CartItem({
         </Box>
         <IconButton
           size={"small"}
-          onClick={() => setProductCount(count + 1, id)}
+          onClick={() => setProductCount(id, count + 1)}
         >
           <AddCircleOutlineIcon fontSize={"large"} />
         </IconButton>
@@ -118,7 +121,7 @@ const cartItem = function CartItem({
           <Box marginLeft={1}>{getAdditionalInfo(product)}</Box>
           <Box marginLeft={1} className={"flex place-items-center"}>
             {QuantityControls()}
-            {ActionsPopover(id, setProductCount)}
+            {ActionsPopover(id, deleteProduct)}
           </Box>
         </Box>
       </div>
@@ -128,12 +131,8 @@ const cartItem = function CartItem({
 
 function mapDispatchToProps(dispatch) {
   return {
-    setProductCount: (count: number, productId: string) =>
-      dispatch({
-        type: "SET_PRODUCT_COUNT",
-        count: count,
-        productId: productId,
-      }),
+    setProductCount: (a1, a2) => dispatch(setProductCountAction(a1,a2)),
+    deleteProduct: (a) => dispatch(deleteProductAction(a))
   };
 }
 
@@ -160,7 +159,7 @@ function getAdditionalInfo({ details }: Product) {
 
 export function ActionsPopover(
   productId: string,
-  setProductCount: (x: number, id: string) => void
+  deleteProduct: (id: string) => void
 ) {
   return (
     <PopupStateComponent variant="popover" popupId="cart-action-popover">
@@ -187,7 +186,7 @@ export function ActionsPopover(
             <div className={"flex flex-col"}>
               <Button
                 onClick={() => {
-                  setProductCount(0, productId);
+                  deleteProduct(productId);
                   popupState.close();
                 }}
                 fullWidth

@@ -49,14 +49,13 @@ export type OrderForm = Omit<Order, "deliveryDetails" | "cart" | "total"> & {
 
 function getStepContent(
   step: number,
-  cartProducts: CartProduct[],
   orderData: OrderForm
 ) {
   switch (step) {
     case 0:
       return <DeliveryDetailsStep order={orderData} />;
     case 1:
-      return <SummaryStep cartProducts={cartProducts} orderForm={orderData} />;
+      return <SummaryStep orderForm={orderData} />;
     case 2:
       return <PaymentStep />;
     default:
@@ -91,13 +90,9 @@ const schema: ObjectSchema<OrderForm> = object({
 
 const validate = makeValidateSync(schema);
 
-export default function Checkout({
-  cartProducts,
-}: {
-  cartProducts: CartProduct[];
-}) {
+export default function Checkout() {
   const classes = useStyles();
-  const steps = ["Доставка", "Проверка"];
+  const steps = ["Доставка", "Проверка", "Оплата"];
   const initialValues = {
     deliveryDetails: { provider: DeliveryProvider.NOVAYA_POCHTA },
     paymentOption: PaymentOption.COD,
@@ -148,7 +143,7 @@ export default function Checkout({
                 </div>
               ) : (
                 <div>
-                  {getStepContent(activeStep, cartProducts, values)}
+                  {getStepContent(activeStep, values)}
                   <Box className={"flex justify-between"}>
                     <Button
                       disabled={activeStep === 0}

@@ -3,14 +3,15 @@ import ShoppingCartTwoToneIcon from "@material-ui/icons/ShoppingCartTwoTone";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
-import CartNoProps from "../../Cart/CartNoProps";
-import React, { useState } from "react";
-import { store } from "../../../store";
+import React, {memo, useState} from "react";
+import {StoreState} from "../../../store";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import theme from "../../../theme";
 import { makeStyles, withStyles } from "@material-ui/styles";
 import { TransitionProps } from "@material-ui/core/transitions";
 import { CustomAppBar } from "./CustomAppBar";
+import Cart, {CartState} from "../../Cart/Cart";
+import {connect} from "react-redux";
 
 const StyledBadge = withStyles({
   badge: {
@@ -40,20 +41,9 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function HeaderCart() {
+function HeaderCart({cartSize}: {cartSize: number}) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-
-  function calcCartSize() {
-    return store
-      .getState()
-      .cartState.selectedProducts.reduce((a, b) => a + b.count, 0);
-  }
-
-  const [cartSize, setCartSize] = useState<number>(calcCartSize());
-  store.subscribe(() => {
-    setCartSize(calcCartSize());
-  });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -99,9 +89,17 @@ export default function HeaderCart() {
           </Toolbar>
         </CustomAppBar>
         <Box paddingX={2} paddingBottom={2}>
-          <CartNoProps />
+          <Cart />
         </Box>
       </Dialog>
     </>
   );
 }
+
+function mapStateToProps(state: StoreState) {
+  return {
+    cartSize: state.cartState.size
+  }
+}
+
+export default connect(mapStateToProps, null)(memo(HeaderCart))
