@@ -8,6 +8,8 @@ import { store } from "../store";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "@material-ui/styles";
 import theme from "../theme";
+import { SnackbarProvider } from "notistack";
+import { CssBaseline } from "@material-ui/core";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -15,11 +17,14 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Погладить можно?</title>
       </Head>
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <Component {...pageProps} />
-        </Provider>
-      </ThemeProvider>
+      <SnackbarProvider maxSnack={3}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Provider store={store}>
+            <Component {...pageProps} />
+          </Provider>
+        </ThemeProvider>
+      </SnackbarProvider>
     </>
   );
 }
