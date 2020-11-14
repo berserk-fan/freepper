@@ -38,9 +38,9 @@ const useStyles = makeStyles({
   },
   menu: {
     [theme.breakpoints.up("md")]: {
-      display: "none"
-    }
-  }
+      display: "none",
+    },
+  },
 });
 
 export default function Header() {

@@ -1,5 +1,5 @@
 import { Container, Grid, Typography } from "@material-ui/core";
-import ItemView from "../../components/ItemView";
+import ItemView from "../../components/CartItem/ItemView";
 import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
 import ShopClient from "@mamat14/shop-server";
 import { category, shopProducts } from "../../../configs/Data";

@@ -1,7 +1,7 @@
 import { makeStyles } from "@material-ui/styles";
 import theme from "../../theme";
 import { StoreState } from "../../store";
-import React, {memo} from "react";
+import React, { memo } from "react";
 import { Box, Button, Typography } from "@material-ui/core";
 import CartItem from "./CartItem";
 import { connect } from "react-redux";
@@ -9,8 +9,8 @@ import { CartProduct } from "../../pages/checkout";
 import Link from "next/link";
 
 export type CartState = {
-  size: number,
-  total: number,
+  size: number;
+  total: number;
   selectedProducts: Record<string, CartProduct>;
 };
 
@@ -61,10 +61,13 @@ const useStyles = makeStyles({
   },
 });
 
-function Cart({cartState: {selectedProducts}}: {cartState: CartState}) {
+function Cart({ cartState: { selectedProducts } }: { cartState: CartState }) {
   const classes = useStyles();
   const productsList = Object.values(selectedProducts);
-  const totalPrice = productsList.reduce((a,b) => a + b.count * b.price.price, 0)
+  const totalPrice = productsList.reduce(
+    (a, b) => a + b.count * b.price.price,
+    0
+  );
   return (
     <div>
       <Box marginTop={2}>
@@ -92,9 +95,7 @@ function Cart({cartState: {selectedProducts}}: {cartState: CartState}) {
             variant="contained"
             size="large"
           >
-            <Link href={"/checkout"}>
-              Оформить заказ
-            </Link>
+            <Link href={"/checkout"}>Оформить заказ</Link>
           </Button>
         </div>
       </Box>
@@ -104,8 +105,8 @@ function Cart({cartState: {selectedProducts}}: {cartState: CartState}) {
 
 function mapStateToProps(store: StoreState) {
   return {
-    cartState: store.cartState
-  }
+    cartState: store.cartState,
+  };
 }
 
-export default connect(mapStateToProps,null)(memo(Cart))
+export default connect(mapStateToProps, null)(memo(Cart));
