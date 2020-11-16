@@ -1,4 +1,3 @@
-import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { useRouter } from "next/router";
 import React from "react";
 import {
@@ -13,7 +12,6 @@ import {
 } from "@material-ui/core";
 import { getModelIndex, productIdsToModel } from "../../../configs/Products";
 import { Color, Model } from "../../model/Model";
-import { Carousel, Thumbs } from "react-responsive-carousel";
 import Image from "material-ui-image";
 import ColorPicker from "../../components/ColorPicker";
 import ProductPrice from "../../components/ProductPrice";
@@ -56,32 +54,6 @@ export default function ProductPage() {
   const galleryHeight = 300;
   const gallery = (
     <Paper>
-      <Carousel
-        swipeable
-        showStatus={false}
-        onChange={setSelectedItem}
-        selectedItem={selectedItem}
-        showThumbs={false}
-      >
-        {images.map((image) => (
-          <Box style={{ height: galleryHeight }}>
-            <img
-              className={"object-scale-down"}
-              style={{ height: galleryHeight }}
-              src={image}
-            />
-          </Box>
-        ))}
-      </Carousel>
-      <Thumbs
-        selectedItem={selectedItem}
-        onSelectItem={setSelectedItem}
-        thumbWidth={60}
-      >
-        {images.map((image) => (
-          <Image disableSpinner src={image} cover={true} />
-        ))}
-      </Thumbs>
     </Paper>
   );
 

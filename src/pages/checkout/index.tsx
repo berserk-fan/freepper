@@ -13,7 +13,7 @@ export default function CheckoutPage() {
       <CheckoutHeader />
       <ValueProp />
       <Container maxWidth={"sm"}>
-        <CheckoutForm/>
+        <CheckoutForm />
       </Container>
     </>
   );

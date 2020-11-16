@@ -47,10 +47,7 @@ export type OrderForm = Omit<Order, "deliveryDetails" | "cart" | "total"> & {
   deliveryDetails?: Partial<DeliveryDetails>;
 };
 
-function getStepContent(
-  step: number,
-  orderData: OrderForm
-) {
+function getStepContent(step: number, orderData: OrderForm) {
   switch (step) {
     case 0:
       return <DeliveryDetailsStep order={orderData} />;

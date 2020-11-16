@@ -7,7 +7,7 @@ export default function CartPage() {
   return (
     <LayoutWithHeader>
       <Container maxWidth={"sm"}>
-        <Cart/>
+        <Cart />
       </Container>
     </LayoutWithHeader>
   );

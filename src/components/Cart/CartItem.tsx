@@ -24,7 +24,11 @@ import { CartState } from "./Cart";
 import { connect } from "react-redux";
 import theme from "../../theme";
 import { CartProduct } from "../../pages/checkout";
-import {deleteProductAction, setProductCountAction, StoreState} from "../../store";
+import {
+  deleteProductAction,
+  setProductCountAction,
+  StoreState,
+} from "../../store";
 
 const useStyles = makeStyles({
   root: {
@@ -53,11 +57,11 @@ const useStyles = makeStyles({
 const cartItem = function CartItem({
   product,
   setProductCount,
-    deleteProduct
+  deleteProduct,
 }: {
   product: CartProduct;
   setProductCount: (id: string, x: number) => void;
-  deleteProduct: (id) => void
+  deleteProduct: (id) => void;
 }) {
   const { displayName, price, image, id, count } = product;
   const classes = useStyles();
@@ -131,8 +135,8 @@ const cartItem = function CartItem({
 
 function mapDispatchToProps(dispatch) {
   return {
-    setProductCount: (a1, a2) => dispatch(setProductCountAction(a1,a2)),
-    deleteProduct: (a) => dispatch(deleteProductAction(a))
+    setProductCount: (a1, a2) => dispatch(setProductCountAction(a1, a2)),
+    deleteProduct: (a) => dispatch(deleteProductAction(a)),
   };
 }
 
