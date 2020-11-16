@@ -18,9 +18,8 @@ export interface DeliveryDetails {
   provider: DeliveryProvider;
   option: DeliveryOption;
   fullName: string;
-  phone?: string;
-  email?: string;
   address: string;
+  phone: string;
 }
 
 export interface Order {

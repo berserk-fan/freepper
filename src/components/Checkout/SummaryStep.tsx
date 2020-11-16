@@ -38,26 +38,26 @@ const strcmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 const formSummaryColumns: Column<OrderForm>[] = [
   {
     name: "Имя",
-    extractor: (t: OrderForm) => t?.deliveryDetails?.fullName || "Отсутствует",
+    extractor: (t: OrderForm) => t?.name || "Отсутствует",
   },
   {
     name: "Телефон",
-    extractor: (t: OrderForm) => t?.deliveryDetails?.phone || "Отсутствует",
+    extractor: (t: OrderForm) => t?.phone || "Отсутствует",
   },
   {
     name: "Способ доставки",
     extractor: (t: OrderForm) =>
-      getDeliveryOptionName(t?.deliveryDetails?.option) || "Отсутствует",
+      getDeliveryOptionName(t?.deliveryOption) || "Отсутствует",
   },
   {
     name: "Служба доставки",
     extractor: (t: OrderForm) =>
-      getDeliveryProviderName(t?.deliveryDetails?.provider) || "Отсутствует",
+      getDeliveryProviderName(t?.deliveryProvider) || "Отсутствует",
   },
   {
     name: "Адрес",
     extractor: (t: OrderForm) => {
-      const address = t?.deliveryDetails?.address;
+      const address = t?.address;
       if (!address) {
         return "Отсутствует";
       }
@@ -77,7 +77,7 @@ function FormSummaryTable({ orderForm }: { orderForm: OrderForm }) {
         <TableHead>
           <TableRow>
             <TableCell colSpan={4}>
-              <Typography variant={"h6"}>Данные для доставки</Typography>
+              <Typography variant={"h4"}>Доставка</Typography>
             </TableCell>
           </TableRow>
         </TableHead>
@@ -134,74 +134,82 @@ function Summary({
   const fullWidth = useMediaQuery(theme.breakpoints.up("sm"));
   return (
     <>
-      <Box marginTop={1}>
-        <Paper className={"flex flex-col"}>
-          <Box
-            paddingX={2}
-            paddingY={1}
-            className={"flex justify-between items-center"}
-          >
-            <Typography variant={"h3"}>Заказ</Typography>
-            <Typography variant={"h5"}>
-              <Typography variant={"body1"} display="inline">
-                на сумму:{" "}
+      <Typography align="center" variant={"h3"}>
+        Проверьте заказ
+      </Typography>
+      <Paper>
+        <Box marginTop={1}>
+          <Box className={"flex flex-col"}>
+            <Box
+              paddingX={2}
+              paddingY={1}
+              className={"flex justify-between items-center"}
+            >
+              <Typography variant={"h4"}>Корзина</Typography>
+              <Typography variant={"h5"}>
+                <Typography variant={"body1"} display="inline">
+                  на сумму:{" "}
+                </Typography>
+                {invoiceTotal} ₴
               </Typography>
-              {invoiceTotal} ₴
-            </Typography>
-          </Box>
-          <Divider />
-          {cartProducts.map((product) => (
-            <>
-              <Box
-                margin={1}
-                className={
-                  "flex gap-4 " +
-                  (fullWidth ? "flex-row justify-between" : "flex-col")
-                }
-              >
+            </Box>
+            <Divider />
+            {cartProducts.map((product) => (
+              <>
                 <Box
-                  width={fullWidth ? "60%" : "auto"}
-                  className={"flex justify-start items-center"}
+                  margin={1}
+                  className={
+                    "flex gap-4 " +
+                    (fullWidth ? "flex-row justify-between" : "flex-col")
+                  }
                 >
-                  <Image
-                    className={"rounded"}
-                    width={72}
-                    height={72}
-                    src={product.image.src}
-                    alt={product.image.alt}
-                  />
-                  <Box paddingLeft={1}>
-                    <Typography variant={"h6"}>
-                      {product.displayName}
-                    </Typography>
+                  <Box
+                    width={fullWidth ? "60%" : "auto"}
+                    className={"flex justify-start items-center"}
+                  >
+                    <Image
+                      className={"rounded"}
+                      width={72}
+                      height={72}
+                      src={product.image.src}
+                      alt={product.image.alt}
+                    />
+                    <Box paddingLeft={1}>
+                      <Typography variant={"h6"}>
+                        {product.displayName}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box
+                    width={fullWidth ? "60%" : "auto"}
+                    className={"flex flex-row no-wrap gap-12 justify-center"}
+                  >
+                    {columns.map((col) => (
+                      <div className={"flex flex-col justify-center"}>
+                        <div>
+                          <Typography
+                            color={"textSecondary"}
+                            variant={"caption"}
+                          >
+                            {col.name}
+                          </Typography>
+                        </div>
+                        <div>
+                          <Typography align={"center"}>
+                            {col.extractor(product)}
+                          </Typography>
+                        </div>
+                      </div>
+                    ))}
                   </Box>
                 </Box>
-                <Box
-                  width={fullWidth ? "60%" : "auto"}
-                  className={"flex flex-row no-wrap gap-12 justify-center"}
-                >
-                  {columns.map((col) => (
-                    <div className={"flex flex-col justify-center"}>
-                      <div>
-                        <Typography color={"textSecondary"} variant={"caption"}>
-                          {col.name}
-                        </Typography>
-                      </div>
-                      <div>
-                        <Typography align={"center"}>
-                          {col.extractor(product)}
-                        </Typography>
-                      </div>
-                    </div>
-                  ))}
-                </Box>
-              </Box>
-              <Divider />
-            </>
-          ))}
-        </Paper>
-      </Box>
-      <Box>
+                <Divider />
+              </>
+            ))}
+          </Box>
+        </Box>
+      </Paper>
+      <Box marginTop={1}>
         <FormSummaryTable orderForm={orderForm} />
       </Box>
     </>
