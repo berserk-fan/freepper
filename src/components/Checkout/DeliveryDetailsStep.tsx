@@ -57,7 +57,7 @@ const useStyles = makeStyles({
 
 export default function DeliveryDetailsForm({ orderForm }: { orderForm: OrderForm}) {
   const classes = useStyles();
-  const deliveryOptions = [DeliveryOption.TO_WAREHOUSE, DeliveryOption.COURIER];
+  const deliveryOptions = [DeliveryOption.TO_WAREHOUSE];
 
   return (
     <Box maxWidth={"md"} className={"flex flex-col gap-4"}>
@@ -123,6 +123,5 @@ export default function DeliveryDetailsForm({ orderForm }: { orderForm: OrderFor
         />
       </Collapse>
     </Box>
-
   );
 }

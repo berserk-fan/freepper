@@ -15,24 +15,14 @@ function paymentOptionToLabel(option: PaymentOption) {
 }
 
 export default function PaymentStep() {
-  const paymentOptions = [PaymentOption.COD];
   return (
-    <Box maxWidth={"md"} className={"flex flex-col gap-4"} paddingBottom={1}>
+    <Box maxWidth={"md"} className={"flex flex-col"} paddingBottom={1}>
       <Typography align="center" variant={"h3"}>
         Оплата
-        <Typography variant={"subtitle1"}>
-          Сейчас только наложенный платеж😭
-        </Typography>
       </Typography>
-      <Radios
-        required
-        label={"Способ оплаты"}
-        name={pathName1({} as OrderForm, "paymentOption")}
-        data={paymentOptions.map((o) => ({
-          label: paymentOptionToLabel(o),
-          value: o,
-        }))}
-      />
+      <Typography align="center" variant={"subtitle1"}>
+        Сейчас только оплата при получении
+      </Typography>
     </Box>
   );
 }

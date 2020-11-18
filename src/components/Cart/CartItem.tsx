@@ -27,7 +27,6 @@ import { CartProduct } from "../../pages/checkout";
 import {
   deleteProductAction,
   setProductCountAction,
-  StoreState,
 } from "../../store";
 
 const useStyles = makeStyles({

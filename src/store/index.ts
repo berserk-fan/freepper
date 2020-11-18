@@ -77,8 +77,7 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
   switch (action.type) {
     case "SET_PRODUCT_COUNT": {
       return {
-        total:
-          total + selectedProducts[action.productId].price.price * action.count,
+        total: total + selectedProducts[action.productId].price.price * action.count,
         size: size - selectedProducts[action.productId].count + action.count,
         selectedProducts: {
           ...selectedProducts,
@@ -92,6 +91,9 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
       };
     }
     case "ADD_PRODUCT": {
+      if(selectedProducts[action.product.id]) {
+        return cartState
+      }
       return {
         total: total + action.product.price.price,
         size: size + 1,
@@ -102,6 +104,9 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
       };
     }
     case "DELETE_PRODUCT": {
+      if(!selectedProducts[action.productId]) {
+        return cartState
+      }
       return {
         total:
           total -

@@ -25,6 +25,6 @@ export interface DeliveryDetails {
 export interface Order {
   deliveryDetails: DeliveryDetails;
   paymentOption: PaymentOption;
-  cart: CartProduct[];
+  cart: Record<string, CartProduct>;
   total: number;
 }
