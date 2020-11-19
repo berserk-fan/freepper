@@ -132,7 +132,6 @@ export default function Address(props: any) {
 
   return (
     <Autocomplete
-      id="google-map-demo"
       freeSolo
       getOptionLabel={(option: PlaceType) =>
         typeof option === "string" ? option : option.description
@@ -159,6 +158,7 @@ export default function Address(props: any) {
           required={props.required}
           variant="filled"
           fullWidth
+          autoComplete={"street-address"}
           {...params}
         />
       )}

@@ -124,7 +124,7 @@ function ItemView({
             </CardContent>
           </Link>
         </CardActionArea>
-        <Divider/>
+        <Divider />
         <CardActions>
           <Box
             paddingLeft={1}

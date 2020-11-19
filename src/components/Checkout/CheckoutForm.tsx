@@ -1,24 +1,20 @@
-import React, { useState } from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import React, {useState} from "react";
+import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import SummaryStep from "./SummaryStep";
 import DeliveryDetailsStep from "./DeliveryDetailsStep";
-import { CartProduct } from "../../pages/checkout";
-import { Box, Container, Paper, useMediaQuery } from "@material-ui/core";
+import {Backdrop, Box, CircularProgress, Fade, LinearProgress, Typography} from "@material-ui/core";
 import PaymentStep from "./Payment";
-import { Form } from "react-final-form";
-import { mixed, object, number, ObjectSchema, string } from "yup";
-import { makeValidate, makeValidateSync } from "mui-rff";
-import {
-  DeliveryDetails,
-  DeliveryOption,
-  DeliveryProvider,
-  Order,
-  PaymentOption,
-} from "../../order-model";
+import {Form} from "react-final-form";
+import {mixed, object, ObjectSchema, string} from "yup";
+import {makeValidateSync} from "mui-rff";
+import {DeliveryOption, DeliveryProvider, Order, PaymentOption,} from "../../order-model";
 import FormStepper from "./FormStepper";
-import theme from "../../theme";
-import CheckoutHeader from "../Layout/Header/CheckoutHeader";
+import Link from "next/link";
+import {CartProduct} from "../../pages/checkout";
+import {StoreState} from "../../store";
+import exp from "constants";
+import {connect} from "react-redux";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,18 +35,23 @@ function getButtonTexts() {
   return [
     "Перейти к проверке заказа",
     "Перейти к оплате заказа",
-    "Оплатить заказ",
+    "Оплатить при получении 😌",
   ];
 }
 
-export type OrderForm = Omit<Order, "deliveryDetails" | "cart" | "total"> & {
-  deliveryDetails?: Partial<DeliveryDetails>;
-};
+export type OrderForm = Partial<{
+    address: string,
+    deliveryProvider: DeliveryProvider,
+    name: string,
+    deliveryOption: DeliveryOption,
+    phone: string
+    paymentOption: PaymentOption
+}>
 
 function getStepContent(step: number, orderData: OrderForm) {
   switch (step) {
-    case 0:
-      return <DeliveryDetailsStep order={orderData} />;
+      case 0:
+      return <DeliveryDetailsStep orderForm={orderData} />;
     case 1:
       return <SummaryStep orderForm={orderData} />;
     case 2:
@@ -60,112 +61,152 @@ function getStepContent(step: number, orderData: OrderForm) {
   }
 }
 
-const deliveryDetailsSchema: ObjectSchema<DeliveryDetails> = object({
-  address: string()
-    .required("Пожалуйста, введите адрес")
-    .max(500, "Слишком длинный адрес"),
-  provider: mixed()
-    .oneOf([DeliveryProvider.NOVAYA_POCHTA])
-    .required()
-    .default(DeliveryProvider.NOVAYA_POCHTA),
-  fullName: string()
-    .required("Пожалуйста, введите имя")
-    .min(5, "Cлишком короткое имя")
-    .max(500, "Слишком длинное имя"),
-  phone: string()
-    .required("Пожалуйста, введите номер телефона")
-    .min(6, "Слишком короткий номер телефона")
-    .max(500, "Слишком длинный номер телефона"),
-  email: string(),
-  option: mixed().oneOf([DeliveryOption.COURIER, DeliveryOption.TO_WAREHOUSE]),
-});
-
 const schema: ObjectSchema<OrderForm> = object({
-  deliveryDetails: deliveryDetailsSchema,
   paymentOption: mixed().oneOf([PaymentOption.COD]).default(PaymentOption.COD),
+    address: string()
+        .required("Введите адрес, пожалуйста")
+        .max(500, "Слишком длинный адрес"),
+    deliveryProvider: mixed()
+        .oneOf([DeliveryProvider.NOVAYA_POCHTA])
+        .required()
+        .default(DeliveryProvider.NOVAYA_POCHTA),
+    name: string()
+        .required("Введите имя, пожалуйста")
+        .min(5, "Cлишком короткое имя")
+        .max(500, "Слишком длинное имя"),
+    deliveryOption: mixed().oneOf([DeliveryOption.COURIER, DeliveryOption.TO_WAREHOUSE]),
+    phone: string()
+        .required("Введите номер телефона, пожалуйста")
+        .min(6, "Слишком короткий номер телефона")
+        .max(500, "Слишком длинный номер телефона"),
 });
 
 const validate = makeValidateSync(schema);
+const steps = ["Доставка", "Проверка", "Оплата"];
 
-export default function Checkout() {
+const Checkout = ({cart, total}: {cart: Record<string, CartProduct>, total: number}) => {
   const classes = useStyles();
-  const steps = ["Доставка", "Проверка", "Оплата"];
   const initialValues = {
-    deliveryDetails: { provider: DeliveryProvider.NOVAYA_POCHTA },
     paymentOption: PaymentOption.COD,
+    deliveryProvider: DeliveryProvider.NOVAYA_POCHTA
   };
   const [activeStep, setActiveStep] = React.useState(0);
   const [formState, setFormState] = useState<OrderForm>(initialValues);
-  const handleNext = (formState: OrderForm) => {
-    return () => {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      setFormState(formState);
-    };
-  };
+  const [handling, setHandling] = useState(false);
 
-  const handleBack = (formState: OrderForm) => {
+  const handleSubmit = (newFormState: OrderForm) => {
+      const isLastStep = activeStep === steps.length - 1
+      if (isLastStep) {
+          return onSubmit(newFormState)
+      } else {
+          setFormState(newFormState);
+          setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      }
+  }
+
+  const handleBack = (newFormState: OrderForm) => {
     return () => {
+      setFormState(newFormState);
       setActiveStep((prevActiveStep) => prevActiveStep - 1);
-      setFormState(formState);
     };
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
+  function onSubmit(orderForm: OrderForm) {
+      const order: Order = {
+          paymentOption: PaymentOption.COD,
+          cart: cart,
+          total: total,
+          deliveryDetails: {
+              provider: orderForm.deliveryProvider,
+              option: orderForm.deliveryOption,
+              address: orderForm.address,
+              phone: orderForm.phone,
+              fullName: orderForm.name
+          }
+      }
 
-  function onSubmit() {}
+      setHandling(true)
+      fetch("/api/orders", {
+          method: 'POST',
+          body: JSON.stringify(order)
+      }).then((resp) => {
+          setHandling(false)
+      })
+  }
 
   const buttonTexts = getButtonTexts();
   return (
     <>
       <FormStepper {...{ activeStep, steps }} />
-      <Form
-        {...{ onSubmit, validate }}
-        initialValues={formState}
-        render={({
-          handleSubmit,
-          values,
-        }: {
-          handleSubmit: any;
-          values: OrderForm;
-        }) => (
-          <form onSubmit={handleSubmit} noValidate>
-            <div>
-              {activeStep === steps.length ? (
-                <div>
-                  <Button onClick={handleReset} className={classes.button}>
-                    Reset
-                  </Button>
-                </div>
-              ) : (
-                <div>
-                  {getStepContent(activeStep, values)}
-                  <Box className={"flex justify-between"}>
-                    <Button
-                      disabled={activeStep === 0}
-                      onClick={handleBack(values)}
-                    >
-                      Назад
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleNext(values)}
-                      disabled={(() => {
-                        console.log(validate(values));
-                        return !schema.isValidSync(values);
-                      })()}
-                    >
-                      {buttonTexts[activeStep]}
-                    </Button>
-                  </Box>
-                </div>
-              )}
-            </div>
-          </form>
-        )}
-      />
+          <Box padding={1}>
+            <Form
+                {...{ onSubmit: handleSubmit, validate }}
+                initialValues={formState}
+                render={({handleSubmit,values}: { handleSubmit: any; values: OrderForm; }) => (
+                    <form noValidate>
+                      <div>
+                        {activeStep === steps.length ? (
+                            <div>
+                              <Button className={classes.button}>
+                                  <Link href={"/"}>
+                                      <Typography>
+                                          На главную
+                                      </Typography>
+                                  </Link>
+                              </Button>
+                            </div>
+                        ) : (
+                            <div>
+                              {getStepContent(activeStep, values)}
+                              <Box className={"flex justify-between"}>
+                                <Button
+                                    disabled={activeStep === 0}
+                                    onClick={handleBack(values)}
+                                >
+                                  Назад
+                                </Button>
+                                  <Box>
+                                      <Box height={"4px"} marginTop={"-4px"} marginX={"2px"}>
+                                          <Fade
+                                              in={handling}
+                                              style={{
+                                                  transitionDelay: handling ? '800ms' : '0ms',
+                                              }}
+                                              unmountOnExit
+                                          >
+                                              <LinearProgress
+                                                  style={{
+                                                      borderRadius: '2px'
+                                                  }}
+                                                  color="secondary"/>
+                                          </Fade>
+                                      </Box>
+                                      <Button
+                                          variant="contained"
+                                          color="primary"
+                                          onClick={handleSubmit}
+                                          type="submit"
+                                          disabled={!schema.isValidSync(values)}>
+                                          {buttonTexts[activeStep]}
+                                      </Button>
+                                  </Box>
+                              </Box>
+                            </div>
+                        )}
+                      </div>
+                    </form>
+                )}
+            />
+          </Box>
     </>
   );
 }
+
+function mapStateToProps(state: StoreState) {
+    return {
+        cart: state.cartState.selectedProducts,
+        total: state.cartState.total
+    }
+}
+
+export default connect(mapStateToProps, null)(Checkout)

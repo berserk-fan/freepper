@@ -9,6 +9,10 @@ export const pipe = <T extends any[], R>(
   return (...args: T) => piped(fn1(...args));
 };
 
+export function pathName1<T, K extends keyof T>(t: T, key1: K) {
+  return `${key1}`;
+}
+
 export function pathName<T, K extends keyof T, U extends keyof T[K]>(
   t: T,
   key1: K,

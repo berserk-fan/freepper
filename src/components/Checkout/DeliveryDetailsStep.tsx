@@ -6,11 +6,11 @@ import {
   SvgIcon,
   Typography,
 } from "@material-ui/core";
-import React, { useEffect } from "react";
+import React from "react";
 import { Radios, Select, TextField } from "mui-rff";
 import { DeliveryOption, DeliveryProvider, Order } from "../../order-model";
 import { PhoneNumber } from "../Inputs/PhoneNumber";
-import { pathName } from "../../utils";
+import {pathName, pathName1} from "../../utils";
 import { Field } from "react-final-form";
 import Address from "../Inputs/Address";
 import { OrderForm } from "./CheckoutForm";
@@ -33,7 +33,7 @@ export function getDeliveryProviderName(provider: DeliveryProvider) {
     case DeliveryProvider.NOVAYA_POCHTA:
       return "Новая почта";
     default:
-      return "Упс. Мы уточним ее по телефону";
+      return "Неизвестно";
   }
 }
 
@@ -55,31 +55,34 @@ const useStyles = makeStyles({
   },
 });
 
-export default function DeliveryDetailsForm({ order }: { order: OrderForm }) {
+export default function DeliveryDetailsForm({ orderForm }: { orderForm: OrderForm}) {
   const classes = useStyles();
-  const deliveryOptions = [DeliveryOption.TO_WAREHOUSE, DeliveryOption.COURIER];
+  const deliveryOptions = [DeliveryOption.TO_WAREHOUSE];
 
   return (
     <Box maxWidth={"md"} className={"flex flex-col gap-4"}>
-      <Typography variant={"h6"}>Введите информацию о заказе</Typography>
+      <Typography variant={"h3"} align={"center"}>
+        Данные для доставки
+      </Typography>
       <TextField
-        name={pathName({} as Order, "deliveryDetails", "fullName")}
+        name={pathName1({} as OrderForm, "name")}
         required
         fullWidth
         id="full-name-input"
         label="Полное имя"
         variant="filled"
         type="text"
+        autoComplete={"name"}
       />
       <Field
         id={"phone-input"}
-        name={pathName({} as Order, "deliveryDetails", "phone")}
+        name={pathName1({} as OrderForm, "phone")}
         placeholder={"Номер телефона"}
         component={PhoneNumber}
       />
       <Radios
         label="Служба доставки"
-        name={pathName({} as Order, "deliveryDetails", "provider")}
+        name={pathName1({} as OrderForm, "deliveryProvider")}
         required={true}
         data={[
           {
@@ -94,7 +97,7 @@ export default function DeliveryDetailsForm({ order }: { order: OrderForm }) {
       />
       <Select
         required
-        name={pathName({} as Order, "deliveryDetails", "option")}
+        name={pathName1({} as OrderForm, "deliveryOption")}
         fullWidth
         labelId="select-devilery-option-label"
         id="select-devilery-option"
@@ -107,13 +110,13 @@ export default function DeliveryDetailsForm({ order }: { order: OrderForm }) {
           </MenuItem>
         ))}
       </Select>
-      <Collapse in={!!order?.deliveryDetails?.option}>
+      <Collapse in={!!orderForm?.deliveryOption}>
         <Field
-          name={pathName({} as Order, "deliveryDetails", "address")}
+          name={pathName1({} as OrderForm, "address")}
           render={(props) => (
             <Address
               required
-              label={getAddressLabel(order?.deliveryDetails?.option)}
+              label={getAddressLabel(orderForm?.deliveryOption)}
               {...props}
             />
           )}
