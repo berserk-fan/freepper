@@ -89,14 +89,16 @@ function Cart({ cartState: { selectedProducts } }: { cartState: CartState }) {
             </Typography>
             <Typography variant="h5">{totalPrice}₴</Typography>
           </div>
+          <Link href={"/checkout"}>
           <Button
             classes={{ root: classes.mainButton }}
             color={"primary"}
             variant="contained"
             size="large"
           >
-            <Link href={"/checkout"}>Оформить заказ</Link>
+            Оформить заказ
           </Button>
+          </Link>
         </div>
       </Box>
     </div>
