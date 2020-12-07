@@ -1,4 +1,4 @@
-import { CartProduct } from "./pages/checkout";
+import { CartProduct } from "../pages/checkout";
 
 export enum PaymentOption {
   COD = "COD",

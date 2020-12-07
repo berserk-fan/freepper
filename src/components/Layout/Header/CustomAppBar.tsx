@@ -5,7 +5,7 @@ import { AppBarProps } from "@material-ui/core/AppBar/AppBar";
 export const CustomAppBar = (props: AppBarProps) => {
   const { children } = props;
   return (
-    <AppBar elevation={0} position="sticky" color={"inherit"} {...props}>
+    <AppBar color="inherit" position="sticky" {...props}>
       {children}
     </AppBar>
   );

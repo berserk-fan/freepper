@@ -2,7 +2,7 @@ import { Box, Divider, Typography } from "@material-ui/core";
 import React from "react";
 import { Radios, TextField } from "mui-rff";
 import { pathName1 } from "../../utils";
-import { PaymentOption } from "../../order-model";
+import { PaymentOption } from "../../model/order";
 import { OrderForm } from "./CheckoutForm";
 
 function paymentOptionToLabel(option: PaymentOption) {

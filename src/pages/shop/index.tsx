@@ -1,10 +1,11 @@
-import { Container, Grid, Typography } from "@material-ui/core";
+import { Box, Container, Grid, Typography } from "@material-ui/core";
 import ItemView from "../../components/CartItem/ItemView";
 import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
 import ShopClient from "@mamat14/shop-server";
 import { category, shopProducts } from "../../../configs/Data";
 import { Category, Product } from "@mamat14/shop-server/shop_model";
-import React from "react";
+import React, { useState } from "react";
+import ShopControls from "../../components/Shop/ShopControls";
 
 export async function getStaticProps() {
   const shopClient = new ShopClient({
@@ -36,14 +37,19 @@ export default function Shop({
   categories: Category[];
 }) {
   const currentCategory = categories[0];
+  const [curProducts, setProducts] = useState(products);
+
   return (
     <LayoutWithHeader>
       <Container>
-        <Typography align={"center"} variant={"h3"}>
-          {currentCategory.displayName}
-        </Typography>
+        <Box marginTop={1}>
+          <Typography align={"center"} variant={"h3"}>
+            {currentCategory.displayName}
+          </Typography>
+        </Box>
+        <ShopControls products={curProducts} setProducts={setProducts} />
         <Grid container={true} spacing={3} justify={"space-between"}>
-          {products.map((item) => (
+          {curProducts.map((item) => (
             <Grid key={item.id} item={true} xs={12} sm={6} md={3}>
               <ItemView product={item} className={"mx-auto"} />
             </Grid>

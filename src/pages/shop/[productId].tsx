@@ -52,10 +52,7 @@ export default function ProductPage() {
   );
 
   const galleryHeight = 300;
-  const gallery = (
-    <Paper>
-    </Paper>
-  );
+  const gallery = <Paper></Paper>;
 
   const buyButton = (
     <BuyButton

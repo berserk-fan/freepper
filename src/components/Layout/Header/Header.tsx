@@ -43,7 +43,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Header() {
+export default function Header({
+  component = false,
+}: {
+  component?: React.ReactNode;
+}) {
   const classes = useStyles();
   return (
     <CustomAppBar>
@@ -57,6 +61,7 @@ export default function Header() {
         <HeaderActions className={`${classes.mainButtonGroup}`} />
         <HeaderCart />
       </Toolbar>
+      {component}
     </CustomAppBar>
   );
 }
