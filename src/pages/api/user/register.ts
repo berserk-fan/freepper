@@ -3,8 +3,9 @@ import {dbClient} from "../../../mongo/run_db"
 
 
 interface RegistrationData {
-  email: string;
-  password: string;
+  name: string
+  email: string
+  password: string
 }
 
 async function register(data: RegistrationData): Promise<boolean> {
