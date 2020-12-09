@@ -37,4 +37,3 @@ yarn-error.log*
 
 # vercel
 .vercel
-package_jock.json

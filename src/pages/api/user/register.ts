@@ -1,23 +1,22 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { connect, disconnect } from "../../../mongo/db"
+import { disconnect } from "../../../mongo/db"
+import {dbClient} from "../../../mongo/run_db"
 
 
-type RegistrationData = {
-  email: string,
-  password: string
+interface RegistrationData {
+  email: string;
+  password: string;
 }
 
 async function register(data: RegistrationData): Promise<boolean> {
-  const db = connect()
-  const isCreated = await db.UserModel.register(data.email, data.password)
-  disconnect()
+  const isCreated = await dbClient.UserModel.register(data.email, data.password)
   return isCreated
 }
 
 export default async function registerHandler(req: NextApiRequest, res: NextApiResponse<void>) {
-  const data: RegistrationData = JSON.parse(req.body)
-  await register(data)
-  if(register(data)) {
+  const data: RegistrationData = req.body
+  const isRegistered = await register(data)
+  if(isRegistered) {
     res.end("Ok")
   } else {
     res.end("Registration error")

@@ -4,7 +4,7 @@ import {UserModel} from "./user_model";
 export let database: Mongoose.Connection;
 
 export const connect = () => {
-  const uri = "mongodb+srv://app351904 :lxc6lspWNmzFW8PA@cluster0-v6q0g.mongodb.net/test?retryWrites=true&w=majority";
+  const uri = "mongodb+srv://app351904:lxc6lspWNmzFW8PA@dc1.o1p2z.mongodb.net/test?retryWrites=true&w=majority"
   if (database) {
     return;
   }
