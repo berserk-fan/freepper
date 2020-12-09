@@ -1,5 +1,5 @@
 import * as Mongoose from "mongoose";
-import {UserModel} from "./user_model";
+import {userModel} from "./user_model";
 
 export let database: Mongoose.Connection;
 
@@ -23,7 +23,7 @@ export const connect = () => {
   });
 
   return {
-    UserModel,
+    userModel,
   };
 };
 

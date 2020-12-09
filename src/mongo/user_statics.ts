@@ -1,7 +1,7 @@
-import { IUserDocument, IUserModel } from "./user_types";
+import { UserDocument, UserModel } from "./user_types";
 
 export async function register(
-  this: IUserModel,
+  this: UserModel,
   email: string,
   password: string
 ): Promise<boolean> {
@@ -15,7 +15,7 @@ export async function register(
 }
 
 export async function authorize(
-  this: IUserModel,
+  this: UserModel,
   email: string,
   password: string
 ): Promise<boolean> {

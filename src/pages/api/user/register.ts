@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { disconnect } from "../../../mongo/db"
 import {dbClient} from "../../../mongo/run_db"
 
 
@@ -9,7 +8,7 @@ interface RegistrationData {
 }
 
 async function register(data: RegistrationData): Promise<boolean> {
-  const isCreated = await dbClient.UserModel.register(data.email, data.password)
+  const isCreated = await dbClient.userModel.register(data.email, data.password)
   return isCreated
 }
 

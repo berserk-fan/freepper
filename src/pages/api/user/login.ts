@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import {disconnect} from "../../../mongo/db"
 import {dbClient} from "../../../mongo/run_db"
 
 export type Credentials = {
@@ -8,7 +7,7 @@ export type Credentials = {
 }
 
 async function login(cred: Credentials): Promise<boolean> {
-  const authResult = await dbClient.UserModel.authorize(cred.email, cred.password)
+  const authResult = await dbClient.userModel.authorize(cred.email, cred.password)
   return authResult
 }
 

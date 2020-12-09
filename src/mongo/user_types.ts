@@ -1,21 +1,21 @@
 import { Document, Model } from "mongoose";
 
-export interface IUser {
+export interface User {
   email: string;
   password: string;
 }
 
-export interface IUserDocument extends IUser, Document {
+export interface UserDocument extends User, Document {
 }
 
-export interface IUserModel extends Model<IUserDocument> {
+export interface UserModel extends Model<UserDocument> {
   register: (
-    this: IUserModel,
+    this: UserModel,
     email: string,
     password: string
   ) => Promise<boolean>;
   authorize: (
-    this: IUserModel,
+    this: UserModel,
     email: string,
     password: string
   ) => Promise<boolean>;
