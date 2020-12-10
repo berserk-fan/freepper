@@ -17,7 +17,7 @@ export default async function loginHandler(req: NextApiRequest, res: NextApiResp
   if(loginResult) {
     res.end("Ok")
   } else {
-    res.status(401);
-    res.end("Unauthorized")
+    res.status(404);
+    res.end("Not found")
   }
 }
