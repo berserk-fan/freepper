@@ -8,6 +8,7 @@ import HeaderCart from "./HeaderCart";
 import HeaderLogo from "./HeaderLogo";
 import HeaderActions from "./HeaderActions";
 import { CustomAppBar } from "./CustomAppBar";
+import HeaderUser from "./HeaderUser";
 
 const useStyles = makeStyles({
   title: {
@@ -56,6 +57,7 @@ export default function Header() {
         </Box>
         <HeaderActions className={`${classes.mainButtonGroup}`} />
         <HeaderCart />
+        <HeaderUser />
       </Toolbar>
     </CustomAppBar>
   );

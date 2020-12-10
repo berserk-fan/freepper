@@ -4,7 +4,6 @@ import { category, shopProducts } from "../../configs/Data";
 import Cookies from "js-cookie";
 import { CartState } from "../components/Cart/Cart";
 import { CartProduct } from "../pages/checkout";
-import exp from "constants";
 import { Product } from "@mamat14/shop-server/shop_model";
 
 export const cartStateKey = "cartState";
@@ -125,28 +124,62 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
   }
 }
 
+function userReducer(cartState: UserState, action: StoreUpdate): UserState {
+  switch (action.type) {
+    case "USER_UPDATE": {
+      return action.state;
+      }
+    default:
+      return cartState;
+  }
+}
+
+export type UserState = null | {
+  email: string
+  fullName: string
+}
+
+function getUserState(): UserState {
+ return {
+   fullName: "qwertty",
+   email: "eweqruoiwer@wqer.com"
+ };
+}
+
+type FullUserUpdate = {
+  type: "USER_UPDATE",
+  state: UserState
+}
+
+export function fullUserUpdateAction(userState: UserState): FullUserUpdate {
+  return {
+    type: "USER_UPDATE",
+    state: userState
+  }
+}
+
+type UserUpdate = FullUserUpdate
+
 export type StoreState = Partial<{
   cartState: CartState;
+  userState: UserState;
 }>;
 
-export type StoreUpdate = CartUpdate;
+export type StoreUpdate = CartUpdate | UserUpdate;
 const initialStoreState = {
   cartState: readStoredCartState(),
+  userState: getUserState()
 };
-function storeReducer(
+
+export function storeReducer(
   store: StoreState = initialStoreState,
   action: StoreUpdate
 ): StoreState {
   return {
     cartState: cartReducer(store.cartState, action),
+    userState: userReducer(store.userState, action)
   };
 }
-
-export const store = createStore(storeReducer);
-
-store.subscribe(() => {
-  storeCartState(store.getState().cartState);
-});
 
 export const shopClient = new ShopClient({
   products: shopProducts,

@@ -12,12 +12,12 @@ async function login(cred: Credentials): Promise<boolean> {
 }
 
 export default async function loginHandler(req: NextApiRequest, res: NextApiResponse<void>) {
-  const creds: Credentials = req.body
-  const loginResult = await login(creds)
+  const creds: Credentials = req.body;
+  const loginResult = await login(creds);
   if(loginResult) {
     res.end("Ok")
   } else {
-    res.status(401)
+    res.status(401);
     res.end("Unauthorized")
   }
 }

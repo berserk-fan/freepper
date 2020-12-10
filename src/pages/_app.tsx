@@ -4,14 +4,16 @@ import "fontsource-roboto";
 import React from "react";
 import { AppProps } from "next/app";
 import Head from "next/head";
-import { store } from "../store";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "@material-ui/styles";
 import theme from "../theme";
 import { SnackbarProvider } from "notistack";
 import { CssBaseline } from "@material-ui/core";
+import setupStore from "../store/cofigStore"
+import {PersistGate} from "redux-persist/integration/react";
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const {store, persistor} = setupStore();
   return (
     <>
       <Head>
@@ -21,7 +23,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Provider store={store}>
-            <Component {...pageProps} />
+              <PersistGate persistor={persistor}>
+                  <Component {...pageProps} />
+              </PersistGate>
           </Provider>
         </ThemeProvider>
       </SnackbarProvider>
