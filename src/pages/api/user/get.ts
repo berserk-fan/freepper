@@ -4,14 +4,21 @@ import {User, toDomainUser} from "./domain"
 
 
 export default async function getHandler(req: NextApiRequest, res: NextApiResponse<User>) {
-  const email: string = req.body.email
-  let dbUser = await dbClient.userModel.findOne({'email': email})
-  if (dbUser) {
-    let user = toDomainUser(dbUser)
-    res.json(user)
-    res.end("ok")
-  } else {
-    res.status(404)
-    res.end("Not found")
+  if (req.method == "GET") {
+    if (typeof req.query.email === "string") {
+      const email: string = req.query.email
+      let dbUser = await dbClient.userModel.findOne({'email': email})
+      if (dbUser) {
+        let user = toDomainUser(dbUser)
+        res.json(user)
+        res.end("ok")
+      } else {
+        res.status(404)
+        res.end("Not found")
+      }
+    } else {
+      res.status(400)
+      res.end("Bad request")
+    }
   }
 }
