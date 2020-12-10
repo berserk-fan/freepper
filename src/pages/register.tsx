@@ -33,7 +33,9 @@ const handleSubmit = (router: NextRouter) => async (registerForm: RegisterForm) 
         email: registerForm.email,
         password: registerForm.password
     };
-    const response = await fetch("/api/user/register", {body: JSON.stringify(user), method: "POST"});
+    const response = await fetch("/api/user/register", {body: JSON.stringify(user), method: "POST"})
+        .then(() => console.log("Register ok."))
+        .then(() => router.push("/"));
 };
 
 export default function Register() {
@@ -48,7 +50,7 @@ export default function Register() {
                     <form noValidate>
                         <div className={"flex flex-col mx-auto w-full gap-4"}>
                             <Typography variant={"h3"} align={"center"}>
-                                Логин
+                                Регистрация
                             </Typography>
                             <TextField
                                 name={pathName1({} as RegisterForm, "name")}

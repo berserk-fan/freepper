@@ -75,7 +75,8 @@ function LoginPopover({login, updateUser}: { login: (email: string, password: st
 
     const handleSubmit = (close: () => void) => async (loginForm: LoginForm) => {
         setHandling(true);
-        login(loginForm.email, loginForm.password).then(() => console.log(`Successfull login: ${loginForm.email} ${loginForm.password}`))
+        login(loginForm.email, loginForm.password)
+            .then(() => console.log(`Successfull login: ${loginForm.email} ${loginForm.password}`))
             .then(() => fetch(`/api/user/get?email=${loginForm.email}`))
             .then((_) => _.json())
             .then((user) => {
