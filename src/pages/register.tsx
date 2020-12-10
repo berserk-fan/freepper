@@ -35,6 +35,11 @@ const handleSubmit = (router: NextRouter) => async (registerForm: RegisterForm) 
     };
     const response = await fetch("/api/user/register", {body: JSON.stringify(user), method: "POST"})
         .then(() => console.log("Register ok."))
+        .then(() => fetch("/api/user/login",
+            {method: "POST",
+                body: JSON.stringify({email: user.email, password: user.password})})
+        )
+        .then(() => console.log("Login ok."))
         .then(() => router.push("/"));
 };
 
