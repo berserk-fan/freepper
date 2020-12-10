@@ -1,4 +1,4 @@
-import React, {memo, useState} from "react";
+import React, {memo, useEffect, useState} from "react";
 import {fullUserUpdateAction, StoreState, UserState} from "../../../store";
 import {connect} from "react-redux";
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -40,7 +40,7 @@ function UserPopover({logout}: { logout: () => Promise<void> }) {
                                 fullWidth
                                 startIcon={<MeetingRoomIcon/>}
                             >
-                                <Typography>Выйти из аккаунта</Typography>
+                                <Typography>Выйти</Typography>
                             </Button>
                             <Button
                                 onClick={popupState.close}
@@ -70,13 +70,25 @@ const schema: ObjectSchema<LoginForm> = object({
 
 const validate = makeValidateSync(schema);
 
-function LoginPopover({login, updateUser}: { login: (email: string, password: string) => Promise<void>, updateUser: (_: UserState) => void }) {
+function LoginPopover({login, updateUser}: { login: (email: string, password: string) => Promise<boolean>, updateUser: (_: UserState) => void }) {
     const [handling, setHandling] = useState(false);
+    const [loginError, setLoginError] = useState(false);
+
+    useEffect(() => {
+        setLoginError(false);
+    }, []);
 
     const handleSubmit = (close: () => void) => async (loginForm: LoginForm) => {
         setHandling(true);
         login(loginForm.email, loginForm.password)
-            .then(() => console.log(`Successfull login: ${loginForm.email} ${loginForm.password}`))
+            .then((success) => {
+                if(!success) {
+                    setLoginError(true);
+                    throw new Error("Bad login credentials.")
+                }
+                setLoginError(false);
+                console.log(`Successful login: ${loginForm.email} ${loginForm.password}`)
+            })
             .then(() => fetch(`/api/user/get?email=${loginForm.email}`))
             .then((_) => _.json())
             .then((user) => {
@@ -88,8 +100,9 @@ function LoginPopover({login, updateUser}: { login: (email: string, password: st
                 return user;
             })
             .then(updateUser)
+            .catch((e) => console.log(`Error logging in: ${e}`))
             .finally(() => {
-                setHandling(false)
+                setHandling(false);
             })
     };
 
@@ -117,6 +130,26 @@ function LoginPopover({login, updateUser}: { login: (email: string, password: st
                                 render={({handleSubmit, values}: { handleSubmit: any; values: LoginForm; }) => (
                                     <form noValidate>
                                         <div className={"flex flex-col mx-auto w-full gap-4 p-4"}>
+                                            <Box height={"12px"} marginTop={"-6px"} marginX={"2px"}>
+                                                <Fade
+                                                    in={loginError}
+                                                    style={{
+                                                        transitionDelay: handling ? '100ms' : '0ms',
+                                                    }}
+                                                    unmountOnExit
+                                                >
+                                                    <Typography color={"error"} variant={"caption"}>Неверный логин или пароль</Typography>
+                                                </Fade>
+                                                <Fade
+                                                    in={!loginError}
+                                                    style={{
+                                                        transitionDelay: handling ? '100ms' : '0ms',
+                                                    }}
+                                                    unmountOnExit
+                                                >
+                                                    <Typography variant={"caption"}>Вход в аккаунт</Typography>
+                                                </Fade>
+                                            </Box>
                                             <TextField
                                                 name={pathName1({} as LoginForm, "email")}
                                                 required
@@ -139,7 +172,7 @@ function LoginPopover({login, updateUser}: { login: (email: string, password: st
                                                 autoComplete={"password"}
                                                 showError={showErrorOnBlur}
                                             />
-                                            <div className={"flex m-2 justify-between"}>
+                                            <div className={"flex justify-center"}>
                                                 <Box>
                                                     <Box height={"4px"} marginTop={"-4px"} marginX={"2px"}>
                                                         <Fade
@@ -185,9 +218,10 @@ function LoginPopover({login, updateUser}: { login: (email: string, password: st
     );
 }
 
-function login(email: string, password: string): Promise<void> {
+function login(email: string, password: string): Promise<boolean> {
     console.log("logging in...");
-    return new Promise<void>((resolve, reject) => setTimeout(() => resolve(), 2000))
+    return fetch("api/user/login", {method: "POST", body: JSON.stringify({email, password})})
+        .then((_) => _.status === 200)
 }
 
 function HeaderUser({userState, logout, updateUser}: { userState: UserState, logout: () => Promise<void>, updateUser: (_: UserState) => void }) {

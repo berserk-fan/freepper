@@ -1,5 +1,7 @@
-import { model } from "mongoose";
+import {model, modelNames, models} from "mongoose";
 import { UserDocument, UserModel } from "./user_types";
 import UserSchema from "./user_schema";
 
-export const userModel = model<UserDocument>("user", UserSchema) as UserModel;
+export const userModel = modelNames().find(_ => _ === "user")
+    ? models["user"]
+    : model<UserDocument>("user", UserSchema) as UserModel;
