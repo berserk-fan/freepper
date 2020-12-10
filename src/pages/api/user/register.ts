@@ -9,7 +9,7 @@ interface RegistrationData {
 }
 
 async function register(data: RegistrationData): Promise<boolean> {
-  const isCreated = await dbClient.userModel.register(data.email, data.password)
+  const isCreated = await dbClient.userModel.register(data.email, data.name, data.password)
   return isCreated
 }
 

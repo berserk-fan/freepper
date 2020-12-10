@@ -18,7 +18,7 @@ export default async function getHandler(req: NextApiRequest, res: NextApiRespon
       }
     } else {
       res.status(400)
-      res.end("Bad request")
+      res.end("Bade request")
     }
   }
 }

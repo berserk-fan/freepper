@@ -13,6 +13,7 @@ export interface UserModel extends Model<UserDocument> {
   register: (
     this: UserModel,
     email: string,
+    name: string,
     password: string
   ) => Promise<boolean>;
   authorize: (
