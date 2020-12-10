@@ -21,5 +21,5 @@ export async function authorize(
   password: string
 ): Promise<boolean> {
   const entryCount = await this.count({'email': email, 'password': password})
-  return entryCount == 0
+  return entryCount == 1
 }
