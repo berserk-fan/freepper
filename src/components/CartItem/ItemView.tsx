@@ -92,8 +92,7 @@ function ItemView({
   }
 
   return (
-    <>
-      <Card className={`${classes.root} ${className || ""}`}>
+    <Card className={`${classes.root} ${className || ""}`}>
         <CardActionArea>
           <Slider
             slides={[
@@ -111,7 +110,7 @@ function ItemView({
           />
           <Link href={`shop/${id}`}>
             <CardContent>
-              <Typography gutterBottom variant="h5">
+              <Typography variant="h5">
                 {displayName}
               </Typography>
               <Typography
@@ -138,7 +137,6 @@ function ItemView({
           </Box>
         </CardActions>
       </Card>
-    </>
   );
 }
 
