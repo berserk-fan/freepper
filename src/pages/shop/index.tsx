@@ -44,7 +44,7 @@ export default function Shop({
         </Typography>
         <Grid container={true} spacing={3} justify={"space-between"}>
           {products.map((item) => (
-            <Grid key={item.id} item={true} xs={12} sm={6} md={3}>
+            <Grid key={item.id} item={true} xs={12} sm={6} md={4} lg={3}>
               <ItemView product={item} className={"mx-auto"} />
             </Grid>
           ))}
