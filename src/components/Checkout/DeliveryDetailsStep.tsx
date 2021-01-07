@@ -10,7 +10,7 @@ import React from "react";
 import { Radios, Select, TextField } from "mui-rff";
 import { DeliveryOption, DeliveryProvider, Order } from "../../order-model";
 import { PhoneNumber } from "../Inputs/PhoneNumber";
-import {pathName, pathName1} from "../../utils";
+import { pathName, pathName1 } from "../../utils";
 import { Field } from "react-final-form";
 import Address from "../Inputs/Address";
 import { OrderForm } from "./CheckoutForm";
@@ -55,7 +55,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function DeliveryDetailsForm({ orderForm }: { orderForm: OrderForm}) {
+export default function DeliveryDetailsForm({
+  orderForm,
+}: {
+  orderForm: OrderForm;
+}) {
   const classes = useStyles();
   const deliveryOptions = [DeliveryOption.TO_WAREHOUSE];
 

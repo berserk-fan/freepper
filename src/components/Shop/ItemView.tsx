@@ -85,7 +85,7 @@ function ItemView({
   inCart: boolean;
 }) {
   const classes = useStyles();
-  const { id, displayName, description, image } = product;
+  const { id, displayName, description, images } = product;
 
   function handleAddedToCart() {
     !inCart ? addProduct(product) : deleteProduct(id);
@@ -93,50 +93,44 @@ function ItemView({
 
   return (
     <Card className={`${classes.root} ${className || ""}`}>
-        <CardActionArea>
-          <Slider
-            slides={[
+      <CardActionArea>
+        <Slider
+          slides={images.map(image => (
               <Box
-                className={`flex ${classes.media} overflow-hidden items-center`}
+                  className={`flex ${classes.media} overflow-hidden items-center`}
               >
                 <Image
-                  width={500}
-                  height={500}
-                  src={image.src}
-                  alt={displayName}
+                    width={500}
+                    height={500}
+                    src={image.src}
+                    alt={displayName}
                 />
-              </Box>,
-            ]}
-          />
-          <Link href={`shop/${id}`}>
-            <CardContent>
-              <Typography variant="h5">
-                {displayName}
-              </Typography>
-              <Typography
-                variant="subtitle2"
-                color="textSecondary"
-                component="p"
-              >
-                {description}
-              </Typography>
-            </CardContent>
-          </Link>
-        </CardActionArea>
-        <Divider />
-        <CardActions>
-          <Box
-            paddingLeft={1}
-            className={"flex w-full justify-between items-center"}
-          >
-            <Typography variant={"h5"}>{product.price.price + " ₴"}</Typography>
-            <Box className={"flex items-stretch gap-2"}>
-              <Button variant={"outlined"}>Подробнее</Button>
-              <AddToCartButton {...{ handleAddedToCart, inCart }} />
-            </Box>
+              </Box>
+          ))}
+        />
+        <Link href={`shop/${id}`}>
+          <CardContent>
+            <Typography variant="h5">{displayName}</Typography>
+            <Typography variant="subtitle2" color="textSecondary" component="p">
+              {description}
+            </Typography>
+          </CardContent>
+        </Link>
+      </CardActionArea>
+      <Divider />
+      <CardActions>
+        <Box
+          paddingLeft={1}
+          className={"flex w-full justify-between items-center"}
+        >
+          <Typography variant={"h5"}>{product.price.price + " ₴"}</Typography>
+          <Box className={"flex items-stretch gap-2"}>
+            <Button variant={"outlined"}>Подробнее</Button>
+            <AddToCartButton {...{ handleAddedToCart, inCart }} />
           </Box>
-        </CardActions>
-      </Card>
+        </Box>
+      </CardActions>
+    </Card>
   );
 }
 

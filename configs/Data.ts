@@ -1,4 +1,5 @@
 import {
+  Category,
   DogBed_Variant,
   Fabric,
   Product,
@@ -83,7 +84,7 @@ function getVariants(): DogBed_Variant[] {
       res.push({
         fabricId: fabric.id,
         sizeId: size.id,
-        variantName: "categories/beds-category/products/lukoshko-grey-xs",
+        variantName: "/products/lukoshko-grey-xs",
       });
     }
   }
@@ -94,13 +95,15 @@ const lukoshkoVariants: DogBed_Variant[] = getVariants();
 export const shopProducts: Product[] = [
   {
     id: "lukoshko-grey",
-    name: "categories/beds-category/products/lukoshko-grey",
+    name: "/products/lukoshko-grey",
     displayName: "Лукошко - Серый",
     description: "Хорошая лежанка",
-    image: {
-      src: "/Dogs-7248.jpg",
-      alt: "лежанка",
-    },
+    images: [
+        {
+        src: "/Dogs-7248.jpg",
+        alt: "лежанка",
+      }
+    ],
     price: {
       price: 999,
     },
@@ -117,13 +120,13 @@ export const shopProducts: Product[] = [
   },
   {
     id: "lukoshko-white",
-    name: "categories/beds-category/products/lukoshko-white",
+    name: "/products/lukoshko-white",
     displayName: "Лукошко серое - White",
     description: "Хорошая лежанка",
-    image: {
+    images: [{
       src: "/Dogs-7254.jpg",
       alt: "лежанка",
-    },
+    }],
     price: {
       price: 999,
     },
@@ -140,13 +143,13 @@ export const shopProducts: Product[] = [
   },
   {
     id: "lukoshko-red",
-    name: "categories/beds-category/products/lukoshko-red",
+    name: "/products/lukoshko-red",
     displayName: "Лукошко - Красный",
     description: "Хорошая лежанка",
-    image: {
+    images: [{
       src: "/Dogs-7255.jpg",
       alt: "лежанка",
-    },
+    }],
     price: {
       price: 1100,
     },
@@ -163,13 +166,13 @@ export const shopProducts: Product[] = [
   },
   {
     id: "lukoshko-blue",
-    name: "categories/beds-category/products/lukoshko-blue",
+    name: "/products/lukoshko-blue",
     displayName: "Лукошко - Синий",
     description: "Хорошая лежанка",
-    image: {
+    images: [{
       src: "/Dogs-7078.jpg",
       alt: "лежанка",
-    },
+    }],
     price: {
       price: 1299,
     },
@@ -186,7 +189,7 @@ export const shopProducts: Product[] = [
   },
 ];
 
-export const category = {
+export const category: Category = {
   id: "beds",
   name: `/categories/beds`,
   displayName: "Лежанки",
@@ -195,4 +198,5 @@ export const category = {
     src: "https://picsum.photos/300/300?random=1",
     alt: "beds category",
   },
+  products: shopProducts.map(p => p.name)
 };
