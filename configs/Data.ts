@@ -1,12 +1,12 @@
 import {
   Category,
   DogBed_Variant,
-  Fabric,
+  Fabric, ImageData, Price,
   Product,
   Size,
 } from "@mamat14/shop-server/shop_model";
 
-const sizes: Size[] = [
+const lukoshkoSizes: Size[] = [
   {
     id: "1",
     displayName: "XS",
@@ -29,7 +29,7 @@ const sizes: Size[] = [
   },
 ];
 
-const avroFabrics: Fabric[] = [
+const lukoshkoFabrics: Fabric[] = [
   {
     id: "avro-500",
     displayName: "Avro 500",
@@ -77,117 +77,54 @@ const avroFabrics: Fabric[] = [
   },
 ];
 
-function getVariants(): DogBed_Variant[] {
+function getLukoshkoVariants(): DogBed_Variant[] {
   const res: DogBed_Variant[] = [];
-  for (const fabric of avroFabrics) {
-    for (const size of sizes) {
+  for (const fabric of lukoshkoFabrics) {
+    for (const size of lukoshkoSizes) {
       res.push({
         fabricId: fabric.id,
         sizeId: size.id,
-        variantName: "/products/lukoshko-grey-xs",
+        variantName: `/products/lukoshko-${fabric.id}-${size.id}`,
       });
     }
   }
   return res;
 }
-const lukoshkoVariants: DogBed_Variant[] = getVariants();
 
-export const shopProducts: Product[] = [
-  {
-    id: "lukoshko-grey",
-    name: "/products/lukoshko-grey",
-    displayName: "Лукошко - Серый",
+type Customizations = {price: Price, images: ImageData[]}
+
+const luckoshkoCustomizations: Record<string, Customizations> = Object.fromEntries(getLukoshkoVariants().map((v,i) =>
+      [v.variantName, {
+        images: ["/Dogs-7248.jpg", "/Dogs-7078.jpg", "/Dogs-7133.jpg"].slice(i % 3).map(image => (
+            {
+              src: image,
+              alt: "фото лежанки",
+            }
+        )),
+        price: {price: Math.floor(970 + Math.random() * 100)}
+      }]));
+
+const lukoshkoVariants: DogBed_Variant[] = getLukoshkoVariants();
+
+export const shopProducts: Product[] = lukoshkoVariants.map(v => ({
+    id: v.variantName.split("/").filter(x => !!x)[1],
+    name: v.variantName,
+    displayName: `Лукошко - ${lukoshkoFabrics.find(s => s.id == v.fabricId).displayName} - ${lukoshkoSizes.find(s => s.id == v.sizeId).displayName}`,
     description: "Хорошая лежанка",
-    images: [
-        {
-        src: "/Dogs-7248.jpg",
-        alt: "лежанка",
-      }
-    ],
-    price: {
-      price: 999,
-    },
+    price: luckoshkoCustomizations[v.variantName].price,
+    images: luckoshkoCustomizations[v.variantName].images,
     details: {
       $case: "dogBed",
       dogBed: {
-        sizeId: "1",
-        fabricId: "avro-500",
-        fabrics: avroFabrics,
-        sizes: sizes,
+        sizeId: v.sizeId,
+        fabricId: v.fabricId,
+        fabrics: lukoshkoFabrics,
+        sizes: lukoshkoSizes,
         variants: lukoshkoVariants,
       },
     },
-  },
-  {
-    id: "lukoshko-white",
-    name: "/products/lukoshko-white",
-    displayName: "Лукошко серое - White",
-    description: "Хорошая лежанка",
-    images: [{
-      src: "/Dogs-7254.jpg",
-      alt: "лежанка",
-    }],
-    price: {
-      price: 999,
-    },
-    details: {
-      $case: "dogBed",
-      dogBed: {
-        sizeId: "1",
-        fabricId: "avro-500",
-        fabrics: avroFabrics,
-        sizes: sizes,
-        variants: lukoshkoVariants,
-      },
-    },
-  },
-  {
-    id: "lukoshko-red",
-    name: "/products/lukoshko-red",
-    displayName: "Лукошко - Красный",
-    description: "Хорошая лежанка",
-    images: [{
-      src: "/Dogs-7255.jpg",
-      alt: "лежанка",
-    }],
-    price: {
-      price: 1100,
-    },
-    details: {
-      $case: "dogBed",
-      dogBed: {
-        sizeId: "1",
-        fabricId: "avro-500",
-        fabrics: avroFabrics,
-        sizes: sizes,
-        variants: lukoshkoVariants,
-      },
-    },
-  },
-  {
-    id: "lukoshko-blue",
-    name: "/products/lukoshko-blue",
-    displayName: "Лукошко - Синий",
-    description: "Хорошая лежанка",
-    images: [{
-      src: "/Dogs-7078.jpg",
-      alt: "лежанка",
-    }],
-    price: {
-      price: 1299,
-    },
-    details: {
-      $case: "dogBed",
-      dogBed: {
-        sizeId: "1",
-        fabricId: "avro-500",
-        fabrics: avroFabrics,
-        sizes: sizes,
-        variants: lukoshkoVariants,
-      },
-    },
-  },
-];
+  }),
+);
 
 export const category: Category = {
   id: "beds",
@@ -198,5 +135,5 @@ export const category: Category = {
     src: "https://picsum.photos/300/300?random=1",
     alt: "beds category",
   },
-  products: shopProducts.map(p => p.name)
+  products: shopProducts.map((p) => p.name),
 };

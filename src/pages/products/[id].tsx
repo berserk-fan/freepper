@@ -1,16 +1,20 @@
 import React from "react";
-import Slider from "../../components/Shop/Slider";
 import { shopClient } from "../../store";
 import { Product } from "@mamat14/shop-server/shop_model";
 import { GetStaticProps } from "next";
 import { Container } from "@material-ui/core";
+import Header from "../../components/Layout/Header/Header";
+import FoundProductPage from "../../components/ProductPage/FoundProductPage";
 
-export default function ProductPage({ product }: { product: Product }) {
+export default function ProductPage({ product }: { product: Product | null }) {
   return (
-    <Container>
-      {product == null ? "Product not found" : false}
-      {product ? "Find product" : false}
-    </Container>
+    <>
+      <Header />
+      <Container>
+        {product == null ? "Product not found" : false}
+        {product ? <FoundProductPage product={product} /> : false}
+      </Container>
+    </>
   );
 }
 

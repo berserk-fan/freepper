@@ -63,7 +63,8 @@ const cartItem = function CartItem({
   setProductCount: (id: string, x: number) => void;
   deleteProduct: (id) => void;
 }) {
-  const { displayName, price, image, id, count } = product;
+  const { displayName, price, images, id, count } = product;
+  const image = images[0];
   const classes = useStyles();
 
   function QuantityControls() {

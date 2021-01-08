@@ -4,7 +4,7 @@ import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
 import { Category, Product } from "@mamat14/shop-server/shop_model";
 import React from "react";
 import { shopClient } from "../../store";
-import {GetStaticProps} from "next";
+import { GetStaticProps } from "next";
 
 export default function Shop({
   products,
@@ -33,7 +33,9 @@ export default function Shop({
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const categoryId = context.params.id;
-  const category = await shopClient.getCategory({ name: `/categories/${categoryId}` });
+  const category = await shopClient.getCategory({
+    name: `/categories/${categoryId}`,
+  });
   const products = await Promise.all(
     category.products.map((pName) => shopClient.getProduct({ name: pName }))
   );
@@ -47,6 +49,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export async function getStaticPaths() {
   const categories = ["beds"];
-  const paths = categories.map(c => ({params: {id: c}}));
+  const paths = categories.map((c) => ({ params: { id: c } }));
   return { paths, fallback: false };
 }

@@ -33,6 +33,7 @@ import Slider from "./Slider";
 import { ToggleButton } from "@material-ui/lab";
 import { CustomAppBar } from "../Layout/Header/CustomAppBar";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import Price from "./Price";
 const CartButton = withStyles({
   root: {
     fontSize: "24px",
@@ -95,20 +96,20 @@ function ItemView({
     <Card className={`${classes.root} ${className || ""}`}>
       <CardActionArea>
         <Slider
-          slides={images.map(image => (
-              <Box
-                  className={`flex ${classes.media} overflow-hidden items-center`}
-              >
-                <Image
-                    width={500}
-                    height={500}
-                    src={image.src}
-                    alt={displayName}
-                />
-              </Box>
+          slides={images.map((image) => (
+            <Box
+              className={`flex ${classes.media} overflow-hidden items-center`}
+            >
+              <Image
+                width={500}
+                height={500}
+                src={image.src}
+                alt={displayName}
+              />
+            </Box>
           ))}
         />
-        <Link href={`shop/${id}`}>
+        <Link href={product.name}>
           <CardContent>
             <Typography variant="h5">{displayName}</Typography>
             <Typography variant="subtitle2" color="textSecondary" component="p">
@@ -123,7 +124,7 @@ function ItemView({
           paddingLeft={1}
           className={"flex w-full justify-between items-center"}
         >
-          <Typography variant={"h5"}>{product.price.price + " ₴"}</Typography>
+          <Price price={product.price} />
           <Box className={"flex items-stretch gap-2"}>
             <Button variant={"outlined"}>Подробнее</Button>
             <AddToCartButton {...{ handleAddedToCart, inCart }} />
