@@ -4,13 +4,13 @@ import "keen-slider/keen-slider.min.css";
 import styles from "./Slider.module.css";
 import { Box } from "@material-ui/core";
 
-export default ({
+export default function Slider({
   slides,
   className = "",
 }: {
   slides: any[];
   className?: string;
-}) => {
+}) {
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [sliderRef, slider] = useKeenSlider({
     initial: 0,
@@ -18,6 +18,8 @@ export default ({
       setCurrentSlide(s.details().relativeSlide);
     },
   });
+
+  React.useEffect(() => {}, [slides]);
 
   return (
     <div className={className}>
@@ -51,4 +53,4 @@ export default ({
       </div>
     </div>
   );
-};
+}
