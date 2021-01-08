@@ -63,7 +63,7 @@ export default function HeaderMenu() {
 
   const pages: [string, string, React.ReactNode][] = [
     ["/", "Домой", <HomeIcon />],
-    ["/shop", "Магазин", <StorefrontIcon />],
+    ["/categories/beds", "Магазин", <StorefrontIcon />],
     ["/about", "О наc", <InfoOutlinedIcon />],
   ];
   const sideBarOpenTime = 250;
