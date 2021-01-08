@@ -171,8 +171,8 @@ function Summary({
                       className={"rounded"}
                       width={72}
                       height={72}
-                      src={product.image.src}
-                      alt={product.image.alt}
+                      src={product.images[0].src}
+                      alt={product.images[0].alt}
                     />
                     <Box paddingLeft={1}>
                       <Typography variant={"h6"}>
