@@ -8,6 +8,9 @@ import HeaderCart from "./HeaderCart";
 import HeaderLogo from "./HeaderLogo";
 import HeaderActions from "./HeaderActions";
 import { CustomAppBar } from "./CustomAppBar";
+import HomeIcon from "@material-ui/icons/Home";
+import StorefrontIcon from "@material-ui/icons/Storefront";
+import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 
 const useStyles = makeStyles({
   title: {
@@ -18,7 +21,7 @@ const useStyles = makeStyles({
   },
   mainButtonGroup: {
     position: "absolute",
-    width: 220,
+    width: 420,
     marginLeft: theme.spacing(2),
     marginRight: "auto",
     left: 0,
@@ -42,6 +45,19 @@ const useStyles = makeStyles({
     },
   },
 });
+
+
+type Page = {
+  name: string;
+  path: string;
+  icon: React.ReactNode
+}
+
+export const pages: Page[] = [
+      {path: "/", name: "Домой", icon: (<HomeIcon />)},
+      {path: "/categories/beds", name: "Магазин", icon: (<StorefrontIcon />)},
+      {path: "/about", name: "О наc", icon: (<InfoOutlinedIcon />)},
+];
 
 export default function Header() {
   const classes = useStyles();

@@ -19,6 +19,7 @@ import HomeIcon from "@material-ui/icons/Home";
 import StorefrontIcon from "@material-ui/icons/Storefront";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import CloseIcon from "@material-ui/icons/Close";
+import {pages} from "./Header";
 
 const useStyles = makeStyles({
   list: {
@@ -61,11 +62,6 @@ export default function HeaderMenu() {
     setDrawerTo(open);
   };
 
-  const pages: [string, string, React.ReactNode][] = [
-    ["/", "Домой", <HomeIcon />],
-    ["/categories/beds", "Магазин", <StorefrontIcon />],
-    ["/about", "О наc", <InfoOutlinedIcon />],
-  ];
   const sideBarOpenTime = 250;
 
   return (
@@ -103,7 +99,7 @@ export default function HeaderMenu() {
           </Box>
         </Fade>
         <List component="nav" aria-label="home shop about">
-          {pages.map(([path, name, icon]) => {
+          {pages.map(({path, name, icon}) => {
             return (
               <Link key={name + path} href={path}>
                 <ListItem button selected={router.pathname === path}>
