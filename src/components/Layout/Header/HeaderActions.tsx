@@ -9,7 +9,7 @@ export default function (props) {
       <Link href={"/"}>
         <Button>Домой</Button>
       </Link>
-      <Link href={"/shop"}>
+      <Link href={"/categories/beds"}>
         <Button>Магазин</Button>
       </Link>
       <Link href={"/about"}>
