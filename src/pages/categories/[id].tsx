@@ -1,4 +1,4 @@
-import { Container, Grid, Typography } from "@material-ui/core";
+import {Box, Container, Divider, Grid, Typography} from "@material-ui/core";
 import ItemView from "../../components/Shop/ItemView";
 import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
 import { Category, Product } from "@mamat14/shop-server/shop_model";
@@ -7,8 +7,7 @@ import { shopClient } from "../../store";
 import { GetStaticProps } from "next";
 
 export default function Shop({
-  products,
-  category,
+  products
 }: {
   products: Product[];
   category: Category;
@@ -16,9 +15,6 @@ export default function Shop({
   return (
     <LayoutWithHeader>
       <Container>
-        <Typography align={"center"} variant={"h3"}>
-          {category.displayName}
-        </Typography>
         <Grid container={true} spacing={3} justify={"space-between"}>
           {products.map((item) => (
             <Grid key={item.id} item={true} xs={12} sm={6} md={4} lg={3}>

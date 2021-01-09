@@ -17,9 +17,11 @@ const checkMarks = ["Гарантия 2 месяца", "Сделано в Укр
 function getDetails(product: Product): React.ReactNode {
   switch (product.details.$case) {
     case "dogBed":
-      return <DogBedDetails details={product.details.dogBed} />;
+      return <>
+        <DogBedDetails details={product.details.dogBed} />
+        </>;
     default:
-      return <></>;
+      return false;
   }
 }
 
@@ -44,9 +46,9 @@ function ProductPage({
     addProduct(product);
   }
 
-  return (
+    const productDetailsPart = getDetails(product);
+    return (
     <Box marginX={"auto"} maxWidth={"500px"}>
-
         <Slider
           className={"border rounded overflow-hidden"}
           slides={images.map((image) => (
@@ -60,12 +62,12 @@ function ProductPage({
             </Box>
           ))}
         />
-
       <Spacing spacing={1} className={"flex flex-col"} childClassName={"w-full"}>
-          <Typography variant={"h4"}>{displayName}</Typography>
+          <Typography variant={"h2"}>{displayName}</Typography>
           <Price price={price} />
-          {getDetails(product)}
-          <Divider/>
+          {productDetailsPart && <Divider/>}
+          {productDetailsPart}
+          {productDetailsPart && <Divider/>}
           {notInCart ? (
               <Button variant={"contained"} color={"secondary"} onClick={addToCart} fullWidth>
                   Добавить в корзину
