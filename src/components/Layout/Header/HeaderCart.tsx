@@ -98,7 +98,7 @@ function HeaderCart({ cartSize }: { cartSize: number }) {
 
 function mapStateToProps(state: StoreState) {
   return {
-    cartSize: state.cartState.size,
+    cartSize: state.cartState.cartSize,
   };
 }
 

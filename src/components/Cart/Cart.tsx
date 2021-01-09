@@ -9,7 +9,7 @@ import { CartProduct } from "../../pages/checkout";
 import Link from "next/link";
 
 export type CartState = {
-  size: number;
+  cartSize: number;
   total: number;
   selectedProducts: Record<string, CartProduct>;
 };
@@ -61,18 +61,17 @@ const useStyles = makeStyles({
   },
 });
 
-function Cart({ cartState: { selectedProducts } }: { cartState: CartState }) {
+function Cart({ cartState: { total: totalPrice, cartSize, selectedProducts } }: { cartState: CartState }) {
   const classes = useStyles();
   const productsList = Object.values(selectedProducts);
-  const totalPrice = productsList.reduce(
-    (a, b) => a + b.count * b.price.price,
-    0
-  );
+  console.log(cartSize);
   return (
     <div>
       <Box marginTop={2}>
-        {productsList.length === 0 ? (
-          <Typography variant={"h2"}>Корзина пуста</Typography>
+        {cartSize === 0 ? (
+            <Box>
+              <Typography variant={"h2"}>Корзина пуста</Typography>
+            </Box>
         ) : (
           productsList.map((product) => (
             <Box key={product.id} marginY={1}>

@@ -14,7 +14,7 @@ export function readStoredCartState(): CartState {
   const parsed = JSON.parse(cartCookie || "{}");
   return parsed.selectedProducts
     ? parsed
-    : { selectedProducts: [], total: 0, size: 0 };
+    : { selectedProducts: [], total: 0, cartSize: 0 };
 }
 
 export function storeCartState(cartState: CartState): void {
@@ -73,13 +73,17 @@ export function deleteProductAction(productId: string): DELETE_PRODUCT {
 }
 
 function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
-  const { selectedProducts, total, size } = cartState;
+  const { selectedProducts, total, cartSize } = cartState;
   switch (action.type) {
     case "SET_PRODUCT_COUNT": {
+      const toSet = selectedProducts[action.productId];
+      if(!toSet) {
+        return cartState
+      }
+      const change = action.count - toSet.count;
       return {
-        total:
-          total + selectedProducts[action.productId].price.price * action.count,
-        size: size - selectedProducts[action.productId].count + action.count,
+        total: total + toSet.price.price * change,
+        cartSize: cartSize + change,
         selectedProducts: {
           ...selectedProducts,
           ...{
@@ -92,12 +96,9 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
       };
     }
     case "ADD_PRODUCT": {
-      if (selectedProducts[action.product.id]) {
-        return cartState;
-      }
       return {
         total: total + action.product.price.price,
-        size: size + 1,
+        cartSize: cartSize + 1,
         selectedProducts: {
           ...selectedProducts,
           ...{ [action.product.id]: { ...action.product, ...{ count: 1 } } },
@@ -105,18 +106,16 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
       };
     }
     case "DELETE_PRODUCT": {
-      if (!selectedProducts[action.productId]) {
+      const toDelete = selectedProducts[action.productId];
+      if (!toDelete) {
         return cartState;
       }
       return {
-        total:
-          total -
-          selectedProducts[action.productId].price.price *
-            selectedProducts[action.productId].count,
-        size: size - selectedProducts[action.productId].count,
+        total: total - toDelete.price.price * toDelete.count,
+        cartSize: cartSize - toDelete.count,
         selectedProducts: Object.fromEntries(
           Object.values(selectedProducts)
-            .filter((p) => p.id !== action.productId)
+            .filter( (p) => p.id !== action.productId)
             .map((p) => [p.id, p])
         ),
       };

@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Divider from "@material-ui/core/Divider";
-import { Box, Typography, useMediaQuery } from "@material-ui/core";
+import {Box, Grid, Typography, useMediaQuery} from "@material-ui/core";
 import { CartProduct } from "../../pages/checkout";
 import theme from "../../theme";
 import { OrderForm } from "./CheckoutForm";
@@ -20,13 +20,8 @@ import Image from "next/image";
 import { StoreState } from "../../store";
 import { CartState } from "../Cart/Cart";
 import { connect } from "react-redux";
+import Spacing from "../Commons/Spacing";
 
-function subtotal(cartProducts: CartProduct[]) {
-  return cartProducts.reduce(
-    (sum, cartProduct) => sum + cartProduct.price.price * cartProduct.count,
-    0
-  );
-}
 
 type Column<T> = {
   name: string;
@@ -148,24 +143,24 @@ function Summary({
               <Typography variant={"h4"}>Корзина</Typography>
               <Typography variant={"h5"}>
                 <Typography variant={"body1"} display="inline">
-                  на сумму:{" "}
+                  на сумму:
                 </Typography>
                 {invoiceTotal} ₴
               </Typography>
             </Box>
             <Divider />
-            {cartProducts.map((product) => (
-              <>
-                <Box
-                  margin={1}
-                  className={
-                    "flex gap-4 " +
-                    (fullWidth ? "flex-row justify-between" : "flex-col")
-                  }
+            {cartProducts.map((product, i, arr) => (
+              <Box margin={1}>
+                <Grid container
+                  spacing={2}
+                  justify={"space-between"}
+                  alignItems={"center"}
+                  direction={fullWidth ? "row" : "column"}
                 >
-                  <Box
-                    width={fullWidth ? "60%" : "auto"}
-                    className={"flex justify-start items-center"}
+                  <Grid item
+                    xs={12}
+                    sm={5}
+                    className={"flex justify-start items-center self-start"}
                   >
                     <Image
                       className={"rounded"}
@@ -179,10 +174,13 @@ function Summary({
                         {product.displayName}
                       </Typography>
                     </Box>
-                  </Box>
-                  <Box
-                    width={fullWidth ? "60%" : "auto"}
-                    className={"flex flex-row no-wrap gap-12 justify-center"}
+                  </Grid>
+                  <Spacing
+                    spacing={4}
+                    xs={12}
+                    sm={7}
+                    className={"flex flex-row no-wrap justify-center items-center"}
+                    item
                   >
                     {columns.map((col) => (
                       <div className={"flex flex-col justify-center"}>
@@ -201,10 +199,10 @@ function Summary({
                         </div>
                       </div>
                     ))}
-                  </Box>
-                </Box>
-                <Divider />
-              </>
+                  </Spacing>
+                </Grid>
+                {i != arr.length - 1 ? <Divider />: false}
+              </Box>
             ))}
           </Box>
         </Box>

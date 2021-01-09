@@ -46,17 +46,16 @@ const useStyles = makeStyles({
   },
 });
 
-
 type Page = {
   name: string;
   path: string;
-  icon: React.ReactNode
-}
+  icon: React.ReactNode;
+};
 
 export const pages: Page[] = [
-      {path: "/", name: "Домой", icon: (<HomeIcon />)},
-      {path: "/categories/beds", name: "Магазин", icon: (<StorefrontIcon />)},
-      {path: "/about", name: "О наc", icon: (<InfoOutlinedIcon />)},
+  { path: "/", name: "Домой", icon: <HomeIcon /> },
+  { path: "/categories/beds", name: "Магазин", icon: <StorefrontIcon /> },
+  { path: "/about", name: "О наc", icon: <InfoOutlinedIcon /> },
 ];
 
 export default function Header() {

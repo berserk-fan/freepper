@@ -7,28 +7,29 @@ import { makeStyles } from "@material-ui/styles";
 import theme from "../../theme";
 
 const useStyles = makeStyles({
-    sizeBlock: ({ selected, borderWidth }: { selected: boolean; borderWidth: number }) => ({
-      borderColor: selected
-        ? theme.palette.success.main
-        : theme.palette.grey["800"],
-      borderWidth: `${borderWidth}px`,
-    }),
-  }
-);
+  sizeNode: {
+    margin: theme.spacing(0.25),
+  },
+});
 
 function SizeView({
   size,
   selected,
+  className = "",
 }: {
   size: Size & { href: string };
   selected: boolean;
+  className?: string;
 }) {
   const borderWidth = selected ? 2 : 1;
-  const classes = useStyles({ selected, borderWidth });
+  const borderColor = selected
+    ? theme.palette.success.main
+    : theme.palette.grey["800"];
   return (
     <span>
       <Box
-        className={`flex overflow-hidden items-center ${classes.sizeBlock} select-none cursor-pointer`}
+        style={{ borderColor, borderWidth }}
+        className={`flex overflow-hidden items-center select-none cursor-pointer ${className}`}
         width={"30px"}
         height={"30px"}
       >
@@ -57,17 +58,23 @@ export default function SizePicker({
   const ordered = sizes.sort((a, b) =>
     a.displayName.localeCompare(b.displayName)
   );
-  const selectedSize = sizes.find(s => s.id == cur);
+  const selectedSize = sizes.find((s) => s.id == cur);
+  const classes = useStyles();
   return (
     <div>
       <Typography variant={"subtitle1"} display={"inline"}>
         Размер: {selectedSize.description}
       </Typography>
-      <div className={"flex justify-start items-center gap-1"}>
+      <Box className={"flex justify-start items-center"}>
         {ordered.map((size) => (
-          <SizeView key={size.id} size={size} selected={size.id === cur} />
+          <SizeView
+            className={classes.sizeNode}
+            key={size.id}
+            size={size}
+            selected={size.id === cur}
+          />
         ))}
-      </div>
+      </Box>
     </div>
   );
 }

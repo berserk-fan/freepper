@@ -8,19 +8,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
 import { BriefProduct } from "../../types";
-import {
-  Box,
-  ButtonGroup,
-  Collapse,
-  Dialog,
-  Divider,
-  Fade,
-  Grow,
-  IconButton,
-  Paper,
-  Toolbar,
-  useMediaQuery,
-} from "@material-ui/core";
+import { Box, Divider } from "@material-ui/core";
 import ShoppingCartTwoToneIcon from "@material-ui/icons/ShoppingCartTwoTone";
 import { withStyles } from "@material-ui/styles";
 import theme from "../../theme";
@@ -31,9 +19,8 @@ import Image from "next/image";
 import "./Slider.module.css";
 import Slider from "./Slider";
 import { ToggleButton } from "@material-ui/lab";
-import { CustomAppBar } from "../Layout/Header/CustomAppBar";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Price from "./Price";
+import Spacing from "../Commons/Spacing";
 const CartButton = withStyles({
   root: {
     fontSize: "24px",
@@ -125,11 +112,13 @@ function ItemView({
           className={"flex w-full justify-between items-center"}
         >
           <Price price={product.price} />
-          <Box className={"flex items-stretch gap-2"}>
-            <Button variant={"outlined"}>Подробнее</Button>
-            <AddToCartButton {...{ handleAddedToCart, inCart }} />
+          <Box>
+            <Spacing spacing={2} className={"flex flex-row items-stretch"} wrap={"nowrap"}>
+              <Link href={product.name}><Button variant={"outlined"}>Детали</Button></Link>
+              <AddToCartButton {...{ handleAddedToCart, inCart }} />
+            </Spacing>
           </Box>
-        </Box>
+      </Box>
       </CardActions>
     </Card>
   );

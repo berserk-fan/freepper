@@ -1,7 +1,7 @@
 import { Product } from "@mamat14/shop-server/shop_model";
 import { CartState } from "../Cart/Cart";
 import Slider from "../Shop/Slider";
-import { Box, Button, Typography } from "@material-ui/core";
+import {Box, Button, Divider, Grid, Typography} from "@material-ui/core";
 import Image from "next/image";
 import Price from "../Shop/Price";
 import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlineOutlined";
@@ -10,6 +10,7 @@ import { addProductAction, StoreState } from "../../store";
 import { connect } from "react-redux";
 import Link from "next/link";
 import DogBedDetails from "./DogBedDetails";
+import Spacing from "../Commons/Spacing";
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
@@ -60,52 +61,40 @@ function ProductPage({
           ))}
         />
       </div>
-      <div className={"flex flex-col gap-2"}>
-        <Typography variant={"h4"}>{displayName}</Typography>
-        <Price price={price} />
-        {getDetails(product)}
-        {notInCart ? (
-          <>
-            <Button
-              variant={"contained"}
-              color={"secondary"}
-              onClick={addToCart}
-            >
-              Добавить в корзину
-            </Button>
-            <Button
-              variant={"contained"}
-              color={"primary"}
-              onClick={checkoutNow}
-            >
+      <Spacing spacing={1} className={"flex flex-col"} childClassName={"w-full"}>
+          <Typography variant={"h4"}>{displayName}</Typography>
+          <Price price={price} />
+          {getDetails(product)}
+          <Divider/>
+          {notInCart ? (
+              <Button variant={"contained"} color={"secondary"} onClick={addToCart} fullWidth>
+                  Добавить в корзину
+              </Button>
+          ) : (
+              <Typography variant={"overline"}>Товар уже в корзине</Typography>
+          )}
+          <Button variant={"contained"} color={"primary"} onClick={checkoutNow} fullWidth>
               <Typography>
-                <Link href={"/checkout"}>Заказать сейчас</Link>
+                  <Link href={"/checkout"}>Заказать сейчас</Link>
               </Typography>
-            </Button>
-          </>
-        ) : (
-          <>
-            <Typography>Товар уже в корзине</Typography>
-            <Button
-              variant={"contained"}
-              color={"primary"}
-              onClick={checkoutNow}
-            >
-              <Typography>
-                <Link href={"/checkout"}>Заказать сейчас</Link>
-              </Typography>
-            </Button>
-          </>
-        )}
-
-        <ul>
-          {checkMarks.map((text) => (
-            <li className={"flex gap-1"}>
-              <CheckCircleOutlineOutlinedIcon /> <Typography>{text}</Typography>
-            </li>
-          ))}
-        </ul>
-      </div>
+          </Button>
+          <ul>
+              {checkMarks.map((text) => (
+                  <li className={"flex"}>
+                      <CheckCircleOutlineOutlinedIcon /> <Typography>{text}</Typography>
+                  </li>
+              ))}
+          </ul>
+          <Divider/>
+          <Typography variant={"h5"}>
+              Описание
+              <Box marginLeft={1} paddingTop={0}>
+                  <Typography className={"pt-0"}>
+                      {product.description}
+                  </Typography>
+              </Box>
+          </Typography>
+      </Spacing>
     </div>
   );
 }
