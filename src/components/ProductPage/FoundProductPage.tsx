@@ -1,7 +1,7 @@
 import { Product } from "@mamat14/shop-server/shop_model";
 import { CartState } from "../Cart/Cart";
 import Slider from "../Shop/Slider";
-import {Box, Button, Divider, Grid, Typography} from "@material-ui/core";
+import {Box, Button, Container, Divider, Grid, Typography} from "@material-ui/core";
 import Image from "next/image";
 import Price from "../Shop/Price";
 import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlineOutlined";
@@ -45,10 +45,10 @@ function ProductPage({
   }
 
   return (
-    <div>
-      <div>
+    <Box marginX={"auto"} maxWidth={"500px"}>
+
         <Slider
-          className={"border"}
+          className={"border rounded overflow-hidden"}
           slides={images.map((image) => (
             <Box className={`flex overflow-hidden items-center`}>
               <Image
@@ -60,7 +60,7 @@ function ProductPage({
             </Box>
           ))}
         />
-      </div>
+
       <Spacing spacing={1} className={"flex flex-col"} childClassName={"w-full"}>
           <Typography variant={"h4"}>{displayName}</Typography>
           <Price price={price} />
@@ -95,7 +95,7 @@ function ProductPage({
               </Box>
           </Typography>
       </Spacing>
-    </div>
+    </Box>
   );
 }
 

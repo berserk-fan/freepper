@@ -36,9 +36,6 @@ const useStyles = makeStyles({
     display: "flex",
   },
   imageContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
     minWidth: 106,
     maxWidth: 148,
     height: 148,
@@ -47,6 +44,7 @@ const useStyles = makeStyles({
   },
   image: {
     height: 148,
+    minWidth: 148,
   },
   dataContainer: {
     minWidth: 140,
@@ -94,9 +92,9 @@ const cartItem = function CartItem({
 
   return (
     <Card variant={"outlined"} className={classes.root}>
-      <div className={`${classes.imageContainer}`}>
-        <div className={`${classes.image}`}>
-          <Image width={148} height={148} src={image.src} alt={image.alt} />
+      <div className={`flex justify-center ${classes.imageContainer}`}>
+        <div className={`flex ${classes.image}`}>
+          <Image width={148} height={148} src={image.src} alt={image.alt}/>
         </div>
       </div>
       <div

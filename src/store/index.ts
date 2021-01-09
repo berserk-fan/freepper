@@ -4,7 +4,6 @@ import { category, shopProducts } from "../../configs/Data";
 import Cookies from "js-cookie";
 import { CartState } from "../components/Cart/Cart";
 import { CartProduct } from "../pages/checkout";
-import exp from "constants";
 import { Product } from "@mamat14/shop-server/shop_model";
 
 export const cartStateKey = "cartState";
