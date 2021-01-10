@@ -94,7 +94,7 @@ const cartItem = function CartItem({
     <Card variant={"outlined"} className={classes.root}>
       <div className={`flex justify-center ${classes.imageContainer}`}>
         <div className={`flex ${classes.image}`}>
-          <Image width={148} height={148} src={image.src} alt={image.alt}/>
+          <Image width={148} height={148} src={image.src} alt={image.alt} />
         </div>
       </div>
       <div

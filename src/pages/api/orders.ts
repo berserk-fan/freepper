@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Order } from "../../order-model";
 import { CartProduct } from "../checkout";
+import nodemailer from "nodemailer";
 
 function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
   const ret: any = {};
@@ -101,12 +102,36 @@ export function getEmailContent(order: Order): string {
     `;
 }
 
-export default function postOrderHandler(
+const transporter = nodemailer.createTransport({
+  host: "smtp.zoho.eu",
+  secure: true,
+  port: 465,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+export default async function postOrderHandler(
   req: NextApiRequest,
   res: NextApiResponse<void>
 ) {
+  res.status(500).end();
+  return;
   const order: Order = JSON.parse(req.body);
   const emailContent = getEmailContent(order);
-  console.log(emailContent);
-  res.end("Ok");
+  const mailOptions = {
+    from: "lika@pogladit-mozhno.com",
+    to: "lika.gefest@gmail.com",
+    subject: `Новый заказ от ${order.deliveryDetails.fullName}.`,
+    html: emailContent,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.status(201).end();
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).end();
+  }
 }

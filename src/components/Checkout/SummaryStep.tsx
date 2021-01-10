@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Divider from "@material-ui/core/Divider";
-import {Box, Grid, Typography, useMediaQuery} from "@material-ui/core";
+import { Box, Grid, Typography, useMediaQuery } from "@material-ui/core";
 import { CartProduct } from "../../pages/checkout";
 import theme from "../../theme";
 import { OrderForm } from "./CheckoutForm";
@@ -21,7 +21,6 @@ import { StoreState } from "../../store";
 import { CartState } from "../Cart/Cart";
 import { connect } from "react-redux";
 import Spacing from "../Commons/Spacing";
-
 
 type Column<T> = {
   name: string;
@@ -151,13 +150,15 @@ function Summary({
             <Divider />
             {cartProducts.map((product, i, arr) => (
               <Box margin={1}>
-                <Grid container
+                <Grid
+                  container
                   spacing={2}
                   justify={"space-between"}
                   alignItems={"center"}
                   direction={fullWidth ? "row" : "column"}
                 >
-                  <Grid item
+                  <Grid
+                    item
                     xs={12}
                     sm={5}
                     className={"flex justify-start items-center self-start"}
@@ -179,7 +180,9 @@ function Summary({
                     spacing={4}
                     xs={12}
                     sm={7}
-                    className={"flex flex-row no-wrap justify-center items-center"}
+                    className={
+                      "flex flex-row no-wrap justify-center items-center"
+                    }
                     item
                   >
                     {columns.map((col) => (
@@ -201,7 +204,7 @@ function Summary({
                     ))}
                   </Spacing>
                 </Grid>
-                {i != arr.length - 1 ? <Divider />: false}
+                {i != arr.length - 1 ? <Divider /> : false}
               </Box>
             ))}
           </Box>

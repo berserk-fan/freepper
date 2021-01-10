@@ -113,12 +113,18 @@ function ItemView({
         >
           <Price price={product.price} />
           <Box>
-            <Spacing spacing={2} className={"flex flex-row items-stretch"} wrap={"nowrap"}>
-              <Link href={product.name}><Button variant={"outlined"}>Детали</Button></Link>
+            <Spacing
+              spacing={2}
+              className={"flex flex-row items-stretch"}
+              wrap={"nowrap"}
+            >
+              <Link href={product.name}>
+                <Button variant={"outlined"}>Детали</Button>
+              </Link>
               <AddToCartButton {...{ handleAddedToCart, inCart }} />
             </Spacing>
           </Box>
-      </Box>
+        </Box>
       </CardActions>
     </Card>
   );

@@ -61,51 +61,61 @@ const useStyles = makeStyles({
   },
 });
 
-function NonEmptyCart({productsList, total}) {
+function NonEmptyCart({ productsList, total }) {
   const classes = useStyles();
-  return (<>
-    {productsList.map((product) => (
-    <Box key={product.id} marginY={1}>
-      <CartItem product={product} />
-    </Box>
-    ))}
-    <Box marginTop={2} className={`flex justify-end items-center`}>
-      <div className={`rounded ${classes.mainButtonContainer}`}>
-        <div className={classes.textWrapper}>
-          <Typography variant={"h5"} classes={{ root: classes.prePriceText }}>
-            Итого
-          </Typography>
-          <Typography variant="h5">{total}₴</Typography>
-        </div>
-        <Link href={"/checkout"}>
-          <Button
+  return (
+    <>
+      {productsList.map((product) => (
+        <Box key={product.id} marginY={1}>
+          <CartItem product={product} />
+        </Box>
+      ))}
+      <Box marginTop={2} className={`flex justify-end items-center`}>
+        <div className={`rounded ${classes.mainButtonContainer}`}>
+          <div className={classes.textWrapper}>
+            <Typography variant={"h5"} classes={{ root: classes.prePriceText }}>
+              Итого
+            </Typography>
+            <Typography variant="h5">{total}₴</Typography>
+          </div>
+          <Link href={"/checkout"}>
+            <Button
               classes={{ root: classes.mainButton }}
               color={"primary"}
               variant="contained"
               size="large"
-          >
-            Оформить заказ
-          </Button>
-        </Link>
-      </div>
-    </Box>
-    </>)
+            >
+              Оформить заказ
+            </Button>
+          </Link>
+        </div>
+      </Box>
+    </>
+  );
 }
 
-function Cart({ cartState: { total, selectedProducts, cartSize } }: { cartState: CartState }) {
+function Cart({
+  cartState: { total, selectedProducts, cartSize },
+}: {
+  cartState: CartState;
+}) {
   const productsList = Object.values(selectedProducts);
   return (
     <div>
       <Box marginTop={2}>
         {cartSize === 0 ? (
-            <Box>
-              <Typography variant={"h3"} align={"center"}>Здесь пока ничего нет</Typography>
-              <Box margin={4} className={"flex justify-center items-center"}>
-                <Button variant={"contained"} color={"primary"}>В Магазин</Button>
-              </Box>
+          <Box>
+            <Typography variant={"h3"} align={"center"}>
+              Здесь пока ничего нет
+            </Typography>
+            <Box margin={4} className={"flex justify-center items-center"}>
+              <Button variant={"contained"} color={"primary"}>
+                В Магазин
+              </Button>
             </Box>
+          </Box>
         ) : (
-          <NonEmptyCart productsList={productsList} total={total}/>
+          <NonEmptyCart productsList={productsList} total={total} />
         )}
       </Box>
     </div>

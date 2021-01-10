@@ -72,61 +72,61 @@ export default function DeliveryDetailsForm({
       </Typography>
       <Spacing spacing={1} childClassName={"w-full"}>
         <TextField
-            name={pathName1({} as OrderForm, "name")}
-            required
-            fullWidth
-            id="full-name-input"
-            label="Полное имя"
-            variant="filled"
-            type="text"
-            autoComplete={"name"}
+          name={pathName1({} as OrderForm, "name")}
+          required
+          fullWidth
+          id="full-name-input"
+          label="Полное имя"
+          variant="filled"
+          type="text"
+          autoComplete={"name"}
         />
         <Field
-            id={"phone-input"}
-            name={pathName1({} as OrderForm, "phone")}
-            placeholder={"Номер телефона"}
-            component={PhoneNumber}
+          id={"phone-input"}
+          name={pathName1({} as OrderForm, "phone")}
+          placeholder={"Номер телефона"}
+          component={PhoneNumber}
         />
         <Radios
-            label="Служба доставки"
-            name={pathName1({} as OrderForm, "deliveryProvider")}
-            required={true}
-            data={[
-              {
-                label: (
-                    <SvgIcon className={classes.largeIcon} viewBox={"0 0 210 75"}>
-                      <NovayaPochtaIcon />
-                    </SvgIcon>
-                ),
-                value: DeliveryProvider.NOVAYA_POCHTA,
-              },
-            ]}
+          label="Служба доставки"
+          name={pathName1({} as OrderForm, "deliveryProvider")}
+          required={true}
+          data={[
+            {
+              label: (
+                <SvgIcon className={classes.largeIcon} viewBox={"0 0 210 75"}>
+                  <NovayaPochtaIcon />
+                </SvgIcon>
+              ),
+              value: DeliveryProvider.NOVAYA_POCHTA,
+            },
+          ]}
         />
         <Select
-            required
-            name={pathName1({} as OrderForm, "deliveryOption")}
-            fullWidth
-            labelId="select-devilery-option-label"
-            id="select-devilery-option"
-            label="Способ доставки"
-            variant="filled"
+          required
+          name={pathName1({} as OrderForm, "deliveryOption")}
+          fullWidth
+          labelId="select-devilery-option-label"
+          id="select-devilery-option"
+          label="Способ доставки"
+          variant="filled"
         >
           {deliveryOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                {getDeliveryOptionName(option)}
-              </MenuItem>
+            <MenuItem key={option} value={option}>
+              {getDeliveryOptionName(option)}
+            </MenuItem>
           ))}
         </Select>
         <Collapse in={!!orderForm?.deliveryOption}>
           <Field
-              name={pathName1({} as OrderForm, "address")}
-              render={(props) => (
-                  <Address
-                      required
-                      label={getAddressLabel(orderForm?.deliveryOption)}
-                      {...props}
-                  />
-              )}
+            name={pathName1({} as OrderForm, "address")}
+            render={(props) => (
+              <Address
+                required
+                label={getAddressLabel(orderForm?.deliveryOption)}
+                {...props}
+              />
+            )}
           />
         </Collapse>
       </Spacing>

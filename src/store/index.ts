@@ -76,8 +76,8 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
   switch (action.type) {
     case "SET_PRODUCT_COUNT": {
       const toSet = selectedProducts[action.productId];
-      if(!toSet) {
-        return cartState
+      if (!toSet) {
+        return cartState;
       }
       const change = action.count - toSet.count;
       return {
@@ -114,7 +114,7 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
         cartSize: cartSize - toDelete.count,
         selectedProducts: Object.fromEntries(
           Object.values(selectedProducts)
-            .filter( (p) => p.id !== action.productId)
+            .filter((p) => p.id !== action.productId)
             .map((p) => [p.id, p])
         ),
       };
