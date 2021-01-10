@@ -44,7 +44,11 @@ type DELETE_PRODUCT = {
   productId: string;
 };
 
-type CartUpdate = SET_PRODUCT_COUNT | ADD_PRODUCT | DELETE_PRODUCT;
+type CLEAR_CART = {
+  type: "CLEAR_CART";
+}
+
+type CartUpdate = SET_PRODUCT_COUNT | ADD_PRODUCT | DELETE_PRODUCT | CLEAR_CART;
 
 export function addProductAction(product: CartProduct): ADD_PRODUCT {
   return {
@@ -69,6 +73,12 @@ export function deleteProductAction(productId: string): DELETE_PRODUCT {
     type: "DELETE_PRODUCT",
     productId,
   };
+}
+
+export function clearCartAction(): CLEAR_CART {
+  return {
+    type: "CLEAR_CART"
+  }
 }
 
 function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
@@ -118,6 +128,13 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
             .map((p) => [p.id, p])
         ),
       };
+    }
+    case "CLEAR_CART": {
+      return {
+        cartSize: 0,
+        total: 0,
+        selectedProducts: {}
+      }
     }
     default:
       return cartState;

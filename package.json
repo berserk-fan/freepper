@@ -26,6 +26,7 @@
     "notistack": "^1.0.1",
     "promise-retry": "^2.0.1",
     "react": "16.14.0",
+    "react-detect-offline": "^2.4.0",
     "react-dom": "16.14.0",
     "react-final-form": "^6.5.2",
     "react-redux": "^7.2.2",

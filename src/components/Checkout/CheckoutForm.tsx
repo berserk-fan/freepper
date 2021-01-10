@@ -1,12 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import SummaryStep from "./SummaryStep";
 import DeliveryDetailsStep from "./DeliveryDetailsStep";
 import {
-  Backdrop,
   Box,
-  CircularProgress,
   Fade,
   LinearProgress,
   Slide,
@@ -26,11 +24,12 @@ import {
 import FormStepper from "./FormStepper";
 import Link from "next/link";
 import { CartProduct } from "../../pages/checkout";
-import { StoreState } from "../../store";
-import exp from "constants";
+import {clearCartAction, StoreState} from "../../store";
 import { connect } from "react-redux";
 import promiseRetry from "promise-retry";
-import {Alert} from "@material-ui/lab";
+import { Alert } from "@material-ui/lab";
+import { Offline } from "react-detect-offline";
+import ContactUs from "./ContactUs";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -51,7 +50,7 @@ function getButtonTexts() {
   return [
     "Перейти к проверке заказа",
     "Перейти к оплате заказа",
-    "Оплатить при получении 😌",
+    "Отправить заказ",
   ];
 }
 
@@ -103,28 +102,25 @@ const schema: ObjectSchema<OrderForm> = object({
 const validate = makeValidateSync(schema);
 const steps = ["Доставка", "Проверка", "Оплата"];
 
-function postOrder(order: Order): Promise<Response> {
-  return fetch("/api/orders", {
-    method: "POST",
-    body: JSON.stringify(order),
-  });
-}
-
 type SubmitState =
   | "NOT_SUBMITTED"
   | "SENDING"
   | "OK"
+  | "RETRY_TIMEOUT"
   | "RETRYING"
   | "CLIENT_ERROR"
-  | "SERVER_ERROR";
+  | "SERVER_ERROR"
+  | "CANCELLED";
 
-
-function CountDown({countDownId, periodSec}: {countDownId: number, periodSec: number}){
-  console.log("RENDRING" + countDownId.toString());
+function CountDown({
+  countDownId,
+  periodSec,
+}: {
+  countDownId: number;
+  periodSec: number;
+}) {
   const [time, setTime] = useState(-1);
-
   useEffect(() => {
-    console.log("Effect triggered");
     setTime(periodSec);
     countDown(countDownId, periodSec);
   }, [countDownId]);
@@ -132,22 +128,28 @@ function CountDown({countDownId, periodSec}: {countDownId: number, periodSec: nu
   function countDown(idAtStart: number, seconds: number) {
     setTimeout(() => {
       const newTime = seconds - 1;
-      if(idAtStart === countDownId && newTime > 0) {
+      if (idAtStart === countDownId && newTime > 0) {
         setTime(newTime);
         countDown(idAtStart, newTime);
       }
-    }, 1000)
+    }, 1000);
   }
 
-  return <Typography display={"inline"}>{time.toString()}</Typography>
+  return (
+    <Typography component={"span"} display={"inline"}>
+      {time.toString()}
+    </Typography>
+  );
 }
 
 const Checkout = ({
   cart,
   total,
+  clearCart
 }: {
   cart: Record<string, CartProduct>;
   total: number;
+  clearCart: () => void
 }) => {
   const classes = useStyles();
   const initialValues = {
@@ -156,13 +158,24 @@ const Checkout = ({
   };
   const [activeStep, setActiveStep] = React.useState(0);
   const [formState, setFormState] = useState<OrderForm>(initialValues);
-  const [orderSubmitState, setOrderSubmitState] = useState<SubmitState>("NOT_SUBMITTED");
+  const [orderSubmitState, setOrderSubmitState] = useState<SubmitState>(
+    "NOT_SUBMITTED"
+  );
   const [retryNumber, setRetryNumber] = useState(0);
 
-  const handleSubmit = (newFormState: OrderForm) => {
-    const isLastStep = activeStep === steps.length - 1;
-    if (isLastStep) {
-      postOrderWithErrorHandling(newFormState).catch(console.log);
+  useEffect(() => {
+    if(orderSubmitState === "OK") {
+      clearCart()
+    }
+  }, [orderSubmitState]);
+
+  function isLastStep() {
+    return activeStep === steps.length - 1;
+  }
+
+  const handleNext = (newFormState: OrderForm) => {
+    if (isLastStep()) {
+      postFormWithErrorHandling(newFormState).catch(console.log);
     } else {
       setFormState(newFormState);
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -176,7 +189,7 @@ const Checkout = ({
     };
   };
 
-  async function submitForm(orderForm: OrderForm): Promise<Response> {
+  async function postForm(orderForm: OrderForm): Promise<Response> {
     const order: Order = {
       paymentOption: PaymentOption.COD,
       cart: cart,
@@ -189,18 +202,25 @@ const Checkout = ({
         fullName: orderForm.name,
       },
     };
-    return postOrder(order);
+
+    return fetch("/api/orders", {
+      method: "POST",
+      body: JSON.stringify(order),
+    });
   }
 
   const RETRY_INTERVAL_SEC = 10;
-  function postOrderWithErrorHandling(orderForm: OrderForm): Promise<void> {
+  function postFormWithErrorHandling(orderForm: OrderForm): Promise<void> {
     setOrderSubmitState("SENDING");
     return promiseRetry(
       async (retry, retryNumber) => {
         setRetryNumber(retryNumber);
+        if (retryNumber !== 1) {
+          setOrderSubmitState("RETRYING");
+        }
         let newState: SubmitState = "OK";
         try {
-          const res = await submitForm(orderForm);
+          const res = await postForm(orderForm);
           if (res.status != 201) {
             newState = "SERVER_ERROR";
           }
@@ -208,32 +228,44 @@ const Checkout = ({
           newState = "CLIENT_ERROR";
         }
         const CLIENT_ERRORS_MAX_RETRY = 6;
-        const SERVER_ERRORS_MAX_RETRY = 3;
+        const SERVER_ERRORS_MAX_RETRY = 2;
         if (
-          (newState === "CLIENT_ERROR" && retryNumber <= CLIENT_ERRORS_MAX_RETRY) ||
-          (newState === "SERVER_ERROR" && retryNumber <= SERVER_ERRORS_MAX_RETRY)
+          (newState === "CLIENT_ERROR" &&
+            retryNumber <= CLIENT_ERRORS_MAX_RETRY) ||
+          (newState === "SERVER_ERROR" &&
+            retryNumber <= SERVER_ERRORS_MAX_RETRY)
         ) {
-          newState = "RETRYING";
+          newState = "RETRY_TIMEOUT";
         }
 
         setOrderSubmitState(newState);
-        if (newState === "RETRYING") {
+        if (newState === "RETRY_TIMEOUT") {
           retry(new Error("Error posting order"));
         }
       },
-      { retries: 100, factor: 1, minTimeout: RETRY_INTERVAL_SEC * 1000, maxTimeout: RETRY_INTERVAL_SEC * 1000}
-    );
+      {
+        retries: 100,
+        factor: 1,
+        minTimeout: RETRY_INTERVAL_SEC * 1000,
+        maxTimeout: RETRY_INTERVAL_SEC * 1000,
+      }
+    )
   }
 
   const buttonTexts = getButtonTexts();
   const isProcessingOrder = orderSubmitState === "SENDING";
-  const retryingPostingOrder = orderSubmitState === "RETRYING";
+  const wasSubmitted = orderSubmitState !== "NOT_SUBMITTED";
+  const isRetryState =
+    orderSubmitState === "RETRY_TIMEOUT" || orderSubmitState === "RETRYING";
+  const isRetryTimeout = orderSubmitState === "RETRY_TIMEOUT";
+  const isOk = orderSubmitState === "OK";
+  const isServerError = orderSubmitState === "SERVER_ERROR";
   return (
     <>
       <FormStepper {...{ activeStep, steps }} />
       <Box padding={1}>
         <Form
-          {...{ onSubmit: handleSubmit, validate }}
+          {...{ onSubmit: handleNext, validate }}
           initialValues={formState}
           render={({
             handleSubmit,
@@ -267,7 +299,9 @@ const Checkout = ({
                           <Fade
                             in={isProcessingOrder}
                             style={{
-                              transitionDelay: isProcessingOrder ? "800ms" : "0ms",
+                              transitionDelay: isProcessingOrder
+                                ? "800ms"
+                                : "0ms",
                             }}
                             unmountOnExit
                           >
@@ -284,7 +318,7 @@ const Checkout = ({
                           color="primary"
                           onClick={handleSubmit}
                           type="submit"
-                          disabled={!schema.isValidSync(values)}
+                          disabled={!schema.isValidSync(values) || (wasSubmitted && isLastStep())}
                         >
                           {buttonTexts[activeStep]}
                         </Button>
@@ -297,14 +331,38 @@ const Checkout = ({
           )}
         />
       </Box>
-      <Snackbar
-        open={retryingPostingOrder}
-        TransitionComponent={Slide}
-
-      >
+      <Snackbar open={isOk} TransitionComponent={Slide}>
+        <Alert severity={"success"}>
+          <Typography>
+            Заказ отправлен успешно
+          </Typography>
+        </Alert>
+      </Snackbar>
+      <Snackbar open={isRetryState} TransitionComponent={Slide}>
         <Alert severity={"warning"}>
-          <Typography>Ошибка при отправке заказа.</Typography>
-          <Typography>Пробую еще раз через: <CountDown countDownId={retryNumber} periodSec={RETRY_INTERVAL_SEC}/> сек</Typography>
+          <Typography>Ошибка при отправке заказа</Typography>
+          <Offline>
+            <Typography>Скорее всего у вас пропал интернет</Typography>
+          </Offline>
+          {isRetryTimeout ? (
+              <Typography>
+                Попробую еще раз через{" "}
+                <CountDown
+                    countDownId={retryNumber}
+                    periodSec={RETRY_INTERVAL_SEC}
+                />
+              </Typography>
+          ) : (
+              <Typography>Отправляю заказ...</Typography>
+          )
+          }
+        </Alert>
+      </Snackbar>
+      <Snackbar open={isServerError} TransitionComponent={Slide}>
+        <Alert severity={"error"}>
+          Не удалось отправить заказ из-за проблем с сайтом.
+          Пожалуйста, попробуйте другой метод:
+          <ContactUs/>
         </Alert>
       </Snackbar>
     </>
@@ -318,4 +376,10 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
-export default connect(mapStateToProps, null)(Checkout);
+function mapDispatchToProps(dispatch) {
+  return {
+    clearCart: () => dispatch(clearCartAction())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Checkout);
