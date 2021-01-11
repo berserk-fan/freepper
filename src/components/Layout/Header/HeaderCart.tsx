@@ -1,4 +1,4 @@
-import { Badge, Box, Dialog, IconButton, Slide } from "@material-ui/core";
+import {Badge, Box, Dialog, Fab, IconButton, Slide} from "@material-ui/core";
 import ShoppingCartTwoToneIcon from "@material-ui/icons/ShoppingCartTwoTone";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -27,7 +27,7 @@ const StyledBadge = withStyles({
 const useStyles = makeStyles({
   cart: {
     color: theme.palette.grey["800"],
-    marginLeft: "auto",
+    marginLeft: "auto"
   },
   closeButton: {
     color: theme.palette.grey["800"],
@@ -56,15 +56,17 @@ function HeaderCart({ cartSize }: { cartSize: number }) {
 
   return (
     <>
-      <IconButton
-        className={classes.cart}
-        size={"medium"}
-        onClick={handleClickOpen}
-      >
-        <StyledBadge max={9} badgeContent={cartSize}>
-          <ShoppingCartTwoToneIcon fontSize={"large"} />
-        </StyledBadge>
-      </IconButton>
+
+        <Fab
+            className={classes.cart}
+            size={"medium"}
+            onClick={handleClickOpen}
+        >
+          <StyledBadge max={9} badgeContent={cartSize}>
+            <ShoppingCartTwoToneIcon/>
+          </StyledBadge>
+        </Fab>
+
       <Dialog
         scroll={isSmallScreen ? "body" : "paper"}
         fullScreen={isSmallScreen}
@@ -78,14 +80,15 @@ function HeaderCart({ cartSize }: { cartSize: number }) {
         <CustomAppBar>
           <Toolbar className={"flex justify-between"}>
             <Typography variant="h5">Корзина</Typography>
-            <IconButton
-              edge="start"
-              className={classes.closeButton}
-              onClick={handleClose}
-              aria-label="close-cart-window"
-            >
-              <CloseIcon fontSize={"large"} />
-            </IconButton>
+            <Box borderRadius={"50%"} bgcolor={theme.palette.background.paper}>
+              <IconButton
+                  className={classes.closeButton}
+                  onClick={handleClose}
+                  aria-label="close-cart-window"
+              >
+                <CloseIcon />
+              </IconButton>
+            </Box>
           </Toolbar>
         </CustomAppBar>
         <Box paddingX={2} paddingBottom={2}>

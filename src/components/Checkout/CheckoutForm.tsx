@@ -24,7 +24,7 @@ import {
 import FormStepper from "./FormStepper";
 import Link from "next/link";
 import { CartProduct } from "../../pages/checkout";
-import {clearCartAction, StoreState} from "../../store";
+import { clearCartAction, StoreState } from "../../store";
 import { connect } from "react-redux";
 import promiseRetry from "promise-retry";
 import { Alert } from "@material-ui/lab";
@@ -145,11 +145,11 @@ function CountDown({
 const Checkout = ({
   cart,
   total,
-  clearCart
+  clearCart,
 }: {
   cart: Record<string, CartProduct>;
   total: number;
-  clearCart: () => void
+  clearCart: () => void;
 }) => {
   const classes = useStyles();
   const initialValues = {
@@ -164,8 +164,8 @@ const Checkout = ({
   const [retryNumber, setRetryNumber] = useState(0);
 
   useEffect(() => {
-    if(orderSubmitState === "OK") {
-      clearCart()
+    if (orderSubmitState === "OK") {
+      clearCart();
     }
   }, [orderSubmitState]);
 
@@ -249,7 +249,7 @@ const Checkout = ({
         minTimeout: RETRY_INTERVAL_SEC * 1000,
         maxTimeout: RETRY_INTERVAL_SEC * 1000,
       }
-    )
+    );
   }
 
   const buttonTexts = getButtonTexts();
@@ -318,7 +318,10 @@ const Checkout = ({
                           color="primary"
                           onClick={handleSubmit}
                           type="submit"
-                          disabled={!schema.isValidSync(values) || (wasSubmitted && isLastStep())}
+                          disabled={
+                            !schema.isValidSync(values) ||
+                            (wasSubmitted && isLastStep())
+                          }
                         >
                           {buttonTexts[activeStep]}
                         </Button>
@@ -333,9 +336,7 @@ const Checkout = ({
       </Box>
       <Snackbar open={isOk} TransitionComponent={Slide}>
         <Alert severity={"success"}>
-          <Typography>
-            Заказ отправлен успешно
-          </Typography>
+          <Typography>Заказ отправлен успешно</Typography>
         </Alert>
       </Snackbar>
       <Snackbar open={isRetryState} TransitionComponent={Slide}>
@@ -345,24 +346,23 @@ const Checkout = ({
             <Typography>Скорее всего у вас пропал интернет</Typography>
           </Offline>
           {isRetryTimeout ? (
-              <Typography>
-                Попробую еще раз через{" "}
-                <CountDown
-                    countDownId={retryNumber}
-                    periodSec={RETRY_INTERVAL_SEC}
-                />
-              </Typography>
+            <Typography>
+              Попробую еще раз через{" "}
+              <CountDown
+                countDownId={retryNumber}
+                periodSec={RETRY_INTERVAL_SEC}
+              />
+            </Typography>
           ) : (
-              <Typography>Отправляю заказ...</Typography>
-          )
-          }
+            <Typography>Отправляю заказ...</Typography>
+          )}
         </Alert>
       </Snackbar>
       <Snackbar open={isServerError} TransitionComponent={Slide}>
         <Alert severity={"error"}>
-          Не удалось отправить заказ из-за проблем с сайтом.
-          Пожалуйста, попробуйте другой метод:
-          <ContactUs/>
+          Не удалось отправить заказ из-за проблем с сайтом. Пожалуйста,
+          попробуйте другой метод:
+          <ContactUs />
         </Alert>
       </Snackbar>
     </>
@@ -378,8 +378,8 @@ function mapStateToProps(state: StoreState) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    clearCart: () => dispatch(clearCartAction())
-  }
+    clearCart: () => dispatch(clearCartAction()),
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Checkout);

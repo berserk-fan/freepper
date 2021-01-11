@@ -7,6 +7,7 @@ import {
   Container,
   Divider,
   Grid,
+  Paper,
   Typography,
 } from "@material-ui/core";
 import Image from "next/image";
@@ -57,7 +58,7 @@ function ProductPage({
 
   const productDetailsPart = getDetails(product);
   return (
-    <Box marginX={"auto"} maxWidth={"500px"}>
+    <Box marginX={"auto"} maxWidth={"500px"} bgcolor={"#fff"} padding={1}>
       <Slider
         className={"border rounded overflow-hidden"}
         slides={images.map((image) => (
@@ -79,7 +80,7 @@ function ProductPage({
         {notInCart ? (
           <Button
             variant={"contained"}
-            color={"secondary"}
+            color={"primary"}
             onClick={addToCart}
             fullWidth
           >
@@ -90,7 +91,7 @@ function ProductPage({
         )}
         <Button
           variant={"contained"}
-          color={"primary"}
+          color={"secondary"}
           onClick={checkoutNow}
           fullWidth
         >

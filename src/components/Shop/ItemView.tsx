@@ -21,6 +21,7 @@ import Slider from "./Slider";
 import { ToggleButton } from "@material-ui/lab";
 import Price from "./Price";
 import Spacing from "../Commons/Spacing";
+
 const CartButton = withStyles({
   root: {
     fontSize: "24px",
@@ -81,30 +82,24 @@ function ItemView({
 
   return (
     <Card className={`${classes.root} ${className || ""}`}>
-      <CardActionArea>
-        <Slider
-          slides={images.map((image) => (
-            <Box
-              className={`flex ${classes.media} overflow-hidden items-center`}
-            >
-              <Image
-                width={500}
-                height={500}
-                src={image.src}
-                alt={displayName}
-              />
-            </Box>
-          ))}
-        />
-        <Link href={product.name}>
+      <Slider
+        slides={images.map((image) => (
+          <Box className={`flex ${classes.media} overflow-hidden items-center`}>
+            <Image width={500} height={500} src={image.src} alt={displayName} />
+          </Box>
+        ))}
+      />
+
+      <Link href={product.name}>
+        <CardActionArea>
           <CardContent>
             <Typography variant="h5">{displayName}</Typography>
             <Typography variant="subtitle2" color="textSecondary" component="p">
               {description}
             </Typography>
           </CardContent>
-        </Link>
-      </CardActionArea>
+        </CardActionArea>
+      </Link>
       <Divider />
       <CardActions>
         <Box
@@ -115,11 +110,13 @@ function ItemView({
           <Box>
             <Spacing
               spacing={2}
-              className={"flex flex-row items-stretch"}
+              className={"flex flex-row items-center"}
               wrap={"nowrap"}
             >
               <Link href={product.name}>
-                <Button variant={"outlined"}>Детали</Button>
+                <Button color={"primary"} variant={"outlined"}>
+                  Детали
+                </Button>
               </Link>
               <AddToCartButton {...{ handleAddedToCart, inCart }} />
             </Spacing>
