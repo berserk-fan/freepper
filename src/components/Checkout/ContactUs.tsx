@@ -28,7 +28,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ContactUs(text: string) {
+export default function ContactUs() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const handleClick = () => {
