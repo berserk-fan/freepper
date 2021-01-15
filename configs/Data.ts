@@ -120,7 +120,9 @@ export const shopProducts: Product[] = lukoshkoVariants.map((v) => ({
   id: v.variantName.split("/").filter((x) => !!x)[1],
   name: v.variantName,
   displayName: `Лукошко`,
-  description: "Хорошая лежанка",
+  description: "Хорошая лежанка, Хорошая лежанка, Хорошая лежанка, " +
+      "Хорошая лежанка, Хорошая лежанка, Хорошая лежанка, " +
+      "Хорошая лежанка, Хорошая лежанка, Хорошая лежанка",
   price: lukoshkoCustomizations[v.variantName].price,
   images: lukoshkoCustomizations[v.variantName].images,
   details: {

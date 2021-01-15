@@ -6,7 +6,7 @@ import theme from "../theme";
 export default class MyDocument extends Document {
   render() {
     return (
-      <Html lang="en">
+      <Html lang="ru">
         <Head>
           <link
             rel="apple-touch-icon"

@@ -20,6 +20,7 @@ import KyivStarIcon from "../Icons/KyivstarIcon";
 import LifecellIcon from "../Icons/LifecellIcon";
 import VodafoneIcon from "../Icons/VodafoneIcon";
 import Image from "next/image";
+import ViberIcon from "../Icons/ViberIcon";
 
 const useStyles = makeStyles({
   nested: {
@@ -27,13 +28,14 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ContactUs() {
+export default function ContactUs(text: string) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const handleClick = () => {
     setOpen(!open);
   };
-  const telegramChat = "https://t.me/pogladit_mozhno";
+
+  const telegramChat = "tg://resolve?domain=pogladit_mozhno?";
 
   return (
     <List component="nav" aria-label="main mailbox folders">
@@ -78,21 +80,29 @@ export default function ContactUs() {
           </ListItem>
         </List>
       </Collapse>
-      <ListItem button>
+      <ListItem button onClick={() => window.open(telegramChat, "_blank")}>
         <ListItemIcon>
           <TelegramIcon />
         </ListItemIcon>
-        <ListItemText onClick={() => window.open(telegramChat)}>
+        <ListItemText>
           <Typography component={"span"} display={"inline"}>
-            Telegram
+            Telegram{" "}
           </Typography>
-          <Link href={telegramChat}>@pogladit_mozhno</Link>
+          <Link>@pogladit_mozhno</Link>
         </ListItemText>
       </ListItem>
-      <ListItem button>
+      <ListItem button onClick={() => window.open(telegramChat, "_blank")}>
         <ListItemIcon>
-          <TelegramIcon />
+          <Box width={"25px"} height={"25px"}>
+            <ViberIcon />
+          </Box>
         </ListItemIcon>
+        <ListItemText>
+          <Typography component={"span"} display={"inline"}>
+            Viber{" "}
+          </Typography>
+          <Link>@pogladit_mozhno</Link>
+        </ListItemText>
       </ListItem>
     </List>
   );

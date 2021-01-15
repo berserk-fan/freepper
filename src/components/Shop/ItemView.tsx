@@ -8,7 +8,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
 import { BriefProduct } from "../../types";
-import { Box, Divider } from "@material-ui/core";
+import {Box, Collapse, Divider, IconButton} from "@material-ui/core";
 import ShoppingCartTwoToneIcon from "@material-ui/icons/ShoppingCartTwoTone";
 import { withStyles } from "@material-ui/styles";
 import theme from "../../theme";
@@ -21,6 +21,8 @@ import Slider from "./Slider";
 import { ToggleButton } from "@material-ui/lab";
 import Price from "./Price";
 import Spacing from "../Commons/Spacing";
+import exp from "constants";
+import {ExpandLess, ExpandMore} from "@material-ui/icons";
 
 const CartButton = withStyles({
   root: {
@@ -52,19 +54,26 @@ function AddToCartButton({
 }
 
 const useStyles = makeStyles({
-  root: {
-    maxWidth: 345,
-  },
   media: {
-    height: 280,
+    width: "100%",
+    '&::after': {
+      content: "",
+      display: "block",
+      "padding-bottom": "100%"
+    }
   },
+  expandButton: {
+    right: 4,
+    top: 2,
+    position: "absolute",
+  }
 });
 
 function ItemView({
   product,
   addProduct,
   deleteProduct,
-  className,
+  className = "",
   inCart,
 }: {
   product: Product;
@@ -75,54 +84,70 @@ function ItemView({
 }) {
   const classes = useStyles();
   const { id, displayName, description, images } = product;
+  const [expandedAndZIndex, setExpandedAndZIndex] = useState<[boolean, number]>([false, 0]);
 
   function handleAddedToCart() {
     !inCart ? addProduct(product) : deleteProduct(id);
   }
 
-  return (
-    <Card className={`${classes.root} ${className || ""}`}>
-      <Slider
-        slides={images.map((image) => (
-          <Box className={`flex ${classes.media} overflow-hidden items-center`}>
-            <Image width={500} height={500} src={image.src} alt={displayName} />
-          </Box>
-        ))}
-      />
+  function handleExpandToggle() {
+    setExpandedAndZIndex(([expanded, _]) => {
+      const newVal = !expanded;
+      return [newVal, newVal ? 100 : 0];
+    })
+  }
 
-      <Link href={product.name}>
-        <CardActionArea>
-          <CardContent>
-            <Typography variant="h5">{displayName}</Typography>
-            <Typography variant="subtitle2" color="textSecondary" component="p">
-              {description}
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-      </Link>
-      <Divider />
-      <CardActions>
-        <Box
-          paddingLeft={1}
-          className={"flex w-full justify-between items-center"}
-        >
-          <Price price={product.price} />
-          <Box>
-            <Spacing
-              spacing={2}
-              className={"flex flex-row items-center"}
-              wrap={"nowrap"}
-            >
-              <Link href={product.name}>
-                <Button color={"primary"} variant={"outlined"}>
-                  Детали
-                </Button>
-              </Link>
-              <AddToCartButton {...{ handleAddedToCart, inCart }} />
-            </Spacing>
+  return (
+    <Card className={`overflow-hidden ${className}`}>
+      <div style={{zIndex : expandedAndZIndex[1]}}>
+        <Slider
+            slides={images.map((image) => (
+                <Box className={`flex ${classes.media} overflow-hidden items-center`}>
+                  <Image width={500} height={500} src={image.src} alt={displayName} objectFit={"cover"}/>
+                </Box>
+            ))}
+        />
+        <CardContent style={{ paddingRight: 0}}>
+          <Typography variant="h5">{displayName}</Typography>
+          <Collapse className={"flex flex-col justify-start relative"} in={expandedAndZIndex[0]} collapsedHeight={48}>
+            <Box padding={"2px"}>
+              <Box className={classes.expandButton}>
+                <IconButton onClick={handleExpandToggle}>
+                  {expandedAndZIndex[0] ? <ExpandLess fontSize={"small"}/> : <ExpandMore fontSize={"small"}/>}
+                </IconButton>
+              </Box>
+              <Box style={{hyphens: "auto"}} paddingRight={"48px"}>
+                <Typography variant="subtitle2" color="textSecondary" component="p">
+                  {description}
+                </Typography>
+              </Box>
+            </Box>
+          </Collapse>
+        </CardContent>
+        <Divider />
+        <CardActions>
+          <Box
+              paddingLeft={1}
+              className={"flex w-full justify-between items-center"}
+          >
+            <Price price={product.price} />
+            <Box>
+              <Spacing
+                  spacing={2}
+                  className={"flex flex-row items-center"}
+                  wrap={"nowrap"}
+              >
+                <Link href={product.name}>
+                  <Button color={"primary"} variant={"outlined"}>
+                    Детали
+                  </Button>
+                </Link>
+                <AddToCartButton {...{ handleAddedToCart, inCart }} />
+              </Spacing>
+            </Box>
           </Box>
-        </Box>
-      </CardActions>
+        </CardActions>
+      </div>
     </Card>
   );
 }
