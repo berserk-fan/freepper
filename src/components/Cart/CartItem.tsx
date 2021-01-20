@@ -170,7 +170,6 @@ export function ActionsPopover(
         <div>
           <IconButton
             size={"small"}
-            color={"primary"}
             {...bindTrigger(popupState)}
           >
             <MoreVertIcon />

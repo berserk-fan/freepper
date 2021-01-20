@@ -7,6 +7,7 @@ import CartItem from "./CartItem";
 import { connect } from "react-redux";
 import { CartProduct } from "../../pages/checkout";
 import Link from "next/link";
+import {pages} from "../Layout/Header/Header";
 
 export type CartState = {
   cartSize: number;
@@ -109,9 +110,11 @@ function Cart({
               Здесь пока ничего нет
             </Typography>
             <Box margin={4} className={"flex justify-center items-center"}>
-              <Button variant={"contained"} color={"primary"}>
-                В Магазин
-              </Button>
+              <Link href={pages.shop.path}>
+                <Button variant={"contained"} color={"secondary"}>
+                  В Магазин
+                </Button>
+              </Link>
             </Box>
           </Box>
         ) : (

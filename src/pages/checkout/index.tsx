@@ -1,5 +1,5 @@
 import React from "react";
-import { Container } from "@material-ui/core";
+import { Box, Container } from "@material-ui/core";
 import { Product } from "@mamat14/shop-server/shop_model";
 import CheckoutHeader from "../../components/Layout/Header/CheckoutHeader";
 import CheckoutForm from "../../components/Checkout/CheckoutForm";

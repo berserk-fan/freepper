@@ -11,9 +11,8 @@ import React from "react";
 import { Radios, Select, TextField } from "mui-rff";
 import { DeliveryOption, DeliveryProvider, Order } from "../../order-model";
 import { PhoneNumber } from "../Inputs/PhoneNumber";
-import { pathName, pathName1 } from "../../utils";
+import { pathName1 } from "../../utils";
 import { Field } from "react-final-form";
-import Address from "../Inputs/Address";
 import { OrderForm } from "./CheckoutForm";
 import NovayaPochtaIcon from "./Nova_Poshta_2014_logo.svg";
 import { makeStyles } from "@material-ui/styles";
@@ -67,11 +66,12 @@ export default function DeliveryDetailsForm({
 
   return (
     <Box maxWidth={"md"} className={"flex flex-col"}>
-      <Typography variant={"h3"} align={"center"}>
+      <Typography variant={"h3"} align={"center"} gutterBottom>
         Данные для доставки
       </Typography>
       <Spacing spacing={1} childClassName={"w-full"}>
         <TextField
+          color={"secondary"}
           name={pathName1({} as OrderForm, "name")}
           required
           fullWidth
@@ -90,7 +90,7 @@ export default function DeliveryDetailsForm({
         <Radios
           label="Служба доставки"
           name={pathName1({} as OrderForm, "deliveryProvider")}
-          required={true}
+          required
           data={[
             {
               label: (
@@ -102,33 +102,40 @@ export default function DeliveryDetailsForm({
             },
           ]}
         />
-        <Select
+        <Radios
           required
           name={pathName1({} as OrderForm, "deliveryOption")}
-          fullWidth
-          labelId="select-devilery-option-label"
           id="select-devilery-option"
           label="Способ доставки"
-          variant="filled"
-        >
-          {deliveryOptions.map((option) => (
-            <MenuItem key={option} value={option}>
-              {getDeliveryOptionName(option)}
-            </MenuItem>
+          color={"secondary"}
+          data={deliveryOptions.map((option) => (
+              { label: <Typography>{getDeliveryOptionName(option)}</Typography>, value: option}
           ))}
-        </Select>
-        <Collapse in={!!orderForm?.deliveryOption}>
-          <Field
-            name={pathName1({} as OrderForm, "address")}
-            render={(props) => (
-              <Address
-                required
-                label={getAddressLabel(orderForm?.deliveryOption)}
-                {...props}
-              />
-            )}
-          />
-        </Collapse>
+        />
+
+        <TextField
+            color={"secondary"}
+            name={pathName1({} as OrderForm, "city")}
+            required
+            fullWidth
+            id="address-input"
+            label="Город"
+            variant="filled"
+            type="text"
+            autoComplete={"city"}
+        />
+        <TextField
+            color={"secondary"}
+            name={pathName1({} as OrderForm, "warehouseNumber")}
+            required
+            fullWidth
+            id="warehouse-number-input"
+            label="Номер отделения"
+            variant="filled"
+            type="number"
+            autoComplete={"warehouseNumber"}
+        />
+
       </Spacing>
     </Box>
   );

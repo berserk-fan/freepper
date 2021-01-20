@@ -62,7 +62,7 @@ export default function SizePicker({
   const classes = useStyles();
   return (
     <div>
-      <Typography variant={"subtitle1"} display={"inline"}>
+      <Typography variant={"h5"} component={"h3"} display={"inline"}>
         Размер: {selectedSize.description}
       </Typography>
       <Box className={"flex justify-start items-center"}>

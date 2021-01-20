@@ -35,7 +35,7 @@ const lukoshkoSoftFabrics: Fabric[] = [
   {
     id: "500",
     displayName: "Красный",
-    description: "Красный",
+    description: "Красный qewrqwer",
     image: {
       src: "https://picsum.photos/30/30?random=1",
       alt: "Красный",
@@ -104,7 +104,7 @@ const lukoshkoCustomizations: Record<
     v.variantName,
     {
       images: [
-        ...["/Dogs-7248.jpg", "/Dogs-7078.jpg", "/Dogs-7133.jpg"]
+        ...["/Dogs-7248.jpg", "/Dogs-7078.jpg", "/Dogs-7255.jpg"]
           .slice(i % 2)
           .map((image) => ({
             src: image,
@@ -120,9 +120,8 @@ export const shopProducts: Product[] = lukoshkoVariants.map((v) => ({
   id: v.variantName.split("/").filter((x) => !!x)[1],
   name: v.variantName,
   displayName: `Лукошко`,
-  description: "Хорошая лежанка, Хорошая лежанка, Хорошая лежанка, " +
-      "Хорошая лежанка, Хорошая лежанка, Хорошая лежанка, " +
-      "Хорошая лежанка, Хорошая лежанка, Хорошая лежанка",
+  description:
+    "Таким образом постоянное информационно пропагандистское обеспечение нашей деятельности способствует подготовки и реализации существенных финансовых и административных условий. Идейные соображения высшего порядка, а также укрепление и развитие структуры.",
   price: lukoshkoCustomizations[v.variantName].price,
   images: lukoshkoCustomizations[v.variantName].images,
   details: {

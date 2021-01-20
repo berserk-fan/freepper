@@ -24,30 +24,13 @@ export default function Shop({
     <LayoutWithHeader>
       <Container>
         <Box paddingTop={1}>
-          <Paper elevation={4}>
-            <Box
-              className={"rounded"}
-              bgcolor={"#ffffff"}
-              paddingX={4}
-              paddingTop={1}
-            >
-              <Box fontWeight="fontWeightBold">
-                <Typography variant={"h1"} align={"center"}>
-                  {category.displayName}
-                </Typography>
-              </Box>
-              <Box paddingY={2}>
-                <Divider />
-              </Box>
-              <Grid container={true} spacing={3} justify={"space-between"}>
-                {products.map((item) => (
-                  <Grid key={item.id} item={true} xs={12} sm={6} md={4} lg={3}>
-                    <ItemView product={item} className={"mx-auto"} />
-                  </Grid>
-                ))}
+          <Grid container={true} spacing={3} justify={"space-between"}>
+            {products.map((item) => (
+              <Grid key={item.id} item={true} xs={12} sm={6} md={4} lg={3}>
+                <ItemView product={item} className={"mx-auto"} />
               </Grid>
-            </Box>
-          </Paper>
+            ))}
+          </Grid>
         </Box>
       </Container>
     </LayoutWithHeader>

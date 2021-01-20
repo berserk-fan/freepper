@@ -51,15 +51,7 @@ const formSummaryColumns: Column<OrderForm>[] = [
   {
     name: "Адрес",
     extractor: (t: OrderForm) => {
-      const address = t?.address;
-      if (!address) {
-        return "Отсутствует";
-      }
-      if (address.match(/[0-9]+/)) {
-        return `Отделение номер ${address}`;
-      } else {
-        return address;
-      }
+      return `${t?.city} Отделение номер ${t?.warehouseNumber}`;
     },
   },
 ];
@@ -177,11 +169,12 @@ function Summary({
                     </Box>
                   </Grid>
                   <Spacing
-                    spacing={4}
+                    spacing={2}
                     xs={12}
                     sm={7}
+                    wrap={"nowrap"}
                     className={
-                      "flex flex-row no-wrap justify-center items-center"
+                      "flex-no-wrap justify-center items-center"
                     }
                     item
                   >

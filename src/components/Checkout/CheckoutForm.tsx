@@ -1,35 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import React, {useEffect, useState} from "react";
+import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import SummaryStep from "./SummaryStep";
+import dynamic from "next/dynamic";
 import DeliveryDetailsStep from "./DeliveryDetailsStep";
-import {
-  Box,
-  Fade,
-  LinearProgress,
-  Slide,
-  Snackbar,
-  Typography,
-} from "@material-ui/core";
-import PaymentStep from "./Payment";
-import { Form } from "react-final-form";
-import { mixed, object, ObjectSchema, string } from "yup";
-import { makeValidateSync } from "mui-rff";
-import {
-  DeliveryOption,
-  DeliveryProvider,
-  Order,
-  PaymentOption,
-} from "../../order-model";
+import {Box, Fade, LinearProgress, Paper, Slide, Snackbar, Typography,} from "@material-ui/core";
+import {Form} from "react-final-form";
+import {mixed, number, object, ObjectSchema, string} from "yup";
+import {makeValidateSync} from "mui-rff";
+import {DeliveryOption, DeliveryProvider, Order, PaymentOption,} from "../../order-model";
 import FormStepper from "./FormStepper";
 import Link from "next/link";
-import { CartProduct } from "../../pages/checkout";
-import { clearCartAction, StoreState } from "../../store";
-import { connect } from "react-redux";
+import {CartProduct} from "../../pages/checkout";
+import {clearCartAction, StoreState} from "../../store";
+import {connect} from "react-redux";
 import promiseRetry from "promise-retry";
-import { Alert } from "@material-ui/lab";
-import { Offline } from "react-detect-offline";
-import ContactUs from "./ContactUs";
+import {Alert} from "@material-ui/lab";
+import {Offline} from "react-detect-offline";
+import theme from "../../theme";
+
+const SummaryStep = dynamic(() => import("./SummaryStep"));
+const PaymentStep = dynamic(() => import("./Payment"));
+const ContactUs = dynamic(() => import("./ContactUs"));
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -55,7 +46,8 @@ function getButtonTexts() {
 }
 
 export type OrderForm = Partial<{
-  address: string;
+  city: string;
+  warehouseNumber: number;
   deliveryProvider: DeliveryProvider;
   name: string;
   deliveryOption: DeliveryOption;
@@ -78,9 +70,12 @@ function getStepContent(step: number, orderData: OrderForm) {
 
 const schema: ObjectSchema<OrderForm> = object({
   paymentOption: mixed().oneOf([PaymentOption.COD]).default(PaymentOption.COD),
-  address: string()
-    .required("Введите адрес, пожалуйста")
-    .max(500, "Слишком длинный адрес"),
+  city: string()
+    .required("Введите город, пожалуйста")
+    .max(50, "Слишком длинный город"),
+  warehouseNumber: number()
+      .required("Введите номер отделения, пожалуйста")
+      .positive("Номер отделения должен быть больше нуля."),
   deliveryProvider: mixed()
     .oneOf([DeliveryProvider.NOVAYA_POCHTA])
     .required()
@@ -88,7 +83,7 @@ const schema: ObjectSchema<OrderForm> = object({
   name: string()
     .required("Введите имя, пожалуйста")
     .min(5, "Cлишком короткое имя")
-    .max(500, "Слишком длинное имя"),
+    .max(100, "Слишком длинное имя"),
   deliveryOption: mixed().oneOf([
     DeliveryOption.COURIER,
     DeliveryOption.TO_WAREHOUSE,
@@ -96,7 +91,7 @@ const schema: ObjectSchema<OrderForm> = object({
   phone: string()
     .required("Введите номер телефона, пожалуйста")
     .min(6, "Слишком короткий номер телефона")
-    .max(500, "Слишком длинный номер телефона"),
+    .max(100, "Слишком длинный номер телефона"),
 });
 
 const validate = makeValidateSync(schema);
@@ -152,9 +147,10 @@ const Checkout = ({
   clearCart: () => void;
 }) => {
   const classes = useStyles();
-  const initialValues = {
+  const initialValues: Partial<OrderForm> = {
     paymentOption: PaymentOption.COD,
     deliveryProvider: DeliveryProvider.NOVAYA_POCHTA,
+    deliveryOption: DeliveryOption.TO_WAREHOUSE
   };
   const [activeStep, setActiveStep] = React.useState(0);
   const [formState, setFormState] = useState<OrderForm>(initialValues);
@@ -197,7 +193,7 @@ const Checkout = ({
       deliveryDetails: {
         provider: orderForm.deliveryProvider,
         option: orderForm.deliveryOption,
-        address: orderForm.address,
+        address: orderForm.city + orderForm.warehouseNumber,
         phone: orderForm.phone,
         fullName: orderForm.name,
       },
@@ -260,8 +256,91 @@ const Checkout = ({
   const isRetryTimeout = orderSubmitState === "RETRY_TIMEOUT";
   const isOk = orderSubmitState === "OK";
   const isServerError = orderSubmitState === "SERVER_ERROR";
+
+  function isNextDisabled<FormValues>(values: FormValues) {
+    return !schema.isValidSync(values) || (wasSubmitted && isLastStep());
+  }
+
+  function snackbars() {
+    return (
+      <>
+        <Snackbar open={isOk} TransitionComponent={Slide}>
+          <Alert severity={"success"}>
+            <Typography>Заказ отправлен успешно</Typography>
+          </Alert>
+        </Snackbar>
+        <Snackbar open={isRetryState} TransitionComponent={Slide}>
+          <Alert severity={"warning"}>
+            <Typography>Ошибка при отправке заказа</Typography>
+            <Offline>
+              <Typography>Скорее всего у вас пропал интернет</Typography>
+            </Offline>
+            {isRetryTimeout ? (
+              <Typography>
+                Попробую еще раз через{" "}
+                <CountDown
+                  countDownId={retryNumber}
+                  periodSec={RETRY_INTERVAL_SEC}
+                />
+              </Typography>
+            ) : (
+              <Typography>Отправляю заказ...</Typography>
+            )}
+          </Alert>
+        </Snackbar>
+        <Snackbar open={isServerError} TransitionComponent={Slide}>
+          <Alert severity={"info"}>
+            Не удалось отправить заказ из-за проблем с сайтом. Пожалуйста,
+            попробуйте другой метод:
+            <ContactUs />
+          </Alert>
+        </Snackbar>
+      </>
+    );
+  }
+
+  function buttons<FormValues>(values: FormValues, handleSubmit: any) {
+    return (
+      <Box margin={1} className={"flex justify-between"}>
+        <Button disabled={activeStep === 0} onClick={handleBack(values)}>
+          Назад
+        </Button>
+        <Box>
+          <Box height={"4px"} marginTop={"-4px"} marginX={"2px"}>
+            <Fade
+              in={isProcessingOrder}
+              style={{
+                transitionDelay: isProcessingOrder ? "800ms" : "0ms",
+              }}
+              unmountOnExit
+            >
+              <LinearProgress
+                style={{
+                  borderRadius: "2px",
+                }}
+                color="secondary"
+              />
+            </Fade>
+          </Box>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            type="submit"
+            disabled={isNextDisabled(values)}
+          >
+            {buttonTexts[activeStep]}
+          </Button>
+        </Box>
+      </Box>
+    );
+  }
+
   return (
-    <>
+    <Paper
+      style={{ padding: theme.spacing(5), marginTop: theme.spacing(1) }}
+      className={"overflow-hidden "}
+    >
       <FormStepper {...{ activeStep, steps }} />
       <Box padding={1}>
         <Form
@@ -285,87 +364,18 @@ const Checkout = ({
                     </Button>
                   </div>
                 ) : (
-                  <div>
+                  <Box>
                     {getStepContent(activeStep, values)}
-                    <Box className={"flex justify-between"}>
-                      <Button
-                        disabled={activeStep === 0}
-                        onClick={handleBack(values)}
-                      >
-                        Назад
-                      </Button>
-                      <Box>
-                        <Box height={"4px"} marginTop={"-4px"} marginX={"2px"}>
-                          <Fade
-                            in={isProcessingOrder}
-                            style={{
-                              transitionDelay: isProcessingOrder
-                                ? "800ms"
-                                : "0ms",
-                            }}
-                            unmountOnExit
-                          >
-                            <LinearProgress
-                              style={{
-                                borderRadius: "2px",
-                              }}
-                              color="secondary"
-                            />
-                          </Fade>
-                        </Box>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={handleSubmit}
-                          type="submit"
-                          disabled={
-                            !schema.isValidSync(values) ||
-                            (wasSubmitted && isLastStep())
-                          }
-                        >
-                          {buttonTexts[activeStep]}
-                        </Button>
-                      </Box>
-                    </Box>
-                  </div>
+                    {buttons(values, handleSubmit)}
+                  </Box>
                 )}
               </div>
             </form>
           )}
         />
       </Box>
-      <Snackbar open={isOk} TransitionComponent={Slide}>
-        <Alert severity={"success"}>
-          <Typography>Заказ отправлен успешно</Typography>
-        </Alert>
-      </Snackbar>
-      <Snackbar open={isRetryState} TransitionComponent={Slide}>
-        <Alert severity={"warning"}>
-          <Typography>Ошибка при отправке заказа</Typography>
-          <Offline>
-            <Typography>Скорее всего у вас пропал интернет</Typography>
-          </Offline>
-          {isRetryTimeout ? (
-            <Typography>
-              Попробую еще раз через{" "}
-              <CountDown
-                countDownId={retryNumber}
-                periodSec={RETRY_INTERVAL_SEC}
-              />
-            </Typography>
-          ) : (
-            <Typography>Отправляю заказ...</Typography>
-          )}
-        </Alert>
-      </Snackbar>
-      <Snackbar open={isServerError} TransitionComponent={Slide}>
-        <Alert severity={"error"}>
-          Не удалось отправить заказ из-за проблем с сайтом. Пожалуйста,
-          попробуйте другой метод:
-          <ContactUs />
-        </Alert>
-      </Snackbar>
-    </>
+      {snackbars()}
+    </Paper>
   );
 };
 

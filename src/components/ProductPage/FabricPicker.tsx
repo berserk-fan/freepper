@@ -55,7 +55,7 @@ export default function FabricPicker({
   const classes = useStyles();
   return (
     <div>
-      <Typography variant={"subtitle1"} display={"inline"}>
+      <Typography variant={"h5"} component={"h3"} display={"inline"}>
         Цвет: {selectedSize.displayName}
       </Typography>
       <div className={"flex justify-start items-center"}>

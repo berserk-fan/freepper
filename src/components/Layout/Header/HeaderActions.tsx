@@ -17,8 +17,8 @@ export default function HeaderActions(props) {
   const classes = useStyles();
   return (
     <ButtonGroup {...props} color="primary" aria-label="page tabs">
-      {pages.map(({ path, name, icon }) => (
-        <Box display={"inline"} marginX={1}>
+      {Object.values(pages).map(({ id, path, name, icon }) => (
+        <Box key={id} display={"inline"} marginX={1}>
           <Link href={path}>
             <Button classes={classes} startIcon={icon} variant="outlined">
               {name}

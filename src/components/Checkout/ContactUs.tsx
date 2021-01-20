@@ -55,7 +55,7 @@ export default function ContactUs() {
               </Box>
             </ListItemIcon>
             <ListItemText>
-              <Link href="tel:+380671111111">+380671111111</Link>
+              <Link color={"textPrimary"} href="tel:+380671111111">+380671111111</Link>
             </ListItemText>
           </ListItem>
           <ListItem button className={classes.nested}>
@@ -65,7 +65,7 @@ export default function ContactUs() {
               </Box>
             </ListItemIcon>
             <ListItemText>
-              <Link href="tel:+380661111111">+380661111111</Link>
+              <Link color={"textPrimary"} href="tel:+380661111111">+380661111111</Link>
             </ListItemText>
           </ListItem>
           <ListItem button className={classes.nested}>
@@ -75,7 +75,7 @@ export default function ContactUs() {
               </Box>
             </ListItemIcon>
             <ListItemText>
-              <Link href="tel:+380631111111">+380631111111</Link>
+              <Link color={"textPrimary"}  href="tel:+380631111111">+380631111111</Link>
             </ListItemText>
           </ListItem>
         </List>
@@ -88,7 +88,7 @@ export default function ContactUs() {
           <Typography component={"span"} display={"inline"}>
             Telegram{" "}
           </Typography>
-          <Link>@pogladit_mozhno</Link>
+          <Link color={"textPrimary"} >@pogladit_mozhno</Link>
         </ListItemText>
       </ListItem>
       <ListItem button onClick={() => window.open(telegramChat, "_blank")}>
@@ -101,7 +101,7 @@ export default function ContactUs() {
           <Typography component={"span"} display={"inline"}>
             Viber{" "}
           </Typography>
-          <Link>@pogladit_mozhno</Link>
+          <Link color={"textPrimary"}  >@pogladit_mozhno</Link>
         </ListItemText>
       </ListItem>
     </List>

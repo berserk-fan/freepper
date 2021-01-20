@@ -19,17 +19,14 @@ import { connect } from "react-redux";
 import Link from "next/link";
 import DogBedDetails from "./DogBedDetails";
 import Spacing from "../Commons/Spacing";
+import SliderThumbs from "../Shop/SliderThumbs";
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
 function getDetails(product: Product): React.ReactNode {
   switch (product.details.$case) {
     case "dogBed":
-      return (
-        <>
-          <DogBedDetails details={product.details.dogBed} />
-        </>
-      );
+      return <DogBedDetails details={product.details.dogBed} />;
     default:
       return false;
   }
@@ -59,11 +56,15 @@ function ProductPage({
   const productDetailsPart = getDetails(product);
   return (
     <Box marginX={"auto"} maxWidth={"500px"} bgcolor={"#fff"} padding={1}>
-      <Slider
-        className={"border rounded overflow-hidden"}
+      <SliderThumbs
         slides={images.map((image) => (
           <Box className={`flex overflow-hidden items-center`}>
             <Image width={500} height={500} src={image.src} alt={displayName} />
+          </Box>
+        ))}
+        thumbs={images.map((image) => (
+          <Box className={`flex overflow-hidden items-center`}>
+            <Image width={75} height={75} src={image.src} alt={displayName} />
           </Box>
         ))}
       />
@@ -72,8 +73,10 @@ function ProductPage({
         className={"flex flex-col"}
         childClassName={"w-full"}
       >
-        <Typography variant={"h2"}>{displayName}</Typography>
-        <Price price={price} />
+        <Typography variant={"h4"} component={"h1"}>
+          {displayName}
+        </Typography>
+        <Typography variant={"h5"}><Price price={price}/></Typography>
         {productDetailsPart && <Divider />}
         {productDetailsPart}
         {productDetailsPart && <Divider />}

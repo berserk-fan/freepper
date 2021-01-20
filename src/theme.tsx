@@ -5,31 +5,87 @@ import { red } from "@material-ui/core/colors";
 const theme = createMuiTheme({
   spacing: 8,
   typography: {
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
+    fontFamily: ["'Roboto', sans-serif", "'Merriweather', serif"].join(","),
+    h1: {
+      fontSize: 96,
+      fontFamily: "'Merriweather', serif",
+      fontWeight: 900,
+      fontStyle: "italic",
+    },
+    h2: {
+      fontSize: 60,
+      fontFamily: "'Roboto', sans-serif",
+      fontWeight: 300,
+    },
+    h3: {
+      fontSize: 48,
+      fontFamily: "'Merriweather', serif",
+      fontWeight: 900,
+      fontStyle: "italic",
+    },
+    h4: {
+      fontSize: 34,
+      fontFamily: "'Roboto', sans-serif",
+      fontWeight: 400,
+    },
+    h5: {
+      fontSize: 24,
+      fontFamily: "'Roboto', sans-serif",
+      fontWeight: 400,
+    },
+    h6: {
+      fontSize: 20,
+      fontFamily: "'Merriweather', serif",
+      fontWeight: 700,
+      fontStyle: "italic",
+    },
+    subtitle1: {
+      fontSize: 16,
+      fontFamily: "'Roboto', sans-serif",
+      fontWeight: 500,
+    },
+    subtitle2: {
+      fontSize: 14,
+      fontFamily: "'Merriweather', serif",
+      fontWeight: 400,
+    },
+    body1: {
+      fontSize: 16,
+      fontFamily: "'Merriweather', serif",
+      fontWeight: 400,
+    },
+    body2: {
+      fontSize: 16,
+      fontFamily: "'Roboto', sans-serif",
+      fontWeight: 400,
+    },
+    button: {
+      fontSize: 14,
+      fontFamily: "'Roboto', sans-serif",
+      fontWeight: 700,
+    },
+    caption: {
+      fontSize: 12,
+      fontFamily: "'Merriweather', serif",
+      fontWeight: 400,
+      fontStyle: "italic",
+    },
+    overline: {
+      fontSize: 10,
+      fontFamily: "'Roboto', sans-serif",
+      fontWeight: 700,
+      textTransform: "capitalize",
+    },
   },
   palette: {
     primary: {
-      main: "#6200ee",
+      main: "#FFFFFF",
     },
     secondary: {
-      main: "#03dac5",
+      main: "#81c3db",
     },
     error: {
       main: red.A400,
-    },
-    background: {
-      default: "#E0F2F1",
     },
   },
   breakpoints: {
@@ -67,6 +123,16 @@ const theme = createMuiTheme({
       sharp: "cubic-bezier(0.4, 0, 0.6, 1)",
     },
   },
+  overrides: {
+    MuiButton: {
+      containedPrimary: {
+        borderTop: 1,
+        borderLeft: 1,
+        borderColor: "#CCCCCC",
+        borderStyle: "solid"
+      }
+    }
+  }
 });
 
 export default responsiveFontSizes(theme);

@@ -1,14 +1,21 @@
 import React, { memo, useState } from "react";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
 import { BriefProduct } from "../../types";
-import {Box, Collapse, Divider, IconButton} from "@material-ui/core";
+import {
+  Box,
+  Collapse,
+  Divider,
+  IconButton,
+  Paper,
+  Popover,
+  Popper,
+} from "@material-ui/core";
 import ShoppingCartTwoToneIcon from "@material-ui/icons/ShoppingCartTwoTone";
 import { withStyles } from "@material-ui/styles";
 import theme from "../../theme";
@@ -21,8 +28,14 @@ import Slider from "./Slider";
 import { ToggleButton } from "@material-ui/lab";
 import Price from "./Price";
 import Spacing from "../Commons/Spacing";
-import exp from "constants";
-import {ExpandLess, ExpandMore} from "@material-ui/icons";
+import { ExpandLess, ExpandMore } from "@material-ui/icons";
+import PopupState, {
+  bindHover,
+  bindPopover,
+  bindPopper,
+  bindToggle,
+  bindTrigger,
+} from "material-ui-popup-state";
 
 const CartButton = withStyles({
   root: {
@@ -56,116 +69,68 @@ function AddToCartButton({
 const useStyles = makeStyles({
   media: {
     width: "100%",
-    '&::after': {
+    "&::after": {
       content: "",
       display: "block",
-      "padding-bottom": "100%"
-    }
+      "padding-bottom": "100%",
+    },
   },
-  expandButton: {
-    right: 4,
-    top: 2,
-    position: "absolute",
-  }
+  previewText: {
+    "line-height": "1.5em",
+    height: "3em",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    width: "100%",
+  },
 });
 
 function ItemView({
   product,
-  addProduct,
-  deleteProduct,
   className = "",
-  inCart,
 }: {
   product: Product;
   className?: string;
-  addProduct: (product: Product) => void;
-  deleteProduct: (id: string) => void;
-  inCart: boolean;
 }) {
   const classes = useStyles();
-  const { id, displayName, description, images } = product;
-  const [expandedAndZIndex, setExpandedAndZIndex] = useState<[boolean, number]>([false, 0]);
-
-  function handleAddedToCart() {
-    !inCart ? addProduct(product) : deleteProduct(id);
-  }
-
-  function handleExpandToggle() {
-    setExpandedAndZIndex(([expanded, _]) => {
-      const newVal = !expanded;
-      return [newVal, newVal ? 100 : 0];
-    })
-  }
+  const { id, displayName, description, images, price } = product;
 
   return (
-    <Card className={`overflow-hidden ${className}`}>
-      <div style={{zIndex : expandedAndZIndex[1]}}>
+    <Box className={`overflow-hidden ${className}`}>
+      <div>
         <Slider
-            slides={images.map((image) => (
-                <Box className={`flex ${classes.media} overflow-hidden items-center`}>
-                  <Image width={500} height={500} src={image.src} alt={displayName} objectFit={"cover"}/>
-                </Box>
-            ))}
-        />
-        <CardContent style={{ paddingRight: 0}}>
-          <Typography variant="h5">{displayName}</Typography>
-          <Collapse className={"flex flex-col justify-start relative"} in={expandedAndZIndex[0]} collapsedHeight={48}>
-            <Box padding={"2px"}>
-              <Box className={classes.expandButton}>
-                <IconButton onClick={handleExpandToggle}>
-                  {expandedAndZIndex[0] ? <ExpandLess fontSize={"small"}/> : <ExpandMore fontSize={"small"}/>}
-                </IconButton>
-              </Box>
-              <Box style={{hyphens: "auto"}} paddingRight={"48px"}>
-                <Typography variant="subtitle2" color="textSecondary" component="p">
-                  {description}
-                </Typography>
-              </Box>
+          slides={images.map((image) => (
+            <Box
+              className={`flex ${classes.media} overflow-hidden items-center`}
+            >
+              <Image
+                width={500}
+                height={500}
+                src={image.src}
+                alt={displayName}
+                objectFit={"cover"}
+              />
             </Box>
-          </Collapse>
-        </CardContent>
-        <Divider />
-        <CardActions>
-          <Box
-              paddingLeft={1}
-              className={"flex w-full justify-between items-center"}
-          >
-            <Price price={product.price} />
-            <Box>
-              <Spacing
-                  spacing={2}
-                  className={"flex flex-row items-center"}
-                  wrap={"nowrap"}
-              >
-                <Link href={product.name}>
-                  <Button color={"primary"} variant={"outlined"}>
-                    Детали
-                  </Button>
-                </Link>
-                <AddToCartButton {...{ handleAddedToCart, inCart }} />
-              </Spacing>
+          ))}
+        />
+
+        <Box marginY={0.5} marginX={1} className={"flex items-center"}>
+          <Box className={"flex flex-col"}>
+            <Typography variant="subtitle1">{displayName}</Typography>
+            <Box className={"flex"}>
+              <Typography display={"inline"} variant={"body2"}>от <Price price={price}/></Typography>
             </Box>
           </Box>
-        </CardActions>
+          <Box style={{marginLeft: "auto"}}>
+            <Link href={product.name}>
+              <Button color={"secondary"} variant={"outlined"}>
+                Подробнее
+              </Button>
+            </Link>
+          </Box>
+        </Box>
       </div>
-    </Card>
+    </Box>
   );
 }
 
-function mapStateToProps(
-  state: StoreState,
-  { product }: { product: BriefProduct }
-) {
-  return {
-    inCart: !!state.cartState.selectedProducts[product.id],
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    addProduct: (product) => dispatch(addProductAction(product)),
-    deleteProduct: (id) => dispatch(deleteProductAction(id)),
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(memo(ItemView));
+export default memo(ItemView);

@@ -99,7 +99,7 @@ export default function HeaderMenu() {
           </Box>
         </Fade>
         <List component="nav" aria-label="home shop about">
-          {pages.map(({ path, name, icon }) => {
+          {Object.values(pages).map(({ path, name, icon }) => {
             return (
               <Link key={name + path} href={path}>
                 <ListItem button selected={router.pathname === path}>

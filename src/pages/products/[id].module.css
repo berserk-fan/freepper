@@ -1,7 +1,6 @@
 .carousel .thumbs-wrapper {
   margin: 5px !important;
 }
-
 .carousel .thumb.selected,
 .carousel .thumb:hover {
   border: 1px solid black !important;

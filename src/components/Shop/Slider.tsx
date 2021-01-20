@@ -14,6 +14,7 @@ export default function Slider({
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [sliderRef, slider] = useKeenSlider({
     initial: 0,
+    spacing: 15,
     slideChanged(s) {
       setCurrentSlide(s.details().relativeSlide);
     },

@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Order } from "../../order-model";
 import { CartProduct } from "../checkout";
 import nodemailer from "nodemailer";
-import {renderJSONPlusCss} from "../../utils/utils";
+import { renderJSONPlusCss } from "../../utils/utils";
 
 function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
   const ret: any = {};
