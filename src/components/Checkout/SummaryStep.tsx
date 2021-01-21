@@ -173,9 +173,7 @@ function Summary({
                     xs={12}
                     sm={7}
                     wrap={"nowrap"}
-                    className={
-                      "flex-no-wrap justify-center items-center"
-                    }
+                    className={"flex-no-wrap justify-center items-center"}
                     item
                   >
                     {columns.map((col) => (

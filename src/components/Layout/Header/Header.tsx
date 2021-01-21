@@ -46,18 +46,56 @@ const useStyles = makeStyles({
   },
 });
 
-type Pages = "shop" | "home" | "about"
+type Pages = "shop" | "home" | "about";
+type SupportPages =
+  | "delivery-and-payment-info"
+  | "returns-policy"
+  | "cooperation"
+  | "public-offer";
 type Page = {
   id: string;
   name: string;
   path: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
 };
 
 export const pages: Record<Pages, Page> = {
-  "home": {id: "home", path: "/", name: "Домой", icon: <HomeIcon/>},
-  "shop": {id: "shop", path: "/categories/beds", name: "Магазин", icon: <StorefrontIcon/>},
-  "about": {id: "about", path: "/about", name: "О наc", icon: <InfoOutlinedIcon/>}
+  home: { id: "home", path: "/", name: "Домой", icon: <HomeIcon /> },
+  shop: {
+    id: "shop",
+    path: "/categories/beds",
+    name: "Магазин",
+    icon: <StorefrontIcon />,
+  },
+  about: {
+    id: "about",
+    path: "/about",
+    name: "О наc",
+    icon: <InfoOutlinedIcon />,
+  },
+};
+
+export const supportPages: Record<SupportPages, Page> = {
+  "delivery-and-payment-info": {
+    id: "delivery-and-payment-info",
+    path: "/delivery-and-payment-info",
+    name: "Доставка и оплата",
+  },
+  "returns-policy": {
+    id: "returns-policy",
+    path: "/returns-policy",
+    name: "Обмен и возврат",
+  },
+  cooperation: {
+    id: "cooperation",
+    path: "/cooperation",
+    name: "Сотрудничество",
+  },
+  "public-offer": {
+    id: "public-offer",
+    path: "/public-offer",
+    name: "Публичная офферта",
+  },
 };
 
 export default function Header() {

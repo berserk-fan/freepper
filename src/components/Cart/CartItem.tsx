@@ -168,10 +168,7 @@ export function ActionsPopover(
     <PopupStateComponent variant="popover" popupId="cart-action-popover">
       {(popupState) => (
         <div>
-          <IconButton
-            size={"small"}
-            {...bindTrigger(popupState)}
-          >
+          <IconButton size={"small"} {...bindTrigger(popupState)}>
             <MoreVertIcon />
           </IconButton>
           <Popover

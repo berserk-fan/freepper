@@ -108,34 +108,34 @@ export default function DeliveryDetailsForm({
           id="select-devilery-option"
           label="Способ доставки"
           color={"secondary"}
-          data={deliveryOptions.map((option) => (
-              { label: <Typography>{getDeliveryOptionName(option)}</Typography>, value: option}
-          ))}
+          data={deliveryOptions.map((option) => ({
+            label: <Typography>{getDeliveryOptionName(option)}</Typography>,
+            value: option,
+          }))}
         />
 
         <TextField
-            color={"secondary"}
-            name={pathName1({} as OrderForm, "city")}
-            required
-            fullWidth
-            id="address-input"
-            label="Город"
-            variant="filled"
-            type="text"
-            autoComplete={"city"}
+          color={"secondary"}
+          name={pathName1({} as OrderForm, "city")}
+          required
+          fullWidth
+          id="address-input"
+          label="Город"
+          variant="filled"
+          type="text"
+          autoComplete={"city"}
         />
         <TextField
-            color={"secondary"}
-            name={pathName1({} as OrderForm, "warehouseNumber")}
-            required
-            fullWidth
-            id="warehouse-number-input"
-            label="Номер отделения"
-            variant="filled"
-            type="number"
-            autoComplete={"warehouseNumber"}
+          color={"secondary"}
+          name={pathName1({} as OrderForm, "warehouseNumber")}
+          required
+          fullWidth
+          id="warehouse-number-input"
+          label="Номер отделения"
+          variant="filled"
+          type="number"
+          autoComplete={"warehouseNumber"}
         />
-
       </Spacing>
     </Box>
   );

@@ -1,4 +1,4 @@
-import {Grid, GridProps, GridTypeMap} from "@material-ui/core";
+import { Grid, GridProps, GridTypeMap } from "@material-ui/core";
 import React from "react";
 
 export default function Spacing(props) {

@@ -129,10 +129,10 @@ const theme = createMuiTheme({
         borderTop: 1,
         borderLeft: 1,
         borderColor: "#CCCCCC",
-        borderStyle: "solid"
-      }
-    }
-  }
+        borderStyle: "solid",
+      },
+    },
+  },
 });
 
 export default responsiveFontSizes(theme);

@@ -76,7 +76,9 @@ function ProductPage({
         <Typography variant={"h4"} component={"h1"}>
           {displayName}
         </Typography>
-        <Typography variant={"h5"}><Price price={price}/></Typography>
+        <Typography variant={"h5"}>
+          <Price price={price} />
+        </Typography>
         {productDetailsPart && <Divider />}
         {productDetailsPart}
         {productDetailsPart && <Divider />}

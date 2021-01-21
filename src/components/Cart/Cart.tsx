@@ -7,7 +7,7 @@ import CartItem from "./CartItem";
 import { connect } from "react-redux";
 import { CartProduct } from "../../pages/checkout";
 import Link from "next/link";
-import {pages} from "../Layout/Header/Header";
+import { pages } from "../Layout/Header/Header";
 
 export type CartState = {
   cartSize: number;

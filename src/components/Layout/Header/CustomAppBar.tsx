@@ -1,7 +1,7 @@
 import AppBar from "@material-ui/core/AppBar";
 import React from "react";
 import { AppBarProps } from "@material-ui/core/AppBar/AppBar";
-import {useScrollTrigger} from "@material-ui/core";
+import { useScrollTrigger } from "@material-ui/core";
 
 function ElevationScroll(props) {
   const { children, window } = props;
@@ -22,10 +22,10 @@ function ElevationScroll(props) {
 export const CustomAppBar = (props: AppBarProps) => {
   const { children } = props;
   return (
-      <ElevationScroll {...props}>
-          <AppBar position="sticky" color={"primary"} {...props}>
-            {children}
-          </AppBar>
-      </ElevationScroll>
+    <ElevationScroll {...props}>
+      <AppBar position="sticky" color={"primary"} {...props}>
+        {children}
+      </AppBar>
+    </ElevationScroll>
   );
 };

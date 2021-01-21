@@ -1,21 +1,34 @@
-import React, {useEffect, useState} from "react";
-import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import React, { useEffect, useState } from "react";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import dynamic from "next/dynamic";
 import DeliveryDetailsStep from "./DeliveryDetailsStep";
-import {Box, Fade, LinearProgress, Paper, Slide, Snackbar, Typography,} from "@material-ui/core";
-import {Form} from "react-final-form";
-import {mixed, number, object, ObjectSchema, string} from "yup";
-import {makeValidateSync} from "mui-rff";
-import {DeliveryOption, DeliveryProvider, Order, PaymentOption,} from "../../order-model";
+import {
+  Box,
+  Fade,
+  LinearProgress,
+  Paper,
+  Slide,
+  Snackbar,
+  Typography,
+} from "@material-ui/core";
+import { Form } from "react-final-form";
+import { mixed, number, object, ObjectSchema, string } from "yup";
+import { makeValidateSync } from "mui-rff";
+import {
+  DeliveryOption,
+  DeliveryProvider,
+  Order,
+  PaymentOption,
+} from "../../order-model";
 import FormStepper from "./FormStepper";
 import Link from "next/link";
-import {CartProduct} from "../../pages/checkout";
-import {clearCartAction, StoreState} from "../../store";
-import {connect} from "react-redux";
+import { CartProduct } from "../../pages/checkout";
+import { clearCartAction, StoreState } from "../../store";
+import { connect } from "react-redux";
 import promiseRetry from "promise-retry";
-import {Alert} from "@material-ui/lab";
-import {Offline} from "react-detect-offline";
+import { Alert } from "@material-ui/lab";
+import { Offline } from "react-detect-offline";
 import theme from "../../theme";
 
 const SummaryStep = dynamic(() => import("./SummaryStep"));
@@ -74,8 +87,8 @@ const schema: ObjectSchema<OrderForm> = object({
     .required("Введите город, пожалуйста")
     .max(50, "Слишком длинный город"),
   warehouseNumber: number()
-      .required("Введите номер отделения, пожалуйста")
-      .positive("Номер отделения должен быть больше нуля."),
+    .required("Введите номер отделения, пожалуйста")
+    .positive("Номер отделения должен быть больше нуля."),
   deliveryProvider: mixed()
     .oneOf([DeliveryProvider.NOVAYA_POCHTA])
     .required()
@@ -150,7 +163,7 @@ const Checkout = ({
   const initialValues: Partial<OrderForm> = {
     paymentOption: PaymentOption.COD,
     deliveryProvider: DeliveryProvider.NOVAYA_POCHTA,
-    deliveryOption: DeliveryOption.TO_WAREHOUSE
+    deliveryOption: DeliveryOption.TO_WAREHOUSE,
   };
   const [activeStep, setActiveStep] = React.useState(0);
   const [formState, setFormState] = useState<OrderForm>(initialValues);

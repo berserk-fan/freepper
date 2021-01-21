@@ -61,7 +61,11 @@ export default function SliderThumbs({
           <div
             ref={thumbsRef as any}
             className="keen-slider"
-            style={{ display: "inline-flex", marginTop: theme.spacing(1), marginBottom: theme.spacing(1)}}
+            style={{
+              display: "inline-flex",
+              marginTop: theme.spacing(1),
+              marginBottom: theme.spacing(1),
+            }}
           >
             {thumbs.map((thumb, idx) => (
               <Box

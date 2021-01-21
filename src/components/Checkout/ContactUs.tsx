@@ -1,12 +1,11 @@
 import {
-  Box,
+  Box, Button,
   Collapse,
   Link,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  SvgIcon,
   Typography,
 } from "@material-ui/core";
 import React from "react";
@@ -17,9 +16,7 @@ import TelegramIcon from "@material-ui/icons/Telegram";
 import { makeStyles } from "@material-ui/styles";
 import theme from "../../theme";
 import KyivStarIcon from "../Icons/KyivstarIcon";
-import LifecellIcon from "../Icons/LifecellIcon";
 import VodafoneIcon from "../Icons/VodafoneIcon";
-import Image from "next/image";
 import ViberIcon from "../Icons/ViberIcon";
 
 const useStyles = makeStyles({
@@ -35,7 +32,7 @@ export default function ContactUs() {
     setOpen(!open);
   };
 
-  const telegramChat = "tg://resolve?domain=pogladit_mozhno?";
+  const telegramChat = "https://t.me/pogladit_mozhno";
 
   return (
     <List component="nav" aria-label="main mailbox folders">
@@ -55,7 +52,9 @@ export default function ContactUs() {
               </Box>
             </ListItemIcon>
             <ListItemText>
-              <Link color={"textPrimary"} href="tel:+380671111111">+380671111111</Link>
+              <Link color={"textPrimary"} href="tel:+380671111111">
+                +380
+              </Link>
             </ListItemText>
           </ListItem>
           <ListItem button className={classes.nested}>
@@ -65,33 +64,33 @@ export default function ContactUs() {
               </Box>
             </ListItemIcon>
             <ListItemText>
-              <Link color={"textPrimary"} href="tel:+380661111111">+380661111111</Link>
-            </ListItemText>
-          </ListItem>
-          <ListItem button className={classes.nested}>
-            <ListItemIcon>
-              <Box width={"25px"} height={"25px"}>
-                <LifecellIcon />
-              </Box>
-            </ListItemIcon>
-            <ListItemText>
-              <Link color={"textPrimary"}  href="tel:+380631111111">+380631111111</Link>
+              <Link color={"textPrimary"} href="tel:+380661111111">
+                +380950717564
+              </Link>
             </ListItemText>
           </ListItem>
         </List>
       </Collapse>
-      <ListItem button onClick={() => window.open(telegramChat, "_blank")}>
+      <ListItem>
         <ListItemIcon>
           <TelegramIcon />
         </ListItemIcon>
         <ListItemText>
           <Typography component={"span"} display={"inline"}>
-            Telegram{" "}
+            Telegram @poglodit_mozhno
           </Typography>
-          <Link color={"textPrimary"} >@pogladit_mozhno</Link>
         </ListItemText>
       </ListItem>
-      <ListItem button onClick={() => window.open(telegramChat, "_blank")}>
+      <List component="div" disablePadding>
+        <ListItem className={classes.nested}>
+          <ListItemText>
+            <Button color={"primary"} variant={"contained"} href={telegramChat} target={"_blank"} rel={"noopener"}>
+              Начать Telegram чат
+            </Button>
+          </ListItemText>
+        </ListItem>
+      </List>
+      <ListItem>
         <ListItemIcon>
           <Box width={"25px"} height={"25px"}>
             <ViberIcon />
@@ -99,11 +98,19 @@ export default function ContactUs() {
         </ListItemIcon>
         <ListItemText>
           <Typography component={"span"} display={"inline"}>
-            Viber{" "}
+            Viber @pogladit_mozhno
           </Typography>
-          <Link color={"textPrimary"}  >@pogladit_mozhno</Link>
         </ListItemText>
       </ListItem>
+      <List component="div" disablePadding>
+        <ListItem className={classes.nested}>
+          <ListItemText>
+            <Button color={"primary"} variant={"contained"} href={telegramChat} target={"_blank"} rel={"noopener"}>
+              Начать Viber чат
+            </Button>
+          </ListItemText>
+        </ListItem>
+      </List>
     </List>
   );
 }

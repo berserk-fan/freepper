@@ -2,13 +2,15 @@ import Header from "./Header/Header";
 import ValueProp from "./Header/ValueProp";
 import CheckoutHeader from "./Header/CheckoutHeader";
 import React from "react";
+import Footer from "./Footer/Footer";
 
-export default function LayoutWithHeader({ children, value = false }) {
+export default function LayoutWithHeaderAndFooter({ children, value = false }) {
   return (
     <>
       <Header />
       {value ? <ValueProp /> : false}
       {children}
+      <Footer/>
     </>
   );
 }

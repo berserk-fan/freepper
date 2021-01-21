@@ -117,10 +117,12 @@ function ItemView({
           <Box className={"flex flex-col"}>
             <Typography variant="subtitle1">{displayName}</Typography>
             <Box className={"flex"}>
-              <Typography display={"inline"} variant={"body2"}>от <Price price={price}/></Typography>
+              <Typography display={"inline"} variant={"body2"}>
+                от <Price price={price} />
+              </Typography>
             </Box>
           </Box>
-          <Box style={{marginLeft: "auto"}}>
+          <Box style={{ marginLeft: "auto" }}>
             <Link href={product.name}>
               <Button color={"secondary"} variant={"outlined"}>
                 Подробнее

@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import ItemView from "../../components/Shop/ItemView";
-import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
+import LayoutWithHeaderAndFooter from "../../components/Layout/LayoutWithHeaderAndFooter";
 import { Category, Product } from "@mamat14/shop-server/shop_model";
 import React from "react";
 import { shopClient } from "../../store";
@@ -21,7 +21,7 @@ export default function Shop({
   category: Category;
 }) {
   return (
-    <LayoutWithHeader>
+    <LayoutWithHeaderAndFooter>
       <Container>
         <Box paddingTop={1}>
           <Grid container={true} spacing={3} justify={"space-between"}>
@@ -33,7 +33,7 @@ export default function Shop({
           </Grid>
         </Box>
       </Container>
-    </LayoutWithHeader>
+    </LayoutWithHeaderAndFooter>
   );
 }
 
