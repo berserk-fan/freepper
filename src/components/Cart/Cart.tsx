@@ -103,19 +103,12 @@ function Cart({
   const productsList = Object.values(selectedProducts);
   return (
     <div>
-      <Box marginTop={2}>
+      <Box marginTop={2} minHeight={"360px"}>
         {cartSize === 0 ? (
           <Box>
             <Typography variant={"h3"} align={"center"}>
               Здесь пока ничего нет
             </Typography>
-            <Box margin={4} className={"flex justify-center items-center"}>
-              <Link href={pages.shop.path}>
-                <Button variant={"contained"} color={"secondary"}>
-                  В Магазин
-                </Button>
-              </Link>
-            </Box>
           </Box>
         ) : (
           <NonEmptyCart productsList={productsList} total={total} />

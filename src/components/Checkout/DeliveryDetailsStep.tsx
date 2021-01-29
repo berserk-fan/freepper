@@ -66,7 +66,7 @@ export default function DeliveryDetailsForm({
 
   return (
     <Box maxWidth={"md"} className={"flex flex-col"}>
-      <Typography variant={"h3"} align={"center"} gutterBottom>
+      <Typography variant={"h4"} align={"center"} gutterBottom>
         Данные для доставки
       </Typography>
       <Spacing spacing={1} childClassName={"w-full"}>

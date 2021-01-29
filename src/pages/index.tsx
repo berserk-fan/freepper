@@ -39,7 +39,7 @@ const ColorButton = withStyles({
 })(Button);
 
 const goToShopButton = () => (
-  <Link href={pages.shop.path}>
+  <Link href={"#"}>
     <ColorButton size={"large"} variant={"contained"}>
       <span
         style={{
@@ -66,7 +66,7 @@ export default function Home({ products }: { products: Product[] }) {
               priority
               height={"500px"}
               width={"500px"}
-              src={"/Dogs-1004.jpg"}
+              src={"/IMG_4337.JPG"}
               alt={"Заставка лежанки"}
             />
           </Box>

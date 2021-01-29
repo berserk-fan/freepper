@@ -7,9 +7,6 @@ import theme from "../../../theme";
 export default function Footer() {
   return (
     <Box component={"footer"} paddingTop={1} paddingBottom={10} bgcolor={theme.palette.grey["300"]}>
-      <Box marginY={1}>
-          <Divider variant={"middle"}/>
-      </Box>
       <Box>
         <Typography style={{paddingLeft: theme.spacing(2)}} variant={"h4"}>Контакты</Typography>
         <ContactUs />

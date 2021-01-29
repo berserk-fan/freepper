@@ -1,5 +1,6 @@
 import {
-  Box, Button,
+  Box,
+  Button,
   Collapse,
   Link,
   List,
@@ -15,9 +16,8 @@ import ExpandMore from "@material-ui/icons/ExpandMore";
 import TelegramIcon from "@material-ui/icons/Telegram";
 import { makeStyles } from "@material-ui/styles";
 import theme from "../../theme";
-import KyivStarIcon from "../Icons/KyivstarIcon";
-import VodafoneIcon from "../Icons/VodafoneIcon";
-import ViberIcon from "../Icons/ViberIcon";
+import Detail from "../Commons/Detail";
+import PhoneNumber from "../Commons/PhoneNumber";
 
 const useStyles = makeStyles({
   nested: {
@@ -27,48 +27,24 @@ const useStyles = makeStyles({
 
 export default function ContactUs() {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
-  const handleClick = () => {
-    setOpen(!open);
+  const [telOpen, setTelOpen] = React.useState(true);
+  const telToggle = () => {
+    setTelOpen(!telOpen);
   };
-
   const telegramChat = "https://t.me/pogladit_mozhno";
-
   return (
-    <List component="nav" aria-label="main mailbox folders">
-      <ListItem button onClick={handleClick}>
+    <List dense component="nav" aria-label="main mailbox folders">
+      <ListItem button onClick={telToggle}>
         <ListItemIcon>
           <PhoneIcon />
         </ListItemIcon>
         <ListItemText primary="Телефон" />
-        {open ? <ExpandLess /> : <ExpandMore />}
+        {telOpen ? <ExpandLess /> : <ExpandMore />}
       </ListItem>
-      <Collapse in={open} timeout="auto">
+      <Collapse in={telOpen} timeout="auto">
         <List component="div" disablePadding>
-          <ListItem button className={classes.nested}>
-            <ListItemIcon>
-              <Box width={"25px"} height={"25px"}>
-                <KyivStarIcon />
-              </Box>
-            </ListItemIcon>
-            <ListItemText>
-              <Link color={"textPrimary"} href="tel:+380671111111">
-                +380
-              </Link>
-            </ListItemText>
-          </ListItem>
-          <ListItem button className={classes.nested}>
-            <ListItemIcon>
-              <Box width={"25px"} height={"25px"}>
-                <VodafoneIcon />
-              </Box>
-            </ListItemIcon>
-            <ListItemText>
-              <Link color={"textPrimary"} href="tel:+380661111111">
-                +380950717564
-              </Link>
-            </ListItemText>
-          </ListItem>
+          <PhoneNumber phone={"+380950717564"} className={classes.nested}/>
+          <PhoneNumber phone={"+380671111111"} className={classes.nested}/>
         </List>
       </Collapse>
       <ListItem>
@@ -77,38 +53,16 @@ export default function ContactUs() {
         </ListItemIcon>
         <ListItemText>
           <Typography component={"span"} display={"inline"}>
-            Telegram @poglodit_mozhno
+            Telegram
           </Typography>
+          <Detail text={"Логин: pogladit_mozhno"}/>
         </ListItemText>
       </ListItem>
       <List component="div" disablePadding>
-        <ListItem className={classes.nested}>
-          <ListItemText>
-            <Button color={"primary"} variant={"contained"} href={telegramChat} target={"_blank"} rel={"noopener"}>
-              Начать Telegram чат
-            </Button>
-          </ListItemText>
-        </ListItem>
-      </List>
-      <ListItem>
-        <ListItemIcon>
-          <Box width={"25px"} height={"25px"}>
-            <ViberIcon />
-          </Box>
-        </ListItemIcon>
-        <ListItemText>
-          <Typography component={"span"} display={"inline"}>
-            Viber @pogladit_mozhno
-          </Typography>
-        </ListItemText>
-      </ListItem>
-      <List component="div" disablePadding>
-        <ListItem className={classes.nested}>
-          <ListItemText>
-            <Button color={"primary"} variant={"contained"} href={telegramChat} target={"_blank"} rel={"noopener"}>
-              Начать Viber чат
-            </Button>
-          </ListItemText>
+        <ListItem className={classes.nested} dense>
+          <Button size={"small"} variant={"outlined"} href={telegramChat} target={"_blank"} rel={"noopener"}>
+            Начать Telegram чат
+          </Button>
         </ListItem>
       </List>
     </List>

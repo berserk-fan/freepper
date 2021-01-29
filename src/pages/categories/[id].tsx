@@ -1,10 +1,7 @@
 import {
   Box,
   Container,
-  Divider,
   Grid,
-  Paper,
-  Typography,
 } from "@material-ui/core";
 import ItemView from "../../components/Shop/ItemView";
 import LayoutWithHeaderAndFooter from "../../components/Layout/LayoutWithHeaderAndFooter";
@@ -12,7 +9,6 @@ import { Category, Product } from "@mamat14/shop-server/shop_model";
 import React from "react";
 import { shopClient } from "../../store";
 import { GetStaticProps } from "next";
-import { category } from "../../../configs/Data";
 
 export default function Shop({
   products,

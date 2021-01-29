@@ -104,7 +104,7 @@ const lukoshkoCustomizations: Record<
     v.variantName,
     {
       images: [
-        ...["/Dogs-7248.jpg", "/Dogs-7078.jpg", "/Dogs-7255.jpg"]
+        ...["/IMG_4241.HEIC", "/Dogs-7078.jpg", "/Dogs-7255.jpg"]
           .slice(i % 2)
           .map((image) => ({
             src: image,
