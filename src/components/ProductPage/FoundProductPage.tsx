@@ -1,26 +1,25 @@
 import { Product } from "@mamat14/shop-server/shop_model";
 import { CartState } from "../Cart/Cart";
-import Slider from "../Shop/Slider";
 import {
   Box,
   Button,
-  Container,
-  Divider,
-  Grid,
-  Paper,
-  Typography,
+  Divider, Fab,
+  Typography, Zoom,
 } from "@material-ui/core";
 import Image from "next/image";
 import Price from "../Shop/Price";
 import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlineOutlined";
-import React, { memo } from "react";
+import React, {memo, useState} from "react";
 import { addProductAction, StoreState } from "../../store";
 import { connect } from "react-redux";
 import Link from "next/link";
 import DogBedDetails from "./DogBedDetails";
 import Spacing from "../Commons/Spacing";
 import SliderThumbs from "../Shop/SliderThumbs";
-import {category} from "../../../configs/Data";
+import theme from "../../theme";
+import {makeStyles} from "@material-ui/styles";
+import EditIcon from '@material-ui/icons/Edit';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
@@ -31,6 +30,20 @@ function getDetails(categoryName: string, product: Product): React.ReactNode {
     default:
       return false;
   }
+}
+
+const useStyles = makeStyles({
+  fab: {
+    width: "100%"
+  }
+});
+
+function MakeFab({icon, label, className, onClick, href, color, ...otherProps}: { href?: string; onClick?: () => void; color: "secondary"; icon?: any; className: string; label: string }) {
+  const innerPart =
+      <Fab className={className} color={color} variant="extended" onClick={onClick} {...otherProps}>
+        {icon || false} <Typography variant={"button"}>{label}</Typography>
+      </Fab>;
+  return href ? <Link href={href}>{innerPart}</Link> : innerPart;
 }
 
 function ProductPage({
@@ -45,20 +58,38 @@ function ProductPage({
   addProduct: (product: Product) => void;
 }) {
   const { id, displayName, images, price, details } = product;
-  const notInCart = !cart.selectedProducts[product.id];
-
-  function checkoutNow(ev): void {
-    if (notInCart) {
-      addProduct(product);
-    }
-  }
+  const inCart = !!cart.selectedProducts[product.id];
   function addToCart() {
     addProduct(product);
   }
 
+  const classes = useStyles();
+  const fabs = [{
+      key: "fabAddToCart",
+      show: !inCart,
+      color: 'secondary' as 'secondary',
+      className: classes.fab,
+      icon: <AddShoppingCartIcon />,
+      label: 'Добавить в корзину',
+      onClick: addToCart
+    },
+    {
+      key: "fabCheckout",
+      show: inCart,
+      color: 'secondary' as 'secondary',
+      className: classes.fab,
+      label: 'Заказать сейчас',
+      href: "/checkout"
+    }];
+
+  const transitionDuration = {
+    enter: theme.transitions.duration.enteringScreen,
+    exit: theme.transitions.duration.leavingScreen,
+  };
+
   const productDetailsPart = getDetails(categoryName, product);
   return (
-    <Box marginX={"auto"} maxWidth={"500px"} bgcolor={"#fff"} padding={1}>
+    <Box marginX={"auto"} maxWidth={"500px"} padding={1}>
       <SliderThumbs
         slides={images.map((image) => (
           <Box className={`flex overflow-hidden items-center`}>
@@ -85,28 +116,18 @@ function ProductPage({
         {productDetailsPart && <Divider />}
         {productDetailsPart}
         {productDetailsPart && <Divider />}
-        {notInCart ? (
-          <Button
-            variant={"contained"}
-            color={"primary"}
-            onClick={addToCart}
-            fullWidth
+        <Box width={"100%"} height={"50px"}>
+          {(inCart ? fabs : fabs.reverse()).map(fab => <Zoom
+              key={fab.key}
+              in={fab.show}
+              timeout={transitionDuration}
+              style={{transitionDelay: `${fab.show ? transitionDuration.exit : 0}ms`}}
+              mountOnEnter={true}
+              unmountOnExit
           >
-            Добавить в корзину
-          </Button>
-        ) : (
-          <Typography variant={"overline"}>Товар уже в корзине</Typography>
-        )}
-        <Button
-          variant={"contained"}
-          color={"secondary"}
-          onClick={checkoutNow}
-          fullWidth
-        >
-          <Typography>
-            <Link href={"/checkout"}>Заказать сейчас</Link>
-          </Typography>
-        </Button>
+            <MakeFab {...fab}/>
+          </Zoom>)}
+        </Box>
         <ul>
           {checkMarks.map((text) => (
             <li className={"flex"}>

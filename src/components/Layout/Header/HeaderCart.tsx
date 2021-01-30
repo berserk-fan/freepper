@@ -32,7 +32,7 @@ const useStyles = makeStyles({
   },
   closeButton: {
     color: theme.palette.grey["800"],
-  },
+  }
 });
 
 const Transition = React.forwardRef(function Transition(
@@ -69,7 +69,6 @@ function HeaderCart({ cartSize }: { cartSize: number }) {
         fullWidth
         maxWidth={"md"}
         onClose={handleClose}
-        aria-labelledby="cart-window"
         open={open}
         TransitionComponent={Transition}
       >

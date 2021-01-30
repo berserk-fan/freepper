@@ -1,81 +1,27 @@
 import { Fabric } from "@mamat14/shop-server/shop_model";
-import React, { MouseEventHandler, useState } from "react";
+import React from "react";
+import Picker from "./Picker";
 import Image from "next/image";
-import {Avatar, Box, Chip, Typography} from "@material-ui/core";
-import theme from "../../theme";
-import Link from "next/link";
-import { makeStyles } from "@material-ui/styles";
-import { useKeenSlider } from "keen-slider/react"
-import "keen-slider/keen-slider.min.css"
+import {Avatar, Typography} from "@material-ui/core";
+import {makeStyles} from "@material-ui/styles";
 
-function FabricView({
-  fabric,
-  selected,
-  className = "",
-}: {
-  fabric: Fabric & { href: string };
-  selected: Boolean;
-  className?: string;
-}) {
-  return (
-      <Link href={fabric.href} scroll={false} replace={true}>
-          <Chip
-              avatar={<Avatar>
-                  <Image
-                  width={30}
-                  height={30}
-                  src={fabric.image.src}
-                  alt={fabric.image.alt}
-                  />
-              </Avatar>}
-              clickable={true}
-              variant={"outlined"}
-              label={fabric.displayName}
-          />
-      </Link>
-  );
+function Icon({item: fabric}: {item: Fabric}) {
+    return (<Image
+            width={24}
+            height={24}
+            src={fabric.image.src}
+            alt={fabric.image.alt}/>)
 }
 
-const useStyles = makeStyles({
-  fabricNode: {
-    margin: theme.spacing(0.25),
-  },
-});
-
-export default function FabricPicker({
-  cur,
-  fabrics,
-}: {
-  cur: string;
-  fabrics: (Fabric & { href: string })[];
+export default function FabricPicker({selected, fabrics}: {
+    selected: string;
+    fabrics: (Fabric & { href: string })[];
 }) {
-  const ordered = fabrics.sort((a, b) => a.id.localeCompare(b.id));
-  const selectedSize = fabrics.find((f) => f.id == cur);
-  const classes = useStyles();
-    const [sliderRef] = useKeenSlider({
-        slidesPerView: 3,
-        mode: "free-snap",
-        spacing: 3,
-        loop: false,
-    });
-  return (
-    <div>
-      <Typography variant={"h5"} component={"h3"} display={"inline"}>
-        Цвет: {selectedSize.displayName}
-      </Typography>
-
-      <div ref={sliderRef} className="keen-slider">
-        {ordered.map((fabric) => (
-            <div className={"keen-slider__slide"}>
-          <FabricView
-            key={fabric.id}
-            fabric={fabric}
-            selected={fabric.id === cur}
-            className={classes.fabricNode}
-          />
-            </div>
-        ))}
-      </div>
-    </div>
-  );
+    return (
+        <div>
+            <Typography gutterBottom variant={"subtitle2"} component={"h3"}>
+                Цвет
+            </Typography>
+            <Picker selectedId={selected} items={fabrics.sort((a, b) => a.id.localeCompare(b.id))} icon={Icon}/>
+        </div>)
 }

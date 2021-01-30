@@ -24,8 +24,8 @@ export default function DogBedDetails({
   }));
   return (
     <div>
-      <FabricPicker cur={curFabric} fabrics={fabricsWithRefs} />
-      <SizePicker cur={curSize} sizes={sizesWithRefs} />
+      <FabricPicker selected={curFabric} fabrics={fabricsWithRefs} />
+      <SizePicker selected={curSize} sizes={sizesWithRefs} />
     </div>
   );
 }
