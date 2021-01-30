@@ -1,10 +1,12 @@
 import { Fabric } from "@mamat14/shop-server/shop_model";
 import React, { MouseEventHandler, useState } from "react";
 import Image from "next/image";
-import { Box, Typography } from "@material-ui/core";
+import {Avatar, Box, Chip, Typography} from "@material-ui/core";
 import theme from "../../theme";
 import Link from "next/link";
 import { makeStyles } from "@material-ui/styles";
+import { useKeenSlider } from "keen-slider/react"
+import "keen-slider/keen-slider.min.css"
 
 function FabricView({
   fabric,
@@ -15,25 +17,22 @@ function FabricView({
   selected: Boolean;
   className?: string;
 }) {
-  const borderSize = selected ? 2 : 0;
   return (
-    <span>
-      <Box
-        style={{ borderColor: theme.palette.success.main }}
-        className={`flex overflow-hidden items-center cursor-pointer ${className}`}
-        border={borderSize}
-        borderRadius={25}
-      >
-        <Link href={fabric.href} scroll={false} replace={true}>
-          <Image
-            width={30}
-            height={30}
-            src={fabric.image.src}
-            alt={fabric.image.alt}
+      <Link href={fabric.href} scroll={false} replace={true}>
+          <Chip
+              avatar={<Avatar>
+                  <Image
+                  width={30}
+                  height={30}
+                  src={fabric.image.src}
+                  alt={fabric.image.alt}
+                  />
+              </Avatar>}
+              clickable={true}
+              variant={"outlined"}
+              label={fabric.displayName}
           />
-        </Link>
-      </Box>
-    </span>
+      </Link>
   );
 }
 
@@ -53,19 +52,28 @@ export default function FabricPicker({
   const ordered = fabrics.sort((a, b) => a.id.localeCompare(b.id));
   const selectedSize = fabrics.find((f) => f.id == cur);
   const classes = useStyles();
+    const [sliderRef] = useKeenSlider({
+        slidesPerView: 3,
+        mode: "free-snap",
+        spacing: 3,
+        loop: false,
+    });
   return (
     <div>
       <Typography variant={"h5"} component={"h3"} display={"inline"}>
         Цвет: {selectedSize.displayName}
       </Typography>
-      <div className={"flex justify-start items-center"}>
+
+      <div ref={sliderRef} className="keen-slider">
         {ordered.map((fabric) => (
+            <div className={"keen-slider__slide"}>
           <FabricView
             key={fabric.id}
             fabric={fabric}
             selected={fabric.id === cur}
             className={classes.fabricNode}
           />
+            </div>
         ))}
       </div>
     </div>

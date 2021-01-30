@@ -87,9 +87,11 @@ const useStyles = makeStyles({
 function ItemView({
   product,
   className = "",
+  productRef
 }: {
   product: Product;
   className?: string;
+  productRef: string;
 }) {
   const classes = useStyles();
   const { id, displayName, description, images, price } = product;
@@ -123,7 +125,7 @@ function ItemView({
             </Box>
           </Box>
           <Box style={{ marginLeft: "auto" }}>
-            <Link href={product.name}>
+            <Link href={productRef}>
               <Button color={"secondary"} variant={"outlined"}>
                 Подробнее
               </Button>

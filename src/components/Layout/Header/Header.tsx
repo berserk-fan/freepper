@@ -72,13 +72,13 @@ export const shopPageGroup: PageGroup = {
   children: [
     {
       id: "beds",
-      path: "/categories/beds",
+      path: "/categories/beds/products",
       name: "Лежанки",
       icon: PetBedIcon,
     },
     {
       id: "ammo",
-      path: "/categories/beds",
+      path: "/categories/beds/products",
       name: "Аммуниция",
       icon: Collar
     }

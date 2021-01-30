@@ -101,7 +101,7 @@ export default function Home({ products }: { products: Product[] }) {
           <Box aria-label={"novelties"} component={"ul"}>
             {products.map((p) => (
               <Box marginX={4} marginY={5} component={"li"}>
-                <ItemView product={p} />
+                <ItemView productRef={`/categories/beds/${p.name}`} product={p} />
               </Box>
             ))}
           </Box>
@@ -139,7 +139,7 @@ export default function Home({ products }: { products: Product[] }) {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const productNames = ["/products/lukoshko-500-1", "/products/lukoshko-500-2"];
+  const productNames = ["products/lukoshko-vic-20-1", "products/lukoshko-vic-34-2"];
   const products = await Promise.all(
     productNames.map((pName) => shopClient.getProduct({ name: pName }))
   );

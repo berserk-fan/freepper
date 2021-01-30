@@ -20,13 +20,14 @@ import Link from "next/link";
 import DogBedDetails from "./DogBedDetails";
 import Spacing from "../Commons/Spacing";
 import SliderThumbs from "../Shop/SliderThumbs";
+import {category} from "../../../configs/Data";
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
-function getDetails(product: Product): React.ReactNode {
+function getDetails(categoryName: string, product: Product): React.ReactNode {
   switch (product.details.$case) {
     case "dogBed":
-      return <DogBedDetails details={product.details.dogBed} />;
+      return <DogBedDetails categoryName={categoryName} details={product.details.dogBed} />;
     default:
       return false;
   }
@@ -36,7 +37,9 @@ function ProductPage({
   product,
   cart,
   addProduct,
+  categoryName
 }: {
+  categoryName: string
   product: Product;
   cart: CartState;
   addProduct: (product: Product) => void;
@@ -53,7 +56,7 @@ function ProductPage({
     addProduct(product);
   }
 
-  const productDetailsPart = getDetails(product);
+  const productDetailsPart = getDetails(categoryName, product);
   return (
     <Box marginX={"auto"} maxWidth={"500px"} bgcolor={"#fff"} padding={1}>
       <SliderThumbs
