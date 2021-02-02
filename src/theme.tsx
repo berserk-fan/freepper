@@ -5,7 +5,12 @@ import { red } from "@material-ui/core/colors";
 const theme = createMuiTheme({
   spacing: 8,
   typography: {
-    fontFamily: ["'Roboto', sans-serif", "'Merriweather', serif", "Monospace", "Montserrat"].join(","),
+    fontFamily: [
+      "'Roboto', sans-serif",
+      "'Merriweather', serif",
+      "Monospace",
+      "Montserrat",
+    ].join(","),
     h1: {
       fontSize: 96,
       fontFamily: "'Merriweather', serif",

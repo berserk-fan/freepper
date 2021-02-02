@@ -1,24 +1,39 @@
-import { createStore, Store } from "redux";
+import { createStore } from "redux";
 import ShopClient from "@mamat14/shop-server";
 import { category, shopProducts } from "../../configs/Data";
-import Cookies from "js-cookie";
 import { CartState } from "../components/Cart/Cart";
 import { CartProduct } from "../pages/checkout";
 import { Product } from "@mamat14/shop-server/shop_model";
 
-export const cartStateKey = "cartState";
+const initialState: StoreState = {
+  cartState: {
+    cartSize: 0,
+    total: 0,
+    selectedProducts: {},
+  },
+};
 
-export function readStoredCartState(): CartState {
-  const cartCookie = Cookies.get(cartStateKey);
-  const parsed = JSON.parse(cartCookie || "{}");
-  return parsed.selectedProducts
-    ? parsed
-    : { selectedProducts: [], total: 0, cartSize: 0 };
-}
+export const loadState: () => StoreState = () => {
+  try {
+    const serializedState = localStorage.getItem("state");
+    if (!serializedState) {
+      return initialState;
+    } else {
+      return JSON.parse(serializedState);
+    }
+  } catch (err) {
+    return initialState;
+  }
+};
 
-export function storeCartState(cartState: CartState): void {
-  Cookies.set(cartStateKey, JSON.stringify(cartState));
-}
+export const saveState = (state) => {
+  try {
+    const serializedState = JSON.stringify(state);
+    localStorage.setItem("state", serializedState);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 export function SetProductCountAction(productId: string, count: number) {
   return {
@@ -146,9 +161,8 @@ export type StoreState = Partial<{
 }>;
 
 export type StoreUpdate = CartUpdate;
-const initialStoreState = {
-  cartState: readStoredCartState(),
-};
+const initialStoreState = loadState();
+
 function storeReducer(
   store: StoreState = initialStoreState,
   action: StoreUpdate
@@ -161,7 +175,7 @@ function storeReducer(
 export const store = createStore(storeReducer);
 
 store.subscribe(() => {
-  storeCartState(store.getState().cartState);
+  saveState(store.getState());
 });
 
 export const shopClient = new ShopClient({

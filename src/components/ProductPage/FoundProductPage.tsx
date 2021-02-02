@@ -1,15 +1,10 @@
 import { Product } from "@mamat14/shop-server/shop_model";
 import { CartState } from "../Cart/Cart";
-import {
-  Box,
-  Button,
-  Divider, Fab,
-  Typography, Zoom,
-} from "@material-ui/core";
+import { Box, Button, Divider, Fab, Typography, Zoom } from "@material-ui/core";
 import Image from "next/image";
 import Price from "../Shop/Price";
 import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlineOutlined";
-import React, {memo, useState} from "react";
+import React, { memo, useState } from "react";
 import { addProductAction, StoreState } from "../../store";
 import { connect } from "react-redux";
 import Link from "next/link";
@@ -17,16 +12,22 @@ import DogBedDetails from "./DogBedDetails";
 import Spacing from "../Commons/Spacing";
 import SliderThumbs from "../Shop/SliderThumbs";
 import theme from "../../theme";
-import {makeStyles} from "@material-ui/styles";
-import EditIcon from '@material-ui/icons/Edit';
-import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import { makeStyles } from "@material-ui/styles";
+import EditIcon from "@material-ui/icons/Edit";
+import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
+import Markdown from "../Commons/Renderers";
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
 function getDetails(categoryName: string, product: Product): React.ReactNode {
   switch (product.details.$case) {
     case "dogBed":
-      return <DogBedDetails categoryName={categoryName} details={product.details.dogBed} />;
+      return (
+        <DogBedDetails
+          categoryName={categoryName}
+          details={product.details.dogBed}
+        />
+      );
     default:
       return false;
   }
@@ -34,15 +35,38 @@ function getDetails(categoryName: string, product: Product): React.ReactNode {
 
 const useStyles = makeStyles({
   fab: {
-    width: "100%"
-  }
+    width: "100%",
+  },
 });
 
-function MakeFab({icon, label, className, onClick, href, color, ...otherProps}: { href?: string; onClick?: () => void; color: "secondary"; icon?: any; className: string; label: string }) {
-  const innerPart =
-      <Fab className={className} color={color} variant="extended" onClick={onClick} {...otherProps}>
-        {icon || false} <Typography variant={"button"}>{label}</Typography>
-      </Fab>;
+function MakeFab({
+  icon,
+  label,
+  className,
+  onClick,
+  href,
+  color,
+  style,
+}: {
+  href?: string;
+  onClick?: () => void;
+  color: "secondary";
+  icon?: any;
+  className: string;
+  label: string;
+  style?: any;
+}) {
+  const innerPart = (
+    <Fab
+      className={className}
+      color={color}
+      variant="extended"
+      onClick={onClick}
+      style={style}
+    >
+      {icon || false} <Typography variant={"button"}>{label}</Typography>
+    </Fab>
+  );
   return href ? <Link href={href}>{innerPart}</Link> : innerPart;
 }
 
@@ -50,9 +74,9 @@ function ProductPage({
   product,
   cart,
   addProduct,
-  categoryName
+  categoryName,
 }: {
-  categoryName: string
+  categoryName: string;
   product: Product;
   cart: CartState;
   addProduct: (product: Product) => void;
@@ -64,23 +88,25 @@ function ProductPage({
   }
 
   const classes = useStyles();
-  const fabs = [{
+  const fabs = [
+    {
       key: "fabAddToCart",
       show: !inCart,
-      color: 'secondary' as 'secondary',
+      color: "secondary" as "secondary",
       className: classes.fab,
       icon: <AddShoppingCartIcon />,
-      label: 'Добавить в корзину',
-      onClick: addToCart
+      label: "Добавить в корзину",
+      onClick: addToCart,
     },
     {
       key: "fabCheckout",
       show: inCart,
-      color: 'secondary' as 'secondary',
+      color: "secondary" as "secondary",
       className: classes.fab,
-      label: 'Заказать сейчас',
-      href: "/checkout"
-    }];
+      label: "Заказать сейчас",
+      href: "/checkout",
+    },
+  ];
 
   const transitionDuration = {
     enter: theme.transitions.duration.enteringScreen,
@@ -117,16 +143,20 @@ function ProductPage({
         {productDetailsPart}
         {productDetailsPart && <Divider />}
         <Box width={"100%"} height={"50px"}>
-          {(inCart ? fabs : fabs.reverse()).map(fab => <Zoom
+          {(inCart ? fabs : fabs.reverse()).map((fab) => (
+            <Zoom
               key={fab.key}
               in={fab.show}
               timeout={transitionDuration}
-              style={{transitionDelay: `${fab.show ? transitionDuration.exit : 0}ms`}}
+              style={{
+                transitionDelay: `${fab.show ? transitionDuration.exit : 0}ms`,
+              }}
               mountOnEnter={true}
               unmountOnExit
-          >
-            <MakeFab {...fab}/>
-          </Zoom>)}
+            >
+              <MakeFab {...fab} />
+            </Zoom>
+          ))}
         </Box>
         <ul>
           {checkMarks.map((text) => (
@@ -136,12 +166,10 @@ function ProductPage({
           ))}
         </ul>
         <Divider />
-        <Typography variant={"h5"}>
-          Описание
-          <Box marginLeft={1} paddingTop={0}>
-            <Typography className={"pt-0"}>{product.description}</Typography>
-          </Box>
-        </Typography>
+        <Typography variant={"h4"}>Описание</Typography>
+        <Box marginLeft={1} paddingTop={0}>
+          <Markdown>{product.description}</Markdown>
+        </Box>
       </Spacing>
     </Box>
   );

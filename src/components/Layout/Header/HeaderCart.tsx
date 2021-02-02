@@ -3,7 +3,7 @@ import ShoppingCartTwoToneIcon from "@material-ui/icons/ShoppingCartTwoTone";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { StoreState } from "../../../store";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import theme from "../../../theme";
@@ -12,27 +12,28 @@ import { TransitionProps } from "@material-ui/core/transitions";
 import { CustomAppBar } from "./CustomAppBar";
 import Cart, { CartState } from "../../Cart/Cart";
 import { connect } from "react-redux";
+import ShoppingBasketIcon from "@material-ui/icons/ShoppingBasket";
+import ShoppingCartIcon from "../../Icons/ShoppingCartIcon";
 
 const StyledBadge = withStyles({
   badge: {
     right: 6,
-    top: 21,
-    border: `2px solid ${theme.palette.background.paper}`,
+    top: 30,
+    border: `1px solid ${theme.palette.grey["800"]}`,
     padding: "0 4px",
-    color: theme.palette.background.paper,
-    backgroundColor: theme.palette.grey["800"],
+    color: theme.palette.grey["800"],
+    backgroundColor: theme.palette.background.default,
   },
 })(Badge);
 
 const useStyles = makeStyles({
   cart: {
-    color: theme.palette.grey["800"],
     marginLeft: "auto",
-    backgroundColor: "#FFFFFF",
+    color: theme.palette.grey["800"],
   },
   closeButton: {
     color: theme.palette.grey["800"],
-  }
+  },
 });
 
 const Transition = React.forwardRef(function Transition(
@@ -46,6 +47,8 @@ function HeaderCart({ cartSize }: { cartSize: number }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
+  console.log(cartSize);
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -57,9 +60,15 @@ function HeaderCart({ cartSize }: { cartSize: number }) {
 
   return (
     <>
-      <Fab className={classes.cart} size={"medium"} onClick={handleClickOpen}>
+      <Fab
+        color={"primary"}
+        className={classes.cart}
+        size={"large"}
+        onClick={handleClickOpen}
+        aria-label="open cart"
+      >
         <StyledBadge max={9} badgeContent={cartSize}>
-          <ShoppingCartTwoToneIcon />
+          <ShoppingCartIcon fontSize={"large"} />
         </StyledBadge>
       </Fab>
 
@@ -72,15 +81,15 @@ function HeaderCart({ cartSize }: { cartSize: number }) {
         open={open}
         TransitionComponent={Transition}
       >
-        <CustomAppBar>
+        <CustomAppBar show>
           <Toolbar className={"flex justify-between"}>
             <Typography variant="h5">Корзина</Typography>
             <IconButton
               className={classes.closeButton}
               onClick={handleClose}
-              aria-label="close-cart-window"
+              aria-label="close cart"
             >
-              <CloseIcon />
+              <CloseIcon fontSize={"large"} />
             </IconButton>
           </Toolbar>
         </CustomAppBar>

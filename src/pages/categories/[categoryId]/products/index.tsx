@@ -1,8 +1,4 @@
-import {
-  Box,
-  Container,
-  Grid,
-} from "@material-ui/core";
+import { Box, Container, Grid } from "@material-ui/core";
 import ItemView from "../../../../components/Shop/ItemView";
 import LayoutWithHeaderAndFooter from "../../../../components/Layout/LayoutWithHeaderAndFooter";
 import { Category, Product } from "@mamat14/shop-server/shop_model";
@@ -12,7 +8,7 @@ import { GetStaticProps } from "next";
 
 export default function Shop({
   products,
-  category
+  category,
 }: {
   products: Product[];
   category: Category;
@@ -24,7 +20,11 @@ export default function Shop({
           <Grid container={true} spacing={3} justify={"space-between"}>
             {products.map((item) => (
               <Grid key={item.id} item={true} xs={12} sm={6} md={4} lg={3}>
-                <ItemView productRef={`/${category.name}/${item.name}`} product={item} className={"mx-auto"} />
+                <ItemView
+                  productRef={`/${category.name}/${item.name}`}
+                  product={item}
+                  className={"mx-auto"}
+                />
               </Grid>
             ))}
           </Grid>

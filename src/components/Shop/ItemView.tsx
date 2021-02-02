@@ -87,7 +87,7 @@ const useStyles = makeStyles({
 function ItemView({
   product,
   className = "",
-  productRef
+  productRef,
 }: {
   product: Product;
   className?: string;

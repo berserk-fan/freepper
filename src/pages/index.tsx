@@ -15,15 +15,6 @@ import { GetStaticProps } from "next";
 import { shopClient } from "../store";
 import { Product } from "@mamat14/shop-server/shop_model";
 import Link from "next/link";
-import { pages } from "../components/Layout/Header/Header";
-
-export type CardData = {
-  id: string;
-  src: string;
-  title: string;
-  text: string;
-  alt: string;
-};
 
 const ColorButton = withStyles({
   root: {
@@ -101,7 +92,10 @@ export default function Home({ products }: { products: Product[] }) {
           <Box aria-label={"novelties"} component={"ul"}>
             {products.map((p) => (
               <Box marginX={4} marginY={5} component={"li"}>
-                <ItemView productRef={`/categories/beds/${p.name}`} product={p} />
+                <ItemView
+                  productRef={`/categories/beds/${p.name}`}
+                  product={p}
+                />
               </Box>
             ))}
           </Box>
@@ -139,7 +133,10 @@ export default function Home({ products }: { products: Product[] }) {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const productNames = ["products/lukoshko-vic-20-1", "products/lukoshko-vic-34-2"];
+  const productNames = [
+    "products/lukoshko-vic-20-lukoshko-1",
+    "products/lukoshko-vic-34-lukoshko-1",
+  ];
   const products = await Promise.all(
     productNames.map((pName) => shopClient.getProduct({ name: pName }))
   );

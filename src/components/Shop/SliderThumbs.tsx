@@ -20,9 +20,9 @@ export default function SliderThumbs({
   thumbs,
   className = "",
 }: {
-  slides: any[];
+  slides: React.ReactNode[];
   className?: string;
-  thumbs: any[];
+  thumbs: React.ReactNode[];
 }) {
   const classes = useStyles();
   const [currentSlide, setCurrentSlide] = React.useState(0);

@@ -1,4 +1,4 @@
-import React, {MouseEventHandler, useEffect, useState} from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import dynamic from "next/dynamic";
@@ -6,7 +6,9 @@ import DeliveryDetailsStep from "./DeliveryDetailsStep";
 import {
   Box,
   MobileStepper,
-  Paper, Typography, useMediaQuery
+  Paper,
+  Typography,
+  useMediaQuery,
 } from "@material-ui/core";
 import { Form } from "react-final-form";
 import { mixed, number, object, ObjectSchema, string } from "yup";
@@ -33,11 +35,7 @@ const PaymentStep = dynamic(() => import("./Payment"));
 const ContactUs = dynamic(() => import("./ContactUs"));
 
 function getButtonTexts() {
-  return [
-    "К проверке заказа",
-    "К оплате заказа",
-    "Отправить заказ",
-  ];
+  return ["К проверке заказа", "К оплате заказа", "Отправить заказ"];
 }
 
 export type OrderForm = Partial<{
@@ -50,7 +48,13 @@ export type OrderForm = Partial<{
   paymentOption: PaymentOption;
 }>;
 
-function StepContent({step, orderData}: {step: number, orderData: OrderForm}) {
+function StepContent({
+  step,
+  orderData,
+}: {
+  step: number;
+  orderData: OrderForm;
+}) {
   console.log(step);
   switch (step) {
     case 0:
@@ -60,7 +64,7 @@ function StepContent({step, orderData}: {step: number, orderData: OrderForm}) {
     case 2:
       return <PaymentStep />;
     case 3:
-      return <SuccessStep/>;
+      return <SuccessStep />;
     default:
       throw new Error("unknown step");
   }
@@ -97,14 +101,13 @@ const steps = ["Доставка", "Проверка", "Оплата", "Успе
 
 function Content() {
   return (
-      <div>
-        Не удалось отправить заказ из-за проблем с сайтом. Пожалуйста,
-        попробуйте другой метод:
-        <ContactUs />
-      </div>
-  )
+    <div>
+      Не удалось отправить заказ из-за проблем с сайтом. Пожалуйста, попробуйте
+      другой метод:
+      <ContactUs />
+    </div>
+  );
 }
-
 
 const Checkout = ({
   cart,
@@ -125,17 +128,27 @@ const Checkout = ({
   const clientRetries = 6;
   const serverRetries = 2;
   const retryPeriod = 10;
-  const [orderSubmitState, makeACall, retryNumber] = useErrorHandling(clearCart, clientRetries, serverRetries, retryPeriod);
-  const smallScreen = useMediaQuery(theme.breakpoints.down('xs'));
+  const [orderSubmitState, makeACall, retryNumber] = useErrorHandling(
+    clearCart,
+    clientRetries,
+    serverRetries,
+    retryPeriod
+  );
+  const smallScreen = useMediaQuery(theme.breakpoints.down("xs"));
 
-  function CheckoutBox({children}: {children: React.ReactNode}) {
-    return smallScreen ? (<Box height={"calc()"} className={"flex flex-col justify-center w-full"}>{children}</Box>)
-        : (<Paper
-            style={{padding: theme.spacing(2), marginTop: theme.spacing(1)}}
-            className={"overflow-hidden"}
-        >
-          {children}
-        </Paper>)
+  function CheckoutBox({ children }: { children: React.ReactNode }) {
+    return smallScreen ? (
+      <Box height={"calc()"} className={"flex flex-col justify-center w-full"}>
+        {children}
+      </Box>
+    ) : (
+      <Paper
+        style={{ padding: theme.spacing(2), marginTop: theme.spacing(1) }}
+        className={"overflow-hidden"}
+      >
+        {children}
+      </Paper>
+    );
   }
 
   function isCallStep() {
@@ -185,7 +198,13 @@ const Checkout = ({
     return !schema.isValidSync(values) || (wasSubmitted && isCallStep());
   }
 
-  function FullScreenFormButtons<FormValues>({values, handleNext}: {values: FormValues, handleNext: any}) {
+  function FullScreenFormButtons<FormValues>({
+    values,
+    handleNext,
+  }: {
+    values: FormValues;
+    handleNext: any;
+  }) {
     return (
       <Box margin={1} className={"flex justify-between"}>
         <Button disabled={activeStep === 0} onClick={handleBack(values)}>
@@ -193,45 +212,61 @@ const Checkout = ({
         </Button>
         <MakeRequestWrapper isProcessing={orderSubmitState === "SENDING"}>
           <Button
-              variant="contained"
-              color="primary"
-              onClick={handleNext}
-              type="submit"
-              disabled={isNextDisabled(values)}
+            variant="contained"
+            color="primary"
+            onClick={handleNext}
+            type="submit"
+            disabled={isNextDisabled(values)}
           >
             {buttonTexts[activeStep]}
           </Button>
         </MakeRequestWrapper>
-        </Box>
+      </Box>
     );
   }
 
   return (
     <CheckoutBox>
-      {!smallScreen && <FormStepper {...{activeStep, steps}} />}
-      <Form {...{onSubmit: handleNext, validate}}
-          initialValues={formState}
-          render={({handleSubmit, values,}: { handleSubmit: any; values: OrderForm}) => (
-              <form noValidate>
-                <StepContent step={activeStep} orderData={values}/>
-                {smallScreen
-                    ? <CustomMobileStepper values={values}
-                                           handleBack={handleBack(values)}
-                                           activeStep={activeStep}
-                                           isNextDisabled={isNextDisabled(values)}
-                                           handleNext={handleSubmit}
-                                           maxSteps={steps.length}/>
-                    : <FullScreenFormButtons values={values} handleNext={handleSubmit}/>}
-              </form>
-          )}
+      {!smallScreen && <FormStepper {...{ activeStep, steps }} />}
+      <Form
+        {...{ onSubmit: handleNext, validate }}
+        initialValues={formState}
+        render={({
+          handleSubmit,
+          values,
+        }: {
+          handleSubmit: any;
+          values: OrderForm;
+        }) => (
+          <form noValidate>
+            <StepContent step={activeStep} orderData={values} />
+            {smallScreen ? (
+              <CustomMobileStepper
+                values={values}
+                handleBack={handleBack(values)}
+                activeStep={activeStep}
+                isNextDisabled={isNextDisabled(values)}
+                handleNext={handleSubmit}
+                maxSteps={steps.length}
+              />
+            ) : (
+              <FullScreenFormButtons
+                values={values}
+                handleNext={handleSubmit}
+              />
+            )}
+          </form>
+        )}
       />
-      <ErrorSnackbars submitState={orderSubmitState}
-                      retryNumber={retryNumber}
-                      retryPeriodSec={retryPeriod}
-                      content={<Content/>}
-                      errorMessage={<Typography>Ошибка при отправке заказа</Typography>}
-                      successMessage={<Typography>Заказ отправлен успешно</Typography>}
-                      retryingMessage={<Typography>Отправляю заказ...</Typography>}/>
+      <ErrorSnackbars
+        submitState={orderSubmitState}
+        retryNumber={retryNumber}
+        retryPeriodSec={retryPeriod}
+        content={<Content />}
+        errorMessage={<Typography>Ошибка при отправке заказа</Typography>}
+        successMessage={<Typography>Заказ отправлен успешно</Typography>}
+        retryingMessage={<Typography>Отправляю заказ...</Typography>}
+      />
     </CheckoutBox>
   );
 };

@@ -1,5 +1,6 @@
 import {
-  Box, Collapse,
+  Box,
+  Collapse,
   Drawer,
   Fade,
   IconButton,
@@ -9,16 +10,18 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import React from "react";
+import React, {useState} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import theme from "../../../theme";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import CloseIcon from "@material-ui/icons/Close";
-import {Page, pages, shopPageGroup} from "./Header";
+import { Page, pages, shopPageGroup } from "./Header";
 import ContactUs from "../../Checkout/ContactUs";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
+import ContactUsSnackBar from "../../Commons/ContactUsSnackBar";
+import ContactsIcon from '../../Icons/ContactsIcon';
 
 const useStyles = makeStyles({
   list: {
@@ -43,8 +46,8 @@ const useStyles = makeStyles({
     borderRadius: "50%",
   },
   nestedList: {
-    paddingLeft: theme.spacing(4)
-  }
+    paddingLeft: theme.spacing(4),
+  },
 });
 
 export default function HeaderMenu() {
@@ -67,22 +70,35 @@ export default function HeaderMenu() {
     setDrawerTo(open);
   };
   const handleListClick = (path) => (event) => {
-    if(path == curPath) {
-      toggleDrawer(false)(event)
+    if (path == curPath) {
+      toggleDrawer(false)(event);
     }
   };
+  const [contactsOpen, setContactsOpen] = useState(false);
+
   const sideBarOpenTime = 250;
-  function pageRepresentation(page: Page, className: string = "", fontSizeOverride?: string): React.ReactNode {
-    const {name, path, icon} = page;
-    const styleProp = fontSizeOverride ? {fontSize: fontSizeOverride} : {};
+  function pageRepresentation(
+    page: Page,
+    className: string = "",
+    fontSizeOverride?: string
+  ): React.ReactNode {
+    const { name, path, icon } = page;
+    const styleProp = fontSizeOverride ? { fontSize: fontSizeOverride } : {};
     return (
-        <Link key={name + path} href={path}>
-          <ListItem className={className} button selected={curPath === path} onClick={handleListClick(path)}>
-            <ListItemIcon>{React.createElement(icon, {fontSize: "large", style : styleProp})}</ListItemIcon>
-            <ListItemText primary={name}>{name}</ListItemText>
-          </ListItem>
-        </Link>
-    )
+      <Link key={name + path} href={path}>
+        <ListItem
+          className={className}
+          button
+          selected={curPath === path}
+          onClick={handleListClick(path)}
+        >
+          <ListItemIcon>
+            {React.createElement(icon, { fontSize: "large", style: styleProp })}
+          </ListItemIcon>
+          <ListItemText primary={name}>{name}</ListItemText>
+        </ListItem>
+      </Link>
+    );
   }
 
   return (
@@ -119,25 +135,44 @@ export default function HeaderMenu() {
             </IconButton>
           </Box>
         </Fade>
-        <Box height={"100vh"} className={"flex flex-col justify-between overflow-y-scroll"}>
+        <Box
+          height={"100vh"}
+          className={"flex flex-col justify-between overflow-y-scroll"}
+          pb={5}
+        >
           <List component="nav" aria-label="shop navigation">
             {pageRepresentation(pages.home)}
             <ListItem button onClick={toggleShopGroupOpen}>
-              <ListItemIcon>{React.createElement(shopPageGroup.icon)}</ListItemIcon>
-              <ListItemText primary={shopPageGroup.name}>{shopPageGroup.name}</ListItemText>
+              <ListItemIcon>
+                {React.createElement(shopPageGroup.icon)}
+              </ListItemIcon>
+              <ListItemText primary={shopPageGroup.name}>
+                {shopPageGroup.name}
+              </ListItemText>
               {shopGroupOpen ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
             <Collapse in={shopGroupOpen} timeout="auto">
               <List component="div" disablePadding>
-                {shopPageGroup.children.map(page => pageRepresentation(page, classes.nestedList, "28px"))}
+                {shopPageGroup.children.map((page) =>
+                  pageRepresentation(page, classes.nestedList, "28px")
+                )}
               </List>
             </Collapse>
           </List>
           {pageRepresentation(pages.about)}
           <Box marginTop={"auto"} aria-label={"contact-us-form"}>
-            <ContactUs/>
+            <ListItem
+                button
+                onClick={() => setContactsOpen(true)}
+            >
+              <ListItemIcon>
+                <ContactsIcon fontSize={"large"}/>
+              </ListItemIcon>
+              <ListItemText>Контакты</ListItemText>
+            </ListItem>
           </Box>
         </Box>
+        <ContactUsSnackBar open={contactsOpen} close={() => setContactsOpen(false)}/>
       </Drawer>
     </>
   );

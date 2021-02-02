@@ -28,7 +28,8 @@ const useStyles = makeStyles({
 export default function ContactUs() {
   const classes = useStyles();
   const [telOpen, setTelOpen] = React.useState(true);
-  const telToggle = () => {
+  const telToggle = (ev) => {
+    ev.preventDefault();
     setTelOpen(!telOpen);
   };
   const telegramChat = "https://t.me/pogladit_mozhno";
@@ -43,8 +44,8 @@ export default function ContactUs() {
       </ListItem>
       <Collapse in={telOpen} timeout="auto">
         <List component="div" disablePadding>
-          <PhoneNumber phone={"+380950717564"} className={classes.nested}/>
-          <PhoneNumber phone={"+380671111111"} className={classes.nested}/>
+          <PhoneNumber phone={"+380950717564"} className={classes.nested} />
+          <PhoneNumber phone={"+380671111111"} className={classes.nested} />
         </List>
       </Collapse>
       <ListItem>
@@ -55,12 +56,18 @@ export default function ContactUs() {
           <Typography component={"span"} display={"inline"}>
             Telegram
           </Typography>
-          <Detail text={"Логин: pogladit_mozhno"}/>
+          <Detail text={"Логин: pogladit_mozhno"} />
         </ListItemText>
       </ListItem>
       <List component="div" disablePadding>
         <ListItem className={classes.nested} dense>
-          <Button size={"small"} variant={"outlined"} href={telegramChat} target={"_blank"} rel={"noopener"}>
+          <Button
+            size={"small"}
+            variant={"outlined"}
+            href={telegramChat}
+            target={"_blank"}
+            rel={"noopener"}
+          >
             Начать Telegram чат
           </Button>
         </ListItem>

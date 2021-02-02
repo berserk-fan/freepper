@@ -1,4 +1,4 @@
-import React, {FunctionComponent} from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import { Box } from "@material-ui/core";
@@ -8,13 +8,13 @@ import HeaderCart from "./HeaderCart";
 import HeaderLogo from "./HeaderLogo";
 import HeaderActions from "./HeaderActions";
 import { CustomAppBar } from "./CustomAppBar";
-import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import PetBedIcon from "../../Icons/PetBedIcon";
 import Collar from "../../Icons/Collar";
 import HouseIcon from "../../Icons/HouseIcon";
 import ShopIcon from "../../Icons/ShopIcon";
-import {OverridableComponent} from "@material-ui/core/OverridableComponent";
-import {SvgIconTypeMap} from "@material-ui/core/SvgIcon/SvgIcon";
+import { OverridableComponent } from "@material-ui/core/OverridableComponent";
+import { SvgIconTypeMap } from "@material-ui/core/SvgIcon/SvgIcon";
+import GroupIcon from "../../Icons/GroupIcon";
 
 const useStyles = makeStyles({
   title: {
@@ -25,7 +25,7 @@ const useStyles = makeStyles({
   },
   mainButtonGroup: {
     position: "absolute",
-    width: 540,
+    width: 546,
     marginLeft: theme.spacing(2),
     marginRight: "auto",
     left: 120,
@@ -36,7 +36,7 @@ const useStyles = makeStyles({
     [theme.breakpoints.up("md")]: {
       marginLeft: "auto",
       display: "flex",
-      alignItems: "stretch"
+      alignItems: "stretch",
     },
   },
   toolbar: {
@@ -56,18 +56,20 @@ type SupportPages =
   | "delivery-and-payment-info"
   | "returns-policy"
   | "cooperation"
-  | "public-offer";
+  | "public-offer"
+  | "privacy-policy"
+  | "attributions";
 
 type PageGroup = {
   id: string;
   name: string;
   icon?: OverridableComponent<SvgIconTypeMap>;
-  children: Page[]
-}
+  children: Page[];
+};
 
 export const shopPageGroup: PageGroup = {
-  id: 'shop-page-group',
-  name: 'Магазин',
+  id: "shop-page-group",
+  name: "Магазин",
   icon: ShopIcon,
   children: [
     {
@@ -80,9 +82,9 @@ export const shopPageGroup: PageGroup = {
       id: "ammo",
       path: "/categories/beds/products",
       name: "Аммуниция",
-      icon: Collar
-    }
-  ]
+      icon: Collar,
+    },
+  ],
 };
 
 export type Page = {
@@ -98,7 +100,7 @@ export const pages: Record<Pages, Page> = {
     id: "about",
     path: "/about",
     name: "О наc",
-    icon: InfoOutlinedIcon,
+    icon: GroupIcon,
   },
 };
 
@@ -123,12 +125,53 @@ export const supportPages: Record<SupportPages, Page> = {
     path: "/public-offer",
     name: "Публичная офферта",
   },
+  "privacy-policy": {
+    id: "privacy-policy",
+    path: "/privacy-policy",
+    name: "Политика конфеденциальности",
+  },
+  "attributions": {
+    id: "attributions",
+    path: "/attributions",
+    name: "Атрибуции"
+  }
+};
+
+type Model = "lukoshko-2" | "lukoshko-3" | "chemodan" | "kvadro-soft" | "kvadro-strong"
+
+export const modelPages: Record<Model, Page> = {
+  "kvadro-soft": {
+   id: "kvadro-soft",
+   path: "#",
+   name: "Квадро Софт"
+  },
+ "kvadro-strong": {
+   id: "kvadro-strong",
+   path: "#",
+   name: "Квадро Стронг"
+ },
+  chemodan: {
+    id: "chemodan",
+    path: "#",
+    name: "Чемодан"
+  },
+  "lukoshko-2": {
+    id: "lukoshko-2",
+    path: "#",
+    name: "Лукошко Эйфель"
+  },
+  "lukoshko-3": {
+    id: "lukoshko-3",
+    path: "#",
+    name: "Лукошко"
+  }
 };
 
 export default function Header() {
   const classes = useStyles();
   return (
-    <CustomAppBar>
+    <>
+      <CustomAppBar>
       <Toolbar className={classes.toolbar}>
         <Box className={classes.menu}>
           <HeaderMenu />
@@ -140,5 +183,6 @@ export default function Header() {
         <HeaderCart />
       </Toolbar>
     </CustomAppBar>
+    </>
   );
 }

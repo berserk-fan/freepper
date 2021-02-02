@@ -1,31 +1,29 @@
 import AppBar from "@material-ui/core/AppBar";
 import React from "react";
 import { AppBarProps } from "@material-ui/core/AppBar/AppBar";
-import { useScrollTrigger } from "@material-ui/core";
+import {Slide, useScrollTrigger} from "@material-ui/core";
 
-function ElevationScroll(props) {
-  const { children, window } = props;
-  // Note that you normally won't need to set the window ref as useScrollTrigger
+
+function HideOnScroll(props) {
+    // Note that you normally won't need to set the window ref as useScrollTrigger
   // will default to window.
   // This is only being set here because the demo is in an iframe.
-  const trigger = useScrollTrigger({
-    disableHysteresis: true,
-    threshold: 0,
-    target: window ? window() : undefined,
-  });
+  const trigger = useScrollTrigger();
 
-  return React.cloneElement(children, {
-    elevation: trigger ? 4 : 0,
-  });
+  return (
+      <Slide appear={false} direction="down" in={props.show || !trigger}>
+        {props.children}
+      </Slide>
+  );
 }
 
-export const CustomAppBar = (props: AppBarProps) => {
+export const CustomAppBar = (props: AppBarProps & {show?: boolean}) => {
   const { children } = props;
   return (
-    <ElevationScroll {...props}>
-      <AppBar position="sticky" color={"primary"} {...props}>
+    <HideOnScroll {...props}>
+      <AppBar elevation={0} position={"sticky"} color={"inherit"} {...props}>
         {children}
       </AppBar>
-    </ElevationScroll>
+    </HideOnScroll>
   );
 };

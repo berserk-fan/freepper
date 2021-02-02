@@ -2,7 +2,7 @@ import Header from "./Header/Header";
 import ValueProp from "./Header/ValueProp";
 import CheckoutHeader from "./Header/CheckoutHeader";
 import React from "react";
-import Footer from "./Footer/Footer";
+import Footer2 from "./Footer/Footer2";
 
 export default function LayoutWithHeaderAndFooter({ children, value = false }) {
   return (
@@ -10,7 +10,7 @@ export default function LayoutWithHeaderAndFooter({ children, value = false }) {
       <Header />
       {value ? <ValueProp /> : false}
       {children}
-      <Footer/>
+      <Footer2 />
     </>
   );
 }
