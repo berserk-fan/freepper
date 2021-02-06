@@ -65,7 +65,7 @@ export default async function postOrderHandler(
   req: NextApiRequest,
   res: NextApiResponse<void>
 ) {
-  setTimeout(() => res.status(500).end(), 1000);
+  setTimeout(() => res.status(500).end(), 10000);
   return;
   const order: Order = JSON.parse(req.body);
   const emailContent = getEmailContent(order);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import promiseRetry from "promise-retry";
 
 export type SubmitState =
@@ -11,47 +11,83 @@ export type SubmitState =
   | "SERVER_ERROR"
   | "CANCELLED";
 
+type UseErrorHandlingResult = {
+  submitState: SubmitState;
+  customFetch: (r: RequestInfo, i: RequestInit) => Promise<void>;
+  currentRetry: number;
+  cancel: () => void;
+  reset: () => void;
+};
+
 export default function useErrorHandling(
   onComplete: () => void,
-  maxClientRetries: number,
   maxServerRetries: number,
   retryPeriod: number
-): [SubmitState, (t: any) => Promise<void>, number] {
+): UseErrorHandlingResult {
+  console.log("USE ERROR HANDLING");
   const [submitState, setSubmitState] = useState<SubmitState>("NOT_SUBMITTED");
-  useEffect(() => {
+  function changeState(state: SubmitState) {
+    setSubmitState(state);
     if (submitState === "OK") {
       onComplete();
     }
-  }, [submitState]);
-  const [retryNumber, setRetryNumber] = useState(0);
+  }
 
-  function makeACall(axiosCall: () => Promise<Response>): Promise<void> {
-    setSubmitState("SENDING");
+  const [retryNumber, setRetryNumber] = useState(0);
+  let controller = new AbortController();
+  let signal = controller.signal;
+  function cancel() {
+      console.log("CANCELLING");
+      controller.abort();
+      controller = new AbortController();
+      signal = controller.signal;
+  }
+
+  function reset() {
+      console.log("RESETTING");
+      setSubmitState("NOT_SUBMITTED");
+      cancel();
+  }
+
+  function makeACall(r: RequestInfo, i: RequestInit): Promise<void> {
+    changeState("SENDING");
     return promiseRetry(
       async (retry, retryNumber) => {
+        console.log("RETRYING" + submitState);
+        if (submitState === "CANCELLED" || (retryNumber != 1 && submitState === "NOT_SUBMITTED")) {
+          return;
+        }
+          console.log("RETRYING 2");
         setRetryNumber(retryNumber);
         if (retryNumber !== 1) {
-          setSubmitState("RETRYING");
+          changeState("RETRYING");
         }
         let newState: SubmitState = "OK";
         try {
-          const res = await axiosCall();
+          const res = await fetch(r, {...i, signal: signal});
           if (res.status != 201) {
             newState = "SERVER_ERROR";
           }
         } catch (err) {
-          newState = "CLIENT_ERROR";
+            console.log("CAUGHT ERROR");
+            if (err.name === 'AbortError') {
+                newState = "CANCELLED";
+                if(submitState === "NOT_SUBMITTED") { //for reset
+                    return;
+                }
+            } else {
+                newState = "CLIENT_ERROR";
+            }
         }
-        if (
-          (newState === "CLIENT_ERROR" && retryNumber <= maxClientRetries) ||
-          (newState === "SERVER_ERROR" && retryNumber <= maxServerRetries)
-        ) {
+
+        if (newState === "SERVER_ERROR" && retryNumber <= maxServerRetries) {
           newState = "RETRY_TIMEOUT";
         }
 
-        setSubmitState(newState);
+        console.log("CHANGING STATE " + newState);
+        changeState(newState);
         if (newState === "RETRY_TIMEOUT") {
-          retry(new Error("Error posting order"));
+          retry(new Error("Error during fetch"));
         }
       },
       {
@@ -63,5 +99,11 @@ export default function useErrorHandling(
     );
   }
 
-  return [submitState, makeACall, retryNumber];
+  return {
+    submitState,
+    customFetch: makeACall,
+    currentRetry: retryNumber,
+    cancel,
+    reset
+  };
 }

@@ -47,7 +47,7 @@ const goToShopButton = () => (
 export default function Home({ products }: { products: Product[] }) {
   return (
     <LayoutWithHeaderAndFooter value>
-      <Box maxWidth={"500px"}>
+      <Box>
         <Box height="100vh" aria-label={"Main screen"} component={"section"}>
           <Box
             height={"52%"}
@@ -55,9 +55,9 @@ export default function Home({ products }: { products: Product[] }) {
           >
             <Image
               priority
-              height={"500px"}
-              width={"500px"}
-              src={"/IMG_4337.JPG"}
+              height={"1150px"}
+              width={"2000px"}
+              src={"/IMG_4524.JPG"}
               alt={"Заставка лежанки"}
             />
           </Box>

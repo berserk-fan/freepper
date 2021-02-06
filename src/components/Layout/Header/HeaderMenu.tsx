@@ -10,7 +10,7 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import theme from "../../../theme";
 import Link from "next/link";
@@ -21,7 +21,7 @@ import ContactUs from "../../Checkout/ContactUs";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import ContactUsSnackBar from "../../Commons/ContactUsSnackBar";
-import ContactsIcon from '../../Icons/ContactsIcon';
+import ContactsIcon from "../../Icons/ContactsIcon";
 
 const useStyles = makeStyles({
   list: {
@@ -161,18 +161,18 @@ export default function HeaderMenu() {
           </List>
           {pageRepresentation(pages.about)}
           <Box marginTop={"auto"} aria-label={"contact-us-form"}>
-            <ListItem
-                button
-                onClick={() => setContactsOpen(true)}
-            >
+            <ListItem button onClick={() => setContactsOpen(true)}>
               <ListItemIcon>
-                <ContactsIcon fontSize={"large"}/>
+                <ContactsIcon fontSize={"large"} />
               </ListItemIcon>
               <ListItemText>Контакты</ListItemText>
             </ListItem>
           </Box>
         </Box>
-        <ContactUsSnackBar open={contactsOpen} close={() => setContactsOpen(false)}/>
+        <ContactUsSnackBar
+          open={contactsOpen}
+          close={() => setContactsOpen(false)}
+        />
       </Drawer>
     </>
   );

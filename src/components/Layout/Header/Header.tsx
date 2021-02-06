@@ -130,41 +130,46 @@ export const supportPages: Record<SupportPages, Page> = {
     path: "/privacy-policy",
     name: "Политика конфеденциальности",
   },
-  "attributions": {
+  attributions: {
     id: "attributions",
     path: "/attributions",
-    name: "Атрибуции"
-  }
+    name: "Атрибуции",
+  },
 };
 
-type Model = "lukoshko-2" | "lukoshko-3" | "chemodan" | "kvadro-soft" | "kvadro-strong"
+type Model =
+  | "lukoshko-2"
+  | "lukoshko-3"
+  | "chemodan"
+  | "kvadro-soft"
+  | "kvadro-strong";
 
 export const modelPages: Record<Model, Page> = {
   "kvadro-soft": {
-   id: "kvadro-soft",
-   path: "#",
-   name: "Квадро Софт"
+    id: "kvadro-soft",
+    path: "#",
+    name: "Квадро Софт",
   },
- "kvadro-strong": {
-   id: "kvadro-strong",
-   path: "#",
-   name: "Квадро Стронг"
- },
+  "kvadro-strong": {
+    id: "kvadro-strong",
+    path: "#",
+    name: "Квадро Стронг",
+  },
   chemodan: {
     id: "chemodan",
     path: "#",
-    name: "Чемодан"
+    name: "Чемодан",
   },
   "lukoshko-2": {
     id: "lukoshko-2",
     path: "#",
-    name: "Лукошко Эйфель"
+    name: "Лукошко Эйфель",
   },
   "lukoshko-3": {
     id: "lukoshko-3",
     path: "#",
-    name: "Лукошко"
-  }
+    name: "Лукошко",
+  },
 };
 
 export default function Header() {
@@ -172,17 +177,17 @@ export default function Header() {
   return (
     <>
       <CustomAppBar>
-      <Toolbar className={classes.toolbar}>
-        <Box className={classes.menu}>
-          <HeaderMenu />
-        </Box>
-        <Box className={`${classes.title} cursor-default uppercase`}>
-          <HeaderLogo />
-        </Box>
-        <HeaderActions className={`${classes.mainButtonGroup}`} />
-        <HeaderCart />
-      </Toolbar>
-    </CustomAppBar>
+        <Toolbar className={classes.toolbar}>
+          <Box className={classes.menu}>
+            <HeaderMenu />
+          </Box>
+          <Box className={`${classes.title} cursor-default uppercase`}>
+            <HeaderLogo />
+          </Box>
+          <HeaderActions className={`${classes.mainButtonGroup}`} />
+          <HeaderCart />
+        </Toolbar>
+      </CustomAppBar>
     </>
   );
 }

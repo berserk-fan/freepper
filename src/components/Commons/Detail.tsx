@@ -1,61 +1,53 @@
-import {
-  ClickAwayListener,
-  IconButton,
-  Tooltip,
-  Typography,
-  withStyles,
-} from "@material-ui/core";
+import { Button, ClickAwayListener, Tooltip } from "@material-ui/core";
 import React from "react";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
-import theme from "../../theme";
+import CloseIcon from "@material-ui/icons/CancelOutlined";
+import { makeStyles } from "@material-ui/styles";
 
-const HtmlTooltip = withStyles({
+const useStyles = makeStyles({
   tooltip: {
-    backgroundColor: "#f5f5f9",
-    color: "rgba(0, 0, 0, 0.87)",
+    backgroundColor: "#FFFFFF",
+    color: "black",
     maxWidth: 220,
-    fontSize: theme.typography.pxToRem(12),
     border: "1px solid #dadde9",
+    padding: 4,
     margin: 0,
-    padding: 4,
   },
-})(Tooltip);
+});
 
-const DetailButton = withStyles({
-  root: {
-    padding: 4,
-  },
-})(IconButton);
 export default function Detail(props: { text: string } & any) {
+  const classes = useStyles();
   const { text, ...rest } = props;
   const [open, setOpen] = React.useState(false);
   const handleTooltipClose = (ev: React.MouseEvent<Document>) => {
-    ev.stopPropagation();
-
     setOpen(false);
   };
 
-  const handleTooltipOpen = (ev) => {
-    ev.stopPropagation();
-    setOpen(true);
+  const handleTooltipClicked = (ev) => {
+    setOpen((prev) => !prev);
   };
 
   return (
     <ClickAwayListener onClickAway={handleTooltipClose}>
-      <HtmlTooltip
+      <Tooltip
+        classes={classes}
         onClose={handleTooltipClose}
         open={open}
         disableFocusListener
         disableHoverListener
         disableTouchListener
-        title={<Typography variant={"caption"}>{text}</Typography>}
+        title={text}
         placement={"bottom"}
         {...rest}
       >
-        <DetailButton onClick={handleTooltipOpen}>
-          <HelpOutlineIcon fontSize={"small"} />
-        </DetailButton>
-      </HtmlTooltip>
+        <Button size={"small"} onClick={handleTooltipClicked}>
+          {open ? (
+            <CloseIcon fontSize={"small"} />
+          ) : (
+            <HelpOutlineIcon fontSize={"small"} />
+          )}
+        </Button>
+      </Tooltip>
     </ClickAwayListener>
   );
 }

@@ -1,13 +1,10 @@
-import React, { MouseEventHandler, useEffect, useState } from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import dynamic from "next/dynamic";
 import DeliveryDetailsStep from "./DeliveryDetailsStep";
 import {
   Box,
-  MobileStepper,
   Paper,
-  Typography,
   useMediaQuery,
 } from "@material-ui/core";
 import { Form } from "react-final-form";
@@ -25,14 +22,12 @@ import { clearCartAction, StoreState } from "../../store";
 import { connect } from "react-redux";
 import theme from "../../theme";
 import MakeRequestWrapper from "../Commons/MakeRequestWrapper";
-import SuccessStep from "./SuccessStep";
 import useErrorHandling from "../Commons/UseErrorHandling";
-import ErrorSnackbars from "../Commons/ErrorSnackbars";
 import CustomMobileStepper from "./CustomMobileStepper";
+import OrderFallback from "./OrderFallback";
 
 const SummaryStep = dynamic(() => import("./SummaryStep"));
 const PaymentStep = dynamic(() => import("./Payment"));
-const ContactUs = dynamic(() => import("./ContactUs"));
 
 function getButtonTexts() {
   return ["К проверке заказа", "К оплате заказа", "Отправить заказ"];
@@ -55,7 +50,6 @@ function StepContent({
   step: number;
   orderData: OrderForm;
 }) {
-  console.log(step);
   switch (step) {
     case 0:
       return <DeliveryDetailsStep orderForm={orderData} />;
@@ -63,8 +57,6 @@ function StepContent({
       return <SummaryStep orderForm={orderData} />;
     case 2:
       return <PaymentStep />;
-    case 3:
-      return <SuccessStep />;
     default:
       throw new Error("unknown step");
   }
@@ -97,17 +89,7 @@ const schema: ObjectSchema<OrderForm> = object({
 });
 
 const validate = makeValidateSync(schema);
-const steps = ["Доставка", "Проверка", "Оплата", "Успех"];
-
-function Content() {
-  return (
-    <div>
-      Не удалось отправить заказ из-за проблем с сайтом. Пожалуйста, попробуйте
-      другой метод:
-      <ContactUs />
-    </div>
-  );
-}
+const steps = ["Доставка", "Проверка", "Оплата"];
 
 const Checkout = ({
   cart,
@@ -125,15 +107,15 @@ const Checkout = ({
   };
   const [activeStep, setActiveStep] = React.useState(0);
   const [formState, setFormState] = useState<OrderForm>(initialValues);
-  const clientRetries = 6;
   const serverRetries = 2;
   const retryPeriod = 10;
-  const [orderSubmitState, makeACall, retryNumber] = useErrorHandling(
-    clearCart,
-    clientRetries,
-    serverRetries,
-    retryPeriod
-  );
+  const {
+    submitState: orderSubmitState,
+    currentRetry,
+    customFetch,
+    cancel,
+    reset
+  } = useErrorHandling(clearCart, serverRetries, retryPeriod);
   const smallScreen = useMediaQuery(theme.breakpoints.down("xs"));
 
   function CheckoutBox({ children }: { children: React.ReactNode }) {
@@ -152,12 +134,12 @@ const Checkout = ({
   }
 
   function isCallStep() {
-    return activeStep === steps.length - 2;
+    return activeStep === steps.length - 1;
   }
 
   const handleNext = (newFormState: OrderForm) => {
     if (isCallStep()) {
-      makeACall(() => postForm(newFormState)).catch(console.log);
+      postForm(newFormState).catch(console.error);
     } else {
       setFormState(newFormState);
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -171,7 +153,7 @@ const Checkout = ({
     };
   };
 
-  async function postForm(orderForm: OrderForm): Promise<Response> {
+  async function postForm(orderForm: OrderForm): Promise<void> {
     const order: Order = {
       paymentOption: PaymentOption.COD,
       cart: cart,
@@ -185,9 +167,13 @@ const Checkout = ({
       },
     };
 
-    return fetch("/api/orders", {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    return customFetch("/api/orders", {
       method: "POST",
       body: JSON.stringify(order),
+      signal: signal
     });
   }
 
@@ -258,14 +244,12 @@ const Checkout = ({
           </form>
         )}
       />
-      <ErrorSnackbars
-        submitState={orderSubmitState}
-        retryNumber={retryNumber}
-        retryPeriodSec={retryPeriod}
-        content={<Content />}
-        errorMessage={<Typography>Ошибка при отправке заказа</Typography>}
-        successMessage={<Typography>Заказ отправлен успешно</Typography>}
-        retryingMessage={<Typography>Отправляю заказ...</Typography>}
+      <OrderFallback
+        orderSubmitState={orderSubmitState}
+        retryNumber={currentRetry}
+        retryPeriod={retryPeriod}
+        onClose={reset}
+        onCancel={cancel}
       />
     </CheckoutBox>
   );

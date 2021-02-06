@@ -1,6 +1,6 @@
 import { createStore } from "redux";
 import ShopClient from "@mamat14/shop-server";
-import { category, shopProducts } from "../../configs/Data";
+import { categories, shopProducts } from "../../configs/Data";
 import { CartState } from "../components/Cart/Cart";
 import { CartProduct } from "../pages/checkout";
 import { Product } from "@mamat14/shop-server/shop_model";
@@ -180,6 +180,6 @@ store.subscribe(() => {
 
 export const shopClient = new ShopClient({
   products: shopProducts,
-  categories: [category],
+  categories: categories,
   settings: { timeout: 100, errorPercentage: 0 },
 });

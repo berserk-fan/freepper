@@ -1,8 +1,7 @@
 import MdPage from "../components/Commons/MdPage";
 import React from "react";
 
-const md =
-`
+const md = `
 # Сколько есть времени чтобы вернуть товар?
 14 дней с момента покупки
 
@@ -31,5 +30,5 @@ const md =
 `;
 
 export default function ReturnsPolicy() {
-    return <MdPage pageMd={md}/>
+  return <MdPage pageMd={md} />;
 }

@@ -5,8 +5,8 @@ import React from "react";
 import { Page, pages, shopPageGroup } from "./Header";
 import { makeStyles } from "@material-ui/styles";
 import theme from "../../../theme";
-import {Box, Typography} from "@material-ui/core";
-import {NavItem, NavMenu} from "@mui-treasury/components/menu/navigation";
+import { Box, Typography } from "@material-ui/core";
+import { NavItem, NavMenu } from "@mui-treasury/components/menu/navigation";
 
 const useStyles = makeStyles({
   root: {
@@ -22,17 +22,19 @@ export default function HeaderActions(props) {
     pages.about,
   ];
   return (
-      <NavMenu {...props} aria-label="page tabs">
-        {bigHeaderPages.map(({ id, path, name, icon }) => (
-            <NavItem key={id}>
-              <Link href={path}>
-                <Box className={"flex justify-between items-center"}>
-                  {React.createElement(icon)}
-                  <Typography style={{paddingLeft: "8px"}} variant={"button"}>{name}</Typography>
-                </Box>
-              </Link>
-            </NavItem>
-        ))}
-      </NavMenu>
+    <NavMenu {...props} aria-label="page tabs">
+      {bigHeaderPages.map(({ id, path, name, icon }) => (
+        <NavItem key={id}>
+          <Link href={path}>
+            <Box className={"flex justify-between items-center"}>
+              {React.createElement(icon)}
+              <Typography style={{ paddingLeft: "8px" }} variant={"button"}>
+                {name}
+              </Typography>
+            </Box>
+          </Link>
+        </NavItem>
+      ))}
+    </NavMenu>
   );
 }

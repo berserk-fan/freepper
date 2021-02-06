@@ -1,11 +1,10 @@
 import Markdown from "../components/Commons/Renderers";
 import React from "react";
-import {Box, Container} from "@material-ui/core";
+import { Box, Container } from "@material-ui/core";
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
 import MdPage from "../components/Commons/MdPage";
 
-const pageMd =
-`
+const pageMd = `
 # O сотрудничестве
 Сотрудничество с брендом *Погладить можно?* – это о построении длительных, дружелюбных отношений,
 в которых компания предоставляет не только товар, но и сопровождение: от фото материалов до специальных предложений.  
@@ -24,5 +23,5 @@ const pageMd =
 `;
 
 export default function Cooperation() {
-    return <MdPage pageMd={pageMd}/>
+  return <MdPage pageMd={pageMd} />;
 }

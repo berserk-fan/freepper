@@ -34,6 +34,7 @@
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",
     "tailwindcss": "^1.9.4",
+    "typeface-roboto": "^1.1.13",
     "yup": "^0.29.3"
   },
   "devDependencies": {

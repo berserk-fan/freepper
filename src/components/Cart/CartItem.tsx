@@ -18,15 +18,12 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import CloseIcon from "@material-ui/icons/Close";
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/styles";
-import RemoveIcon from '@material-ui/icons/Remove';
+import RemoveIcon from "@material-ui/icons/Remove";
 import { connect } from "react-redux";
-import AddIcon from '@material-ui/icons/Add';
+import AddIcon from "@material-ui/icons/Add";
 
 import { CartProduct } from "../../pages/checkout";
-import {
-  deleteProductAction,
-  setProductCountAction,
-} from "../../store";
+import { deleteProductAction, setProductCountAction } from "../../store";
 
 const useStyles = makeStyles({
   root: {
@@ -54,14 +51,14 @@ const useStyles = makeStyles({
     padding: "4px",
     alignItems: "center",
     borderColor: "#e0e0e0",
-    borderRadius: "40px"
+    borderRadius: "40px",
   },
   quantityControlsIcon: {
-    fontSize: '16px'
+    fontSize: "16px",
   },
   quantityControlsIconButton: {
-    padding: '8px'
-  }
+    padding: "8px",
+  },
 });
 
 const cartItem = function CartItem({
@@ -85,7 +82,7 @@ const cartItem = function CartItem({
           disabled={count <= 1}
           onClick={() => setProductCount(id, count - 1)}
         >
-          <RemoveIcon className={classes.quantityControlsIcon}/>
+          <RemoveIcon className={classes.quantityControlsIcon} />
         </IconButton>
         <Box className="select-none" fontFamily={"Monospace"}>
           {count}
@@ -94,7 +91,7 @@ const cartItem = function CartItem({
           className={classes.quantityControlsIconButton}
           onClick={() => setProductCount(id, count + 1)}
         >
-          <AddIcon className={classes.quantityControlsIcon}/>
+          <AddIcon className={classes.quantityControlsIcon} />
         </IconButton>
       </Box>
     );
@@ -133,7 +130,7 @@ const cartItem = function CartItem({
         >
           <Box marginLeft={1}>{getAdditionalInfo(product)}</Box>
           <Box marginLeft={1} className={"flex place-items-center"}>
-            <QuantityControls/>
+            <QuantityControls />
             {ActionsPopover(id, deleteProduct)}
           </Box>
         </Box>

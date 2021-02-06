@@ -5,25 +5,29 @@ import Link from "@material-ui/core/Link";
 import Table from "@material-ui/core/Table";
 import Paper from "@material-ui/core/Paper";
 import {
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
-    StyledComponentProps, ListItem, ListItemText, List, ListItemIcon,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  StyledComponentProps,
+  ListItem,
+  ListItemText,
+  List,
+  ListItemIcon,
 } from "@material-ui/core";
 import ReactMarkdown from "react-markdown";
-import {ListContent , List as MdList} from "mdast";
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import { ListContent, List as MdList } from "mdast";
+import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import theme from "../../theme";
 
-const styles = ({
-    header: {
-        paddingTop: "1rem"
-    },
-    listIcon: {
-        minWidth: 0
-    }
-});
+const styles = {
+  header: {
+    paddingTop: "1rem",
+  },
+  listIcon: {
+    minWidth: 0,
+  },
+};
 
 function MarkdownParagraph(props: { children: ReactNode }) {
   return <Typography>{props.children}</Typography>;
@@ -33,7 +37,8 @@ interface MdHeadingProps {
   level: number;
 }
 
-const MarkdownHeading = withStyles(styles)(({
+const MarkdownHeading = withStyles(styles)(
+  ({
     classes,
     ...props
   }: StyledComponentProps & TypographyProps & MdHeadingProps) => {
@@ -60,27 +65,35 @@ const MarkdownHeading = withStyles(styles)(({
         {props.children}
       </Typography>
     );
-  });
+  }
+);
 
 const MarkdownListItem = withStyles(styles)((props: ListContent & any) => {
-    return (
-      <ListItem style={{paddingTop: 0, paddingBottom: 0}} alignItems={"flex-start"}>
-          <ListItemIcon style={{minWidth: 18}}>
-              <FiberManualRecordIcon style={{fontSize: "12px", color: theme.palette.grey["800"]}}/>
-          </ListItemIcon>
-          <ListItemText style={{marginTop: 2}}>
-              <Typography component="span" variant={"body2"}>{props.children}</Typography>
-          </ListItemText>
-      </ListItem>
-    )
-  });
+  return (
+    <ListItem
+      style={{ paddingTop: 0, paddingBottom: 0 }}
+      alignItems={"flex-start"}
+    >
+      <ListItemIcon style={{ minWidth: 18 }}>
+        <FiberManualRecordIcon
+          style={{ fontSize: "12px", color: theme.palette.grey["800"] }}
+        />
+      </ListItemIcon>
+      <ListItemText style={{ marginTop: 2 }}>
+        <Typography component="span" variant={"body2"}>
+          {props.children}
+        </Typography>
+      </ListItemText>
+    </ListItem>
+  );
+});
 
 const MarkdownList = (props: MdList) => {
-    return (
-        <List dense disablePadding>
-            {props.children}
-        </List>
-    )
+  return (
+    <List dense disablePadding>
+      {props.children}
+    </List>
+  );
 };
 
 function MarkdownTable(props: { children: ReactNode }) {
