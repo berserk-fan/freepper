@@ -25,7 +25,7 @@ const useStyles = makeStyles({
   },
   mainButtonGroup: {
     position: "absolute",
-    width: 546,
+    width: 570,
     marginLeft: theme.spacing(2),
     marginRight: "auto",
     left: 120,

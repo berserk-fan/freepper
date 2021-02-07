@@ -5,7 +5,7 @@ import { Category, Product } from "@mamat14/shop-server/shop_model";
 import React from "react";
 import { shopClient } from "../../../../store";
 import { GetStaticProps } from "next";
-import { tmpProducts } from "../../../../../configs/Data";
+import {tmpProducts} from "../../../../../configs/tmpProducts";
 
 export default function Shop({
   products,

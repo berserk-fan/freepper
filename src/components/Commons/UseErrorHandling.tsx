@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import promiseRetry from "promise-retry";
 
 export type SubmitState =
@@ -26,6 +26,8 @@ export default function useErrorHandling(
 ): UseErrorHandlingResult {
   console.log("USE ERROR HANDLING");
   const [submitState, setSubmitState] = useState<SubmitState>("NOT_SUBMITTED");
+  const [retryNumber, setRetryNumber] = useState(0);
+
   function changeState(state: SubmitState) {
     setSubmitState(state);
     if (submitState === "OK") {
@@ -33,9 +35,8 @@ export default function useErrorHandling(
     }
   }
 
-  const [retryNumber, setRetryNumber] = useState(0);
-  let controller = new AbortController();
-  let signal = controller.signal;
+  let controller = typeof window === "undefined" ? undefined : new AbortController();
+  let signal = typeof window === "undefined" ? undefined : controller.signal;
   function cancel() {
       console.log("CANCELLING");
       controller.abort();
@@ -49,7 +50,7 @@ export default function useErrorHandling(
       cancel();
   }
 
-  function makeACall(r: RequestInfo, i: RequestInit): Promise<void> {
+  function customFetch(r: RequestInfo, i: RequestInit): Promise<void> {
     changeState("SENDING");
     return promiseRetry(
       async (retry, retryNumber) => {
@@ -57,7 +58,7 @@ export default function useErrorHandling(
         if (submitState === "CANCELLED" || (retryNumber != 1 && submitState === "NOT_SUBMITTED")) {
           return;
         }
-          console.log("RETRYING 2");
+        console.log("RETRYING 2");
         setRetryNumber(retryNumber);
         if (retryNumber !== 1) {
           changeState("RETRYING");
@@ -101,7 +102,7 @@ export default function useErrorHandling(
 
   return {
     submitState,
-    customFetch: makeACall,
+    customFetch: customFetch,
     currentRetry: retryNumber,
     cancel,
     reset

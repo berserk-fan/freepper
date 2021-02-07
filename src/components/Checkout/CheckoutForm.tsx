@@ -116,7 +116,10 @@ const Checkout = ({
     cancel,
     reset
   } = useErrorHandling(clearCart, serverRetries, retryPeriod);
+
   const smallScreen = useMediaQuery(theme.breakpoints.down("xs"));
+
+  console.log(smallScreen, theme.breakpoints.down("xs"));
 
   function CheckoutBox({ children }: { children: React.ReactNode }) {
     return smallScreen ? (

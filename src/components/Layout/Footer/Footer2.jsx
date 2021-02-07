@@ -121,7 +121,7 @@ const Footer = React.memo(function AppFooter() {
                       <Typography>Модели</Typography>
                     </CategoryTitle>
                     {Object.values(modelPages).map((page) => (
-                      <Link href={pages.about.path} color={"textPrimary"}>
+                      <Link href={pages.about.path}>
                         <CategoryItem key={page.path}>
                           <Typography>{page.name}</Typography>
                         </CategoryItem>
