@@ -115,8 +115,6 @@ const Checkout = ({
 
   const smallScreen = useMediaQuery(theme.breakpoints.down("xs"));
 
-  console.log(smallScreen, theme.breakpoints.down("xs"));
-
   function CheckoutBox({ children }: { children: React.ReactNode }) {
     return smallScreen ? (
       <Box height={"calc()"} className={"flex flex-col justify-center w-full"}>

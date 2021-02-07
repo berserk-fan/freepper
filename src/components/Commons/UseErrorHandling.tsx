@@ -24,7 +24,6 @@ export default function useErrorHandling(
   maxServerRetries: number,
   retryPeriod: number
 ): UseErrorHandlingResult {
-  console.log("USE ERROR HANDLING");
   const [submitState, setSubmitState] = useState<SubmitState>("NOT_SUBMITTED");
   const [retryNumber, setRetryNumber] = useState(0);
 
@@ -39,14 +38,12 @@ export default function useErrorHandling(
     typeof window === "undefined" ? undefined : new AbortController();
   let signal = typeof window === "undefined" ? undefined : controller.signal;
   function cancel() {
-    console.log("CANCELLING");
     controller.abort();
     controller = new AbortController();
     signal = controller.signal;
   }
 
   function reset() {
-    console.log("RESETTING");
     setSubmitState("NOT_SUBMITTED");
     cancel();
   }
@@ -55,14 +52,12 @@ export default function useErrorHandling(
     changeState("SENDING");
     return promiseRetry(
       async (retry, retryNumber) => {
-        console.log("RETRYING" + submitState);
         if (
           submitState === "CANCELLED" ||
           (retryNumber != 1 && submitState === "NOT_SUBMITTED")
         ) {
           return;
         }
-        console.log("RETRYING 2");
         setRetryNumber(retryNumber);
         if (retryNumber !== 1) {
           changeState("RETRYING");
@@ -74,7 +69,6 @@ export default function useErrorHandling(
             newState = "SERVER_ERROR";
           }
         } catch (err) {
-          console.log("CAUGHT ERROR");
           if (err.name === "AbortError") {
             newState = "CANCELLED";
             if (submitState === "NOT_SUBMITTED") {
@@ -90,7 +84,6 @@ export default function useErrorHandling(
           newState = "RETRY_TIMEOUT";
         }
 
-        console.log("CHANGING STATE " + newState);
         changeState(newState);
         if (newState === "RETRY_TIMEOUT") {
           retry(new Error("Error during fetch"));

@@ -171,7 +171,6 @@ export default function OrderFallback({
         return [<></>, undefined];
     }
   }
-  console.log(orderSubmitState);
 
   const [currentMessage, autoHide] = getSubmitMessage();
   return (

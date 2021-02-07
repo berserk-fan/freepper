@@ -80,7 +80,6 @@ export default async function postOrderHandler(
     await transporter.sendMail(mailOptions);
     res.status(201).end();
   } catch (err) {
-    console.log(err.message);
     res.status(500).end();
   }
 }
