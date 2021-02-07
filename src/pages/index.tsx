@@ -15,8 +15,8 @@ import { GetStaticProps } from "next";
 import { shopClient } from "../store";
 import { Product } from "@mamat14/shop-server/shop_model";
 import Link from "next/link";
-import {makeStyles} from "@material-ui/styles";
-import {breakpoints} from "@material-ui/system";
+import { makeStyles } from "@material-ui/styles";
+import { breakpoints } from "@material-ui/system";
 
 const ColorButton = withStyles({
   root: {
@@ -50,9 +50,9 @@ const useStyles = makeStyles({
       minHeight: "none",
     },
     [theme.breakpoints.up("md")]: {
-      width: "calc(50% + 400px)"
-    }
-  }
+      width: "calc(50% + 400px)",
+    },
+  },
 });
 
 const goToShopButton = () => (
@@ -74,32 +74,37 @@ export default function Home({ products }: { products: Product[] }) {
   return (
     <LayoutWithHeaderAndFooter value>
       <Box width={"100%"}>
-        <Box className={`flex flex-col ${classes.container}`} height="calc(100vh - 135px)" aria-label={"Main screen"} component={"section"}>
+        <Box
+          className={`flex flex-col ${classes.container}`}
+          height="calc(100vh - 135px)"
+          aria-label={"Main screen"}
+          component={"section"}
+        >
           <Box className={`${classes.imageContainer} overflow-hidden`}>
             <Box className={"relative"} width={"100%"} height={"100%"}>
               <Image
-                  priority
-                  src={"/beds/kvadro-strong/Dogs-7248.jpg"}
-                  alt={"Заставка лежанки"}
-                  layout="fill"
-                  objectFit="cover"
-                  quality={100}
+                priority
+                src={"/beds/kvadro-strong/Dogs-7248.jpg"}
+                alt={"Заставка лежанки"}
+                layout="fill"
+                objectFit="cover"
+                quality={100}
               />
             </Box>
           </Box>
           <Box>
             <Typography
-                style={{ paddingTop: theme.spacing(3) }}
-                align={"center"}
-                variant={"h3"}
-                component={"h1"}
+              style={{ paddingTop: theme.spacing(3) }}
+              align={"center"}
+              variant={"h3"}
+              component={"h1"}
             >
               10% на первую покупку
             </Typography>
             <Box
-                marginTop={2}
-                marginBottom={1}
-                className={"flex justify-center items-center"}
+              marginTop={2}
+              marginBottom={1}
+              className={"flex justify-center items-center"}
             >
               {goToShopButton()}
             </Box>
@@ -120,10 +125,10 @@ export default function Home({ products }: { products: Product[] }) {
           <Box aria-label={"novelties"} component={"ul"}>
             {products.map((p) => (
               <Box marginX={4} marginY={5} component={"li"}>
-                <ItemView
-                  productRef={`/categories/beds/${p.name}`}
-                  product={p}
-                />
+                {/*<ItemView*/}
+                {/*  productRef={`/categories/beds/${p.name}`}*/}
+                {/*  product={p}*/}
+                {/*/>*/}
               </Box>
             ))}
           </Box>
@@ -162,8 +167,8 @@ export default function Home({ products }: { products: Product[] }) {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const productNames = [
-    "products/lukoshko-vic-20-lukoshko-1",
-    "products/lukoshko-vic-34-lukoshko-1",
+    "products/lukoshko-vic-20-lukoshko-xs",
+    "products/lukoshko-vic-34-lukoshko-xs",
   ];
   const products = await Promise.all(
     productNames.map((pName) => shopClient.getProduct({ name: pName }))

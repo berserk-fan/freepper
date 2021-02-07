@@ -1,52 +1,78 @@
-import {DogBed_Variant, ImageData, Price, Product} from "@mamat14/shop-server/shop_model";
+import {
+  DogBed_Variant,
+  ImageData,
+  Price,
+  Product,
+} from "@mamat14/shop-server/shop_model";
 import avFabrics from "../fabrics/avFabrics";
 import kvadroSizes from "../sizes/kvadroSizes";
 
 function getVariants(): DogBed_Variant[] {
-    const res: DogBed_Variant[] = [];
-    for (const fabric of avFabrics) {
-        for (const size of kvadroSizes) {
-            res.push({
-                fabricId: fabric.id,
-                sizeId: size.id,
-                variantName: `products/kvadro-strong-${fabric.id}-${size.id}`,
-            });
-        }
+  const res: DogBed_Variant[] = [];
+  for (const fabric of avFabrics) {
+    for (const size of kvadroSizes) {
+      res.push({
+        fabricId: fabric.id,
+        sizeId: size.id,
+        variantName: `products/kvadroStrong-${fabric.id}-${size.id}`,
+      });
     }
-    return res;
+  }
+  return res;
 }
 
 const variants: DogBed_Variant[] = getVariants();
 
 const images: Record<string, ImageData[]> = Object.fromEntries(
-    Object.entries({
-        "av-01": [],
-        "av-02": ["IMG_7827.jpg", "IMG_7828.JPG", "IMG_7831.JPG", "IMG_7831.JPG", "IMG_7833.JPG" ],
-        "av-04": [],
-        "av-06": [],
-        "av-07": [],
-        "av-10": [],
-        "av-11": ["Dogs-7248.jpg", "Dogs-7249.jpg", "Dogs-7251.jpg", "Dogs-7326.jpg", "Dogs-7332.jpg", "Dogs-24875.jpg", "Dogs-24890jpg"],
-        "av-12": [],
-        "av-13": [],
-        "av-14": [],
-        "av-15": [],
-        "av-17": [],
-        "av-18": []
-    }).map(([id, photos]: [string, ImageData[]]) => [
-        id,
-        photos.map(name => ({
-            src: `/beds/kvadro-strong/${name}`,
-            alt: "фото лежанки Квадро стронг",
-        })).concat([{ src: `/fabrics/av/${id}.png`, alt: "Фото ткани лежанки квадро стронг" }]),
-    ])
+  Object.entries({
+    "av-01": [],
+    "av-02": [
+      "IMG_7827.jpg",
+      "IMG_7828.JPG",
+      "IMG_7831.JPG",
+      "IMG_7831.JPG",
+      "IMG_7833.JPG",
+    ],
+    "av-04": [],
+    "av-06": [],
+    "av-07": [],
+    "av-10": [],
+    "av-11": [
+      "Dogs-7248.jpg",
+      "Dogs-7249.jpg",
+      "Dogs-7251.jpg",
+      "Dogs-7326.jpg",
+      "Dogs-7332.jpg",
+      "Dogs-24875.jpg",
+      "Dogs-24890jpg",
+    ],
+    "av-12": [],
+    "av-13": [],
+    "av-14": [],
+    "av-15": [],
+    "av-17": [],
+    "av-18": [],
+  }).map(([id, photos]: [string, ImageData[]]) => [
+    id,
+    photos
+      .map((name) => ({
+        src: `/beds/kvadro-strong/${name}`,
+        alt: "фото лежанки Квадро стронг",
+      }))
+      .concat([
+        {
+          src: `/fabrics/av/${id}.png`,
+          alt: "Фото ткани лежанки квадро стронг",
+        },
+      ]),
+  ])
 );
 
 const prices: Record<string, Price> = {
-    "kvadro-1": {price: 1050},
-    "kvadro-2": {price: 1200},
-    "kvadro-3": {price: 1450},
-    "kvadro-4": {price: 1600},
+  "kvadro-xs": { price: 1050 },
+  "kvadro-s": { price: 1200 },
+  "kvadro-m": { price: 1450 },
+  "kvadro-l": { price: 1600 },
 };
 
 const description = `
@@ -63,22 +89,22 @@ const description = `
 `;
 
 const kvadroStrongs: Product[] = variants.map((v) => ({
-    id: v.variantName.split("/").filter((x) => !!x)[1],
-    name: v.variantName,
-    displayName: `Чемодан`,
-    description: description,
-    price: prices[v.sizeId],
-    images: images[v.fabricId],
-    details: {
-        $case: "dogBed",
-        dogBed: {
-            sizeId: v.sizeId,
-            fabricId: v.fabricId,
-            fabrics: avFabrics,
-            sizes: kvadroSizes,
-            variants: variants,
-        },
+  id: v.variantName.split("/").filter((x) => !!x)[1],
+  name: v.variantName,
+  displayName: `Чемодан`,
+  description: description,
+  price: prices[v.sizeId],
+  images: images[v.fabricId],
+  details: {
+    $case: "dogBed",
+    dogBed: {
+      sizeId: v.sizeId,
+      fabricId: v.fabricId,
+      fabrics: avFabrics,
+      sizes: kvadroSizes,
+      variants: variants,
     },
+  },
 }));
 
-export default kvadroStrongs
+export default kvadroStrongs;

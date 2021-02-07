@@ -138,8 +138,8 @@ export const supportPages: Record<SupportPages, Page> = {
 };
 
 type Model =
-  | "lukoshko-2"
-  | "lukoshko-3"
+  | "lukoshko-s"
+  | "lukoshko-m"
   | "chemodan"
   | "kvadro-soft"
   | "kvadro-strong";
@@ -160,13 +160,13 @@ export const modelPages: Record<Model, Page> = {
     path: "#",
     name: "Чемодан",
   },
-  "lukoshko-2": {
-    id: "lukoshko-2",
+  "lukoshko-s": {
+    id: "lukoshko-s",
     path: "#",
     name: "Лукошко Эйфель",
   },
-  "lukoshko-3": {
-    id: "lukoshko-3",
+  "lukoshko-m": {
+    id: "lukoshko-m",
     path: "#",
     name: "Лукошко",
   },

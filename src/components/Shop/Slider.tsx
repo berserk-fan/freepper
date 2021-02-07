@@ -7,16 +7,22 @@ import { Box } from "@material-ui/core";
 export default function Slider({
   slides,
   className = "",
+  onChange
 }: {
   slides: any[];
   className?: string;
+  onChange?: (slideNum: number) => void
 }) {
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [sliderRef, slider] = useKeenSlider({
     initial: 0,
     spacing: 15,
     slideChanged(s) {
-      setCurrentSlide(s.details().relativeSlide);
+      const slideIdx = s.details().relativeSlide;
+      setCurrentSlide(slideIdx);
+      if(onChange) {
+        onChange(slideIdx);
+      }
     },
   });
 

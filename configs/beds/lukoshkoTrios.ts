@@ -1,53 +1,69 @@
-import {DogBed_Variant, ImageData, Price, Product} from "@mamat14/shop-server/shop_model";
+import {
+  DogBed_Variant,
+  ImageData,
+  Price,
+  Product,
+} from "@mamat14/shop-server/shop_model";
 import vicFabrics from "../fabrics/vicFabrics";
 import lukoshkoSizes from "../sizes/lukoshkoSizes";
 
 function getVariants(): DogBed_Variant[] {
-    const res: DogBed_Variant[] = [];
-    for (const fabric of vicFabrics) {
-        for (const size of lukoshkoSizes) {
-            res.push({
-                fabricId: fabric.id,
-                sizeId: size.id,
-                variantName: `products/lukoshko-eifel-${fabric.id}-${size.id}`,
-            });
-        }
+  const res: DogBed_Variant[] = [];
+  for (const fabric of vicFabrics) {
+    for (const size of lukoshkoSizes) {
+      res.push({
+        fabricId: fabric.id,
+        sizeId: size.id,
+        variantName: `products/lukoshkoTrio-${fabric.id}-${size.id}`,
+      });
     }
-    return res;
+  }
+  return res;
 }
 
 const variants: DogBed_Variant[] = getVariants();
 
 const images: Record<string, ImageData[]> = Object.fromEntries(
-    Object.entries({
-        "vic-20": [],
-        "vic-21": [],
-        "vic-22": [],
-        "vic-32": [],
-        "vic-34": [],
-        "vic-36": [],
-        "vic-66": [],
-        "vic-70": [],
-        "vic-80": [],
-        "vic-88": [],
-        "vic-93": [],
-        "vic-96": ["Dogs-7253", "Dogs-7254", "Dogs-7309", "Dogs-24838", "Dogs-24849",
-            "Dogs-25105", "Dogs-25115", "Dogs-25127", "Dogs-25142"],
-        "vic-100": [],
-    }).map(([id, photos]: [string, ImageData[]]) => [
-        id,
-        photos.map(name => ({
-            src: `/beds/lukoshko2/${name}.jpg`,
-            alt: "фото лежанки Лукошко Трио",
-        })).concat([{ src: `/fabrics/vic/${id}.JPG`, alt: "Фото ткани" }]),
-    ])
+  Object.entries({
+    "vic-20": [],
+    "vic-21": [],
+    "vic-22": [],
+    "vic-32": [],
+    "vic-34": [],
+    "vic-36": [],
+    "vic-66": [],
+    "vic-70": [],
+    "vic-80": [],
+    "vic-88": [],
+    "vic-93": [],
+    "vic-96": [
+      "Dogs-7253",
+      "Dogs-7254",
+      "Dogs-7309",
+      "Dogs-24838",
+      "Dogs-24849",
+      "Dogs-25105",
+      "Dogs-25115",
+      "Dogs-25127",
+      "Dogs-25142",
+    ],
+    "vic-100": [],
+  }).map(([id, photos]: [string, ImageData[]]) => [
+    id,
+    photos
+      .map((name) => ({
+        src: `/beds/lukoshko2/${name}.jpg`,
+        alt: "фото лежанки Лукошко Трио",
+      }))
+      .concat([{ src: `/fabrics/vic/${id}.JPG`, alt: "Фото ткани" }]),
+  ])
 );
 
 const prices: Record<string, Price> = {
-    "lukoshko-1": {price: 1350},
-    "lukoshko-2": {price: 1450},
-    "lukoshko-3": {price: 1550},
-    "lukoshko-4": {price: 1750},
+  "lukoshko-xs": { price: 1350 },
+  "lukoshko-s": { price: 1450 },
+  "lukoshko-m": { price: 1550 },
+  "lukoshko-l": { price: 1750 },
 };
 
 const description = `
@@ -64,22 +80,22 @@ const description = `
 `;
 
 const lukoshkos: Product[] = variants.map((v) => ({
-    id: v.variantName.split("/").filter((x) => !!x)[1],
-    name: v.variantName,
-    displayName: `Лукошко Ейфель`,
-    description: description,
-    price: prices[v.sizeId],
-    images: images[v.fabricId],
-    details: {
-        $case: "dogBed",
-        dogBed: {
-            sizeId: v.sizeId,
-            fabricId: v.fabricId,
-            fabrics: vicFabrics,
-            sizes: lukoshkoSizes,
-            variants: variants,
-        },
+  id: v.variantName.split("/").filter((x) => !!x)[1],
+  name: v.variantName,
+  displayName: `Лукошко Ейфель`,
+  description: description,
+  price: prices[v.sizeId],
+  images: images[v.fabricId],
+  details: {
+    $case: "dogBed",
+    dogBed: {
+      sizeId: v.sizeId,
+      fabricId: v.fabricId,
+      fabrics: vicFabrics,
+      sizes: lukoshkoSizes,
+      variants: variants,
     },
+  },
 }));
 
-export default lukoshkos
+export default lukoshkos;

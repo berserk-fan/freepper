@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import promiseRetry from "promise-retry";
 
 export type SubmitState =
@@ -35,19 +35,20 @@ export default function useErrorHandling(
     }
   }
 
-  let controller = typeof window === "undefined" ? undefined : new AbortController();
+  let controller =
+    typeof window === "undefined" ? undefined : new AbortController();
   let signal = typeof window === "undefined" ? undefined : controller.signal;
   function cancel() {
-      console.log("CANCELLING");
-      controller.abort();
-      controller = new AbortController();
-      signal = controller.signal;
+    console.log("CANCELLING");
+    controller.abort();
+    controller = new AbortController();
+    signal = controller.signal;
   }
 
   function reset() {
-      console.log("RESETTING");
-      setSubmitState("NOT_SUBMITTED");
-      cancel();
+    console.log("RESETTING");
+    setSubmitState("NOT_SUBMITTED");
+    cancel();
   }
 
   function customFetch(r: RequestInfo, i: RequestInit): Promise<void> {
@@ -55,7 +56,10 @@ export default function useErrorHandling(
     return promiseRetry(
       async (retry, retryNumber) => {
         console.log("RETRYING" + submitState);
-        if (submitState === "CANCELLED" || (retryNumber != 1 && submitState === "NOT_SUBMITTED")) {
+        if (
+          submitState === "CANCELLED" ||
+          (retryNumber != 1 && submitState === "NOT_SUBMITTED")
+        ) {
           return;
         }
         console.log("RETRYING 2");
@@ -65,20 +69,21 @@ export default function useErrorHandling(
         }
         let newState: SubmitState = "OK";
         try {
-          const res = await fetch(r, {...i, signal: signal});
+          const res = await fetch(r, { ...i, signal: signal });
           if (res.status != 201) {
             newState = "SERVER_ERROR";
           }
         } catch (err) {
-            console.log("CAUGHT ERROR");
-            if (err.name === 'AbortError') {
-                newState = "CANCELLED";
-                if(submitState === "NOT_SUBMITTED") { //for reset
-                    return;
-                }
-            } else {
-                newState = "CLIENT_ERROR";
+          console.log("CAUGHT ERROR");
+          if (err.name === "AbortError") {
+            newState = "CANCELLED";
+            if (submitState === "NOT_SUBMITTED") {
+              //for reset
+              return;
             }
+          } else {
+            newState = "CLIENT_ERROR";
+          }
         }
 
         if (newState === "SERVER_ERROR" && retryNumber <= maxServerRetries) {
@@ -105,6 +110,6 @@ export default function useErrorHandling(
     customFetch: customFetch,
     currentRetry: retryNumber,
     cancel,
-    reset
+    reset,
   };
 }

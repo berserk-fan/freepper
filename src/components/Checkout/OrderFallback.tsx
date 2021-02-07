@@ -18,58 +18,66 @@ import { SubmitState } from "../Commons/UseErrorHandling";
 import { Offline } from "react-detect-offline";
 import ButtonWithDetail from "../Commons/ButtonWithDetail";
 
-function FailedHeader({onClose}: {onClose: () => void}) {
-  return <Box>
-    <AlertTitle className={"flex justify-between items-start"}>
-    <Typography variant={"h5"}>Не удалось отправить заказ</Typography>
-    <IconButton size={"small"} aria-label={"закрыть"} onClick={onClose}>
-      <CloseIcon/>
-    </IconButton>
-  </AlertTitle>
-  <Offline>
-    <Typography variant={"caption"}>Скорее всего у вас пропал интернет</Typography>
-  </Offline>
-  </Box>;
+function FailedHeader({ onClose }: { onClose: () => void }) {
+  return (
+    <Box>
+      <AlertTitle className={"flex justify-between items-start"}>
+        <Typography variant={"h5"}>Не удалось отправить заказ</Typography>
+        <IconButton size={"small"} aria-label={"закрыть"} onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      </AlertTitle>
+      <Offline>
+        <Typography variant={"caption"}>
+          Скорее всего у вас пропал интернет
+        </Typography>
+      </Offline>
+    </Box>
+  );
 }
 
-function ManualOrderMessage({onClose}: {onClose: () => void}): React.ReactElement {
+function ManualOrderMessage({
+  onClose,
+}: {
+  onClose: () => void;
+}): React.ReactElement {
   const [showContactUs, setShowContactUs] = useState(false);
 
   return (
     <Alert severity={"info"}>
       <Box pb={2}>
-        <FailedHeader onClose={onClose}/>
+        <FailedHeader onClose={onClose} />
         <Typography gutterBottom>Выберете что делать</Typography>
         <Typography variant={"caption"}>
           Нажмите на вопросик чтобы узнать детали.
         </Typography>
         <Box className={"flex justify-between items-center"}>
           <ButtonWithDetail
-              size={"small"}
-              variant={"outlined"}
-              detailText={
-                "Попробовать еще раз. Может помочь если у вас вернулся интернет."
-              }
+            size={"small"}
+            variant={"outlined"}
+            detailText={
+              "Попробовать еще раз. Может помочь если у вас вернулся интернет."
+            }
           >
             Повторить
           </ButtonWithDetail>
           <ButtonWithDetail
-              size={"small"}
-              variant={"outlined"}
-              detailText={"Заказать телефоном или в телеграме"}
-              onClick={() => setShowContactUs((prev) => !prev)}
+            size={"small"}
+            variant={"outlined"}
+            detailText={"Заказать телефоном или в телеграме"}
+            onClick={() => setShowContactUs((prev) => !prev)}
           >
             ДРУГОЙ СПОСОБ
           </ButtonWithDetail>
         </Box>
       </Box>
       <Collapse in={showContactUs}>
-        <Divider/>
+        <Divider />
         <Box my={1}>
           <Typography>
             Пожалуйста, попробуйте заказать по телефону или написать в телеграм
           </Typography>
-          <ContactUs/>
+          <ContactUs />
         </Box>
       </Collapse>
     </Alert>
@@ -79,15 +87,15 @@ function ManualOrderMessage({onClose}: {onClose: () => void}): React.ReactElemen
 function RetryMessage({
   retryNumber,
   retryPeriod,
-  onClose
+  onClose,
 }: {
   retryNumber: number;
   retryPeriod: number;
-  onClose: () => void
+  onClose: () => void;
 }) {
   return (
     <Alert severity={"warning"}>
-      <FailedHeader onClose={onClose}/>
+      <FailedHeader onClose={onClose} />
       <Typography>
         Попробую еще раз через{" "}
         <CountDown countDownId={retryNumber} periodSec={retryPeriod} />
@@ -98,13 +106,13 @@ function RetryMessage({
 
 function OkMessage() {
   return (
-      <Alert severity={"success"}>
-        <Typography>Заказ отправлен успешно</Typography>
-      </Alert>
+    <Alert severity={"success"}>
+      <Typography>Заказ отправлен успешно</Typography>
+    </Alert>
   );
 }
 
-function Sending({onCancel}: {onCancel: () => void}): React.ReactElement {
+function Sending({ onCancel }: { onCancel: () => void }): React.ReactElement {
   return (
     <Alert
       severity={"info"}
@@ -131,30 +139,34 @@ export default function OrderFallback({
   retryNumber,
   retryPeriod,
   onClose,
-  onCancel
+  onCancel,
 }: {
   orderSubmitState: SubmitState;
   retryNumber: number;
   retryPeriod: number;
-  onClose: () => void
-  onCancel: () => void
+  onClose: () => void;
+  onCancel: () => void;
 }): JSX.Element {
   function getSubmitMessage(): [React.ReactElement, number | undefined] {
     switch (orderSubmitState) {
       case "CANCELLED":
       case "CLIENT_ERROR":
       case "SERVER_ERROR":
-        return [<ManualOrderMessage onClose={onClose}/>, undefined];
+        return [<ManualOrderMessage onClose={onClose} />, undefined];
       case "OK":
-        return [<OkMessage/>, 1000];
+        return [<OkMessage />, 1000];
       case "RETRY_TIMEOUT":
         return [
-          <RetryMessage onClose={onClose} retryNumber={retryNumber} retryPeriod={retryPeriod} />,
+          <RetryMessage
+            onClose={onClose}
+            retryNumber={retryNumber}
+            retryPeriod={retryPeriod}
+          />,
           undefined,
         ];
       case "SENDING":
       case "RETRYING":
-        return [<Sending onCancel={onCancel}/>, undefined];
+        return [<Sending onCancel={onCancel} />, undefined];
       case "NOT_SUBMITTED":
         return [<></>, undefined];
     }

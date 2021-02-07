@@ -1,17 +1,15 @@
 import { Box, Container, Grid } from "@material-ui/core";
 import ItemView from "../../../../components/Shop/ItemView";
 import LayoutWithHeaderAndFooter from "../../../../components/Layout/LayoutWithHeaderAndFooter";
-import { Category, Product } from "@mamat14/shop-server/shop_model";
 import React from "react";
-import { shopClient } from "../../../../store";
 import { GetStaticProps } from "next";
-import {tmpProducts} from "../../../../../configs/tmpProducts";
+import {TmpGroupedProduct, tmpProducts} from "../../../../../configs/tmpProducts";
 
 export default function Shop({
   products,
   categoryName,
 }: {
-  products: Product[];
+  products: TmpGroupedProduct[];
   categoryName: string;
 }) {
   return (
@@ -22,7 +20,7 @@ export default function Shop({
             {products.map((item) => (
               <Grid key={item.id} item={true} xs={12} sm={6} md={4} lg={3}>
                 <ItemView
-                  productRef={`/${categoryName}/${item.name}`}
+                  categoryName={categoryName}
                   product={item}
                   className={"mx-auto"}
                 />
@@ -35,14 +33,7 @@ export default function Shop({
   );
 }
 
-export const getStaticProps: GetStaticProps = async (context) => {
-  // const categoryId = context.params.categoryId;
-  // const category = await shopClient.getCategory({
-  //   name: `categories/${categoryId}`,
-  // });
-  // const products = await Promise.all(
-  //   category.products.map((pName) => shopClient.getProduct({ name: pName }))
-  // );
+export const getStaticProps: GetStaticProps = async () => {
   const products = tmpProducts;
   const category = "categories/beds";
   return {

@@ -2,11 +2,7 @@ import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import dynamic from "next/dynamic";
 import DeliveryDetailsStep from "./DeliveryDetailsStep";
-import {
-  Box,
-  Paper,
-  useMediaQuery,
-} from "@material-ui/core";
+import { Box, Paper, useMediaQuery } from "@material-ui/core";
 import { Form } from "react-final-form";
 import { mixed, number, object, ObjectSchema, string } from "yup";
 import { makeValidateSync } from "mui-rff";
@@ -114,7 +110,7 @@ const Checkout = ({
     currentRetry,
     customFetch,
     cancel,
-    reset
+    reset,
   } = useErrorHandling(clearCart, serverRetries, retryPeriod);
 
   const smallScreen = useMediaQuery(theme.breakpoints.down("xs"));
@@ -176,7 +172,7 @@ const Checkout = ({
     return customFetch("/api/orders", {
       method: "POST",
       body: JSON.stringify(order),
-      signal: signal
+      signal: signal,
     });
   }
 

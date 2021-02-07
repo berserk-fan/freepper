@@ -36,6 +36,7 @@ import PopupState, {
   bindToggle,
   bindTrigger,
 } from "material-ui-popup-state";
+import {TmpGroupedProduct} from "../../../configs/tmpProducts";
 
 const CartButton = withStyles({
   root: {
@@ -87,30 +88,39 @@ const useStyles = makeStyles({
 function ItemView({
   product,
   className = "",
-  productRef,
+  categoryName,
 }: {
-  product: Product;
+  product: TmpGroupedProduct;
   className?: string;
-  productRef: string;
+  categoryName: string;
 }) {
   const classes = useStyles();
   const { id, displayName, description, images, price } = product;
+  const [slideId, useSlideId] = useState(0);
+
+  function productHref(productName: string) {
+    return `/${categoryName}/${productName}`
+  }
 
   return (
     <Box className={`overflow-hidden ${className}`}>
       <div>
         <Slider
+          onChange={useSlideId}
           slides={images.map((image) => (
             <Box
+              key={image.src}
               className={`flex ${classes.media} overflow-hidden items-center`}
             >
-              <Image
-                width={500}
-                height={500}
-                src={image.src}
-                alt={displayName}
-                objectFit={"cover"}
-              />
+              <Link href={productHref(image.name)}>
+                <Image
+                    width={500}
+                    height={500}
+                    src={image.src}
+                    alt={displayName}
+                    objectFit={"cover"}
+                />
+              </Link>
             </Box>
           ))}
         />
@@ -125,7 +135,7 @@ function ItemView({
             </Box>
           </Box>
           <Box style={{ marginLeft: "auto" }}>
-            <Link href={productRef}>
+            <Link href={productHref(product.images[slideId].name)}>
               <Button color={"secondary"} variant={"outlined"}>
                 Подробнее
               </Button>
