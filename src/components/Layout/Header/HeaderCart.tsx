@@ -47,7 +47,6 @@ function HeaderCart({ cartSize }: { cartSize: number }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
-
   const handleClickOpen = () => {
     setOpen(true);
   };

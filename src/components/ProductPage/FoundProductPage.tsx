@@ -10,12 +10,15 @@ import { connect } from "react-redux";
 import Link from "next/link";
 import DogBedDetails from "./DogBedDetails";
 import Spacing from "../Commons/Spacing";
-import SliderThumbs from "../Shop/SliderThumbs";
 import theme from "../../theme";
 import { makeStyles } from "@material-ui/styles";
 import EditIcon from "@material-ui/icons/Edit";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import Markdown from "../Commons/Renderers";
+import dynamic from "next/dynamic";
+const SliderThumbs = dynamic(() => import("../Shop/SliderThumbs"), {
+  ssr: false,
+});
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 

@@ -1,18 +1,65 @@
 import React from "react";
-import { useKeenSlider } from "keen-slider/react";
+import KeenSlider, { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import styles from "./Slider.module.css";
-import { Box } from "@material-ui/core";
+import {Box, Typography} from "@material-ui/core";
+import { makeStyles } from "@material-ui/styles";
+import theme from "../../theme";
+
+const useStyles = makeStyles({
+  dot: {
+    border: "none",
+    width: "10px",
+    height: "10px",
+    background: "#c5c5c5",
+    borderRadius: "50%",
+    margin: "0 5px",
+    padding: "5px",
+    cursor: "pointer",
+    "&focus": {
+      outline: "none",
+    },
+  },
+  active: {
+    background: theme.palette.secondary.main,
+  },
+  navigationContainer: {
+    background: theme.palette.background.default,
+    bottom: 0,
+    paddingLeft: "10px",
+    paddingRight: "10px",
+    height: "24px",
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    display: "flex",
+    marginLeft: "auto",
+    marginRight: "auto"
+  },
+  arrow: {
+    width: "30px",
+    height: "30px",
+    position: "absolute",
+    top: "50%",
+    transform: "translateY(-50%)",
+    WebkitTransform: "translateY(-50%)",
+    fill: "#fff",
+    cursor: "pointer"
+  },
+  arrow_left: { left: "5px" },
+  arrow_right: { left: "auto", right: "5px" },
+  arrow_disabled: { fill: "rgba(255, 255, 255, 0.5)" }
+});
 
 export default function Slider({
   slides,
   className = "",
-  onChange
+  onChange,
 }: {
   slides: any[];
   className?: string;
-  onChange?: (slideNum: number) => void
+  onChange?: (slideNum: number) => void;
 }) {
+  const classes = useStyles();
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [sliderRef, slider] = useKeenSlider({
     initial: 0,
@@ -20,44 +67,47 @@ export default function Slider({
     slideChanged(s) {
       const slideIdx = s.details().relativeSlide;
       setCurrentSlide(slideIdx);
-      if(onChange) {
+      if (onChange) {
         onChange(slideIdx);
       }
     },
   });
 
-  React.useEffect(() => {}, [slides]);
+  const Dot = ({ key, isActive }: { key: number; isActive: boolean }) => (
+    <button
+      key={key}
+      onClick={() => slider.moveToSlideRelative(key)}
+      className={`${classes.dot} ${isActive ? classes.active : ""}`}
+    />
+  );
+
+  const Dots = () => (
+    <Box className={classes.navigationContainer}
+    >
+      {[...Array(slider.details().size).keys()].map((idx) => (
+        <Dot key={idx} isActive={currentSlide === idx} />
+      ))}
+    </Box>
+  );
+
+  const Numbers = () => (
+    <Box className={classes.navigationContainer}>
+      <Typography variant={"caption"} align={"center"}>
+        <Box fontFamily={"Monospace"}>{currentSlide + 1} / {slider.details().size}</Box>
+      </Typography>
+    </Box>
+  );
 
   return (
-    <div className={className}>
-      <div className={`${styles["navigation-wrapper"]}`}>
+    <Box className={className}>
+      <Box position={"relative"}>
         <div ref={sliderRef as any} className="keen-slider">
           {slides.map((slide) => (
             <div className="keen-slider__slide">{slide}</div>
           ))}
         </div>
-        {slider && slides.length > 1 && (
-          <Box
-            className={`${styles.dotsBox} w-full flex justify-center absolute`}
-          >
-            <div className={styles.dots}>
-              {[...Array(slider.details().size).keys()].map((idx) => {
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      slider.moveToSlideRelative(idx);
-                    }}
-                    className={`${styles.dot} ${
-                      currentSlide === idx ? styles.active : ""
-                    }`}
-                  />
-                );
-              })}
-            </div>
-          </Box>
-        )}
-      </div>
-    </div>
+        {slider && slides.length > 1 && (slides.length <= 7 ? <Dots/> : <Numbers/>)}
+      </Box>
+    </Box>
   );
 }

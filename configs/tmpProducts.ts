@@ -230,7 +230,7 @@ export const tmpProducts: TmpGroupedProduct[] = [
         src: "/beds/kvadro-soft/Dogs-7278.jpg",
         alt: "Зеленое квадро",
         name: "products/kvadroSoft-vic-70-kvadro-xs",
-      }
+      },
     ],
   },
   {

@@ -166,8 +166,7 @@ export default function Home({ products }: { products: Product[] }) {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const productNames = [
-  ];
+  const productNames = [];
   const products = await Promise.all(
     productNames.map((pName) => shopClient.getProduct({ name: pName }))
   );

@@ -1,42 +1,17 @@
 import React, { memo, useState } from "react";
 import { fade, makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
-import { BriefProduct } from "../../types";
-import {
-  Box,
-  Collapse,
-  Divider,
-  IconButton,
-  Paper,
-  Popover,
-  Popper,
-} from "@material-ui/core";
+import {Box} from "@material-ui/core";
 import ShoppingCartTwoToneIcon from "@material-ui/icons/ShoppingCartTwoTone";
 import { withStyles } from "@material-ui/styles";
 import theme from "../../theme";
-import { connect } from "react-redux";
-import { addProductAction, deleteProductAction, StoreState } from "../../store";
-import { Product } from "@mamat14/shop-server/shop_model";
 import Image from "next/image";
-import "./Slider.module.css";
 import Slider from "./Slider";
 import { ToggleButton } from "@material-ui/lab";
 import Price from "./Price";
-import Spacing from "../Commons/Spacing";
-import { ExpandLess, ExpandMore } from "@material-ui/icons";
-import PopupState, {
-  bindHover,
-  bindPopover,
-  bindPopper,
-  bindToggle,
-  bindTrigger,
-} from "material-ui-popup-state";
-import {TmpGroupedProduct} from "../../../configs/tmpProducts";
+import { TmpGroupedProduct } from "../../../configs/tmpProducts";
 
 const CartButton = withStyles({
   root: {
@@ -99,7 +74,7 @@ function ItemView({
   const [slideId, useSlideId] = useState(0);
 
   function productHref(productName: string) {
-    return `/${categoryName}/${productName}`
+    return `/${categoryName}/${productName}`;
   }
 
   return (
@@ -114,11 +89,11 @@ function ItemView({
             >
               <Link href={productHref(image.name)}>
                 <Image
-                    width={500}
-                    height={500}
-                    src={image.src}
-                    alt={displayName}
-                    objectFit={"cover"}
+                  width={500}
+                  height={500}
+                  src={image.src}
+                  alt={displayName}
+                  objectFit={"cover"}
                 />
               </Link>
             </Box>

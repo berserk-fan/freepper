@@ -3,7 +3,10 @@ import ItemView from "../../../../components/Shop/ItemView";
 import LayoutWithHeaderAndFooter from "../../../../components/Layout/LayoutWithHeaderAndFooter";
 import React from "react";
 import { GetStaticProps } from "next";
-import {TmpGroupedProduct, tmpProducts} from "../../../../../configs/tmpProducts";
+import {
+  TmpGroupedProduct,
+  tmpProducts,
+} from "../../../../../configs/tmpProducts";
 
 export default function Shop({
   products,
