@@ -20,12 +20,13 @@ export default function Shop({
       <Container>
         <Box paddingTop={1}>
           <Grid container={true} spacing={3} justify={"space-between"}>
-            {products.map((item) => (
+            {products.map((item, idx) => (
               <Grid key={item.id} item={true} xs={12} sm={6} md={4} lg={3}>
                 <ItemView
                   categoryName={categoryName}
                   product={item}
                   className={"mx-auto"}
+                  first={idx === 0}
                 />
               </Grid>
             ))}

@@ -64,10 +64,12 @@ function ItemView({
   product,
   className = "",
   categoryName,
+  first
 }: {
   product: TmpGroupedProduct;
   className?: string;
   categoryName: string;
+  first: boolean
 }) {
   const classes = useStyles();
   const { id, displayName, description, images, price } = product;
@@ -82,13 +84,15 @@ function ItemView({
       <div>
         <Slider
           onChange={useSlideId}
-          slides={images.map((image) => (
+          slides={images.map((image, idx) => (
             <Box
               key={image.src}
               className={`flex ${classes.media} overflow-hidden items-center`}
             >
               <Link href={productHref(image.name)}>
                 <Image
+                  priority={first}
+                  loading={idx === 0 ? "eager" : "lazy"}
                   width={500}
                   height={500}
                   src={image.src}
