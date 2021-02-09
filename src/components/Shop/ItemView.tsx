@@ -96,7 +96,6 @@ function ItemView({
                   height={500}
                   src={image.src}
                   alt={displayName}
-                  objectFit={"cover"}
                 />
               </Link>
             </Box>

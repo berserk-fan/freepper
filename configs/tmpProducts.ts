@@ -24,7 +24,7 @@ export const tmpProducts: TmpGroupedProduct[] = [
     price: min(chemodans),
     images: [
       {
-        src: "/beds/chemodan/IMG_4965.jpg",
+        src: "/beds/chemodan/IMG_4965.JPG",
         alt: "Собака на желтом чемодане",
         name: "products/chemodan-av-07-chemodan-m",
       },
