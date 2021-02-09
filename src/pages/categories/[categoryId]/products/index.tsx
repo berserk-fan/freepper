@@ -26,7 +26,7 @@ export default function Shop({
                   categoryName={categoryName}
                   product={item}
                   className={"mx-auto"}
-                  first={idx === 0}
+                  priority={idx === 0}
                 />
               </Grid>
             ))}

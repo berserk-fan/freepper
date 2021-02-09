@@ -1,9 +1,10 @@
-import React from "react";
-import KeenSlider, { useKeenSlider } from "keen-slider/react";
+import React, {useEffect, useState} from "react";
+import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import {Box, Typography} from "@material-ui/core";
+import {Box, CircularProgress, Typography} from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import theme from "../../theme";
+import {Skeleton} from "@material-ui/lab";
 
 const useStyles = makeStyles({
   dot: {
@@ -73,6 +74,13 @@ export default function Slider({
     },
   });
 
+  const WINDOWSIZE = 2;
+  const [toLoad, setToLoad] = useState([0, 2]);
+  useEffect(() => {
+    setToLoad([Math.max(currentSlide - WINDOWSIZE, 0),
+                    Math.min(currentSlide + WINDOWSIZE, slides.length)]);
+  },[currentSlide]);
+
   const Dot = ({ key, isActive }: { key: number; isActive: boolean }) => (
     <button
       key={key}
@@ -98,12 +106,15 @@ export default function Slider({
     </Box>
   );
 
+
   return (
     <Box className={className}>
       <Box position={"relative"}>
         <div ref={sliderRef as any} className="keen-slider">
-          {slides.map((slide) => (
-            <div className="keen-slider__slide">{slide}</div>
+          {slides.map((slide, idx) => (
+              <div className="keen-slider__slide">
+                {(toLoad[0] <= idx && idx < toLoad[1]) ? slide : <Skeleton animation={'wave'} variant={"rect"} width={"100%"} height={"100%"}/>}
+              </div>
           ))}
         </div>
         {slider && slides.length > 1 && (slides.length <= 7 ? <Dots/> : <Numbers/>)}

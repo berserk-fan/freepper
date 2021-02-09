@@ -64,15 +64,15 @@ function ItemView({
   product,
   className = "",
   categoryName,
-  first
+  priority
 }: {
   product: TmpGroupedProduct;
   className?: string;
   categoryName: string;
-  first: boolean
+  priority: boolean
 }) {
   const classes = useStyles();
-  const { id, displayName, description, images, price } = product;
+  const { id, displayName, images, price } = product;
   const [slideId, useSlideId] = useState(0);
 
   function productHref(productName: string) {
@@ -91,8 +91,7 @@ function ItemView({
             >
               <Link href={productHref(image.name)}>
                 <Image
-                  priority={first}
-                  loading={idx === 0 ? "eager" : "lazy"}
+                  priority={idx === 0 && priority}
                   width={500}
                   height={500}
                   src={image.src}
