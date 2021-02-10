@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, { useRef, useState } from "react";
 import KeenSlider, { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { Box } from "@material-ui/core";
@@ -15,15 +15,17 @@ const useStyles = makeStyles({
     borderRadius: "3px",
   },
   navigationContainer: {
-      bottom: 0,
-      padding: "10px",
+    bottom: 0,
+    padding: "10px",
   },
-
 });
 
-const nolock = (lock: {current: number}): boolean => lock.current == -1;
-const lockEnded = (lock: {current: number}, idx: number): boolean => lock.current == idx;
-const unlock = (lock: {current: number}): void => {lock.current = -1};
+const nolock = (lock: { current: number }): boolean => lock.current == -1;
+const lockEnded = (lock: { current: number }, idx: number): boolean =>
+  lock.current == idx;
+const unlock = (lock: { current: number }): void => {
+  lock.current = -1;
+};
 
 export default function SliderThumbs({
   slides,
@@ -55,14 +57,14 @@ export default function SliderThumbs({
       const thumbser = thumbserDirRef.current;
       setActiveSlide(idx);
 
-      if(nolock(lock)) {
+      if (nolock(lock)) {
         thumbser && thumbser.moveToSlideRelative(idx);
       }
 
-      if(lockEnded(lock, idx)) {
+      if (lockEnded(lock, idx)) {
         unlock(lock);
       }
-    }
+    },
   });
 
   const slidesPerView = 7;
@@ -74,17 +76,17 @@ export default function SliderThumbs({
     duration: 400,
     slideChanged(s) {
       const idx = s.details().relativeSlide;
-    }
+    },
   });
 
   React.useEffect(() => {
     slider && slider.refresh();
     thumbser && thumbser.refresh();
-    setActiveSlide(0)
+    setActiveSlide(0);
   }, [slides, thumbs]);
 
   React.useEffect(() => {
-    thumbserDirRef.current = thumbser
+    thumbserDirRef.current = thumbser;
   }, [thumbser]);
 
   return (

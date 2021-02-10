@@ -4,7 +4,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 module.exports = withBundleAnalyzer({
   images: {
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 500]
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 500],
   },
   webpack(config) {
     config.module.rules.push({

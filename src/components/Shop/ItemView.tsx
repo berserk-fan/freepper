@@ -3,7 +3,7 @@ import { fade, makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
-import {Box} from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import ShoppingCartTwoToneIcon from "@material-ui/icons/ShoppingCartTwoTone";
 import { withStyles } from "@material-ui/styles";
 import theme from "../../theme";
@@ -64,12 +64,12 @@ function ItemView({
   product,
   className = "",
   categoryName,
-  priority
+  priority,
 }: {
   product: TmpGroupedProduct;
   className?: string;
   categoryName: string;
-  priority: boolean
+  priority: boolean;
 }) {
   const classes = useStyles();
   const { id, displayName, images, price } = product;

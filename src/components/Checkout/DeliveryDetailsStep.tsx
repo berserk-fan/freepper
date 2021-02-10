@@ -13,10 +13,10 @@ import { DeliveryOption, DeliveryProvider, Order } from "../../order-model";
 import { PhoneNumber } from "../Inputs/PhoneNumber";
 import { pathName1 } from "../../utils";
 import { Field } from "react-final-form";
-import { OrderForm } from "./CheckoutForm";
 import NovayaPochtaIcon from "./Nova_Poshta_2014_logo.svg";
 import { makeStyles } from "@material-ui/styles";
 import Spacing from "../Commons/Spacing";
+import { OrderForm } from "./Definitions";
 
 export function getDeliveryOptionName(option: DeliveryOption) {
   switch (option) {

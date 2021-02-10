@@ -1,22 +1,13 @@
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
 import React from "react";
-import {
-  Box,
-  Button,
-  Divider,
-  Grid,
-  Typography,
-  withStyles,
-} from "@material-ui/core";
+import { Box, Button, Typography, withStyles } from "@material-ui/core";
 import theme from "../theme";
 import Image from "next/image";
-import ItemView from "../components/Shop/ItemView";
 import { GetStaticProps } from "next";
 import { shopClient } from "../store";
 import { Product } from "@mamat14/shop-server/shop_model";
 import Link from "next/link";
 import { makeStyles } from "@material-ui/styles";
-import { breakpoints } from "@material-ui/system";
 
 const ColorButton = withStyles({
   root: {

@@ -45,15 +45,21 @@ const MarkdownHeading = withStyles(styles)(
     let variant: TypographyProps["variant"];
     switch (props.level) {
       case 1:
-        variant = "h5";
+        variant = "h3";
         break;
       case 2:
-        variant = "h6";
+        variant = "h4";
         break;
       case 3:
-        variant = "subtitle1";
+        variant = "h5";
         break;
       case 4:
+        variant = "h6";
+        break;
+      case 5:
+        variant = "subtitle1";
+        break;
+      case 6:
         variant = "subtitle2";
         break;
       default:

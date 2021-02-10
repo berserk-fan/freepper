@@ -10,7 +10,6 @@ import Divider from "@material-ui/core/Divider";
 import { Box, Grid, Typography, useMediaQuery } from "@material-ui/core";
 import { CartProduct } from "../../pages/checkout";
 import theme from "../../theme";
-import { OrderForm } from "./CheckoutForm";
 import {
   getDeliveryOptionName,
   getDeliveryProviderName,
@@ -20,13 +19,12 @@ import { StoreState } from "../../store";
 import { CartState } from "../Cart/Cart";
 import { connect } from "react-redux";
 import Spacing from "../Commons/Spacing";
+import { OrderForm } from "./Definitions";
 
 type Column<T> = {
   name: string;
   extractor: (product: T) => string;
 };
-
-const strcmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
 const formSummaryColumns: Column<OrderForm>[] = [
   {
@@ -212,4 +210,5 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
+export type SummaryProps = { orderForm: OrderForm };
 export default connect(mapStateToProps, null)(memo(Summary));

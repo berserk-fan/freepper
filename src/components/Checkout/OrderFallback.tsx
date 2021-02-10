@@ -38,8 +38,10 @@ function FailedHeader({ onClose }: { onClose: () => void }) {
 
 function ManualOrderMessage({
   onClose,
+  onRetry,
 }: {
   onClose: () => void;
+  onRetry: () => void;
 }): React.ReactElement {
   const [showContactUs, setShowContactUs] = useState(false);
 
@@ -47,12 +49,13 @@ function ManualOrderMessage({
     <Alert severity={"info"}>
       <Box pb={2}>
         <FailedHeader onClose={onClose} />
-        <Typography gutterBottom>Выберете что делать</Typography>
+        <Typography gutterBottom>Выберите что делать</Typography>
         <Typography variant={"caption"}>
           Нажмите на вопросик чтобы узнать детали.
         </Typography>
         <Box className={"flex justify-between items-center"}>
           <ButtonWithDetail
+            onClick={onRetry}
             size={"small"}
             variant={"outlined"}
             detailText={
@@ -140,19 +143,24 @@ export default function OrderFallback({
   retryPeriod,
   onClose,
   onCancel,
+  onRetry,
 }: {
   orderSubmitState: SubmitState;
   retryNumber: number;
   retryPeriod: number;
   onClose: () => void;
   onCancel: () => void;
+  onRetry: () => void;
 }): JSX.Element {
   function getSubmitMessage(): [React.ReactElement, number | undefined] {
     switch (orderSubmitState) {
       case "CANCELLED":
       case "CLIENT_ERROR":
       case "SERVER_ERROR":
-        return [<ManualOrderMessage onClose={onClose} />, undefined];
+        return [
+          <ManualOrderMessage onRetry={onRetry} onClose={onClose} />,
+          undefined,
+        ];
       case "OK":
         return [<OkMessage />, 1000];
       case "RETRY_TIMEOUT":

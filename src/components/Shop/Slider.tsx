@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import {Box, CircularProgress, Typography} from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import theme from "../../theme";
-import {Skeleton} from "@material-ui/lab";
+import { Skeleton } from "@material-ui/lab";
 
 const useStyles = makeStyles({
   dot: {
@@ -34,7 +34,7 @@ const useStyles = makeStyles({
     alignItems: "center",
     display: "flex",
     marginLeft: "auto",
-    marginRight: "auto"
+    marginRight: "auto",
   },
   arrow: {
     width: "30px",
@@ -44,11 +44,11 @@ const useStyles = makeStyles({
     transform: "translateY(-50%)",
     WebkitTransform: "translateY(-50%)",
     fill: "#fff",
-    cursor: "pointer"
+    cursor: "pointer",
   },
   arrow_left: { left: "5px" },
   arrow_right: { left: "auto", right: "5px" },
-  arrow_disabled: { fill: "rgba(255, 255, 255, 0.5)" }
+  arrow_disabled: { fill: "rgba(255, 255, 255, 0.5)" },
 });
 
 export default function Slider({
@@ -77,9 +77,11 @@ export default function Slider({
   const WINDOWSIZE = 2;
   const [toLoad, setToLoad] = useState([0, 2]);
   useEffect(() => {
-    setToLoad([Math.max(currentSlide - WINDOWSIZE, 0),
-                    Math.min(currentSlide + WINDOWSIZE, slides.length)]);
-  },[currentSlide]);
+    setToLoad([
+      Math.max(currentSlide - WINDOWSIZE, 0),
+      Math.min(currentSlide + WINDOWSIZE, slides.length),
+    ]);
+  }, [currentSlide]);
 
   const Dot = ({ key, isActive }: { key: number; isActive: boolean }) => (
     <button
@@ -90,8 +92,7 @@ export default function Slider({
   );
 
   const Dots = () => (
-    <Box className={classes.navigationContainer}
-    >
+    <Box className={classes.navigationContainer}>
       {[...Array(slider.details().size).keys()].map((idx) => (
         <Dot key={idx} isActive={currentSlide === idx} />
       ))}
@@ -101,23 +102,35 @@ export default function Slider({
   const Numbers = () => (
     <Box className={classes.navigationContainer}>
       <Typography variant={"caption"} align={"center"}>
-        <Box fontFamily={"Monospace"}>{currentSlide + 1} / {slider.details().size}</Box>
+        <Box fontFamily={"Monospace"}>
+          {currentSlide + 1} / {slider.details().size}
+        </Box>
       </Typography>
     </Box>
   );
-
 
   return (
     <Box className={className}>
       <Box position={"relative"}>
         <div ref={sliderRef as any} className="keen-slider">
           {slides.map((slide, idx) => (
-              <div className="keen-slider__slide">
-                {(toLoad[0] <= idx && idx < toLoad[1]) ? slide : <Skeleton animation={'wave'} variant={"rect"} width={"100%"} height={"100%"}/>}
-              </div>
+            <div className="keen-slider__slide">
+              {toLoad[0] <= idx && idx < toLoad[1] ? (
+                slide
+              ) : (
+                <Skeleton
+                  animation={"wave"}
+                  variant={"rect"}
+                  width={"100%"}
+                  height={"100%"}
+                />
+              )}
+            </div>
           ))}
         </div>
-        {slider && slides.length > 1 && (slides.length <= 7 ? <Dots/> : <Numbers/>)}
+        {slider &&
+          slides.length > 1 &&
+          (slides.length <= 7 ? <Dots /> : <Numbers />)}
       </Box>
     </Box>
   );

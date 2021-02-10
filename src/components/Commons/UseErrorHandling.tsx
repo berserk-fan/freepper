@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import promiseRetry from "promise-retry";
 
 export type SubmitState =
@@ -26,25 +26,33 @@ export default function useErrorHandling(
 ): UseErrorHandlingResult {
   const [submitState, setSubmitState] = useState<SubmitState>("NOT_SUBMITTED");
   const [retryNumber, setRetryNumber] = useState(0);
+  const currentState = useRef("NOT_SUBMITTED");
+  const abortController = useRef<AbortController>(null);
+  console.log(currentState.current);
+
+  useEffect(() => {
+    abortController.current = new AbortController();
+  }, []);
 
   function changeState(state: SubmitState) {
+    currentState.current = state;
     setSubmitState(state);
     if (submitState === "OK") {
-      onComplete();
+      try {
+        onComplete();
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
-  let controller =
-    typeof window === "undefined" ? undefined : new AbortController();
-  let signal = typeof window === "undefined" ? undefined : controller.signal;
   function cancel() {
-    controller.abort();
-    controller = new AbortController();
-    signal = controller.signal;
+    abortController.current.abort();
+    abortController.current = new AbortController();
   }
 
   function reset() {
-    setSubmitState("NOT_SUBMITTED");
+    changeState("NOT_SUBMITTED");
     cancel();
   }
 
@@ -52,9 +60,10 @@ export default function useErrorHandling(
     changeState("SENDING");
     return promiseRetry(
       async (retry, retryNumber) => {
+        const curState = currentState.current;
         if (
-          submitState === "CANCELLED" ||
-          (retryNumber != 1 && submitState === "NOT_SUBMITTED")
+          curState === "CANCELLED" ||
+          (retryNumber != 1 && curState === "NOT_SUBMITTED")
         ) {
           return;
         }
@@ -64,14 +73,17 @@ export default function useErrorHandling(
         }
         let newState: SubmitState = "OK";
         try {
-          const res = await fetch(r, { ...i, signal: signal });
+          const res = await fetch(r, {
+            ...i,
+            signal: abortController.current.signal,
+          });
           if (res.status != 201) {
             newState = "SERVER_ERROR";
           }
         } catch (err) {
           if (err.name === "AbortError") {
             newState = "CANCELLED";
-            if (submitState === "NOT_SUBMITTED") {
+            if (curState === "NOT_SUBMITTED") {
               //for reset
               return;
             }

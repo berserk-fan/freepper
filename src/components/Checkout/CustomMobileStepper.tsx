@@ -3,6 +3,7 @@ import { MobileStepper } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import theme from "../../theme";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
+import { buttonTexts } from "./Definitions";
 
 export default function CustomMobileStepper<FormValues>({
   handleBack,
@@ -11,7 +12,6 @@ export default function CustomMobileStepper<FormValues>({
   isNextDisabled,
   maxSteps,
 }: {
-  values: FormValues;
   handleBack: MouseEventHandler;
   activeStep: number;
   isNextDisabled: boolean;
@@ -26,21 +26,13 @@ export default function CustomMobileStepper<FormValues>({
       activeStep={activeStep}
       nextButton={
         <Button size="small" onClick={handleNext} disabled={isNextDisabled}>
-          Вперед
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowLeft />
-          ) : (
-            <KeyboardArrowRight />
-          )}
+          {buttonTexts[activeStep]}
+          <KeyboardArrowRight />
         </Button>
       }
       backButton={
         <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowRight />
-          ) : (
-            <KeyboardArrowLeft />
-          )}
+          <KeyboardArrowLeft />
           Назад
         </Button>
       }

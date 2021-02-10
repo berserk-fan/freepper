@@ -10,6 +10,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import StepConnector from "@material-ui/core/StepConnector";
 import theme from "../../theme";
+import { Box } from "@material-ui/core";
 
 const ColorlibConnector = withStyles({
   alternativeLabel: {
