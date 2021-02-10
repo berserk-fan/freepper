@@ -2,7 +2,7 @@ import Box from "@material-ui/core/Box";
 import theme from "../../theme";
 import { IconButton, Snackbar } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
-import ContactUs from "../Checkout/ContactUs";
+import ContactUs from "./ContactUs";
 import React, { useState } from "react";
 
 export default function ContactUsSnackBar({

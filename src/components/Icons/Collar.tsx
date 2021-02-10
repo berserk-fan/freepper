@@ -1,6 +1,6 @@
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-import CollarIcon from "./collar.svg";
+import CollarIcon from "./svg/collar.svg";
 
 export default function Collar(props) {
   return (

@@ -1,6 +1,6 @@
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-import Contacts from "./contacts.svg";
+import Contacts from "./svg/contacts.svg";
 
 export default function ContactsIcon(props) {
   return (

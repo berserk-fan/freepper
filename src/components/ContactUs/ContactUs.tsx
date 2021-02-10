@@ -16,7 +16,7 @@ import ExpandMore from "@material-ui/icons/ExpandMore";
 import TelegramIcon from "@material-ui/icons/Telegram";
 import { makeStyles } from "@material-ui/styles";
 import theme from "../../theme";
-import PhoneNumber from "../Commons/PhoneNumber";
+import PhoneNumber from "./PhoneNumber";
 import ButtonWithDetail from "../Commons/ButtonWithDetail";
 
 const useStyles = makeStyles({

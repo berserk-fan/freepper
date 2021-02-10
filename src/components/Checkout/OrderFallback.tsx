@@ -13,7 +13,7 @@ import CountDown from "../Commons/CountDown";
 import React, { useState } from "react";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import CloseIcon from "@material-ui/icons/Close";
-import ContactUs from "./ContactUs";
+import ContactUs from "../ContactUs/ContactUs";
 import { SubmitState } from "../Commons/UseErrorHandling";
 import { Offline } from "react-detect-offline";
 import ButtonWithDetail from "../Commons/ButtonWithDetail";

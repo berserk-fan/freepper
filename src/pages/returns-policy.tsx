@@ -1,4 +1,4 @@
-import MdPage from "../components/Commons/MdPage";
+import MdPage from "../components/Markdown/MdPage";
 import React from "react";
 
 const md = `

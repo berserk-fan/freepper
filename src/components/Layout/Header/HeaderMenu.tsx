@@ -17,10 +17,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import CloseIcon from "@material-ui/icons/Close";
 import { Page, pages, shopPageGroup } from "./Header";
-import ContactUs from "../../Checkout/ContactUs";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import ContactUsSnackBar from "../../Commons/ContactUsSnackBar";
+import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
 import ContactsIcon from "../../Icons/ContactsIcon";
 
 const useStyles = makeStyles({

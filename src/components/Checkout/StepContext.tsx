@@ -16,15 +16,11 @@ export function StepContent({
 }) {
   switch (step) {
     case 0:
-      return <DeliveryDetailsStep orderForm={orderData} />;
+      return <DeliveryDetailsStep/>;
     case 1:
-      return SummaryStep ? (
-        <SummaryStep orderForm={orderData} />
-      ) : (
-        <>Загрузка...</>
-      );
+      return <SummaryStep orderForm={orderData} />;
     case 2:
-      return PaymentStep ? <PaymentStep /> : <>Загрузка...</>;
+      return <PaymentStep />;
     default:
       throw new Error("unknown step");
   }

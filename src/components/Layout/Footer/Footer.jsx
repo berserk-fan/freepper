@@ -4,7 +4,7 @@ import Container from "@material-ui/core/Container";
 import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import { makeStyles, createMuiTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { ColumnToRow, Item } from "@mui-treasury/components/flex";
 import { NavMenu, NavItem } from "@mui-treasury/components/menu/navigation";
 import {
@@ -22,7 +22,7 @@ import { usePoofSocialLinkStyles } from "@mui-treasury/styles/socialLink/poof";
 import { usePlainNavigationMenuStyles } from "@mui-treasury/styles/navigationMenu/plain";
 import { modelPages, pages, supportPages } from "../Header/Header";
 import Link from "next/link";
-import ContactUsSnackBar from "../../Commons/ContactUsSnackBar";
+import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
 import Image from "next/image";
 
 const useStyles = makeStyles(({ palette, typography }) => ({

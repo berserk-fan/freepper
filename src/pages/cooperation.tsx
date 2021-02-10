@@ -1,8 +1,5 @@
-import Markdown from "../components/Commons/Renderers";
 import React from "react";
-import { Box, Container } from "@material-ui/core";
-import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
-import MdPage from "../components/Commons/MdPage";
+import MdPage from "../components/Markdown/MdPage";
 
 const pageMd = `
 # O сотрудничестве

@@ -1,6 +1,6 @@
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-import ShopingCart from "./shopping-cart.svg";
+import ShopingCart from "./svg/shopping-cart.svg";
 
 export default function ShoppingCartIcon(props) {
   return (

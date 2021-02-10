@@ -1,10 +1,10 @@
 import { Product } from "@mamat14/shop-server/shop_model";
 import { CartState } from "../Cart/Cart";
-import { Box, Button, Divider, Fab, Typography, Zoom } from "@material-ui/core";
+import { Box, Divider, Fab, Typography, Zoom } from "@material-ui/core";
 import Image from "next/image";
 import Price from "../Shop/Price";
 import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlineOutlined";
-import React, { memo, useState } from "react";
+import React, { memo } from "react";
 import { addProductAction, StoreState } from "../../store";
 import { connect } from "react-redux";
 import Link from "next/link";
@@ -12,13 +12,9 @@ import DogBedDetails from "./DogBedDetails";
 import Spacing from "../Commons/Spacing";
 import theme from "../../theme";
 import { makeStyles } from "@material-ui/styles";
-import EditIcon from "@material-ui/icons/Edit";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
-import Markdown from "../Commons/Renderers";
-import dynamic from "next/dynamic";
-const SliderThumbs = dynamic(() => import("../Shop/SliderThumbs"), {
-  ssr: false,
-});
+import Markdown from "../Markdown/Renderers";
+import SliderThumbs from "../Shop/SliderThumbs";
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
