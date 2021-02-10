@@ -45,9 +45,9 @@ export const schema: ObjectSchema<OrderForm> = object({
 export const validate = makeValidateSync(schema);
 export const steps = ["Доставка", "Проверка", "Оплата"];
 export const initialValues: Partial<OrderForm> = {
-    paymentOption: PaymentOption.COD,
-    deliveryProvider: DeliveryProvider.NOVAYA_POCHTA,
-    deliveryOption: DeliveryOption.TO_WAREHOUSE,
+  paymentOption: PaymentOption.COD,
+  deliveryProvider: DeliveryProvider.NOVAYA_POCHTA,
+  deliveryOption: DeliveryOption.TO_WAREHOUSE,
 };
 
 export function toOrder(cart: CartState, orderForm: OrderForm) {
@@ -64,4 +64,23 @@ export function toOrder(cart: CartState, orderForm: OrderForm) {
     },
   };
   return order;
+}
+
+export function getDeliveryOptionName(option: DeliveryOption) {
+  switch (option) {
+    case DeliveryOption.COURIER:
+      return "Курьер";
+    case DeliveryOption.TO_WAREHOUSE:
+      return "В отделение";
+    default:
+      return "Недоступно";
+  }
+}
+
+export function getDeliveryProviderName(provider: DeliveryProvider) {
+  if (provider === DeliveryProvider.NOVAYA_POCHTA) {
+    return "Новая почта";
+  } else {
+    return "Неизвестно";
+  }
 }

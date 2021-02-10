@@ -1,25 +1,32 @@
-import React, {useState} from "react";
-import {Box, Paper} from "@material-ui/core";
-import {Form} from "react-final-form";
+import React, { useState } from "react";
+import { Box, Paper } from "@material-ui/core";
+import { Form } from "react-final-form";
 import FormStepper from "./FormStepper";
-import {clearCartAction, StoreState} from "../../store";
-import {connect} from "react-redux";
+import { clearCartAction, StoreState } from "../../store";
+import { connect } from "react-redux";
 import useErrorHandling from "../Commons/UseErrorHandling";
 import CustomMobileStepper from "./CustomMobileStepper";
 import OrderFallback from "./OrderFallback";
-import {initialValues, OrderForm, schema, steps, toOrder, validate} from "./Definitions";
-import {StepContent} from "./StepContext";
+import {
+  initialValues,
+  OrderForm,
+  schema,
+  steps,
+  toOrder,
+  validate,
+} from "./Definitions";
+import { StepContent } from "./StepContext";
 import HideOnMobile from "../Commons/HideOnMobile";
 import ShowOnMobile from "../Commons/ShowOnMobile";
 import FullScreenButtons from "./FullScreenButtons";
-import {CartState} from "../Cart/Cart";
+import { CartState } from "../Cart/Cart";
 
 type CheckoutProps = {
   cart: CartState;
   clearCart: () => void;
 };
 
-const Checkout = ({cart, clearCart,}: CheckoutProps) => {
+function Checkout({ cart, clearCart }: CheckoutProps) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [formState, setFormState] = useState(initialValues);
   const serverRetries = 2;
@@ -34,6 +41,8 @@ const Checkout = ({cart, clearCart,}: CheckoutProps) => {
 
   const isLastStep = activeStep === steps.length - 1;
   const wasSubmitted = orderSubmitState !== "NOT_SUBMITTED";
+  const processing =
+    orderSubmitState === "SENDING" || orderSubmitState === "RETRYING";
 
   function retryPostForm() {
     reset();
@@ -77,7 +86,6 @@ const Checkout = ({cart, clearCart,}: CheckoutProps) => {
           <form noValidate>
             <ShowOnMobile>
               <Box className={"flex flex-col justify-center w-full"}>
-                <StepContent step={activeStep} orderData={values} />
                 <CustomMobileStepper
                   handleBack={handleBack(values)}
                   activeStep={activeStep}
@@ -85,6 +93,7 @@ const Checkout = ({cart, clearCart,}: CheckoutProps) => {
                   handleNext={handleSubmit}
                   maxSteps={steps.length}
                 />
+                <StepContent step={activeStep} orderData={values} />
               </Box>
             </ShowOnMobile>
             <HideOnMobile>
@@ -93,12 +102,11 @@ const Checkout = ({cart, clearCart,}: CheckoutProps) => {
                   <FormStepper {...{ activeStep, steps }} />
                   <StepContent step={activeStep} orderData={values} />
                   <FullScreenButtons
-                      activeStep={activeStep}
-                      backDisabled={activeStep === 0}
-                      nextDisabled={isNextDisabled(values)}
-                      onNext={handleSubmit}
-                      onBack={handleBack(values)}
-                      processing={orderSubmitState === "SENDING"}
+                    activeStep={activeStep}
+                    backDisabled={activeStep === 0}
+                    nextDisabled={isNextDisabled(values)}
+                    onNext={handleSubmit}
+                    onBack={handleBack(values)}
                   />
                 </Box>
               </Paper>
@@ -118,6 +126,8 @@ const Checkout = ({cart, clearCart,}: CheckoutProps) => {
   );
 };
 
-const mapStateToProps = (state: StoreState) => ({cart: state.cartState,});
-const mapDispatchToProps = dispatch => ({clearCart: () => dispatch(clearCartAction()),});
+const mapStateToProps = (state: StoreState) => ({ cart: state.cartState });
+const mapDispatchToProps = (dispatch) => ({
+  clearCart: () => dispatch(clearCartAction()),
+});
 export default connect(mapStateToProps, mapDispatchToProps)(Checkout);

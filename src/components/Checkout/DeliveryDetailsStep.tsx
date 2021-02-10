@@ -1,69 +1,19 @@
-import {
-  Box,
-  Collapse,
-  Container,
-  Grid,
-  MenuItem,
-  SvgIcon,
-  Typography,
-} from "@material-ui/core";
+import {Box, Typography,} from "@material-ui/core";
 import React from "react";
-import { Radios, Select, TextField } from "mui-rff";
-import { DeliveryOption, DeliveryProvider, Order } from "../../order-model";
-import { PhoneNumber } from "../Inputs/PhoneNumber";
-import { pathName1 } from "../../utils";
-import { Field } from "react-final-form";
-import NovayaPochtaIcon from "./Nova_Poshta_2014_logo.svg";
-import { makeStyles } from "@material-ui/styles";
+import {Radios, TextField} from "mui-rff";
+import {DeliveryOption, DeliveryProvider} from "../../order-model";
+import {PhoneNumber} from "../Inputs/PhoneNumber";
+import {Field} from "react-final-form";
 import Spacing from "../Commons/Spacing";
-import { OrderForm } from "./Definitions";
+import {getDeliveryOptionName, OrderForm} from "./Definitions";
+import NovayaPochtaIcon from "../Icons/NovayaPochtaIcon";
 
-export function getDeliveryOptionName(option: DeliveryOption) {
-  switch (option) {
-    case DeliveryOption.COURIER:
-      return "Курьер";
-    case DeliveryOption.TO_WAREHOUSE:
-      return "В отделение";
-    default:
-      return "Недоступно";
-  }
+function pathName<T>(key1: keyof T) {
+    return `${key1}`;
 }
 
-export function getDeliveryProviderName(provider: DeliveryProvider) {
-  switch (provider) {
-    case DeliveryProvider.NOVAYA_POCHTA:
-      return "Новая почта";
-    default:
-      return "Неизвестно";
-  }
-}
-
-function getAddressLabel(deliveryOption: DeliveryOption) {
-  switch (deliveryOption) {
-    case DeliveryOption.COURIER:
-      return "Адрес для курьера";
-    case DeliveryOption.TO_WAREHOUSE:
-      return "Адрес или номер отделения";
-    default:
-      return "Адрес для выбраного способа доставки";
-  }
-}
-
-const useStyles = makeStyles({
-  largeIcon: {
-    width: "4.2rem",
-    height: "1.5rem",
-  },
-});
-
-export default function DeliveryDetailsForm({
-  orderForm,
-}: {
-  orderForm: OrderForm;
-}) {
-  const classes = useStyles();
+export default function DeliveryDetailsForm() {
   const deliveryOptions = [DeliveryOption.TO_WAREHOUSE];
-
   return (
     <Box maxWidth={"md"} className={"flex flex-col"}>
       <Typography variant={"h4"} align={"center"} gutterBottom>
@@ -72,7 +22,7 @@ export default function DeliveryDetailsForm({
       <Spacing spacing={1} childClassName={"w-full"}>
         <TextField
           color={"secondary"}
-          name={pathName1({} as OrderForm, "name")}
+          name={pathName<OrderForm>( "name")}
           required
           fullWidth
           id="full-name-input"
@@ -83,28 +33,24 @@ export default function DeliveryDetailsForm({
         />
         <Field
           id={"phone-input"}
-          name={pathName1({} as OrderForm, "phone")}
+          name={pathName<OrderForm>( "phone")}
           placeholder={"Номер телефона"}
           component={PhoneNumber}
         />
         <Radios
           label="Служба доставки"
-          name={pathName1({} as OrderForm, "deliveryProvider")}
+          name={pathName<OrderForm>("deliveryProvider")}
           required
           data={[
             {
-              label: (
-                <SvgIcon className={classes.largeIcon} viewBox={"0 0 210 75"}>
-                  <NovayaPochtaIcon />
-                </SvgIcon>
-              ),
+              label: <NovayaPochtaIcon/>,
               value: DeliveryProvider.NOVAYA_POCHTA,
             },
           ]}
         />
         <Radios
           required
-          name={pathName1({} as OrderForm, "deliveryOption")}
+          name={pathName<OrderForm>( "deliveryOption")}
           id="select-devilery-option"
           label="Способ доставки"
           color={"secondary"}
@@ -116,7 +62,7 @@ export default function DeliveryDetailsForm({
 
         <TextField
           color={"secondary"}
-          name={pathName1({} as OrderForm, "city")}
+          name={pathName<OrderForm>( "city")}
           required
           fullWidth
           id="address-input"
@@ -127,7 +73,7 @@ export default function DeliveryDetailsForm({
         />
         <TextField
           color={"secondary"}
-          name={pathName1({} as OrderForm, "warehouseNumber")}
+          name={pathName<OrderForm>( "warehouseNumber")}
           required
           fullWidth
           id="warehouse-number-input"

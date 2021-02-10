@@ -109,22 +109,17 @@ export default function Slider({
     </Box>
   );
 
+  function shouldLoad(idx: number) {
+    return toLoad[0] <= idx && idx < toLoad[1];
+  }
+
   return (
     <Box className={className}>
       <Box position={"relative"}>
         <div ref={sliderRef as any} className="keen-slider">
           {slides.map((slide, idx) => (
             <div className="keen-slider__slide">
-              {toLoad[0] <= idx && idx < toLoad[1] ? (
-                slide
-              ) : (
-                <Skeleton
-                  animation={"wave"}
-                  variant={"rect"}
-                  width={"100%"}
-                  height={"100%"}
-                />
-              )}
+              {shouldLoad(idx) ? slide : <></>}
             </div>
           ))}
         </div>

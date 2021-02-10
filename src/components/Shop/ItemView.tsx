@@ -80,7 +80,7 @@ function ItemView({
   }
 
   return (
-    <Box className={`overflow-hidden ${className}`}>
+    <Box className={`mx-auto overflow-hidden ${className}`} maxWidth={"500px"}>
       <div>
         <Slider
           onChange={useSlideId}
@@ -96,7 +96,7 @@ function ItemView({
                   width={500}
                   height={500}
                   src={image.src}
-                  alt={displayName}
+                  alt={image.alt}
                 />
               </Link>
             </Box>

@@ -10,16 +10,12 @@ import Divider from "@material-ui/core/Divider";
 import { Box, Grid, Typography, useMediaQuery } from "@material-ui/core";
 import { CartProduct } from "../../pages/checkout";
 import theme from "../../theme";
-import {
-  getDeliveryOptionName,
-  getDeliveryProviderName,
-} from "./DeliveryDetailsStep";
 import Image from "next/image";
 import { StoreState } from "../../store";
 import { CartState } from "../Cart/Cart";
 import { connect } from "react-redux";
 import Spacing from "../Commons/Spacing";
-import { OrderForm } from "./Definitions";
+import {getDeliveryOptionName, getDeliveryProviderName, OrderForm} from "./Definitions";
 
 type Column<T> = {
   name: string;

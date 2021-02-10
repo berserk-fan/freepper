@@ -4,22 +4,36 @@ import Button from "@material-ui/core/Button";
 import theme from "../../theme";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
 import { buttonTexts } from "./Definitions";
+import MakeRequestWrapper from "../Commons/MakeRequestWrapper";
+import {makeStyles} from "@material-ui/styles";
 
-export default function CustomMobileStepper<FormValues>({
-  handleBack,
-  handleNext,
-  activeStep,
-  isNextDisabled,
-  maxSteps,
-}: {
+
+const useStyles = makeStyles({
+  dotActive: {
+    backgroundColor: theme.palette.secondary.dark
+  }
+});
+
+
+type MobileForm = {
   handleBack: MouseEventHandler;
   activeStep: number;
   isNextDisabled: boolean;
   handleNext: MouseEventHandler;
   maxSteps: number;
-}) {
+};
+
+export default function CustomMobileStepper({
+  handleBack,
+  handleNext,
+  activeStep,
+  isNextDisabled,
+  maxSteps,
+}: MobileForm) {
+  const classes = useStyles();
   return (
     <MobileStepper
+      classes={classes}
       variant="dots"
       steps={maxSteps}
       position="static"
