@@ -18,17 +18,12 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import CloseIcon from "@material-ui/icons/Close";
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/styles";
-import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
-import { CartState } from "./Cart";
+import RemoveIcon from "@material-ui/icons/Remove";
 import { connect } from "react-redux";
-import theme from "../../theme";
+import AddIcon from "@material-ui/icons/Add";
+
 import { CartProduct } from "../../pages/checkout";
-import {
-  deleteProductAction,
-  setProductCountAction,
-  StoreState,
-} from "../../store";
+import { deleteProductAction, setProductCountAction } from "../../store";
 
 const useStyles = makeStyles({
   root: {
@@ -36,9 +31,6 @@ const useStyles = makeStyles({
     display: "flex",
   },
   imageContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
     minWidth: 106,
     maxWidth: 148,
     height: 148,
@@ -47,10 +39,25 @@ const useStyles = makeStyles({
   },
   image: {
     height: 148,
+    minWidth: 148,
   },
   dataContainer: {
     minWidth: 140,
     flexShrink: 1,
+  },
+  quantityControls: {
+    border: "1px solid",
+    display: "inline-flex",
+    padding: "4px",
+    alignItems: "center",
+    borderColor: "#e0e0e0",
+    borderRadius: "40px",
+  },
+  quantityControlsIcon: {
+    fontSize: "16px",
+  },
+  quantityControlsIconButton: {
+    padding: "8px",
   },
 });
 
@@ -63,38 +70,37 @@ const cartItem = function CartItem({
   setProductCount: (id: string, x: number) => void;
   deleteProduct: (id) => void;
 }) {
-  const { displayName, price, image, id, count } = product;
+  const { displayName, price, images, id, count } = product;
+  const image = images[0];
   const classes = useStyles();
 
   function QuantityControls() {
     return (
-      <>
+      <Box className={classes.quantityControls}>
         <IconButton
-          size={"small"}
+          className={classes.quantityControlsIconButton}
           disabled={count <= 1}
           onClick={() => setProductCount(id, count - 1)}
         >
-          <RemoveCircleOutlineIcon fontSize={"large"} />
+          <RemoveIcon className={classes.quantityControlsIcon} />
         </IconButton>
-        <Box fontFamily={"Monospace"}>
-          <Typography variant={"h6"} classes={{ root: "select-none" }}>
-            {count}
-          </Typography>
+        <Box className="select-none" fontFamily={"Monospace"}>
+          {count}
         </Box>
         <IconButton
-          size={"small"}
+          className={classes.quantityControlsIconButton}
           onClick={() => setProductCount(id, count + 1)}
         >
-          <AddCircleOutlineIcon fontSize={"large"} />
+          <AddIcon className={classes.quantityControlsIcon} />
         </IconButton>
-      </>
+      </Box>
     );
   }
 
   return (
     <Card variant={"outlined"} className={classes.root}>
-      <div className={`${classes.imageContainer}`}>
-        <div className={`${classes.image}`}>
+      <div className={`flex justify-center ${classes.imageContainer}`}>
+        <div className={`flex ${classes.image}`}>
           <Image width={148} height={148} src={image.src} alt={image.alt} />
         </div>
       </div>
@@ -124,7 +130,7 @@ const cartItem = function CartItem({
         >
           <Box marginLeft={1}>{getAdditionalInfo(product)}</Box>
           <Box marginLeft={1} className={"flex place-items-center"}>
-            {QuantityControls()}
+            <QuantityControls />
             {ActionsPopover(id, deleteProduct)}
           </Box>
         </Box>
@@ -169,11 +175,7 @@ export function ActionsPopover(
     <PopupStateComponent variant="popover" popupId="cart-action-popover">
       {(popupState) => (
         <div>
-          <IconButton
-            size={"small"}
-            color={"primary"}
-            {...bindTrigger(popupState)}
-          >
+          <IconButton size={"small"} {...bindTrigger(popupState)}>
             <MoreVertIcon />
           </IconButton>
           <Popover

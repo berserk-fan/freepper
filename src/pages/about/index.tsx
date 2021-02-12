@@ -1,9 +1,9 @@
 import { Box, Container, Typography } from "@material-ui/core";
-import LayoutWithHeader from "../../components/Layout/LayoutWithHeader";
+import LayoutWithHeaderAndFooter from "../../components/Layout/LayoutWithHeaderAndFooter";
 
 export default function AboutUs() {
   return (
-    <LayoutWithHeader>
+    <LayoutWithHeaderAndFooter>
       <Container maxWidth={"md"}>
         <Typography variant="h1">О нас</Typography>
         <Box>
@@ -38,6 +38,6 @@ export default function AboutUs() {
           административных условий.
         </Typography>
       </Container>
-    </LayoutWithHeader>
+    </LayoutWithHeaderAndFooter>
   );
 }

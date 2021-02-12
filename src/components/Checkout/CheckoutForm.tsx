@@ -1,212 +1,133 @@
-import React, {useState} from "react";
-import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import SummaryStep from "./SummaryStep";
-import DeliveryDetailsStep from "./DeliveryDetailsStep";
-import {Backdrop, Box, CircularProgress, Fade, LinearProgress, Typography} from "@material-ui/core";
-import PaymentStep from "./Payment";
-import {Form} from "react-final-form";
-import {mixed, object, ObjectSchema, string} from "yup";
-import {makeValidateSync} from "mui-rff";
-import {DeliveryOption, DeliveryProvider, Order, PaymentOption,} from "../../order-model";
+import React, { useState } from "react";
+import { Box, Paper } from "@material-ui/core";
+import { Form } from "react-final-form";
 import FormStepper from "./FormStepper";
-import Link from "next/link";
-import {CartProduct} from "../../pages/checkout";
-import {StoreState} from "../../store";
-import exp from "constants";
-import {connect} from "react-redux";
+import { clearCartAction, StoreState } from "../../store";
+import { connect } from "react-redux";
+import useErrorHandling from "../Commons/UseErrorHandling";
+import CustomMobileStepper from "./CustomMobileStepper";
+import OrderFallback from "./OrderFallback";
+import {
+  initialValues,
+  OrderForm,
+  schema,
+  steps,
+  toOrder,
+  validate,
+} from "./Definitions";
+import { StepContent } from "./StepContext";
+import HideOnMobile from "../Commons/HideOnMobile";
+import ShowOnMobile from "../Commons/ShowOnMobile";
+import FullScreenButtons from "./FullScreenButtons";
+import { CartState } from "../Cart/Cart";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: "100%",
-    },
-    button: {
-      marginRight: theme.spacing(1),
-    },
-    instructions: {
-      marginTop: theme.spacing(1),
-      marginBottom: theme.spacing(1),
-    },
-  })
-);
+type CheckoutProps = {
+  cart: CartState;
+  clearCart: () => void;
+};
 
-function getButtonTexts() {
-  return [
-    "Перейти к проверке заказа",
-    "Перейти к оплате заказа",
-    "Оплатить при получении 😌",
-  ];
-}
-
-export type OrderForm = Partial<{
-    address: string,
-    deliveryProvider: DeliveryProvider,
-    name: string,
-    deliveryOption: DeliveryOption,
-    phone: string
-    paymentOption: PaymentOption
-}>
-
-function getStepContent(step: number, orderData: OrderForm) {
-  switch (step) {
-      case 0:
-      return <DeliveryDetailsStep orderForm={orderData} />;
-    case 1:
-      return <SummaryStep orderForm={orderData} />;
-    case 2:
-      return <PaymentStep />;
-    default:
-      return "Unknown step";
-  }
-}
-
-const schema: ObjectSchema<OrderForm> = object({
-  paymentOption: mixed().oneOf([PaymentOption.COD]).default(PaymentOption.COD),
-    address: string()
-        .required("Введите адрес, пожалуйста")
-        .max(500, "Слишком длинный адрес"),
-    deliveryProvider: mixed()
-        .oneOf([DeliveryProvider.NOVAYA_POCHTA])
-        .required()
-        .default(DeliveryProvider.NOVAYA_POCHTA),
-    name: string()
-        .required("Введите имя, пожалуйста")
-        .min(5, "Cлишком короткое имя")
-        .max(500, "Слишком длинное имя"),
-    deliveryOption: mixed().oneOf([DeliveryOption.COURIER, DeliveryOption.TO_WAREHOUSE]),
-    phone: string()
-        .required("Введите номер телефона, пожалуйста")
-        .min(6, "Слишком короткий номер телефона")
-        .max(500, "Слишком длинный номер телефона"),
-});
-
-const validate = makeValidateSync(schema);
-const steps = ["Доставка", "Проверка", "Оплата"];
-
-const Checkout = ({cart, total}: {cart: Record<string, CartProduct>, total: number}) => {
-  const classes = useStyles();
-  const initialValues = {
-    paymentOption: PaymentOption.COD,
-    deliveryProvider: DeliveryProvider.NOVAYA_POCHTA
-  };
+function Checkout({ cart, clearCart }: CheckoutProps) {
   const [activeStep, setActiveStep] = React.useState(0);
-  const [formState, setFormState] = useState<OrderForm>(initialValues);
-  const [handling, setHandling] = useState(false);
+  const [formState, setFormState] = useState(initialValues);
+  const serverRetries = 2;
+  const retryPeriod = 10;
+  const {
+    submitState: orderSubmitState,
+    currentRetry,
+    customFetch,
+    cancel,
+    reset,
+  } = useErrorHandling(clearCart, serverRetries, retryPeriod);
 
-  const handleSubmit = (newFormState: OrderForm) => {
-      const isLastStep = activeStep === steps.length - 1
-      if (isLastStep) {
-          return onSubmit(newFormState)
-      } else {
-          setFormState(newFormState);
-          setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      }
+  const isLastStep = activeStep === steps.length - 1;
+  const wasSubmitted = orderSubmitState !== "NOT_SUBMITTED";
+  const processing =
+    orderSubmitState === "SENDING" || orderSubmitState === "RETRYING";
+
+  function retryPostForm() {
+    reset();
+    postForm(formState).catch(console.error);
   }
+
+  const handleNext = (newFormState: OrderForm) => {
+    setFormState(newFormState);
+    if (isLastStep) {
+      postForm(newFormState).catch(console.error);
+    } else {
+      setActiveStep((p) => p + 1);
+    }
+  };
 
   const handleBack = (newFormState: OrderForm) => {
     return () => {
       setFormState(newFormState);
-      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+      setActiveStep((p) => p - 1);
     };
   };
 
-  function onSubmit(orderForm: OrderForm) {
-      const order: Order = {
-          paymentOption: PaymentOption.COD,
-          cart: cart,
-          total: total,
-          deliveryDetails: {
-              provider: orderForm.deliveryProvider,
-              option: orderForm.deliveryOption,
-              address: orderForm.address,
-              phone: orderForm.phone,
-              fullName: orderForm.name
-          }
-      }
-
-      setHandling(true)
-      fetch("/api/orders", {
-          method: 'POST',
-          body: JSON.stringify(order)
-      }).then((resp) => {
-          setHandling(false)
-      })
+  async function postForm(orderForm: OrderForm): Promise<void> {
+    const order = toOrder(cart, orderForm);
+    return customFetch("/api/orders", {
+      method: "POST",
+      body: JSON.stringify(order),
+    });
   }
 
-  const buttonTexts = getButtonTexts();
+  function isNextDisabled<FormValues>(values: FormValues) {
+    return !schema.isValidSync(values) || (wasSubmitted && isLastStep);
+  }
+
   return (
-    <>
-      <FormStepper {...{ activeStep, steps }} />
-          <Box padding={1}>
-            <Form
-                {...{ onSubmit: handleSubmit, validate }}
-                initialValues={formState}
-                render={({handleSubmit,values}: { handleSubmit: any; values: OrderForm; }) => (
-                    <form noValidate>
-                      <div>
-                        {activeStep === steps.length ? (
-                            <div>
-                              <Button className={classes.button}>
-                                  <Link href={"/"}>
-                                      <Typography>
-                                          На главную
-                                      </Typography>
-                                  </Link>
-                              </Button>
-                            </div>
-                        ) : (
-                            <div>
-                              {getStepContent(activeStep, values)}
-                              <Box className={"flex justify-between"}>
-                                <Button
-                                    disabled={activeStep === 0}
-                                    onClick={handleBack(values)}
-                                >
-                                  Назад
-                                </Button>
-                                  <Box>
-                                      <Box height={"4px"} marginTop={"-4px"} marginX={"2px"}>
-                                          <Fade
-                                              in={handling}
-                                              style={{
-                                                  transitionDelay: handling ? '800ms' : '0ms',
-                                              }}
-                                              unmountOnExit
-                                          >
-                                              <LinearProgress
-                                                  style={{
-                                                      borderRadius: '2px'
-                                                  }}
-                                                  color="secondary"/>
-                                          </Fade>
-                                      </Box>
-                                      <Button
-                                          variant="contained"
-                                          color="primary"
-                                          onClick={handleSubmit}
-                                          type="submit"
-                                          disabled={!schema.isValidSync(values)}>
-                                          {buttonTexts[activeStep]}
-                                      </Button>
-                                  </Box>
-                              </Box>
-                            </div>
-                        )}
-                      </div>
-                    </form>
-                )}
-            />
-          </Box>
-    </>
+    <Box>
+      <Form
+        {...{ onSubmit: handleNext, validate }}
+        initialValues={formState}
+        render={({ handleSubmit, values }) => (
+          <form noValidate>
+            <ShowOnMobile>
+              <Box className={"flex flex-col justify-center w-full"}>
+                <CustomMobileStepper
+                  handleBack={handleBack(values)}
+                  activeStep={activeStep}
+                  isNextDisabled={isNextDisabled(values)}
+                  handleNext={handleSubmit}
+                  maxSteps={steps.length}
+                />
+                <StepContent step={activeStep} orderData={values} />
+              </Box>
+            </ShowOnMobile>
+            <HideOnMobile>
+              <Paper className={"overflow-hidden"}>
+                <Box p={2} m={1}>
+                  <FormStepper {...{ activeStep, steps }} />
+                  <StepContent step={activeStep} orderData={values} />
+                  <FullScreenButtons
+                    activeStep={activeStep}
+                    backDisabled={activeStep === 0}
+                    nextDisabled={isNextDisabled(values)}
+                    onNext={handleSubmit}
+                    onBack={handleBack(values)}
+                  />
+                </Box>
+              </Paper>
+            </HideOnMobile>
+          </form>
+        )}
+      />
+      <OrderFallback
+        orderSubmitState={orderSubmitState}
+        retryNumber={currentRetry}
+        retryPeriod={retryPeriod}
+        onClose={reset}
+        onCancel={cancel}
+        onRetry={retryPostForm}
+      />
+    </Box>
   );
-}
+};
 
-function mapStateToProps(state: StoreState) {
-    return {
-        cart: state.cartState.selectedProducts,
-        total: state.cartState.total
-    }
-}
-
-export default connect(mapStateToProps, null)(Checkout)
+const mapStateToProps = (state: StoreState) => ({ cart: state.cartState });
+const mapDispatchToProps = (dispatch) => ({
+  clearCart: () => dispatch(clearCartAction()),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Checkout);

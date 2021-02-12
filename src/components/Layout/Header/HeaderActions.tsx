@@ -2,19 +2,39 @@ import Link from "next/link";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import React from "react";
+import { Page, pages, shopPageGroup } from "./Header";
+import { makeStyles } from "@material-ui/styles";
+import theme from "../../../theme";
+import { Box, Typography } from "@material-ui/core";
+import { NavItem, NavMenu } from "@mui-treasury/components/menu/navigation";
 
-export default function (props) {
+const useStyles = makeStyles({
+  root: {
+    color: theme.palette.primary.contrastText,
+  },
+});
+
+export default function HeaderActions(props) {
+  const classes = useStyles();
+  const bigHeaderPages: Page[] = [
+    pages.home,
+    ...shopPageGroup.children,
+    pages.about,
+  ];
   return (
-    <ButtonGroup {...props} color="primary" aria-label="page tabs">
-      <Link href={"/"}>
-        <Button>Домой</Button>
-      </Link>
-      <Link href={"/shop"}>
-        <Button>Магазин</Button>
-      </Link>
-      <Link href={"/about"}>
-        <Button>О нас</Button>
-      </Link>
-    </ButtonGroup>
+    <NavMenu {...props} aria-label="page tabs">
+      {bigHeaderPages.map(({ id, path, name, icon }) => (
+        <NavItem key={id}>
+          <Link href={path}>
+            <Box className={"flex justify-between items-center"}>
+              {React.createElement(icon)}
+              <Typography style={{ paddingLeft: "8px" }} variant={"button"}>
+                {name}
+              </Typography>
+            </Box>
+          </Link>
+        </NavItem>
+      ))}
+    </NavMenu>
   );
 }

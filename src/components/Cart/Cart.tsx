@@ -7,9 +7,10 @@ import CartItem from "./CartItem";
 import { connect } from "react-redux";
 import { CartProduct } from "../../pages/checkout";
 import Link from "next/link";
+import { pages } from "../Layout/Header/Header";
 
 export type CartState = {
-  size: number;
+  cartSize: number;
   total: number;
   selectedProducts: Record<string, CartProduct>;
 };
@@ -61,45 +62,57 @@ const useStyles = makeStyles({
   },
 });
 
-function Cart({ cartState: { selectedProducts } }: { cartState: CartState }) {
+function NonEmptyCart({ productsList, total }) {
   const classes = useStyles();
-  const productsList = Object.values(selectedProducts);
-  const totalPrice = productsList.reduce(
-    (a, b) => a + b.count * b.price.price,
-    0
-  );
   return (
-    <div>
-      <Box marginTop={2}>
-        {productsList.length === 0 ? (
-          <Typography variant={"h2"}>Корзина пуста</Typography>
-        ) : (
-          productsList.map((product) => (
-            <Box key={product.id} marginY={1}>
-              <CartItem product={product} />
-            </Box>
-          ))
-        )}
-      </Box>
+    <>
+      {productsList.map((product) => (
+        <Box key={product.id} marginY={1}>
+          <CartItem product={product} />
+        </Box>
+      ))}
       <Box marginTop={2} className={`flex justify-end items-center`}>
         <div className={`rounded ${classes.mainButtonContainer}`}>
           <div className={classes.textWrapper}>
             <Typography variant={"h5"} classes={{ root: classes.prePriceText }}>
               Итого
             </Typography>
-            <Typography variant="h5">{totalPrice}₴</Typography>
+            <Typography variant="h5">{total}₴</Typography>
           </div>
           <Link href={"/checkout"}>
-          <Button
-            classes={{ root: classes.mainButton }}
-            color={"primary"}
-            variant="contained"
-            size="large"
-          >
-            Оформить заказ
-          </Button>
+            <Button
+              classes={{ root: classes.mainButton }}
+              color={"primary"}
+              variant="contained"
+              size="large"
+            >
+              Оформить заказ
+            </Button>
           </Link>
         </div>
+      </Box>
+    </>
+  );
+}
+
+function Cart({
+  cartState: { total, selectedProducts, cartSize },
+}: {
+  cartState: CartState;
+}) {
+  const productsList = Object.values(selectedProducts);
+  return (
+    <div>
+      <Box marginTop={2} minHeight={"360px"}>
+        {cartSize === 0 ? (
+          <Box>
+            <Typography variant={"h3"} align={"center"}>
+              Здесь пока ничего нет
+            </Typography>
+          </Box>
+        ) : (
+          <NonEmptyCart productsList={productsList} total={total} />
+        )}
       </Box>
     </div>
   );

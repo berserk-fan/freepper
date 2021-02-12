@@ -1,25 +1,39 @@
-import { createStore, Store } from "redux";
+import { createStore } from "redux";
 import ShopClient from "@mamat14/shop-server";
-import { category, shopProducts } from "../../configs/Data";
-import Cookies from "js-cookie";
+import { categories, shopProducts } from "../../configs/Data";
 import { CartState } from "../components/Cart/Cart";
 import { CartProduct } from "../pages/checkout";
-import exp from "constants";
 import { Product } from "@mamat14/shop-server/shop_model";
 
-export const cartStateKey = "cartState";
+const initialState: StoreState = {
+  cartState: {
+    cartSize: 0,
+    total: 0,
+    selectedProducts: {},
+  },
+};
 
-export function readStoredCartState(): CartState {
-  const cartCookie = Cookies.get(cartStateKey);
-  const parsed = JSON.parse(cartCookie || "{}");
-  return parsed.selectedProducts
-    ? parsed
-    : { selectedProducts: [], total: 0, size: 0 };
-}
+export const loadState: () => StoreState = () => {
+  try {
+    const serializedState = localStorage.getItem("state");
+    if (!serializedState) {
+      return initialState;
+    } else {
+      return JSON.parse(serializedState);
+    }
+  } catch (err) {
+    return initialState;
+  }
+};
 
-export function storeCartState(cartState: CartState): void {
-  Cookies.set(cartStateKey, JSON.stringify(cartState));
-}
+export const saveState = (state) => {
+  try {
+    const serializedState = JSON.stringify(state);
+    localStorage.setItem("state", serializedState);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 export function SetProductCountAction(productId: string, count: number) {
   return {
@@ -45,7 +59,11 @@ type DELETE_PRODUCT = {
   productId: string;
 };
 
-type CartUpdate = SET_PRODUCT_COUNT | ADD_PRODUCT | DELETE_PRODUCT;
+type CLEAR_CART = {
+  type: "CLEAR_CART";
+};
+
+type CartUpdate = SET_PRODUCT_COUNT | ADD_PRODUCT | DELETE_PRODUCT | CLEAR_CART;
 
 export function addProductAction(product: CartProduct): ADD_PRODUCT {
   return {
@@ -72,13 +90,24 @@ export function deleteProductAction(productId: string): DELETE_PRODUCT {
   };
 }
 
+export function clearCartAction(): CLEAR_CART {
+  return {
+    type: "CLEAR_CART",
+  };
+}
+
 function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
-  const { selectedProducts, total, size } = cartState;
+  const { selectedProducts, total, cartSize } = cartState;
   switch (action.type) {
     case "SET_PRODUCT_COUNT": {
+      const toSet = selectedProducts[action.productId];
+      if (!toSet) {
+        return cartState;
+      }
+      const change = action.count - toSet.count;
       return {
-        total: total + selectedProducts[action.productId].price.price * action.count,
-        size: size - selectedProducts[action.productId].count + action.count,
+        total: total + toSet.price.price * change,
+        cartSize: cartSize + change,
         selectedProducts: {
           ...selectedProducts,
           ...{
@@ -91,12 +120,9 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
       };
     }
     case "ADD_PRODUCT": {
-      if(selectedProducts[action.product.id]) {
-        return cartState
-      }
       return {
         total: total + action.product.price.price,
-        size: size + 1,
+        cartSize: cartSize + 1,
         selectedProducts: {
           ...selectedProducts,
           ...{ [action.product.id]: { ...action.product, ...{ count: 1 } } },
@@ -104,20 +130,25 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
       };
     }
     case "DELETE_PRODUCT": {
-      if(!selectedProducts[action.productId]) {
-        return cartState
+      const toDelete = selectedProducts[action.productId];
+      if (!toDelete) {
+        return cartState;
       }
       return {
-        total:
-          total -
-          selectedProducts[action.productId].price.price *
-            selectedProducts[action.productId].count,
-        size: size - selectedProducts[action.productId].count,
+        total: total - toDelete.price.price * toDelete.count,
+        cartSize: cartSize - toDelete.count,
         selectedProducts: Object.fromEntries(
           Object.values(selectedProducts)
             .filter((p) => p.id !== action.productId)
             .map((p) => [p.id, p])
         ),
+      };
+    }
+    case "CLEAR_CART": {
+      return {
+        cartSize: 0,
+        total: 0,
+        selectedProducts: {},
       };
     }
     default:
@@ -130,9 +161,8 @@ export type StoreState = Partial<{
 }>;
 
 export type StoreUpdate = CartUpdate;
-const initialStoreState = {
-  cartState: readStoredCartState(),
-};
+const initialStoreState = loadState();
+
 function storeReducer(
   store: StoreState = initialStoreState,
   action: StoreUpdate
@@ -145,11 +175,11 @@ function storeReducer(
 export const store = createStore(storeReducer);
 
 store.subscribe(() => {
-  storeCartState(store.getState().cartState);
+  saveState(store.getState());
 });
 
 export const shopClient = new ShopClient({
   products: shopProducts,
-  categories: [category],
+  categories: categories,
   settings: { timeout: 100, errorPercentage: 0 },
 });

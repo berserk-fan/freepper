@@ -10,6 +10,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import theme from "../theme";
 import { SnackbarProvider } from "notistack";
 import { CssBaseline } from "@material-ui/core";
+import "typeface-roboto";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

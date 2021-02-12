@@ -6,7 +6,7 @@ import theme from "../theme";
 export default class MyDocument extends Document {
   render() {
     return (
-      <Html lang="en">
+      <Html lang="ru">
         <Head>
           <link
             rel="apple-touch-icon"
@@ -25,6 +25,7 @@ export default class MyDocument extends Document {
             sizes="16x16"
             href="/favicon-16x16.png"
           />
+          <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link rel="manifest" href="/site.webmanifest" />
           {/* PWA primary color */}
           <meta name="theme-color" content={theme.palette.primary.main} />
