@@ -224,7 +224,7 @@ const Footer = React.memo(function AppFooter() {
                   variant={"caption"}
                   color={"textSecondary"}
                 >
-                  <Box fontFamily={"Monospace"}>
+                  <Box component={"span"} fontFamily={"Monospace"}>
                     Designed by Dima © Home Studio 2021 All right reserved
                   </Box>
                 </Typography>

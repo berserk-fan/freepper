@@ -185,6 +185,7 @@ export default function OrderFallback({
     <Snackbar
       TransitionComponent={Slide}
       autoHideDuration={autoHide}
+      onClose={onClose}
       open={orderSubmitState != "NOT_SUBMITTED"}
     >
       <Box>{currentMessage}</Box>

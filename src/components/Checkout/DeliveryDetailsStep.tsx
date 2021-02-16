@@ -26,7 +26,7 @@ export default function DeliveryDetailsForm() {
           required
           fullWidth
           id="full-name-input"
-          label="Полное имя"
+          label="Фамилия и Имя"
           variant="filled"
           type="text"
           autoComplete={"name"}

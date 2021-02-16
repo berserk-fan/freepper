@@ -8,9 +8,9 @@ import { store } from "../store";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "@material-ui/styles";
 import theme from "../theme";
-import { SnackbarProvider } from "notistack";
 import { CssBaseline } from "@material-ui/core";
 import "typeface-roboto";
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -18,14 +18,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Погладить можно?</title>
       </Head>
-      <SnackbarProvider maxSnack={3}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Provider store={store}>
-            <Component {...pageProps} />
-          </Provider>
-        </ThemeProvider>
-      </SnackbarProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Provider store={store}>
+          <Component {...pageProps} />
+        </Provider>
+      </ThemeProvider>
     </>
   );
 }

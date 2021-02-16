@@ -1,19 +1,20 @@
-import { Badge, Box, Dialog, Fab, IconButton, Slide } from "@material-ui/core";
-import ShoppingCartTwoToneIcon from "@material-ui/icons/ShoppingCartTwoTone";
+import { Box, Dialog, Fab, IconButton, Slide } from "@material-ui/core";
+
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useState } from "react";
 import { StoreState } from "../../../store";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import theme from "../../../theme";
 import { makeStyles, withStyles } from "@material-ui/styles";
 import { TransitionProps } from "@material-ui/core/transitions";
 import { CustomAppBar } from "./CustomAppBar";
-import Cart, { CartState } from "../../Cart/Cart";
+import dynamic from 'next/dynamic';
 import { connect } from "react-redux";
-import ShoppingBasketIcon from "@material-ui/icons/ShoppingBasket";
 import ShoppingCartIcon from "../../Icons/ShoppingCartIcon";
+const Cart = dynamic(() => import("../../Cart/Cart"));
+const Badge = dynamic(() => import("@material-ui/core/Badge"));
 
 const StyledBadge = withStyles({
   badge: {
