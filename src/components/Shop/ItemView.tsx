@@ -113,7 +113,7 @@ function ItemView({
             </Box>
           </Box>
           <Box style={{ marginLeft: "auto" }}>
-            <Link href={productHref(product.images[slideId].name)}>
+            <Link href={productHref(images[slideId].name)}>
               <Button color={"secondary"} variant={"outlined"}>
                 Подробнее
               </Button>

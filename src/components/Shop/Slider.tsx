@@ -62,15 +62,18 @@ export default function Slider({
 }) {
   const classes = useStyles();
   const [currentSlide, setCurrentSlide] = React.useState(0);
+  function changeSlide(slideIdx: number) {
+    setCurrentSlide(slideIdx);
+    if (onChange) {
+      onChange(slideIdx);
+    }
+  }
   const [sliderRef, slider] = useKeenSlider({
     initial: 0,
     spacing: 15,
     slideChanged(s) {
       const slideIdx = s.details().relativeSlide;
-      setCurrentSlide(slideIdx);
-      if (onChange) {
-        onChange(slideIdx);
-      }
+      changeSlide(slideIdx);
     },
   });
 
@@ -83,10 +86,9 @@ export default function Slider({
     ]);
   }, [currentSlide]);
 
-  const Dot = ({ key, isActive }: { key: number; isActive: boolean }) => (
+  const Dot = ({ idx, isActive }: { idx: number; isActive: boolean }) => (
     <button
-      key={key}
-      onClick={() => slider.moveToSlideRelative(key)}
+      onClick={() => slider.moveToSlideRelative(idx)}
       className={`${classes.dot} ${isActive ? classes.active : ""}`}
     />
   );
@@ -94,7 +96,7 @@ export default function Slider({
   const Dots = () => (
     <Box className={classes.navigationContainer}>
       {[...Array(slider.details().size).keys()].map((idx) => (
-        <Dot key={idx} isActive={currentSlide === idx} />
+        <Dot key={idx} idx={idx} isActive={currentSlide === idx} />
       ))}
     </Box>
   );
