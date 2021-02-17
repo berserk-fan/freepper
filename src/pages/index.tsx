@@ -63,7 +63,7 @@ const goToShopButton = () => (
 export default function Home({ products }: { products: Product[] }) {
   const classes = useStyles();
   return (
-    <LayoutWithHeaderAndFooter value>
+    <LayoutWithHeaderAndFooter showValueProp disableBreadcrumbs>
       <Box width={"100%"}>
         <Box
           className={`flex flex-col ${classes.container}`}

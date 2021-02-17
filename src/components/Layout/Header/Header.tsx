@@ -51,40 +51,23 @@ const useStyles = makeStyles({
   },
 });
 
-type Pages = "home" | "about";
-type SupportPages =
+type Pages =
+  | "home"
+  | "about"
   | "delivery-and-payment-info"
   | "returns-policy"
   | "cooperation"
   | "public-offer"
   | "privacy-policy"
-  | "attributions";
+  | "attributions"
+  | "ammo"
+  | "beds";
 
 type PageGroup = {
   id: string;
   name: string;
   icon?: OverridableComponent<SvgIconTypeMap>;
   children: Page[];
-};
-
-export const shopPageGroup: PageGroup = {
-  id: "shop-page-group",
-  name: "Магазин",
-  icon: ShopIcon,
-  children: [
-    {
-      id: "beds",
-      path: "/categories/beds/products",
-      name: "Лежанки",
-      icon: PetBedIcon,
-    },
-    {
-      id: "ammo",
-      path: "/categories/beds/products",
-      name: "Аммуниция",
-      icon: Collar,
-    },
-  ],
 };
 
 export type Page = {
@@ -95,16 +78,25 @@ export type Page = {
 };
 
 export const pages: Record<Pages, Page> = {
-  home: { id: "home", path: "/", name: "Домой", icon: HouseIcon },
+  home: {id: "home", path: "/", name: "Домой", icon: HouseIcon},
+  beds: {
+    id: "beds",
+    path: "/categories/beds/products",
+    name: "Лежанки",
+    icon: PetBedIcon,
+  },
+  ammo: {
+    id: "ammo",
+    path: "/categories/ammo/products",
+    name: "Аммуниция",
+    icon: Collar,
+  },
   about: {
     id: "about",
     path: "/about",
     name: "О наc",
     icon: GroupIcon,
   },
-};
-
-export const supportPages: Record<SupportPages, Page> = {
   "delivery-and-payment-info": {
     id: "delivery-and-payment-info",
     path: "/delivery-and-payment-info",
@@ -137,14 +129,22 @@ export const supportPages: Record<SupportPages, Page> = {
   },
 };
 
-type Model =
+
+export const shopPageGroup: PageGroup = {
+  id: "shop-page-group",
+  name: "Магазин",
+  icon: ShopIcon,
+  children: [pages.beds, pages.ammo],
+};
+
+type ModelPages =
   | "lukoshko-s"
   | "lukoshko-m"
   | "chemodan"
   | "kvadro-soft"
   | "kvadro-strong";
 
-export const modelPages: Record<Model, Page> = {
+export const modelPages: Record<ModelPages, Page> = {
   "kvadro-soft": {
     id: "kvadro-soft",
     path: "#",
@@ -175,19 +175,17 @@ export const modelPages: Record<Model, Page> = {
 export default function Header() {
   const classes = useStyles();
   return (
-    <>
-      <CustomAppBar>
-        <Toolbar className={classes.toolbar}>
-          <Box className={classes.menu}>
-            <HeaderMenu />
-          </Box>
-          <Box className={`${classes.title} cursor-default uppercase`}>
-            <HeaderLogo />
-          </Box>
-          <HeaderActions className={`${classes.mainButtonGroup}`} />
-          <HeaderCart />
-        </Toolbar>
-      </CustomAppBar>
-    </>
+    <CustomAppBar>
+      <Toolbar className={classes.toolbar}>
+        <Box className={classes.menu}>
+          <HeaderMenu />
+        </Box>
+        <Box className={`${classes.title} cursor-default uppercase`}>
+          <HeaderLogo />
+        </Box>
+        <HeaderActions className={`${classes.mainButtonGroup}`} />
+        <HeaderCart />
+      </Toolbar>
+    </CustomAppBar>
   );
 }

@@ -91,12 +91,12 @@ function ItemView({
             >
               <Link href={productHref(image.name)}>
                 <Image
-                  layout="intrinsic"
                   priority={idx === 0 && priority}
                   width={500}
                   height={500}
                   src={image.src}
                   alt={image.alt}
+                  layout="intrinsic"
                 />
               </Link>
             </Box>

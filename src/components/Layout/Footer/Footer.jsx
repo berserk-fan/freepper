@@ -20,7 +20,7 @@ import {
 import { useMagCategoryMenuStyles } from "@mui-treasury/styles/categoryMenu/mag";
 import { usePoofSocialLinkStyles } from "@mui-treasury/styles/socialLink/poof";
 import { usePlainNavigationMenuStyles } from "@mui-treasury/styles/navigationMenu/plain";
-import { modelPages, pages, supportPages } from "../Header/Header";
+import { modelPages, pages } from "../Header/Header";
 import Link from "next/link";
 import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
 import Image from "next/image";
@@ -136,8 +136,8 @@ const Footer = React.memo(function AppFooter() {
                     </CategoryTitle>
                     {[
                       pages.about,
-                      supportPages["delivery-and-payment-info"],
-                      supportPages["returns-policy"],
+                      pages["delivery-and-payment-info"],
+                      pages["returns-policy"],
                     ].map((page) => (
                       <Link href={page.path} color={"textPrimary"}>
                         <CategoryItem key={page.path}>
@@ -162,10 +162,10 @@ const Footer = React.memo(function AppFooter() {
                       <Typography>Документы</Typography>
                     </CategoryTitle>
                     {[
-                      supportPages.cooperation,
-                      supportPages["public-offer"],
-                      supportPages["privacy-policy"],
-                      supportPages.attributions,
+                      pages.cooperation,
+                      pages["public-offer"],
+                      pages["privacy-policy"],
+                      pages.attributions,
                     ].map((page) => (
                       <Link href={page.path} color={"textPrimary"}>
                         <CategoryItem key={page.path}>
@@ -205,8 +205,8 @@ const Footer = React.memo(function AppFooter() {
               <NavMenu useStyles={usePlainNavigationMenuStyles}>
                 <ColumnToRow at={"sm"}>
                   {[
-                    supportPages.cooperation,
-                    supportPages["privacy-policy"],
+                    pages.cooperation,
+                    pages["privacy-policy"],
                   ].map((page) => (
                     <NavItem className={classes.legalLink}>
                       <Link href={page.path}>

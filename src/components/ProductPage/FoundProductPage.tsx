@@ -119,7 +119,7 @@ function ProductPage({
       <SliderThumbs
         slides={images.map((image, idx) => (
           <Box key={image.src} className={`flex overflow-hidden items-center`}>
-            <Image priority={idx === 0} width={500} height={500} src={image.src} alt={displayName} />
+            <Image priority={idx === 0} width={500} height={500} src={image.src} alt={displayName} layout={"intrinsic"}/>
           </Box>
         ))}
         thumbs={images.map((image) => (
