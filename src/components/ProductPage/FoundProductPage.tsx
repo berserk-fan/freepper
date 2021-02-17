@@ -13,8 +13,9 @@ import Spacing from "../Commons/Spacing";
 import theme from "../../theme";
 import { makeStyles } from "@material-ui/styles";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
-import Markdown from "../Markdown/Renderers";
+const Markdown = dynamic(() => import("../Markdown/Renderers"));
 import SliderThumbs from "../Shop/SliderThumbs";
+import dynamic from "next/dynamic";
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
@@ -116,13 +117,13 @@ function ProductPage({
   return (
     <Box marginX={"auto"} maxWidth={"500px"} padding={1}>
       <SliderThumbs
-        slides={images.map((image) => (
-          <Box className={`flex overflow-hidden items-center`}>
-            <Image width={500} height={500} src={image.src} alt={displayName} />
+        slides={images.map((image, idx) => (
+          <Box key={image.src} className={`flex overflow-hidden items-center`}>
+            <Image priority={idx === 0} width={500} height={500} src={image.src} alt={displayName} />
           </Box>
         ))}
         thumbs={images.map((image) => (
-          <Box className={`flex overflow-hidden items-center`}>
+          <Box key={image.src} className={`flex overflow-hidden items-center`}>
             <Image width={75} height={75} src={image.src} alt={displayName} />
           </Box>
         ))}
