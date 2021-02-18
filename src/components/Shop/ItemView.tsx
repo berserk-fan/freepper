@@ -1,12 +1,11 @@
 import React, {memo, useEffect, useState} from "react";
-import { fade, makeStyles } from "@material-ui/core/styles";
+import {fade, makeStyles, Theme} from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
 import { Box } from "@material-ui/core";
 import ShoppingCartTwoToneIcon from "@material-ui/icons/ShoppingCartTwoTone";
 import { withStyles } from "@material-ui/styles";
-import theme from "../../theme";
 import Image from "next/image";
 import Slider from "./Slider";
 import { ToggleButton } from "@material-ui/lab";
@@ -14,7 +13,7 @@ import Price from "./Price";
 import { TmpGroupedProduct } from "../../../configs/tmpProducts";
 import {SIZES} from "./ShopDefinitions";
 
-const CartButton = withStyles({
+const CartButton = withStyles((theme: Theme) => ({
   root: {
     fontSize: "24px",
     borderRadius: "20%",
@@ -27,21 +26,8 @@ const CartButton = withStyles({
     },
   },
   selected: {},
-})(ToggleButton);
+}))(ToggleButton);
 
-function AddToCartButton({
-  handleAddedToCart,
-  inCart,
-}: {
-  handleAddedToCart: () => void;
-  inCart: boolean;
-}) {
-  return (
-    <CartButton onClick={handleAddedToCart} size="small" selected={inCart}>
-      <ShoppingCartTwoToneIcon fontSize={"inherit"} />
-    </CartButton>
-  );
-}
 
 const useStyles = makeStyles({
   media: {

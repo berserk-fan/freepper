@@ -1,11 +1,10 @@
 import React, { useRef, useState } from "react";
 import KeenSlider, { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import { Box } from "@material-ui/core";
+import {Box, Theme} from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import theme from "../../theme";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   thumb: {
     border: "3px solid transparent",
     borderRadius: "3px",
@@ -18,7 +17,12 @@ const useStyles = makeStyles({
     bottom: 0,
     padding: "10px",
   },
-});
+  thumbSlide: {
+    display: "inline-flex",
+    marginTop: theme.spacing(0.5),
+    marginBottom: theme.spacing(1),
+  }
+}));
 
 const nolock = (lock: { current: number }): boolean => lock.current == -1;
 const lockEnded = (lock: { current: number }, idx: number): boolean =>
@@ -99,12 +103,7 @@ export default function SliderThumbs({
         </div>
         <div
           ref={thumbsRef as any}
-          className="keen-slider"
-          style={{
-            display: "inline-flex",
-            marginTop: theme.spacing(0.5),
-            marginBottom: theme.spacing(1),
-          }}
+          className={`keen-slider ${classes.thumbSlide}`}
         >
           {thumbs.map((thumb, idx) => (
             <Box

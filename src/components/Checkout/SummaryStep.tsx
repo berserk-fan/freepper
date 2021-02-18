@@ -7,9 +7,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Divider from "@material-ui/core/Divider";
-import { Box, Grid, Typography, useMediaQuery } from "@material-ui/core";
+import {Box, Grid, makeStyles, Theme, Typography, useMediaQuery, useTheme} from "@material-ui/core";
 import { CartProduct } from "../../pages/checkout";
-import theme from "../../theme";
 import Image from "next/image";
 import { StoreState } from "../../store";
 import { CartState } from "../Cart/Cart";
@@ -21,6 +20,16 @@ type Column<T> = {
   name: string;
   extractor: (product: T) => string;
 };
+
+const useStyles = makeStyles((theme: Theme) => ({
+  tableCell1: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(0.5),
+  },
+  tableCell2: {
+
+  }
+}));
 
 const formSummaryColumns: Column<OrderForm>[] = [
   {
@@ -50,6 +59,7 @@ const formSummaryColumns: Column<OrderForm>[] = [
 ];
 
 function FormSummaryTable({ orderForm }: { orderForm: OrderForm }) {
+  const classes = useStyles();
   return (
     <TableContainer component={Paper}>
       <Table size={"small"}>
@@ -64,15 +74,12 @@ function FormSummaryTable({ orderForm }: { orderForm: OrderForm }) {
           {formSummaryColumns.map((col) => (
             <TableRow key={col.name}>
               <TableCell
-                style={{
-                  paddingLeft: theme.spacing(1),
-                  paddingRight: theme.spacing(0.5),
-                }}
+                className={classes.tableCell1}
                 colSpan={1}
               >
                 {col.name}
               </TableCell>
-              <TableCell style={{ paddingLeft: theme.spacing(1) }} colSpan={3}>
+              <TableCell className={classes.tableCell2} colSpan={3}>
                 {col.extractor(orderForm)}
               </TableCell>
             </TableRow>
@@ -90,6 +97,7 @@ function Summary({
   cartState: CartState;
   orderForm: OrderForm;
 }) {
+  const theme = useTheme();
   const cartProducts = Object.values(cartState.selectedProducts);
   const invoiceShipping = 0;
   const invoiceSubtotal = cartState.total;

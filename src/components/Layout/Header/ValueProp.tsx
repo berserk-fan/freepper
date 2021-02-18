@@ -1,9 +1,8 @@
 import React from "react";
-import { Typography } from "@material-ui/core";
+import {Theme, Typography} from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import theme from "../../../theme";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   container: {
     borderStyle: "solid",
     borderBottomStyle: "solid",
@@ -28,7 +27,7 @@ const useStyles = makeStyles({
     color: theme.palette.text.secondary,
     fontWeight: theme.typography.fontWeightBold,
   },
-});
+}));
 
 export default function ValueProp() {
   const classes = useStyles();

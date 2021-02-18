@@ -1,8 +1,7 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import {makeStyles, Theme} from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import { Box } from "@material-ui/core";
-import theme from "../../../theme";
 import HeaderMenu from "./HeaderMenu";
 import HeaderCart from "./HeaderCart";
 import HeaderLogo from "./HeaderLogo";
@@ -16,7 +15,7 @@ import { OverridableComponent } from "@material-ui/core/OverridableComponent";
 import { SvgIconTypeMap } from "@material-ui/core/SvgIcon/SvgIcon";
 import GroupIcon from "../../Icons/GroupIcon";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   title: {
     marginLeft: "auto",
     [theme.breakpoints.up("md")]: {
@@ -49,7 +48,7 @@ const useStyles = makeStyles({
       display: "none",
     },
   },
-});
+}));
 
 type Pages =
   | "home"

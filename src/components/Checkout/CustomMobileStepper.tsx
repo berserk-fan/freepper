@@ -1,18 +1,16 @@
 import React, { MouseEventHandler } from "react";
-import { MobileStepper } from "@material-ui/core";
+import {MobileStepper, Theme} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import theme from "../../theme";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
 import { buttonTexts } from "./Definitions";
-import MakeRequestWrapper from "../Commons/MakeRequestWrapper";
 import {makeStyles} from "@material-ui/styles";
 
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   dotActive: {
     backgroundColor: theme.palette.secondary.dark
   }
-});
+}));
 
 
 type MobileForm = {

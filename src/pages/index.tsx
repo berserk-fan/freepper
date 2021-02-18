@@ -1,7 +1,6 @@
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
 import React from "react";
-import { Box, Button, Typography, withStyles } from "@material-ui/core";
-import theme from "../theme";
+import {Box, Button, Theme, Typography, useTheme, withStyles, withTheme} from "@material-ui/core";
 import Image from "next/image";
 import { GetStaticProps } from "next";
 import { shopClient } from "../store";
@@ -9,7 +8,7 @@ import { Product } from "@mamat14/shop-server/shop_model";
 import Link from "next/link";
 import { makeStyles } from "@material-ui/styles";
 
-const ColorButton = withStyles({
+const ColorButton = withStyles((theme: Theme) => ({
   root: {
     color: theme.palette.getContrastText(theme.palette.secondary.light),
     backgroundColor: theme.palette.secondary.main,
@@ -20,9 +19,9 @@ const ColorButton = withStyles({
       backgroundColor: theme.palette.secondary.main,
     },
   },
-})(Button);
+}))(Button);
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   container: {
     width: "100%",
     height: "calc(100vh - 135px)",
@@ -44,21 +43,22 @@ const useStyles = makeStyles({
       width: "calc(50% + 400px)",
     },
   },
-});
+  saleText: {
+    paddingTop: theme.spacing(3)
+  }
+}));
 
-const goToShopButton = () => (
-  <Link href={"#"}>
+const GoToShopButton = React.memo(() => {
+  const theme = useTheme();
+  return <Link href={"#"}>
     <ColorButton size={"large"} variant={"contained"}>
-      <span
-        style={{
-          color: theme.palette.getContrastText(theme.palette.secondary.main),
-        }}
-      >
+      <Box component={"span"}
+           color={theme.palette.getContrastText(theme.palette.secondary.main)}>
         В Магазин
-      </span>
+      </Box>
     </ColorButton>
   </Link>
-);
+});
 
 export default function Home({ products }: { products: Product[] }) {
   const classes = useStyles();
@@ -85,7 +85,7 @@ export default function Home({ products }: { products: Product[] }) {
           </Box>
           <Box>
             <Typography
-              style={{ paddingTop: theme.spacing(3) }}
+              className={classes.saleText}
               align={"center"}
               variant={"h3"}
               component={"h1"}
@@ -97,7 +97,7 @@ export default function Home({ products }: { products: Product[] }) {
               marginBottom={1}
               className={"flex justify-center items-center"}
             >
-              {goToShopButton()}
+              <GoToShopButton/>
             </Box>
             <Typography align={"center"} variant={"h5"} component={"h3"}>
               Только сегодня
@@ -108,7 +108,7 @@ export default function Home({ products }: { products: Product[] }) {
           paddingY={2}
           aria-label={"propositions-block"}
           component={"section"}
-          bgcolor={theme.palette.grey["100"]}
+          bgcolor={'grey["100"]'}
         >
           <Typography align={"center"} variant={"h2"}>
             Новинки
@@ -148,7 +148,7 @@ export default function Home({ products }: { products: Product[] }) {
         </Box>
         <Box>
           <Box marginY={4} className={"flex justify-center items-center"}>
-            {goToShopButton()}
+            <GoToShopButton/>
           </Box>
         </Box>
       </Box>

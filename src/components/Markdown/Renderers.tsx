@@ -14,11 +14,11 @@ import {
   ListItemText,
   List,
   ListItemIcon,
+  useTheme
 } from "@material-ui/core";
 import ReactMarkdown from "react-markdown";
 import { ListContent, List as MdList } from "mdast";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-import theme from "../../theme";
 
 const styles = {
   header: {
@@ -75,6 +75,7 @@ const MarkdownHeading = withStyles(styles)(
 );
 
 const MarkdownListItem = withStyles(styles)((props: ListContent & any) => {
+  const theme = useTheme();
   return (
     <ListItem
       style={{ paddingTop: 0, paddingBottom: 0 }}

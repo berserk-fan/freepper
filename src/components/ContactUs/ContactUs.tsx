@@ -6,7 +6,7 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText,
+  ListItemText, Theme,
   Typography,
 } from "@material-ui/core";
 import React from "react";
@@ -15,15 +15,14 @@ import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import TelegramIcon from "@material-ui/icons/Telegram";
 import { makeStyles } from "@material-ui/styles";
-import theme from "../../theme";
 import PhoneNumber from "./PhoneNumber";
 import ButtonWithDetail from "../Commons/ButtonWithDetail";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   nested: {
     paddingLeft: theme.spacing(4),
   },
-});
+}));
 
 export default function ContactUs() {
   const classes = useStyles();

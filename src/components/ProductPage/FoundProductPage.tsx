@@ -1,6 +1,6 @@
 import { Product } from "@mamat14/shop-server/shop_model";
 import { CartState } from "../Cart/Cart";
-import { Box, Divider, Fab, Typography, Zoom } from "@material-ui/core";
+import {Box, Divider, Fab, Typography, useTheme, Zoom} from "@material-ui/core";
 import Image from "next/image";
 import Price from "../Shop/Price";
 import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlineOutlined";
@@ -10,7 +10,6 @@ import { connect } from "react-redux";
 import Link from "next/link";
 import DogBedDetails from "./DogBedDetails";
 import Spacing from "../Commons/Spacing";
-import theme from "../../theme";
 import { makeStyles } from "@material-ui/styles";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 const Markdown = dynamic(() => import("../Markdown/Renderers"));
@@ -81,6 +80,7 @@ function ProductPage({
   cart: CartState;
   addProduct: (product: Product) => void;
 }) {
+  const theme = useTheme();
   const { id, displayName, images, price, details } = product;
   const inCart = !!cart.selectedProducts[product.id];
   function addToCart() {

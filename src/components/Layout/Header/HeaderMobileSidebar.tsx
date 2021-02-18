@@ -2,16 +2,26 @@ import {useRouter} from "next/router";
 import React, {useState} from "react";
 import {Page, pages, shopPageGroup} from "./Header";
 import Link from "next/link";
-import {Box, Collapse, Drawer, Fade, IconButton, List, ListItem, ListItemIcon, ListItemText} from "@material-ui/core";
+import {
+    Box,
+    Collapse,
+    Drawer,
+    Fade,
+    IconButton,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    Theme
+} from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import ContactsIcon from "../../Icons/ContactsIcon";
 import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
 import {makeStyles} from "@material-ui/core/styles";
-import theme from "../../../theme";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
     list: {
         width: 250,
     },
@@ -33,8 +43,7 @@ const useStyles = makeStyles({
     nestedList: {
         paddingLeft: theme.spacing(4),
     },
-});
-
+}));
 
 export default function HeaderMobileSidebar({open, toggle}) {
     const classes = useStyles();

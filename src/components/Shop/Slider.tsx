@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import { Box, Typography } from "@material-ui/core";
+import {Box, Theme, Typography} from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import theme from "../../theme";
-import { Skeleton } from "@material-ui/lab";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   dot: {
     border: "none",
     width: "10px",
@@ -49,7 +47,7 @@ const useStyles = makeStyles({
   arrow_left: { left: "5px" },
   arrow_right: { left: "auto", right: "5px" },
   arrow_disabled: { fill: "rgba(255, 255, 255, 0.5)" },
-});
+}));
 
 export default function Slider({
   slides,

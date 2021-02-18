@@ -1,8 +1,6 @@
 import Link from "next/link";
 import React from "react";
 import { Page, pages, shopPageGroup } from "./Header";
-import { makeStyles } from "@material-ui/styles";
-import theme from "../../../theme";
 import { Box, Typography } from "@material-ui/core";
 import { NavItem, NavMenu } from "@mui-treasury/components/menu/navigation";
 

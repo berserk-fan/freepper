@@ -1,9 +1,8 @@
 import Box from "@material-ui/core/Box";
-import theme from "../../theme";
-import { IconButton, Snackbar } from "@material-ui/core";
+import {IconButton, Snackbar, useTheme} from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import ContactUs from "./ContactUs";
-import React, { useState } from "react";
+import React from "react";
 
 export default function ContactUsSnackBar({
   open,
@@ -12,6 +11,7 @@ export default function ContactUsSnackBar({
   open: boolean;
   close: () => void;
 }) {
+  const theme = useTheme();
   function handleClose(ev) {
     ev.stopPropagation();
     close();

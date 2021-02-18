@@ -1,8 +1,7 @@
 import { makeStyles } from "@material-ui/styles";
-import theme from "../../theme";
 import { StoreState } from "../../store";
 import React, { memo } from "react";
-import { Box, Button, Typography } from "@material-ui/core";
+import {Box, Button, Theme, Typography} from "@material-ui/core";
 import CartItem from "./CartItem";
 import { connect } from "react-redux";
 import { CartProduct } from "../../pages/checkout";
@@ -14,7 +13,7 @@ export type CartState = {
   selectedProducts: Record<string, CartProduct>;
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   textWrapper: {
     width: "100%",
     display: "flex",
@@ -59,7 +58,7 @@ const useStyles = makeStyles({
       display: "none",
     },
   },
-});
+}));
 
 function NonEmptyCart({ productsList, total }) {
   const classes = useStyles();

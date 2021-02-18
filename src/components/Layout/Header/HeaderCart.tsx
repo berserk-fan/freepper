@@ -1,4 +1,4 @@
-import { Box, Dialog, Fab, IconButton, Slide } from "@material-ui/core";
+import {Box, Dialog, Fab, IconButton, Slide, Theme, useTheme} from "@material-ui/core";
 
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -6,7 +6,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import React, { memo, useState } from "react";
 import { StoreState } from "../../../store";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import theme from "../../../theme";
 import { makeStyles, withStyles } from "@material-ui/styles";
 import { TransitionProps } from "@material-ui/core/transitions";
 import { CustomAppBar } from "./CustomAppBar";
@@ -16,7 +15,7 @@ import ShoppingCartIcon from "../../Icons/ShoppingCartIcon";
 const Cart = dynamic(() => import("../../Cart/Cart"));
 const Badge = dynamic(() => import("@material-ui/core/Badge"));
 
-const StyledBadge = withStyles({
+const StyledBadge = withStyles((theme: Theme) => ({
   badge: {
     right: 6,
     top: 30,
@@ -25,9 +24,9 @@ const StyledBadge = withStyles({
     color: theme.palette.grey["800"],
     backgroundColor: theme.palette.background.default,
   },
-})(Badge);
+}))(Badge);
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   cart: {
     marginLeft: "auto",
     color: theme.palette.grey["800"],
@@ -35,7 +34,7 @@ const useStyles = makeStyles({
   closeButton: {
     color: theme.palette.grey["800"],
   },
-});
+}));
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children?: React.ReactElement<any, any> },
@@ -46,15 +45,14 @@ const Transition = React.forwardRef(function Transition(
 
 function HeaderCart({ cartSize }: { cartSize: number }) {
   const classes = useStyles();
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
-
   const handleClickOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
-
   const isSmallScreen = !useMediaQuery(theme.breakpoints.up("sm"));
 
   return (

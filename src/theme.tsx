@@ -5,10 +5,10 @@ import { red } from "@material-ui/core/colors";
 const theme = createMuiTheme({
   spacing: 8,
   typography: {
-    fontFamily: ["Roboto, sans-serif", "Monospace", "Montserrat"].join(","),
+    fontFamily: ["Roboto, sans-serif", "Monospace"].join(","),
     h1: {
       fontSize: 96,
-      fontFamily: "Roboto, serif",
+      fontFamily: "Roboto, sans-serif",
       fontWeight: 900,
       fontStyle: "italic",
     },
@@ -19,7 +19,7 @@ const theme = createMuiTheme({
     },
     h3: {
       fontSize: 48,
-      fontFamily: "Roboto, serif",
+      fontFamily: "Roboto, sans-serif",
       fontWeight: 900,
       fontStyle: "italic",
     },
@@ -35,7 +35,7 @@ const theme = createMuiTheme({
     },
     h6: {
       fontSize: 20,
-      fontFamily: "Roboto, serif",
+      fontFamily: "Roboto, sans-serif",
       fontWeight: 700,
       fontStyle: "italic",
     },
@@ -46,12 +46,12 @@ const theme = createMuiTheme({
     },
     subtitle2: {
       fontSize: 14,
-      fontFamily: "Roboto, serif",
+      fontFamily: "Roboto, sans-serif",
       fontWeight: 400,
     },
     body1: {
       fontSize: 16,
-      fontFamily: "Roboto, serif",
+      fontFamily: "Roboto, sans-serif",
       fontWeight: 400,
     },
     body2: {
@@ -66,7 +66,7 @@ const theme = createMuiTheme({
     },
     caption: {
       fontSize: 12,
-      fontFamily: "Roboto, serif",
+      fontFamily: "Roboto, sans-serif",
       fontWeight: 400,
       fontStyle: "italic",
     },

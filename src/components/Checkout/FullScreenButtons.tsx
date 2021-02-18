@@ -1,10 +1,7 @@
 import React, { MouseEventHandler } from "react";
 import { Box } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import MakeRequestWrapper from "../Commons/MakeRequestWrapper";
 import { buttonTexts } from "./Definitions";
-import {makeStyles} from "@material-ui/styles";
-import theme from "../../theme";
 
 type FullScreenButtonsProps = {
   onBack: MouseEventHandler;

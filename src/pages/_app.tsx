@@ -9,7 +9,6 @@ import { Provider } from "react-redux";
 import { ThemeProvider } from "@material-ui/styles";
 import theme from "../theme";
 import { CssBaseline } from "@material-ui/core";
-import "typeface-roboto";
 import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 
 function MyApp({ Component, pageProps }: AppProps) {
