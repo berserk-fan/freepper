@@ -116,19 +116,17 @@ export default function Slider({
   }
 
   return (
-    <Box className={className}>
-      <Box position={"relative"}>
-        <div ref={sliderRef as any} className="keen-slider">
+    <Box className={className} position={"relative"}>
+      <div ref={sliderRef as any} className={`keen-slider`}>
           {slides.map((slide, idx) => (
             <div className="keen-slider__slide">
               {shouldLoad(idx) ? slide : <></>}
             </div>
           ))}
         </div>
-        {slider &&
-          slides.length > 1 &&
-          (slides.length <= 7 ? <Dots /> : <Numbers />)}
-      </Box>
+      {slider &&
+        slides.length > 1 &&
+        (slides.length <= 7 ? <Dots /> : <Numbers />)}
     </Box>
   );
 }
