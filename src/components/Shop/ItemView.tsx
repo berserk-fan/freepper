@@ -4,7 +4,6 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
 import { Box } from "@material-ui/core";
-import ShoppingCartTwoToneIcon from "@material-ui/icons/ShoppingCartTwoTone";
 import { withStyles } from "@material-ui/styles";
 import Image from "next/image";
 import Slider from "./Slider";
@@ -27,7 +26,6 @@ const CartButton = withStyles((theme: Theme) => ({
   },
   selected: {},
 }))(ToggleButton);
-
 
 const useStyles = makeStyles({
   media: {

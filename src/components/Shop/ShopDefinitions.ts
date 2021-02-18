@@ -13,5 +13,6 @@ export const PAGE_SIZES: Record<Breakpoint, Exclude<GridSize, "auto">> = {
 
 export const SIZES = Object.entries(PAGE_SIZES)
     .map(([br, gridCols]) => `${noMedia(theme.breakpoints.up(br as Breakpoint))} ${Math.floor(100 * gridCols / 12)}vw`)
+    .reverse()
     .join(",")
-    .concat(", 100vw");
+    .concat(", 500px");
