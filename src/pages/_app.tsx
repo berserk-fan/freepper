@@ -1,6 +1,5 @@
 import "../styles/globals.css";
 import "../styles/tailwind.css";
-import "fontsource-roboto";
 import React from "react";
 import {AppProps} from "next/app";
 import Head from "next/head";
@@ -9,7 +8,8 @@ import { Provider } from "react-redux";
 import { ThemeProvider } from "@material-ui/styles";
 import theme from "../theme";
 import {CssBaseline} from "@material-ui/core";
-import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
+import dynamic from "next/dynamic";
+dynamic(() => import('abortcontroller-polyfill/dist/polyfill-patch-fetch'));
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
