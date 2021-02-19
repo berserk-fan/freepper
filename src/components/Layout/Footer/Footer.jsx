@@ -20,10 +20,10 @@ import {
 import { useMagCategoryMenuStyles } from "@mui-treasury/styles/categoryMenu/mag";
 import { usePoofSocialLinkStyles } from "@mui-treasury/styles/socialLink/poof";
 import { usePlainNavigationMenuStyles } from "@mui-treasury/styles/navigationMenu/plain";
-import { modelPages, pages } from "../Header/Header";
 import Link from "next/link";
 import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
 import Logo from "../Logo/Logo";
+import {modelPages, pages} from "../Header/pages";
 
 const useStyles = makeStyles(({ palette, typography }) => ({
   top: {

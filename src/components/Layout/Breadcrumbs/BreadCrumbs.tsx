@@ -3,7 +3,7 @@ import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import {useRouter} from "next/router";
 import Link from "next/link";
-import {Page, pages} from "../Header/Header";
+import {Page, pages} from "../Header/pages";
 
 function prefixes<T>(arr: T[]): T[][] {
     return arr.map((_, idx) => arr.slice(0, idx + 1));

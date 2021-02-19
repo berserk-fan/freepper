@@ -1,6 +1,5 @@
 import {useRouter} from "next/router";
 import React, {useState} from "react";
-import {Page, pages, shopPageGroup} from "./Header";
 import Link from "next/link";
 import {
     Box,
@@ -20,6 +19,7 @@ import ExpandMore from "@material-ui/icons/ExpandMore";
 import ContactsIcon from "../../Icons/ContactsIcon";
 import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
 import {makeStyles} from "@material-ui/core/styles";
+import {Page, pages, shopPageGroup} from "./pages";
 
 const useStyles = makeStyles((theme: Theme) => ({
     list: {

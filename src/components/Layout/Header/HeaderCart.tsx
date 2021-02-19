@@ -9,11 +9,10 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, withStyles } from "@material-ui/styles";
 import { TransitionProps } from "@material-ui/core/transitions";
 import { CustomAppBar } from "./CustomAppBar";
-import dynamic from 'next/dynamic';
 import { connect } from "react-redux";
 import ShoppingCartIcon from "../../Icons/ShoppingCartIcon";
-const Cart = dynamic(() => import("../../Cart/Cart"));
-const Badge = dynamic(() => import("@material-ui/core/Badge"));
+import Cart from "../../Cart/Cart";
+import Badge from "@material-ui/core/Badge";
 
 const StyledBadge = withStyles((theme: Theme) => ({
   badge: {

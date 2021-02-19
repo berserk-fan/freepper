@@ -35,7 +35,6 @@ export default function HeaderMenu() {
       >
         <MenuIcon />
       </IconButton>
-      {/* TODO: code split */}
       <HeaderMobileSidebar open={drawerOpen} toggle={toggleDrawer}/>
     </>
   );

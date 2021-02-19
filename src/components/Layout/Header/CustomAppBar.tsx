@@ -1,9 +1,7 @@
 import AppBar from "@material-ui/core/AppBar";
 import React from "react";
 import { AppBarProps } from "@material-ui/core/AppBar/AppBar";
-import dynamic from "next/dynamic";
-import {Box} from "@material-ui/core";
-const HideOnScroll = dynamic(() => import("./HideOnScroll"), {loading: (children) => <Box>{children}</Box>});
+import HideOnScroll from "./HideOnScroll";
 
 export const CustomAppBar = (props: AppBarProps & { show?: boolean }) => {
   const { children } = props;

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import React from "react";
-import { Page, pages, shopPageGroup } from "./Header";
 import { Box, Typography } from "@material-ui/core";
 import { NavItem, NavMenu } from "@mui-treasury/components/menu/navigation";
+import {Page, pages, shopPageGroup} from "./pages";
 
 export default function HeaderActions(props) {
   const bigHeaderPages: Page[] = [
