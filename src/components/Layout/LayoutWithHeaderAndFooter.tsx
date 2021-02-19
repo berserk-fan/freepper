@@ -1,7 +1,7 @@
 import Header from "./Header/Header";
-import ValueProp from "./Header/ValueProp";
 import React from "react";
-import Footer from "./Footer/Footer";
+const ValueProp = dynamic(() => import("./Header/ValueProp"));
+const Footer = dynamic(() => import("./Footer/Footer"));
 const BreadCrumbs = dynamic(() => import("./Breadcrumbs/BreadCrumbs"));
 import {Box} from "@material-ui/core";
 import dynamic from "next/dynamic";

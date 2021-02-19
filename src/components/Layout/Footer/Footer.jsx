@@ -23,7 +23,7 @@ import { usePlainNavigationMenuStyles } from "@mui-treasury/styles/navigationMen
 import { modelPages, pages } from "../Header/Header";
 import Link from "next/link";
 import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
-import Image from "next/image";
+import Logo from "../Logo/Logo";
 
 const useStyles = makeStyles(({ palette, typography }) => ({
   top: {
@@ -94,18 +94,14 @@ const Footer = React.memo(function AppFooter() {
                 width={"100%"}
                 height={120}
                 borderRadius={12}
-                className={"center overflow-y-hidden"}
+                className={"center overflow-hidden"}
+                fontSize={400}
               >
-                <Image
-                  width={280}
-                  height={280}
-                  src={"/logo-512x512.png"}
-                  alt={"Логотип бренда Погладить можно?"}
-                />
+                <Logo/>
               </Box>
               <Typography className={classes.info}>
                 <Box fontFamily={"Monospace"}>
-                  Architect VR, 830-1183 BKK Thailand 10220
+                  ZooHugge, Dnipro
                 </Box>
               </Typography>
 
