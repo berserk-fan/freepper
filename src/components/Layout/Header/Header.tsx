@@ -2,7 +2,7 @@ import React from "react";
 import {makeStyles, Theme} from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import { Box } from "@material-ui/core";
-import HeaderMenu from "./HeaderMenu";
+const HeaderMenu = dynamic(() => import("./HeaderMenu"));
 import HeaderCart from "./HeaderCart";
 import HeaderLogo from "./HeaderLogo";
 import HeaderActions from "./HeaderActions";
@@ -14,6 +14,7 @@ import ShopIcon from "../../Icons/ShopIcon";
 import { OverridableComponent } from "@material-ui/core/OverridableComponent";
 import { SvgIconTypeMap } from "@material-ui/core/SvgIcon/SvgIcon";
 import GroupIcon from "../../Icons/GroupIcon";
+import dynamic from "next/dynamic";
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
