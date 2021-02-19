@@ -1,14 +1,17 @@
 import { Box, Container } from "@material-ui/core";
-import Markdown from "./Renderers";
 import LayoutWithHeaderAndFooter from "../Layout/LayoutWithHeaderAndFooter";
 import React from "react";
+import { MDXProvider } from "@mdx-js/react"
+import {components} from "./components";
 
-export default function MdPage({ pageMd }: { pageMd: string }) {
-  return (
+export default function MdPage(props) {
+    return (
     <LayoutWithHeaderAndFooter>
       <Container maxWidth={"md"}>
         <Box py={8}>
-          <Markdown>{pageMd}</Markdown>
+            <MDXProvider components={components}>
+                <main {...props}/>
+            </MDXProvider>
         </Box>
       </Container>
     </LayoutWithHeaderAndFooter>

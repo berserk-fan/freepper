@@ -21,7 +21,6 @@ export default class MyDocument extends Document {
             href="/favicon-16x16.png"
           />
           <link rel="manifest" href="/site.webmanifest" />
-          {/* PWA primary color */}
           <meta
             name="apple-mobile-web-app-status-bar-style"
             content="black-translucent"
