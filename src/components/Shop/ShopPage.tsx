@@ -21,7 +21,7 @@ export default function ShopPage({products, categoryName}: ShopPageProps) {
                                 categoryName={categoryName}
                                 product={item}
                                 className={"mx-auto"}
-                                priority={idx === 0}
+                                priority={idx <= 1}
                             />
                         </Grid>
                     ))}
