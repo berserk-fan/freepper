@@ -1,31 +1,16 @@
-import React, {memo, useEffect, useState} from "react";
-import {fade, makeStyles, Theme} from "@material-ui/core/styles";
+import React, {useEffect, useRef, useState} from "react";
+import {makeStyles} from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
 import { Box } from "@material-ui/core";
-import { withStyles } from "@material-ui/styles";
 import Image from "next/image";
-import Slider from "./Slider";
-import { ToggleButton } from "@material-ui/lab";
 import Price from "./Price";
 import { TmpGroupedProduct } from "../../../configs/tmpProducts";
 import {SIZES} from "./ShopDefinitions";
-
-const CartButton = withStyles((theme: Theme) => ({
-  root: {
-    fontSize: "24px",
-    borderRadius: "20%",
-    "&$selected": {
-      color: fade(theme.palette.success.dark, 0.9),
-      backgroundColor: fade(theme.palette.success.light, 0.12),
-    },
-    "&$selected:hover": {
-      backgroundColor: fade(theme.palette.success.light, 0.2),
-    },
-  },
-  selected: {},
-}))(ToggleButton);
+import SliderMock from "./SliderMock";
+import {SliderProps} from "./Slider";
+import dynamic from "next/dynamic";
 
 const useStyles = makeStyles({
   media: {
@@ -71,11 +56,19 @@ export default function ItemView({
     return `/${categoryName}/${productName}`;
   }
 
+  const [SliderC, setSliderC] = useState<(props: SliderProps) => any>(SliderMock);
+  useEffect(() => {
+    import("./Slider")
+        .then(module => setSliderC(module.default))
+        .catch(err => console.error(`Failed to load Slider component: ${err}`))
+        .finally(() => console.log("Loaded component"))
+  }, []);
+
   return (
     <Box className={`mx-auto ${className}`} maxWidth={"500px"}>
       <Box className={classes.media} position={"relative"}>
         <Box className={classes.mediaChild}>
-          <Slider onChange={useSlideId} slides={images.map((image, idx) => (
+          <SliderC onChange={useSlideId} slides={images.map((image, idx) => (
               <Box key={image.src} className={classes.media}>
                 <Link href={productHref(image.name)}>
                   <Image

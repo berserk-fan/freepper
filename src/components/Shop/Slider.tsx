@@ -49,15 +49,17 @@ const useStyles = makeStyles((theme: Theme) => ({
   arrow_disabled: { fill: "rgba(255, 255, 255, 0.5)" },
 }));
 
+export type SliderProps = {
+  slides: React.ReactNode[];
+  className?: string;
+  onChange?: (slideNum: number) => void;
+};
+
 export default function Slider({
   slides,
   className = "",
   onChange,
-}: {
-  slides: any[];
-  className?: string;
-  onChange?: (slideNum: number) => void;
-}) {
+}: SliderProps) {
   const classes = useStyles();
   const [currentSlide, setCurrentSlide] = React.useState(0);
   function changeSlide(slideIdx: number) {
