@@ -6,7 +6,8 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText, Theme,
+  ListItemText,
+  Theme,
   Typography,
 } from "@material-ui/core";
 import React from "react";
