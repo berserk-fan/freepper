@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
 import Divider from "@material-ui/core/Divider";
@@ -10,11 +10,11 @@ import { NavMenu, NavItem } from "@mui-treasury/components/menu/navigation";
 import {
   CategoryProvider,
   CategoryTitle,
-  CategoryItem,
+  CategoryItem
 } from "@mui-treasury/components/menu/category";
 import {
   SocialProvider,
-  SocialLink,
+  SocialLink
 } from "@mui-treasury/components/socialLink";
 
 import { useMagCategoryMenuStyles } from "@mui-treasury/styles/categoryMenu/mag";
@@ -23,29 +23,29 @@ import { usePlainNavigationMenuStyles } from "@mui-treasury/styles/navigationMen
 import Link from "next/link";
 import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
 import Logo from "../Logo/Logo";
-import {modelPages, pages} from "../Header/pages";
+import { modelPages, pages } from "../Header/pages";
 
 const useStyles = makeStyles(({ palette, typography }) => ({
   top: {
     backgroundSize: "cover",
-    overflow: "hidden",
+    overflow: "hidden"
   },
   middle: {
-    backgroundColor: palette.type === "dark" ? "#192D36" : palette.action.hover,
+    backgroundColor: palette.type === "dark" ? "#192D36" : palette.action.hover
   },
   bottom: {
     backgroundColor:
-      palette.type === "dark" ? "#0F2128" : palette.action.selected,
+      palette.type === "dark" ? "#0F2128" : palette.action.selected
   },
   newsletterText: {
     color: "#fff",
     TypographySize: "0.875rem",
-    textTransform: "uppercase",
+    textTransform: "uppercase"
   },
   form: {
     margin: 0,
     minWidth: 343,
-    TypographySize: "0.875rem",
+    TypographySize: "0.875rem"
   },
   legalLink: {
     textTransform: "uppercase",
@@ -53,11 +53,11 @@ const useStyles = makeStyles(({ palette, typography }) => ({
     TypographySize: "0.75rem",
     justifyContent: "center",
     color: palette.text.hint,
-    letterSpacing: "0.5px",
+    letterSpacing: "0.5px"
   },
   divider: {
     height: 2,
-    margin: "-1px 0",
+    margin: "-1px 0"
   },
   overlay: {
     position: "absolute",
@@ -69,17 +69,18 @@ const useStyles = makeStyles(({ palette, typography }) => ({
     "& img": {
       width: "100%",
       height: "100%",
-      objectFit: "cover",
-    },
+      objectFit: "cover"
+    }
   },
   info: {
     ...typography.caption,
     color: palette.text.hint,
     marginTop: 8,
-  },
+    fontFamily: "Monospace"
+  }
 }));
 
-const Footer = React.memo(function AppFooter() {
+const Footer = memo(function AppFooter() {
   const classes = useStyles();
   const [contactsOpen, setContactsOpen] = useState(false);
   return (
@@ -97,16 +98,14 @@ const Footer = React.memo(function AppFooter() {
                 className={"center overflow-hidden"}
                 fontSize={400}
               >
-                <Logo/>
+                <Logo />
               </Box>
               <Typography className={classes.info}>
-                <Box fontFamily={"Monospace"}>
-                  ZooHugge, Dnipro
-                </Box>
+                ZooHugge, Dnipro
               </Typography>
 
               <Typography className={classes.info}>
-                <Box fontFamily={"Monospace"}>lika@pogladit-mozhno.com</Box>
+                lika@pogladit-mozhno.com
               </Typography>
             </Grid>
             <Grid item xs={12} md={8} lg={6}>
@@ -117,11 +116,11 @@ const Footer = React.memo(function AppFooter() {
                       <Typography>Модели</Typography>
                     </CategoryTitle>
                     {Object.values(modelPages).map((page) => (
-                      <Link href={pages.about.path}>
-                        <CategoryItem key={page.path}>
+                      <CategoryItem key={page.id}>
+                        <Link href={pages.about.path}>
                           <Typography>{page.name}</Typography>
-                        </CategoryItem>
-                      </Link>
+                        </Link>
+                      </CategoryItem>
                     ))}
                   </CategoryProvider>
                 </Grid>
@@ -133,13 +132,13 @@ const Footer = React.memo(function AppFooter() {
                     {[
                       pages.about,
                       pages["delivery-and-payment-info"],
-                      pages["returns-policy"],
+                      pages["returns-policy"]
                     ].map((page) => (
-                      <Link href={page.path} color={"textPrimary"}>
-                        <CategoryItem key={page.path}>
+                      <CategoryItem key={page.id}>
+                        <Link href={page.path} color={"textPrimary"}>
                           <Typography>{page.name}</Typography>
-                        </CategoryItem>
-                      </Link>
+                        </Link>
+                      </CategoryItem>
                     ))}
                     <CategoryItem>
                       <Typography onClick={() => setContactsOpen(true)}>
@@ -161,13 +160,13 @@ const Footer = React.memo(function AppFooter() {
                       pages.cooperation,
                       pages["public-offer"],
                       pages["privacy-policy"],
-                      pages.attributions,
+                      pages.attributions
                     ].map((page) => (
-                      <Link href={page.path} color={"textPrimary"}>
-                        <CategoryItem key={page.path}>
+                      <CategoryItem key={page.id}>
+                        <Link href={page.path} color={"textPrimary"}>
                           <Typography>{page.name}</Typography>
-                        </CategoryItem>
-                      </Link>
+                        </Link>
+                      </CategoryItem>
                     ))}
                   </CategoryProvider>
                 </Grid>
@@ -202,9 +201,9 @@ const Footer = React.memo(function AppFooter() {
                 <ColumnToRow at={"sm"}>
                   {[
                     pages.cooperation,
-                    pages["privacy-policy"],
+                    pages["privacy-policy"]
                   ].map((page) => (
-                    <NavItem className={classes.legalLink}>
+                    <NavItem key={page.id} className={classes.legalLink}>
                       <Link href={page.path}>
                         <Typography align={"center"}>{page.name}</Typography>
                       </Link>

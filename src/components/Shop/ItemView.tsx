@@ -57,18 +57,12 @@ export default function ItemView({
   }
 
   const [SliderC, setSliderC] = useState<(props: SliderProps) => any>(SliderMock);
-  useEffect(() => {
-    import("./Slider")
-        .then(module => setSliderC(module.default))
-        .catch(err => console.error(`Failed to load Slider component: ${err}`))
-        .finally(() => console.log("Loaded component"))
-  }, []);
 
   return (
     <Box className={`mx-auto ${className}`} maxWidth={"500px"}>
       <Box className={classes.media} position={"relative"}>
         <Box className={classes.mediaChild}>
-          <SliderC onChange={useSlideId} slides={images.map((image, idx) => (
+          <SliderMock onChange={useSlideId} slides={images.map((image, idx) => (
               <Box key={image.src} className={classes.media}>
                 <Link href={productHref(image.name)}>
                   <Image

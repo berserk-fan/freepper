@@ -4,8 +4,8 @@ import {SliderProps} from "./Slider";
 
 export default function SliderMock(props: SliderProps) {
     return (
-        <Box className={props.className}>
-            {props.slides[0]}
+        <Box >
+            {/*{props.slides[0]}*/}
         </Box>
     );
 }
