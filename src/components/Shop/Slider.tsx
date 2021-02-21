@@ -60,12 +60,14 @@ export default function Slider({
 }) {
   const classes = useStyles();
   const [currentSlide, setCurrentSlide] = React.useState(0);
+
   function changeSlide(slideIdx: number) {
     setCurrentSlide(slideIdx);
     if (onChange) {
       onChange(slideIdx);
     }
   }
+
   const [sliderRef, slider] = useKeenSlider({
     initial: 0,
     spacing: 15,
@@ -103,10 +105,7 @@ export default function Slider({
     <Box className={classes.navigationContainer}>
       <Typography variant="caption" align="center">
         <Box fontFamily="Monospace">
-          {currentSlide + 1}
-          {" "}
-          /
-          {slider.details().size}
+          {currentSlide + 1} /{slider.details().size}
         </Box>
       </Typography>
     </Box>
@@ -121,7 +120,7 @@ export default function Slider({
       <div ref={sliderRef as any} className="keen-slider">
         {slides.map((slide, idx) => (
           <div className="keen-slider__slide">
-            {shouldLoad(idx) ? slide : <></>}
+            {shouldLoad(idx) ? slide : null}
           </div>
         ))}
       </div>

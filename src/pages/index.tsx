@@ -1,12 +1,19 @@
-import React from 'react';
-import { Box, Button, Theme, Typography, useTheme, withStyles } from '@material-ui/core';
-import Image from 'next/image';
-import { GetStaticProps } from 'next';
-import { Product } from '@mamat14/shop-server/shop_model';
-import Link from 'next/link';
-import { makeStyles } from '@material-ui/styles';
-import { shopClient } from '../store';
-import LayoutWithHeaderAndFooter from '../components/Layout/LayoutWithHeaderAndFooter';
+import React from "react";
+import {
+  Box,
+  Button,
+  Theme,
+  Typography,
+  useTheme,
+  withStyles,
+} from "@material-ui/core";
+import Image from "next/image";
+import { GetStaticProps } from "next";
+import { Product } from "@mamat14/shop-server/shop_model";
+import Link from "next/link";
+import { makeStyles } from "@material-ui/styles";
+import { shopClient } from "../store";
+import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
 
 const ColorButton = withStyles((theme: Theme) => ({
   root: {
@@ -119,7 +126,7 @@ export default function Home({ products }: { products: Product[] }) {
           </Typography>
           <Box aria-label="novelties" component="ul">
             {products.map((p) => (
-              <Box marginX={4} marginY={5} component="li">
+              <Box key={p.id} marginX={4} marginY={5} component="li">
                 {/* <ItemView */}
                 {/*  productRef={`/categories/beds/${p.name}`} */}
                 {/*  product={p} */}
@@ -128,11 +135,7 @@ export default function Home({ products }: { products: Product[] }) {
             ))}
           </Box>
         </Box>
-        <Box
-          marginTop={2}
-          aria-label="how do we make it?"
-          component="section"
-        >
+        <Box marginTop={2} aria-label="how do we make it?" component="section">
           <Box className="flex flex-col">
             <Typography variant="h2" gutterBottom>
               Как они это делают?

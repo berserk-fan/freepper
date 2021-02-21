@@ -16,6 +16,19 @@
     "jest": true
   },
   "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 80,
+        "jsxSingleQuote": false,
+        "singleQuote": false,
+        "useTabs": false,
+        "trailingComma": "all",
+        "tabWidth": 2,
+        "semi": true,
+        "jsxBracketSameLine": false
+      }
+    ],
     "max-len": [
       "warn",
       {
