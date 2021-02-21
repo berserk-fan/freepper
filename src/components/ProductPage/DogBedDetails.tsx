@@ -1,6 +1,6 @@
 import { DogBed } from "@mamat14/shop-server/shop_model";
-import FabricPicker from "./FabricPicker";
 import React from "react";
+import FabricPicker from "./FabricPicker";
 import SizePicker from "./SizePicker";
 
 export default function DogBedDetails({
@@ -14,8 +14,8 @@ export default function DogBedDetails({
   variants.forEach((v) =>
     hrefMap.set(
       `${v.fabricId}-${v.sizeId}`,
-      `/${categoryName}/${v.variantName}`
-    )
+      `/${categoryName}/${v.variantName}`,
+    ),
   );
   const fabricsWithRefs = fabrics.map((f) => ({
     ...f,

@@ -1,7 +1,7 @@
-import {makeValidateSync} from "mui-rff";
-import {mixed, number, object, ObjectSchema, string} from "yup";
-import {DeliveryOption, DeliveryProvider, Order, PaymentOption,} from "../../order-model";
-import {CartState} from "../Cart/Cart";
+import { makeValidateSync } from "mui-rff";
+import { mixed, number, object, ObjectSchema, string } from "yup";
+import { DeliveryOption, DeliveryProvider, Order, PaymentOption } from "../../order-model";
+import { CartState } from "../Cart/Cart";
 
 export const buttonTexts = [
   "К проверке заказа",
@@ -80,7 +80,7 @@ export function getDeliveryOptionName(option: DeliveryOption) {
 export function getDeliveryProviderName(provider: DeliveryProvider) {
   if (provider === DeliveryProvider.NOVAYA_POCHTA) {
     return "Новая почта";
-  } else {
-    return "Неизвестно";
-  }
+  } 
+  return "Неизвестно";
+  
 }

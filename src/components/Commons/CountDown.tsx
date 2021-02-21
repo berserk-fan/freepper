@@ -25,7 +25,7 @@ export default function CountDown({
   }
 
   return (
-    <Typography component={"span"} display={"inline"}>
+    <Typography component="span" display="inline">
       {time.toString()}
     </Typography>
   );

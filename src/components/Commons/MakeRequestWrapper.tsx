@@ -4,7 +4,7 @@ import React from "react";
 export default function MakeRequestWrapper({ children, isProcessing }) {
   return (
     <Box>
-      <Box height={"4px"} marginTop={"-4px"} marginX={"2px"}>
+      <Box height="4px" marginTop="-4px" marginX="2px">
         <Fade
           in={isProcessing}
           style={{

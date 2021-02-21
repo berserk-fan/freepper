@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import {Box, Theme, Typography} from "@material-ui/core";
+import { Box, Theme, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -49,17 +49,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   arrow_disabled: { fill: "rgba(255, 255, 255, 0.5)" },
 }));
 
-export type SliderProps = {
-  slides: React.ReactNode[];
-  className?: string;
-  onChange?: (slideNum: number) => void;
-};
-
 export default function Slider({
   slides,
   className = "",
   onChange,
-}: SliderProps) {
+}: {
+  slides: any[];
+  className?: string;
+  onChange?: (slideNum: number) => void;
+}) {
   const classes = useStyles();
   const [currentSlide, setCurrentSlide] = React.useState(0);
   function changeSlide(slideIdx: number) {
@@ -103,9 +101,12 @@ export default function Slider({
 
   const Numbers = () => (
     <Box className={classes.navigationContainer}>
-      <Typography variant={"caption"} align={"center"}>
-        <Box fontFamily={"Monospace"}>
-          {currentSlide + 1} / {slider.details().size}
+      <Typography variant="caption" align="center">
+        <Box fontFamily="Monospace">
+          {currentSlide + 1}
+          {" "}
+          /
+          {slider.details().size}
         </Box>
       </Typography>
     </Box>
@@ -116,14 +117,14 @@ export default function Slider({
   }
 
   return (
-    <Box className={className} position={"relative"}>
-      <div ref={sliderRef as any} className={`keen-slider`}>
-          {slides.map((slide, idx) => (
-            <div className="keen-slider__slide">
-              {shouldLoad(idx) ? slide : <></>}
-            </div>
-          ))}
-        </div>
+    <Box className={className} position="relative">
+      <div ref={sliderRef as any} className="keen-slider">
+        {slides.map((slide, idx) => (
+          <div className="keen-slider__slide">
+            {shouldLoad(idx) ? slide : <></>}
+          </div>
+        ))}
+      </div>
       {slider &&
         slides.length > 1 &&
         (slides.length <= 7 ? <Dots /> : <Numbers />)}

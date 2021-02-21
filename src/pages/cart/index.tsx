@@ -6,7 +6,7 @@ import Cart from "../../components/Cart/Cart";
 export default function CartPage() {
   return (
     <LayoutWithHeaderAndFooter>
-      <Container maxWidth={"sm"}>
+      <Container maxWidth="sm">
         <Cart />
       </Container>
     </LayoutWithHeaderAndFooter>

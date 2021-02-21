@@ -1,20 +1,21 @@
 import { Product } from "@mamat14/shop-server/shop_model";
-import { CartState } from "../Cart/Cart";
-import {Box, Divider, Fab, Typography, useTheme, Zoom} from "@material-ui/core";
+import { Box, Divider, Fab, Typography, useTheme, Zoom } from "@material-ui/core";
 import Image from "next/image";
-import Price from "../Shop/Price";
 import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlineOutlined";
 import React, { memo } from "react";
-import { addProductAction, StoreState } from "../../store";
 import { connect } from "react-redux";
 import Link from "next/link";
-import DogBedDetails from "./DogBedDetails";
-import Spacing from "../Commons/Spacing";
 import { makeStyles } from "@material-ui/styles";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
-const Markdown = dynamic(() => import("../Markdown/Renderers"));
-import SliderThumbs from "../Shop/SliderThumbs";
 import dynamic from "next/dynamic";
+import DogBedDetails from "./DogBedDetails";
+import Spacing from "../Commons/Spacing";
+import SliderThumbs from "../Shop/SliderThumbs";
+import { addProductAction, StoreState } from "../../store";
+import Price from "../Shop/Price";
+import { CartState } from "../Cart/Cart";
+
+const Markdown = dynamic(() => import("../Markdown/Renderers"));
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
@@ -63,7 +64,9 @@ function MakeFab({
       onClick={onClick}
       style={style}
     >
-      {icon || false} <Typography variant={"button"}>{label}</Typography>
+      {icon || false}
+      {" "}
+      <Typography variant="button">{label}</Typography>
     </Fab>
   );
   return href ? <Link href={href}>{innerPart}</Link> : innerPart;
@@ -86,7 +89,7 @@ function ProductPage({
   function addToCart() {
     addProduct(product);
   }
-
+  const x = 1;
   const classes = useStyles();
   const fabs = [
     {
@@ -115,34 +118,34 @@ function ProductPage({
 
   const productDetailsPart = getDetails(categoryName, product);
   return (
-    <Box marginX={"auto"} maxWidth={"500px"} padding={1}>
+    <Box marginX="auto" maxWidth="500px" padding={1}>
       <SliderThumbs
         slides={images.map((image, idx) => (
-          <Box key={image.src} className={`flex overflow-hidden items-center`}>
-            <Image priority={idx === 0} width={500} height={500} src={image.src} alt={displayName} layout={"intrinsic"}/>
+          <Box key={image.src} className="flex overflow-hidden items-center">
+            <Image priority={idx === 0} width={500} height={500} src={image.src} alt={displayName} layout="intrinsic" />
           </Box>
         ))}
         thumbs={images.map((image) => (
-          <Box key={image.src} className={`flex overflow-hidden items-center`}>
+          <Box key={image.src} className="flex overflow-hidden items-center">
             <Image width={75} height={75} src={image.src} alt={displayName} />
           </Box>
         ))}
       />
       <Spacing
         spacing={1}
-        className={"flex flex-col"}
-        childClassName={"w-full"}
+        className="flex flex-col"
+        childClassName="w-full"
       >
-        <Typography variant={"h4"} component={"h1"}>
+        <Typography variant="h4" component="h1">
           {displayName}
         </Typography>
-        <Typography variant={"h5"}>
+        <Typography variant="h5">
           <Price price={price} />
         </Typography>
         {productDetailsPart && <Divider />}
         {productDetailsPart}
         {productDetailsPart && <Divider />}
-        <Box width={"100%"} height={"50px"}>
+        <Box width="100%" height="50px">
           {(inCart ? fabs : fabs.reverse()).map((fab) => (
             <Zoom
               key={fab.key}
@@ -151,7 +154,7 @@ function ProductPage({
               style={{
                 transitionDelay: `${fab.show ? transitionDuration.exit : 0}ms`,
               }}
-              mountOnEnter={true}
+              mountOnEnter
               unmountOnExit
             >
               <MakeFab {...fab} />
@@ -160,13 +163,15 @@ function ProductPage({
         </Box>
         <ul>
           {checkMarks.map((text) => (
-            <li className={"flex"}>
-              <CheckCircleOutlineOutlinedIcon /> <Typography>{text}</Typography>
+            <li className="flex">
+              <CheckCircleOutlineOutlinedIcon />
+              {" "}
+              <Typography>{text}</Typography>
             </li>
           ))}
         </ul>
         <Divider />
-        <Typography variant={"h4"}>Описание</Typography>
+        <Typography variant="h4">Описание</Typography>
         <Box marginLeft={1} paddingTop={0}>
           <Markdown>{product.description}</Markdown>
         </Box>

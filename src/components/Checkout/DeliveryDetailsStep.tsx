@@ -1,27 +1,27 @@
-import {Box, Typography,} from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import React from "react";
-import {Radios, TextField} from "mui-rff";
-import {DeliveryOption, DeliveryProvider} from "../../order-model";
-import {PhoneNumber} from "../Inputs/PhoneNumber";
-import {Field} from "react-final-form";
+import { Radios, TextField } from "mui-rff";
+import { Field } from "react-final-form";
+import { DeliveryOption, DeliveryProvider } from "../../order-model";
+import { PhoneNumber } from "../Inputs/PhoneNumber";
 import Spacing from "../Commons/Spacing";
-import {getDeliveryOptionName, OrderForm} from "./Definitions";
+import { getDeliveryOptionName, OrderForm } from "./Definitions";
 import NovayaPochtaIcon from "../Icons/NovayaPochtaIcon";
 
 function pathName<T>(key1: keyof T) {
-    return `${key1}`;
+  return `${key1}`;
 }
 
 export default function DeliveryDetailsForm() {
   const deliveryOptions = [DeliveryOption.TO_WAREHOUSE];
   return (
-    <Box maxWidth={"md"} className={"flex flex-col"}>
-      <Typography variant={"h4"} align={"center"} gutterBottom>
+    <Box maxWidth="md" className="flex flex-col">
+      <Typography variant="h4" align="center" gutterBottom>
         Данные для доставки
       </Typography>
-      <Spacing spacing={1} childClassName={"w-full"}>
+      <Spacing spacing={1} childClassName="w-full">
         <TextField
-          color={"secondary"}
+          color="secondary"
           name={pathName<OrderForm>( "name")}
           required
           fullWidth
@@ -29,12 +29,12 @@ export default function DeliveryDetailsForm() {
           label="Фамилия и Имя"
           variant="filled"
           type="text"
-          autoComplete={"name"}
+          autoComplete="name"
         />
         <Field
-          id={"phone-input"}
+          id="phone-input"
           name={pathName<OrderForm>( "phone")}
-          placeholder={"Номер телефона"}
+          placeholder="Номер телефона"
           component={PhoneNumber}
         />
         <Radios
@@ -43,7 +43,7 @@ export default function DeliveryDetailsForm() {
           required
           data={[
             {
-              label: <NovayaPochtaIcon/>,
+              label: <NovayaPochtaIcon />,
               value: DeliveryProvider.NOVAYA_POCHTA,
             },
           ]}
@@ -53,7 +53,7 @@ export default function DeliveryDetailsForm() {
           name={pathName<OrderForm>( "deliveryOption")}
           id="select-devilery-option"
           label="Способ доставки"
-          color={"secondary"}
+          color="secondary"
           data={deliveryOptions.map((option) => ({
             label: <Typography>{getDeliveryOptionName(option)}</Typography>,
             value: option,
@@ -61,7 +61,7 @@ export default function DeliveryDetailsForm() {
         />
 
         <TextField
-          color={"secondary"}
+          color="secondary"
           name={pathName<OrderForm>( "city")}
           required
           fullWidth
@@ -69,10 +69,10 @@ export default function DeliveryDetailsForm() {
           label="Город"
           variant="filled"
           type="text"
-          autoComplete={"city"}
+          autoComplete="city"
         />
         <TextField
-          color={"secondary"}
+          color="secondary"
           name={pathName<OrderForm>( "warehouseNumber")}
           required
           fullWidth
@@ -80,7 +80,7 @@ export default function DeliveryDetailsForm() {
           label="Номер отделения"
           variant="filled"
           type="number"
-          autoComplete={"warehouseNumber"}
+          autoComplete="warehouseNumber"
         />
       </Spacing>
     </Box>

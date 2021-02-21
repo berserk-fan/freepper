@@ -22,7 +22,7 @@ type UseErrorHandlingResult = {
 export default function useErrorHandling(
   onComplete: () => void,
   maxServerRetries: number,
-  retryPeriod: number
+  retryPeriod: number,
 ): UseErrorHandlingResult {
   const [submitState, setSubmitState] = useState<SubmitState>("NOT_SUBMITTED");
   const [retryNumber, setRetryNumber] = useState(0);
@@ -84,7 +84,7 @@ export default function useErrorHandling(
           if (err.name === "AbortError") {
             newState = "CANCELLED";
             if (curState === "NOT_SUBMITTED") {
-              //for reset
+              // for reset
               return;
             }
           } else {
@@ -106,13 +106,13 @@ export default function useErrorHandling(
         factor: 1,
         minTimeout: retryPeriod * 1000,
         maxTimeout: retryPeriod * 1000,
-      }
+      },
     );
   }
 
   return {
     submitState,
-    customFetch: customFetch,
+    customFetch,
     currentRetry: retryNumber,
     cancel,
     reset,

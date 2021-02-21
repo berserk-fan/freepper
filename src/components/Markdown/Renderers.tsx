@@ -14,7 +14,7 @@ import {
   ListItemText,
   List,
   ListItemIcon,
-  useTheme
+  useTheme,
 } from "@material-ui/core";
 import ReactMarkdown from "react-markdown";
 import { ListContent, List as MdList } from "mdast";
@@ -71,7 +71,7 @@ const MarkdownHeading = withStyles(styles)(
         {props.children}
       </Typography>
     );
-  }
+  },
 );
 
 const MarkdownListItem = withStyles(styles)((props: ListContent & any) => {
@@ -79,7 +79,7 @@ const MarkdownListItem = withStyles(styles)((props: ListContent & any) => {
   return (
     <ListItem
       style={{ paddingTop: 0, paddingBottom: 0 }}
-      alignItems={"flex-start"}
+      alignItems="flex-start"
     >
       <ListItemIcon style={{ minWidth: 18 }}>
         <FiberManualRecordIcon
@@ -87,7 +87,7 @@ const MarkdownListItem = withStyles(styles)((props: ListContent & any) => {
         />
       </ListItemIcon>
       <ListItemText style={{ marginTop: 2 }}>
-        <Typography component="span" variant={"body2"}>
+        <Typography component="span" variant="body2">
           {props.children}
         </Typography>
       </ListItemText>
@@ -95,13 +95,11 @@ const MarkdownListItem = withStyles(styles)((props: ListContent & any) => {
   );
 });
 
-const MarkdownList = (props: MdList) => {
-  return (
-    <List dense disablePadding>
-      {props.children}
-    </List>
-  );
-};
+const MarkdownList = (props: MdList) => (
+  <List dense disablePadding>
+    {props.children}
+  </List>
+);
 
 function MarkdownTable(props: { children: ReactNode }) {
   return (

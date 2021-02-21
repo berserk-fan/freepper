@@ -9,26 +9,26 @@ import {
   Snackbar,
   Typography,
 } from "@material-ui/core";
-import CountDown from "../Commons/CountDown";
 import React, { useState } from "react";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import CloseIcon from "@material-ui/icons/Close";
+import { Offline } from "react-detect-offline";
 import ContactUs from "../ContactUs/ContactUs";
 import { SubmitState } from "../Commons/UseErrorHandling";
-import { Offline } from "react-detect-offline";
+import CountDown from "../Commons/CountDown";
 import ButtonWithDetail from "../Commons/ButtonWithDetail";
 
 function FailedHeader({ onClose }: { onClose: () => void }) {
   return (
     <Box>
-      <AlertTitle className={"flex justify-between items-start"}>
-        <Typography variant={"h5"}>Не удалось отправить заказ</Typography>
-        <IconButton size={"small"} aria-label={"закрыть"} onClick={onClose}>
+      <AlertTitle className="flex justify-between items-start">
+        <Typography variant="h5">Не удалось отправить заказ</Typography>
+        <IconButton size="small" aria-label="закрыть" onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </AlertTitle>
       <Offline>
-        <Typography variant={"caption"}>
+        <Typography variant="caption">
           Скорее всего у вас пропал интернет
         </Typography>
       </Offline>
@@ -46,28 +46,26 @@ function ManualOrderMessage({
   const [showContactUs, setShowContactUs] = useState(false);
 
   return (
-    <Alert severity={"info"}>
+    <Alert severity="info">
       <Box pb={2}>
         <FailedHeader onClose={onClose} />
         <Typography gutterBottom>Выберите что делать</Typography>
-        <Typography variant={"caption"}>
+        <Typography variant="caption">
           Нажмите на вопросик чтобы узнать детали.
         </Typography>
-        <Box className={"flex justify-between items-center"}>
+        <Box className="flex justify-between items-center">
           <ButtonWithDetail
             onClick={onRetry}
-            size={"small"}
-            variant={"outlined"}
-            detailText={
-              "Попробовать еще раз. Может помочь если у вас вернулся интернет."
-            }
+            size="small"
+            variant="outlined"
+            detailText="Попробовать еще раз. Может помочь если у вас вернулся интернет."
           >
             Повторить
           </ButtonWithDetail>
           <ButtonWithDetail
-            size={"small"}
-            variant={"outlined"}
-            detailText={"Заказать телефоном или в телеграме"}
+            size="small"
+            variant="outlined"
+            detailText="Заказать телефоном или в телеграме"
             onClick={() => setShowContactUs((prev) => !prev)}
           >
             ДРУГОЙ СПОСОБ
@@ -97,10 +95,11 @@ function RetryMessage({
   onClose: () => void;
 }) {
   return (
-    <Alert severity={"warning"}>
+    <Alert severity="warning">
       <FailedHeader onClose={onClose} />
       <Typography>
-        Попробую еще раз через{" "}
+        Попробую еще раз через
+        {" "}
         <CountDown countDownId={retryNumber} periodSec={retryPeriod} />
       </Typography>
     </Alert>
@@ -109,7 +108,7 @@ function RetryMessage({
 
 function OkMessage() {
   return (
-    <Alert severity={"success"}>
+    <Alert severity="success">
       <Typography>Заказ отправлен успешно</Typography>
     </Alert>
   );
@@ -118,16 +117,16 @@ function OkMessage() {
 function Sending({ onCancel }: { onCancel: () => void }): React.ReactElement {
   return (
     <Alert
-      severity={"info"}
-      action={
+      severity="info"
+      action={(
         <ButtonWithDetail
-          detailText={"Отменить запрос и попробовать другой способ"}
-          size={"small"}
+          detailText="Отменить запрос и попробовать другой способ"
+          size="small"
           onClick={onCancel}
         >
           ОТМЕНА
         </ButtonWithDetail>
-      }
+      )}
     >
       <Typography>Отправляю заказ...</Typography>
       <Offline>

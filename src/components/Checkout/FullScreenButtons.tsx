@@ -19,7 +19,7 @@ export default function FullScreenButtons({
   backDisabled,
 }: FullScreenButtonsProps) {
   return (
-    <Box margin={1} className={"flex justify-between"}>
+    <Box margin={1} className="flex justify-between">
       <Button disabled={backDisabled} onClick={onBack}>
         Назад
       </Button>

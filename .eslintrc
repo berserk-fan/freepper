@@ -1,0 +1,63 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module",
+    "allowImportExportEverywhere": false,
+    "codeFrame": false,
+    "project": "./tsconfig.json"
+  },
+  "extends": [
+    "airbnb-typescript",
+    "prettier"
+  ],
+  "env": {
+    "browser": true,
+    "jest": true
+  },
+  "rules": {
+    "max-len": [
+      "warn",
+      {
+        "code": 120,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreComments": true
+      }
+    ],
+    "no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "args": "none"
+      }
+    ],
+    "@typescript-eslint/quotes": [
+      2,
+      "double",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "prefer-promise-reject-errors": [
+      "off"
+    ],
+    "react/jsx-filename-extension": [
+      "off"
+    ],
+    "no-return-assign": [
+      "off"
+    ],
+    "import/extensions": [
+      "off"
+    ],
+    "react/jsx-key": "error",
+    "react/jsx-props-no-spreading": "off",
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/naming-convention": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/destructuring-assignment": "off",
+    "react/require-default-props": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/no-unused-vars": "off"
+  }
+}

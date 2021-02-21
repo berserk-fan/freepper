@@ -34,7 +34,7 @@ export default function ContactUs() {
   const telegramChat = "https://t.me/pogladit_mozhno";
   return (
     <Box>
-      <Typography variant={"caption"}>
+      <Typography variant="caption">
         Нажмите на интересующий вариант
       </Typography>
       <List dense component="nav" aria-label="main mailbox folders">
@@ -47,8 +47,8 @@ export default function ContactUs() {
         </ListItem>
         <Collapse in={telOpen} timeout="auto">
           <List component="div" disablePadding>
-            <PhoneNumber phone={"+380950717564"} className={classes.nested} />
-            <PhoneNumber phone={"+380671111111"} className={classes.nested} />
+            <PhoneNumber phone="+380950717564" className={classes.nested} />
+            <PhoneNumber phone="+380671111111" className={classes.nested} />
           </List>
         </Collapse>
         <ListItem button onClick={() => setTelegramToggle((prev) => !prev)}>
@@ -56,7 +56,7 @@ export default function ContactUs() {
             <TelegramIcon />
           </ListItemIcon>
           <ListItemText>
-            <Typography component={"span"} display={"inline"}>
+            <Typography component="span" display="inline">
               Telegram
             </Typography>
           </ListItemText>
@@ -66,11 +66,11 @@ export default function ContactUs() {
           <List component="div" disablePadding>
             <ListItem className={classes.nested} dense>
               <ButtonWithDetail
-                size={"small"}
+                size="small"
                 href={telegramChat}
-                target={"_blank"}
-                rel={"noopener"}
-                detailText={"Логин: pogladit_mozhno"}
+                target="_blank"
+                rel="noopener"
+                detailText="Логин: pogladit_mozhno"
               >
                 Начать Telegram чат
               </ButtonWithDetail>

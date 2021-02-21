@@ -7,14 +7,14 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Divider from "@material-ui/core/Divider";
-import {Box, Grid, makeStyles, Theme, Typography, useMediaQuery, useTheme} from "@material-ui/core";
-import { CartProduct } from "../../pages/checkout";
+import { Box, Grid, makeStyles, Theme, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import Image from "next/image";
+import { connect } from "react-redux";
+import { CartProduct } from "../../pages/checkout";
 import { StoreState } from "../../store";
 import { CartState } from "../Cart/Cart";
-import { connect } from "react-redux";
 import Spacing from "../Commons/Spacing";
-import {getDeliveryOptionName, getDeliveryProviderName, OrderForm} from "./Definitions";
+import { getDeliveryOptionName, getDeliveryProviderName, OrderForm } from "./Definitions";
 
 type Column<T> = {
   name: string;
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   tableCell2: {
 
-  }
+  },
 }));
 
 const formSummaryColumns: Column<OrderForm>[] = [
@@ -52,9 +52,7 @@ const formSummaryColumns: Column<OrderForm>[] = [
   },
   {
     name: "Адрес",
-    extractor: (t: OrderForm) => {
-      return `${t?.city} Отделение номер ${t?.warehouseNumber}`;
-    },
+    extractor: (t: OrderForm) => `${t?.city} Отделение номер ${t?.warehouseNumber}`,
   },
 ];
 
@@ -62,11 +60,11 @@ function FormSummaryTable({ orderForm }: { orderForm: OrderForm }) {
   const classes = useStyles();
   return (
     <TableContainer component={Paper}>
-      <Table size={"small"}>
+      <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell colSpan={4}>
-              <Typography variant={"h4"}>Доставка</Typography>
+              <Typography variant="h4">Доставка</Typography>
             </TableCell>
           </TableRow>
         </TableHead>
@@ -105,7 +103,7 @@ function Summary({
   const columns: Column<CartProduct>[] = [
     {
       name: "Цена",
-      extractor: (p: CartProduct) => p.price.price.toString() + " ₴",
+      extractor: (p: CartProduct) => `${p.price.price.toString()  } ₴`,
     },
     {
       name: "Количество",
@@ -114,30 +112,32 @@ function Summary({
     {
       name: "Сумма",
       extractor: (p: CartProduct) =>
-        (p.count * p.price.price).toString() + " ₴",
+        `${(p.count * p.price.price).toString()  } ₴`,
     },
   ];
 
   const fullWidth = useMediaQuery(theme.breakpoints.up("sm"));
   return (
     <>
-      <Typography align="center" variant={"h3"}>
+      <Typography align="center" variant="h3">
         Проверьте заказ
       </Typography>
       <Paper>
         <Box marginTop={1}>
-          <Box className={"flex flex-col"}>
+          <Box className="flex flex-col">
             <Box
               paddingX={2}
               paddingY={1}
-              className={"flex justify-between items-center"}
+              className="flex justify-between items-center"
             >
-              <Typography variant={"h4"}>Корзина</Typography>
-              <Typography variant={"h5"}>
-                <Typography variant={"body1"} display="inline">
+              <Typography variant="h4">Корзина</Typography>
+              <Typography variant="h5">
+                <Typography variant="body1" display="inline">
                   на сумму:
                 </Typography>
-                {invoiceTotal} ₴
+                {invoiceTotal}
+                {" "}
+                ₴
               </Typography>
             </Box>
             <Divider />
@@ -146,25 +146,25 @@ function Summary({
                 <Grid
                   container
                   spacing={2}
-                  justify={"space-between"}
-                  alignItems={"center"}
+                  justify="space-between"
+                  alignItems="center"
                   direction={fullWidth ? "row" : "column"}
                 >
                   <Grid
                     item
                     xs={12}
                     sm={5}
-                    className={"flex justify-start items-center self-start"}
+                    className="flex justify-start items-center self-start"
                   >
                     <Image
-                      className={"rounded"}
+                      className="rounded"
                       width={72}
                       height={72}
                       src={product.images[0].src}
                       alt={product.images[0].alt}
                     />
                     <Box paddingLeft={1}>
-                      <Typography variant={"h6"}>
+                      <Typography variant="h6">
                         {product.displayName}
                       </Typography>
                     </Box>
@@ -173,22 +173,22 @@ function Summary({
                     spacing={2}
                     xs={12}
                     sm={7}
-                    wrap={"nowrap"}
-                    className={"flex-no-wrap justify-center items-center"}
+                    wrap="nowrap"
+                    className="flex-no-wrap justify-center items-center"
                     item
                   >
                     {columns.map((col) => (
-                      <div className={"flex flex-col justify-center"}>
+                      <div className="flex flex-col justify-center">
                         <div>
                           <Typography
-                            color={"textSecondary"}
-                            variant={"caption"}
+                            color="textSecondary"
+                            variant="caption"
                           >
                             {col.name}
                           </Typography>
                         </div>
                         <div>
-                          <Typography align={"center"}>
+                          <Typography align="center">
                             {col.extractor(product)}
                           </Typography>
                         </div>

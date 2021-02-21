@@ -2,7 +2,7 @@ import Link from "next/link";
 import React from "react";
 import { Box, Typography } from "@material-ui/core";
 import { NavItem, NavMenu } from "@mui-treasury/components/menu/navigation";
-import {Page, pages, shopPageGroup} from "./pages";
+import { Page, pages, shopPageGroup } from "./pages";
 
 export default function HeaderActions(props) {
   const bigHeaderPages: Page[] = [
@@ -15,9 +15,9 @@ export default function HeaderActions(props) {
       {bigHeaderPages.map(({ id, path, name, icon }) => (
         <NavItem key={id}>
           <Link href={path}>
-            <Box className={"flex justify-between items-center"}>
+            <Box className="flex justify-between items-center">
               {React.createElement(icon)}
-              <Typography style={{ paddingLeft: "8px" }} variant={"button"}>
+              <Typography style={{ paddingLeft: "8px" }} variant="button">
                 {name}
               </Typography>
             </Box>

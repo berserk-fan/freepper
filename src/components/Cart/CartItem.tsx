@@ -84,7 +84,7 @@ const cartItem = function CartItem({
         >
           <RemoveIcon className={classes.quantityControlsIcon} />
         </IconButton>
-        <Box className="select-none" fontFamily={"Monospace"}>
+        <Box className="select-none" fontFamily="Monospace">
           {count}
         </Box>
         <IconButton
@@ -98,7 +98,7 @@ const cartItem = function CartItem({
   }
 
   return (
-    <Card variant={"outlined"} className={classes.root}>
+    <Card variant="outlined" className={classes.root}>
       <div className={`flex justify-center ${classes.imageContainer}`}>
         <div className={`flex ${classes.image}`}>
           <Image width={148} height={148} src={image.src} alt={image.alt} />
@@ -109,16 +109,18 @@ const cartItem = function CartItem({
       >
         <CardContent>
           <div className="flex flex-col justify-between">
-            <Typography noWrap align={"right"} variant={"h6"}>
+            <Typography noWrap align="right" variant="h6">
               {displayName}
             </Typography>
             <Typography
               noWrap
-              color={"textSecondary"}
-              align={"right"}
-              variant={"h6"}
+              color="textSecondary"
+              align="right"
+              variant="h6"
             >
-              {price.price} ₴
+              {price.price}
+              {" "}
+              ₴
             </Typography>
           </div>
         </CardContent>
@@ -126,10 +128,10 @@ const cartItem = function CartItem({
           marginBottom={1}
           paddingLeft={1}
           paddingRight={2}
-          className={"flex justify-between items-center"}
+          className="flex justify-between items-center"
         >
           <Box marginLeft={1}>{getAdditionalInfo(product)}</Box>
-          <Box marginLeft={1} className={"flex place-items-center"}>
+          <Box marginLeft={1} className="flex place-items-center">
             <QuantityControls />
             {ActionsPopover(id, deleteProduct)}
           </Box>
@@ -152,15 +154,15 @@ function getAdditionalInfo({ details }: Product) {
   switch (details.$case) {
     case "dogBed":
       const size = details.dogBed.sizes.find(
-        (s) => s.id == details.dogBed.sizeId
+        (s) => s.id == details.dogBed.sizeId,
       );
       return (
         <div>
-          <Typography noWrap display={"inline"} variant={"caption"}>
+          <Typography noWrap display="inline" variant="caption">
             Размер:
           </Typography>
-          <Typography noWrap display={"inline"} variant={"h6"}>
-            {" " + size.displayName}
+          <Typography noWrap display="inline" variant="h6">
+            {` ${  size.displayName}`}
           </Typography>
         </div>
       );
@@ -169,13 +171,13 @@ function getAdditionalInfo({ details }: Product) {
 
 export function ActionsPopover(
   productId: string,
-  deleteProduct: (id: string) => void
+  deleteProduct: (id: string) => void,
 ) {
   return (
     <PopupStateComponent variant="popover" popupId="cart-action-popover">
       {(popupState) => (
         <div>
-          <IconButton size={"small"} {...bindTrigger(popupState)}>
+          <IconButton size="small" {...bindTrigger(popupState)}>
             <MoreVertIcon />
           </IconButton>
           <Popover
@@ -189,7 +191,7 @@ export function ActionsPopover(
               horizontal: "right",
             }}
           >
-            <div className={"flex flex-col"}>
+            <div className="flex flex-col">
               <Button
                 onClick={() => {
                   deleteProduct(productId);

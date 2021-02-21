@@ -19,7 +19,7 @@ export const tmpProducts: TmpGroupedProduct[] = [
   {
     id: "tmpChemodan",
     name: chemodans[0].name,
-    displayName: `Чемодан`,
+    displayName: "Чемодан",
     description: "",
     price: min(chemodans),
     images: [
@@ -138,7 +138,7 @@ export const tmpProducts: TmpGroupedProduct[] = [
   {
     id: "tmpLukoshko",
     name: lukoshkoDuos[0].name,
-    displayName: `Лукошко Дуо`,
+    displayName: "Лукошко Дуо",
     description: "",
     price: min(lukoshkoDuos),
     images: [
@@ -152,7 +152,7 @@ export const tmpProducts: TmpGroupedProduct[] = [
   {
     id: "tmpLukoshkoEifel",
     name: lukoshkoTrios[0].name,
-    displayName: `Лукошко Трио`,
+    displayName: "Лукошко Трио",
     description: "",
     price: min(lukoshkoTrios),
     images: [
@@ -207,7 +207,7 @@ export const tmpProducts: TmpGroupedProduct[] = [
   {
     id: "tmpKvadro",
     name: kvadroSofts[0].name,
-    displayName: `Квадро Soft`,
+    displayName: "Квадро Soft",
     description: "",
     price: min(kvadroSofts),
     images: [
@@ -236,7 +236,7 @@ export const tmpProducts: TmpGroupedProduct[] = [
   {
     id: "tmpKvadroStrong",
     name: kvadroStrongs[0].name,
-    displayName: `Квадро Стронг`,
+    displayName: "Квадро Стронг",
     description: "",
     price: min(kvadroStrongs),
     images: [

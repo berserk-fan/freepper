@@ -7,7 +7,7 @@ export const CustomAppBar = (props: AppBarProps & { show?: boolean }) => {
   const { children } = props;
   return (
     <HideOnScroll {...props}>
-      <AppBar elevation={0} position={"sticky"} color={"inherit"} {...props}>
+      <AppBar elevation={0} position="sticky" color="inherit" {...props}>
         {children}
       </AppBar>
     </HideOnScroll>

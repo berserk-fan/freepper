@@ -1,22 +1,37 @@
-import React, {useEffect, useRef, useState} from "react";
-import {makeStyles} from "@material-ui/core/styles";
+import React, { memo, useEffect, useState } from "react";
+import { fade, makeStyles, Theme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
 import { Box } from "@material-ui/core";
+import { withStyles } from "@material-ui/styles";
 import Image from "next/image";
+import { ToggleButton } from "@material-ui/lab";
+import Slider from "./Slider";
 import Price from "./Price";
 import { TmpGroupedProduct } from "../../../configs/tmpProducts";
-import {SIZES} from "./ShopDefinitions";
-import SliderMock from "./SliderMock";
-import {SliderProps} from "./Slider";
-import dynamic from "next/dynamic";
+import { SIZES } from "./ShopDefinitions";
+
+const CartButton = withStyles((theme: Theme) => ({
+  root: {
+    fontSize: "24px",
+    borderRadius: "20%",
+    "&$selected": {
+      color: fade(theme.palette.success.dark, 0.9),
+      backgroundColor: fade(theme.palette.success.light, 0.12),
+    },
+    "&$selected:hover": {
+      backgroundColor: fade(theme.palette.success.light, 0.2),
+    },
+  },
+  selected: {},
+}))(ToggleButton);
 
 const useStyles = makeStyles({
   media: {
     width: "100%",
     "&::after": {
-      content: "\"\"",
+      content: '""',
       display: "block",
       "padding-bottom": "100%",
     },
@@ -26,7 +41,7 @@ const useStyles = makeStyles({
     top: 0,
     left: 0,
     width: "100%",
-    height: "100%"
+    height: "100%",
   },
   previewText: {
     "line-height": "1.5em",
@@ -56,40 +71,42 @@ export default function ItemView({
     return `/${categoryName}/${productName}`;
   }
 
-  const [SliderC, setSliderC] = useState<(props: SliderProps) => any>(SliderMock);
-
   return (
-    <Box className={`mx-auto ${className}`} maxWidth={"500px"}>
-      <Box className={classes.media} position={"relative"}>
+    <Box className={`mx-auto ${className}`} maxWidth="500px">
+      <Box className={classes.media} position="relative">
         <Box className={classes.mediaChild}>
-          <SliderMock onChange={useSlideId} slides={images.map((image, idx) => (
+          <Slider
+            onChange={useSlideId}
+            slides={images.map((image, idx) => (
               <Box key={image.src} className={classes.media}>
                 <Link href={productHref(image.name)}>
                   <Image
-                      priority={idx === 0 && priority}
-                      src={image.src}
-                      alt={image.alt}
-                      layout="fill"
-                      sizes={SIZES}
+                    priority={idx === 0 && priority}
+                    src={image.src}
+                    alt={image.alt}
+                    layout="fill"
+                    sizes={SIZES}
                   />
                 </Link>
               </Box>
-          ))}
+            ))}
           />
         </Box>
       </Box>
-      <Box marginY={0.5} marginX={1} className={"flex items-center"}>
-        <Box className={"flex flex-col"}>
+      <Box marginY={0.5} marginX={1} className="flex items-center">
+        <Box className="flex flex-col">
           <Typography variant="subtitle1">{displayName}</Typography>
-          <Box className={"flex"}>
-            <Typography display={"inline"} variant={"body2"}>
-              от <Price price={price} />
+          <Box className="flex">
+            <Typography display="inline" variant="body2">
+              от 
+              {" "}
+              <Price price={price} />
             </Typography>
           </Box>
         </Box>
         <Box style={{ marginLeft: "auto" }}>
           <Link href={productHref(images[slideId].name)}>
-            <Button color={"secondary"} variant={"outlined"}>
+            <Button color="secondary" variant="outlined">
               Подробнее
             </Button>
           </Link>

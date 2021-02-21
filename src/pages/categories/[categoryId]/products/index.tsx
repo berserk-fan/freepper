@@ -1,10 +1,10 @@
 import React from "react";
 import { GetStaticProps } from "next";
-import {tmpProducts} from "../../../../../configs/tmpProducts";
-import ShopPage, {ShopPageProps} from "../../../../components/Shop/ShopPage";
+import { tmpProducts } from "../../../../../configs/tmpProducts";
+import ShopPage, { ShopPageProps } from "../../../../components/Shop/ShopPage";
 
 export default function Shop(props: ShopPageProps) {
-  return (<ShopPage {...props}/>);
+  return (<ShopPage {...props} />);
 }
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -12,7 +12,7 @@ export const getStaticProps: GetStaticProps = async () => {
   const category = "categories/beds";
   return {
     props: {
-      products: products,
+      products,
       categoryName: category,
     },
   };

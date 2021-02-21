@@ -1,5 +1,5 @@
 import React from "react";
-import {Theme, Typography} from "@material-ui/core";
+import { Theme, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -34,10 +34,10 @@ export default function ValueProp() {
   return (
     <div className={classes.container}>
       <Typography
-        align="center"
+        align='center'
         className={classes.valueText}
-        variant={"subtitle2"}
-        color={"textSecondary"}
+        variant='subtitle2'
+        color='textSecondary'
       >
         <span className={classes.boldSpan}>Бесплатная доставка </span>
         по Украине, Бесплатные возвраты

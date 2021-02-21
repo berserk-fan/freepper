@@ -4,8 +4,8 @@ import ShopingCart from "./svg/shopping-cart.svg";
 
 export default function ShoppingCartIcon(props) {
   return (
-    <SvgIcon viewBox={"0 0 512 512"} fontSize={"large"} {...props}>
-      {<ShopingCart />}
+    <SvgIcon viewBox="0 0 512 512" fontSize="large" {...props}>
+      <ShopingCart />
     </SvgIcon>
   );
 }

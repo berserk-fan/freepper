@@ -1,8 +1,8 @@
 import { Fabric, Size } from "@mamat14/shop-server/shop_model";
 import React from "react";
 import Image from "next/image";
-import Picker from "./Picker";
 import { Typography } from "@material-ui/core";
+import Picker from "./Picker";
 
 export default function SizePicker({
   selected,
@@ -13,7 +13,7 @@ export default function SizePicker({
 }) {
   return (
     <div>
-      <Typography gutterBottom variant={"subtitle2"} component={"h3"}>
+      <Typography gutterBottom variant="subtitle2" component="h3">
         Размер
       </Typography>
       <Picker

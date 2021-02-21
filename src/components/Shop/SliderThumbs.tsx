@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import KeenSlider, { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import {Box, Theme} from "@material-ui/core";
+import { Box, Theme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: "inline-flex",
     marginTop: theme.spacing(0.5),
     marginBottom: theme.spacing(1),
-  }
+  },
 }));
 
 const nolock = (lock: { current: number }): boolean => lock.current == -1;
@@ -62,7 +62,7 @@ export default function SliderThumbs({
       setActiveSlide(idx);
 
       if (nolock(lock)) {
-        thumbser && thumbser.moveToSlideRelative(idx);
+        thumbser?.moveToSlideRelative(idx);
       }
 
       if (lockEnded(lock, idx)) {
@@ -75,7 +75,7 @@ export default function SliderThumbs({
   const [thumbsRef, thumbser] = useKeenSlider({
     spacing: 4,
     initial: 0,
-    slidesPerView: slidesPerView,
+    slidesPerView,
     centered: true,
     duration: 400,
     slideChanged(s) {
@@ -84,8 +84,8 @@ export default function SliderThumbs({
   });
 
   React.useEffect(() => {
-    slider && slider.refresh();
-    thumbser && thumbser.refresh();
+    slider?.refresh();
+    thumbser?.refresh();
     setActiveSlide(0);
   }, [slides, thumbs]);
 
