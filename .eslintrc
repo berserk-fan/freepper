@@ -8,7 +8,8 @@
   },
   "extends": [
     "airbnb-typescript",
-    "prettier"
+    "plugin:prettier/recommended",
+    "prettier/react"
   ],
   "env": {
     "browser": true,
@@ -31,13 +32,7 @@
         "args": "none"
       }
     ],
-    "@typescript-eslint/quotes": [
-      2,
-      "double",
-      {
-        "avoidEscape": true
-      }
-    ],
+    "@typescript-eslint/quotes": "off",
     "prefer-promise-reject-errors": [
       "off"
     ],

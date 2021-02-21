@@ -12,10 +12,7 @@ export default function DogBedDetails({
 }) {
   const hrefMap = new Map<string, string>();
   variants.forEach((v) =>
-    hrefMap.set(
-      `${v.fabricId}-${v.sizeId}`,
-      `/${categoryName}/${v.variantName}`,
-    ),
+    hrefMap.set(`${v.fabricId}-${v.sizeId}`, `/${categoryName}/${v.variantName}`),
   );
   const fabricsWithRefs = fabrics.map((f) => ({
     ...f,
