@@ -4,8 +4,8 @@ import {
   Price,
   Product,
 } from "@mamat14/shop-server/shop_model";
-import avFabrics from "../fabrics/avFabrics";
-import kvadroSizes from "../sizes/kvadroSizes";
+import avFabrics, {AvFabricKeys} from "../fabrics/avFabrics";
+import kvadroSizes, {KvadroSizeKeys} from "../sizes/kvadroSizes";
 
 function getVariants(): DogBed_Variant[] {
   const res: DogBed_Variant[] = [];
@@ -23,28 +23,60 @@ function getVariants(): DogBed_Variant[] {
 
 const variants: DogBed_Variant[] = getVariants();
 
-const images: Record<string, ImageData[]> = Object.fromEntries(
-  Object.entries({
+export const kvadroStrongImages = {
+    "kvadroStrongWithDog": {
+        src: "/beds/kvadro-strong/Dogs-24890.jpg",
+        alt: "Собака прямо в Квадро стронг",
+        name: "products/kvadroStrong-av-11-kvadro-xs",
+    },
+    "kvadroStrongFull": {
+        src: "/beds/kvadro-strong/Dogs-7248.jpg",
+        alt: " Квадро стронг полностью",
+        name: "products/kvadroStrong-av-11-kvadro-xs",
+    },
+    "kvadroStrongLabel": {
+        src: "/beds/kvadro-strong/Dogs-7249.jpg",
+        alt: "Этикетка в Квадро стронг",
+        name: "products/kvadroStrong-av-11-kvadro-xs",
+    },
+    "kvadroStrongPillow": {
+        src: "/beds/kvadro-strong/Dogs-7251.jpg",
+        alt: "Подушка в Квадро стронг",
+        name: "products/kvadroStrong-av-11-kvadro-xs",
+    },
+    "kvadroStrongFabric": {
+        src: "/beds/kvadro-strong/Dogs-7326.jpg",
+        alt: "Фото ткани в Квадро стронг",
+        name: "products/kvadroStrong-av-11-kvadro-xs",
+    },
+    "kvadroStrongFabric2": {
+        src: "/beds/kvadro-strong/Dogs-7332.jpg",
+        alt: "Фото ткани в Квадро стронг",
+        name: "products/kvadroStrong-av-11-kvadro-xs",
+    },
+    "kvadroStrongDogFromAbove": {
+        src: "/beds/kvadro-strong/Dogs-24875.jpg",
+        alt: "Собака сверху в Квадро стронг",
+        name: "products/kvadroStrong-av-11-kvadro-xs",
+    },
+};
+const images = kvadroStrongImages;
+
+const fabricToImages: Record<AvFabricKeys, ImageData[]> = {
     "av-01": [],
-    "av-02": [
-      "IMG_7827.jpg",
-      "IMG_7828.JPG",
-      "IMG_7831.JPG",
-      "IMG_7831.JPG",
-      "IMG_7833.JPG",
-    ],
+    "av-02": [],
     "av-04": [],
     "av-06": [],
     "av-07": [],
     "av-10": [],
     "av-11": [
-      "Dogs-7248.jpg",
-      "Dogs-7249.jpg",
-      "Dogs-7251.jpg",
-      "Dogs-7326.jpg",
-      "Dogs-7332.jpg",
-      "Dogs-24875.jpg",
-      "Dogs-24890jpg",
+        images.kvadroStrongWithDog,
+        images.kvadroStrongFull,
+        images.kvadroStrongLabel,
+        images.kvadroStrongPillow,
+        images.kvadroStrongFabric,
+        images.kvadroStrongDogFromAbove,
+        images.kvadroStrongFabric2,
     ],
     "av-12": [],
     "av-13": [],
@@ -52,23 +84,16 @@ const images: Record<string, ImageData[]> = Object.fromEntries(
     "av-15": [],
     "av-17": [],
     "av-18": [],
-  }).map(([id, photos]: [string, ImageData[]]) => [
+};
+
+const imagesWithFabric: Record<string, ImageData[]> = Object.fromEntries(
+  Object.entries(fabricToImages).map(([id, photos]: [string, ImageData[]]) => [
     id,
-    photos
-      .map((name) => ({
-        src: `/beds/kvadro-strong/${name}`,
-        alt: "фото лежанки Квадро стронг",
-      }))
-      .concat([
-        {
-          src: `/fabrics/av/${id}.png`,
-          alt: "Фото ткани лежанки квадро стронг",
-        },
-      ]),
-  ]),
+    photos.concat([{src: `/fabrics/av/${id}.png`, alt: "Фото ткани лежанки квадро стронг"}]),
+  ])
 );
 
-const prices: Record<string, Price> = {
+const prices: Record<KvadroSizeKeys, Price> = {
   "kvadro-xs": { price: 1050 },
   "kvadro-s": { price: 1200 },
   "kvadro-m": { price: 1450 },
@@ -91,10 +116,10 @@ const description = `
 const kvadroStrongs: Product[] = variants.map((v) => ({
   id: v.variantName.split("/").filter((x) => !!x)[1],
   name: v.variantName,
-  displayName: "Чемодан",
-  description,
+  displayName: `Чемодан`,
+  description: description,
   price: prices[v.sizeId],
-  images: images[v.fabricId],
+  images: imagesWithFabric[v.fabricId],
   details: {
     $case: "dogBed",
     dogBed: {
@@ -102,7 +127,7 @@ const kvadroStrongs: Product[] = variants.map((v) => ({
       fabricId: v.fabricId,
       fabrics: avFabrics,
       sizes: kvadroSizes,
-      variants,
+      variants: variants,
     },
   },
 }));

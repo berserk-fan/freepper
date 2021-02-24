@@ -1,7 +1,9 @@
 import { Fabric } from "@mamat14/shop-server/shop_model";
 
-const avFabrics: Fabric[] = [
-  {
+export type AvFabricKeys =  | "av-01" | "av-02" | "av-04" | "av-06" | "av-07" | "av-10" | "av-11" | "av-12" | "av-13" | "av-14" | "av-15" | "av-17" | "av-18"
+
+const avFabrics: Record<string, Fabric & {id: AvFabricKeys}> = {
+  "av-01": {
     id: "av-01",
     displayName: "Алюминий",
     description: "",
@@ -10,7 +12,7 @@ const avFabrics: Fabric[] = [
       alt: "Ткань цвета алюминий",
     },
   },
-  {
+  "av-02": {
     id: "av-02",
     displayName: "Серый туман",
     description: "",
@@ -19,7 +21,7 @@ const avFabrics: Fabric[] = [
       alt: "Ткань цвета серый туман",
     },
   },
-  {
+  "av-04": {
     id: "av-04",
     displayName: "Сантал",
     description: "",
@@ -28,7 +30,7 @@ const avFabrics: Fabric[] = [
       alt: "Ткань цвета сантал",
     },
   },
-  {
+  "av-06": {
     id: "av-06",
     displayName: "Какао",
     description: "",
@@ -37,7 +39,7 @@ const avFabrics: Fabric[] = [
       alt: "Ткань цвета какао",
     },
   },
-  {
+  "av-07": {
     id: "av-07",
     displayName: "Желтый",
     description: "",
@@ -46,7 +48,7 @@ const avFabrics: Fabric[] = [
       alt: "Ткань желтого цвета",
     },
   },
-  {
+  "av-10": {
     id: "av-10",
     displayName: "Пыльная роза",
     description: "",
@@ -55,7 +57,7 @@ const avFabrics: Fabric[] = [
       alt: "Ткань цвета пыльная роза",
     },
   },
-  {
+  "av-11": {
     id: "av-11",
     displayName: "Бирюза",
     description: "",
@@ -64,7 +66,7 @@ const avFabrics: Fabric[] = [
       alt: "Ткань цвета Бирюза",
     },
   },
-  {
+  "av-12": {
     id: "av-12",
     displayName: "Изумруд",
     description: "",
@@ -73,7 +75,7 @@ const avFabrics: Fabric[] = [
       alt: "Ткань цвета изумруд",
     },
   },
-  {
+  "av-13": {
     id: "av-13",
     displayName: "Гольфстрим",
     description: "",
@@ -82,7 +84,7 @@ const avFabrics: Fabric[] = [
       alt: "Ткань цвета васаби",
     },
   },
-  {
+  "av-14": {
     id: "av-14",
     displayName: "Астронавт",
     description: "",
@@ -91,7 +93,7 @@ const avFabrics: Fabric[] = [
       alt: "Ткань цвета астронавт",
     },
   },
-  {
+  "av-15": {
     id: "av-15",
     displayName: "Серебро",
     description: "",
@@ -100,7 +102,7 @@ const avFabrics: Fabric[] = [
       alt: "Ткань цвета серебро",
     },
   },
-  {
+  "av-17": {
     id: "av-17",
     displayName: "Серый",
     description: "",
@@ -109,7 +111,7 @@ const avFabrics: Fabric[] = [
       alt: "Ткань серого цвета",
     },
   },
-  {
+  "av-18": {
     id: "av-18",
     displayName: "Черный",
     description: "",
@@ -118,5 +120,5 @@ const avFabrics: Fabric[] = [
       alt: "Черная ткань",
     },
   },
-];
-export default avFabrics;
+};
+export default Object.values(avFabrics);

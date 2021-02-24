@@ -4,8 +4,8 @@ import {
   Price,
   Product,
 } from "@mamat14/shop-server/shop_model";
-import vicFabrics from "../fabrics/vicFabrics";
-import lukoshkoSizes from "../sizes/lukoshkoSizes";
+import vicFabrics, {VicFabricKey} from "../fabrics/vicFabrics";
+import lukoshkoSizes, {LukoshkoSizeKeys} from "../sizes/lukoshkoSizes";
 
 function getVariants(): DogBed_Variant[] {
   const res: DogBed_Variant[] = [];
@@ -23,8 +23,57 @@ function getVariants(): DogBed_Variant[] {
 
 const variants: DogBed_Variant[] = getVariants();
 
-const images: Record<string, ImageData[]> = Object.fromEntries(
-  Object.entries({
+
+export const lukoshkoTrioImages: Record<string, ImageData & {name: string}> = {
+    "lukoshkoTrioFromAbove": {
+        src: "/beds/lukoshko3/Dogs-7253.jpg",
+        alt: "Фото серого Лукошко Трио сверху",
+        name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    },
+    "lukoshkoTrioFromSide": {
+        src: "/beds/lukoshko3/Dogs-7254.jpg",
+        alt: "Фото серого Лукошко Трио ракурс",
+        name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    },
+    "lukoshkoTrioWithDrops": {
+        src: "/beds/lukoshko3/Dogs-7309.jpg",
+        alt: "Фото розового Лукошко Трио с каплями на водонепроницаемой поверхности",
+        name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    },
+    "lukoshkoTrioWithDog": {
+        src: "/beds/lukoshko3/Dogs-24838.jpg",
+        alt: "Фото спереди собачки в сером Лукошко Трио",
+        name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    },
+    "lukoshkoAndHappyDog": {
+        src: "/beds/lukoshko3/Dogs-24849.jpg",
+        alt: "Фото спереди веселой собачки в сером Лукошко Трио",
+        name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    },
+    "lukoshkoTrioAndPug": {
+        src: "/beds/lukoshko3/Dogs-25105.jpg",
+        alt: "Фото довольного мопса в сером Лукошко Трио",
+        name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    },
+    "lukoshkoTrioAndHappyPug": {
+        src: "/beds/lukoshko3/Dogs-25115.jpg",
+        alt: "Фото довольного мопса в сером Лукошко Трио",
+        name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    },
+    "lukoshkoTrioAndHappyPug2": {
+        src: "/beds/lukoshko3/Dogs-25127.jpg",
+        alt: "Фото довольного мопса в сером Лукошко Трио",
+        name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    },
+    "lukoshkoTrioAndHappyPug3": {
+        src: "/beds/lukoshko3/Dogs-25142.jpg",
+        alt: "Фото довольного мопса в сером Лукошко Трио",
+        name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    }
+};
+
+const image = lukoshkoTrioImages;
+const fabricToImage: Record<VicFabricKey, ImageData[]> = {
     "vic-20": [],
     "vic-21": [],
     "vic-22": [],
@@ -35,31 +84,26 @@ const images: Record<string, ImageData[]> = Object.fromEntries(
     "vic-70": [],
     "vic-80": [],
     "vic-88": [],
-    "vic-93": [],
-    "vic-96": [
-      "Dogs-7253",
-      "Dogs-7254",
-      "Dogs-7309",
-      "Dogs-24838",
-      "Dogs-24849",
-      "Dogs-25105",
-      "Dogs-25115",
-      "Dogs-25127",
-      "Dogs-25142",
+    "vic-93": [
+        image.lukoshkoTrioFromAbove,
+        image.lukoshkoTrioFromSide,
+        image.lukoshkoTrioWithDrops,
+        image.lukoshkoTrioWithDog,
+        image.lukoshkoAndHappyDog,
+        image.lukoshkoTrioAndPug,
+        image.lukoshkoTrioAndHappyPug,
+        image.lukoshkoTrioAndHappyPug2,
+        image.lukoshkoTrioAndHappyPug3,
     ],
     "vic-100": [],
-  }).map(([id, photos]: [string, ImageData[]]) => [
-    id,
-    photos
-      .map((name) => ({
-        src: `/beds/lukoshko2/${name}.jpg`,
-        alt: "фото лежанки Лукошко Трио",
-      }))
-      .concat([{ src: `/fabrics/vic/${id}.JPG`, alt: "Фото ткани" }]),
-  ]),
+};
+
+const imagesWithFabric: Record<string, ImageData[]> = Object.fromEntries<ImageData[]>(
+  Object.entries(fabricToImage).map(([id, photos]: [string, ImageData[]]) =>
+      [id, photos.concat([{ src: `/fabrics/vic/${id}.JPG`, alt: "Фото ткани" }])])
 );
 
-const prices: Record<string, Price> = {
+const prices: Record<LukoshkoSizeKeys, Price> = {
   "lukoshko-xs": { price: 1350 },
   "lukoshko-s": { price: 1450 },
   "lukoshko-m": { price: 1550 },
@@ -82,10 +126,10 @@ const description = `
 const lukoshkos: Product[] = variants.map((v) => ({
   id: v.variantName.split("/").filter((x) => !!x)[1],
   name: v.variantName,
-  displayName: "Лукошко Ейфель",
-  description,
+  displayName: `Лукошко Ейфель`,
+  description: description,
   price: prices[v.sizeId],
-  images: images[v.fabricId],
+  images: imagesWithFabric[v.fabricId],
   details: {
     $case: "dogBed",
     dogBed: {
@@ -93,7 +137,7 @@ const lukoshkos: Product[] = variants.map((v) => ({
       fabricId: v.fabricId,
       fabrics: vicFabrics,
       sizes: lukoshkoSizes,
-      variants,
+      variants: variants,
     },
   },
 }));
