@@ -11,8 +11,8 @@ export default function PhoneNumber({
   return (
     <ListItem button className={className}>
       <ListItemText>
-        <Link color={"textPrimary"} href={`tel:${phone}`}>
-          <Box fontFamily={"Monospace"}>{phone}</Box>
+        <Link color="textPrimary" href={`tel:${phone}`}>
+          <Box fontFamily="Monospace">{phone}</Box>
         </Link>
       </ListItemText>
     </ListItem>

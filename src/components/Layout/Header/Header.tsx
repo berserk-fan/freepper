@@ -1,12 +1,12 @@
 import React from "react";
-import {makeStyles, Theme} from "@material-ui/core/styles";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
-import {Box} from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import HeaderMenu from "./HeaderMenu";
 import HeaderCart from "./HeaderCart";
 import HeaderLogo from "./HeaderLogo";
 import HeaderActions from "./HeaderActions";
-import {CustomAppBar} from "./CustomAppBar";
+import { CustomAppBar } from "./CustomAppBar";
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: "relative",
     display: "flex",
     justifyContent: "center",
-    height: "100px"
+    height: "100px",
   },
   menu: {
     [theme.breakpoints.up("md")]: {

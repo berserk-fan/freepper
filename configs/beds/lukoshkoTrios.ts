@@ -56,7 +56,7 @@ const images: Record<string, ImageData[]> = Object.fromEntries(
         alt: "фото лежанки Лукошко Трио",
       }))
       .concat([{ src: `/fabrics/vic/${id}.JPG`, alt: "Фото ткани" }]),
-  ])
+  ]),
 );
 
 const prices: Record<string, Price> = {
@@ -82,8 +82,8 @@ const description = `
 const lukoshkos: Product[] = variants.map((v) => ({
   id: v.variantName.split("/").filter((x) => !!x)[1],
   name: v.variantName,
-  displayName: `Лукошко Ейфель`,
-  description: description,
+  displayName: "Лукошко Ейфель",
+  description,
   price: prices[v.sizeId],
   images: images[v.fabricId],
   details: {
@@ -93,7 +93,7 @@ const lukoshkos: Product[] = variants.map((v) => ({
       fabricId: v.fabricId,
       fabrics: vicFabrics,
       sizes: lukoshkoSizes,
-      variants: variants,
+      variants,
     },
   },
 }));

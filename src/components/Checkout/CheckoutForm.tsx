@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Box, Paper } from "@material-ui/core";
 import { Form } from "react-final-form";
+import { connect } from "react-redux";
 import FormStepper from "./FormStepper";
 import { clearCartAction, StoreState } from "../../store";
-import { connect } from "react-redux";
 import useErrorHandling from "../Commons/UseErrorHandling";
 import CustomMobileStepper from "./CustomMobileStepper";
 import OrderFallback from "./OrderFallback";
@@ -58,11 +58,9 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
     }
   };
 
-  const handleBack = (newFormState: OrderForm) => {
-    return () => {
-      setFormState(newFormState);
-      setActiveStep((p) => p - 1);
-    };
+  const handleBack = (newFormState: OrderForm) => () => {
+    setFormState(newFormState);
+    setActiveStep((p) => p - 1);
   };
 
   async function postForm(orderForm: OrderForm): Promise<void> {
@@ -85,7 +83,7 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
         render={({ handleSubmit, values }) => (
           <form noValidate>
             <ShowOnMobile>
-              <Box className={"flex flex-col justify-center w-full"}>
+              <Box className="flex flex-col justify-center w-full">
                 <CustomMobileStepper
                   handleBack={handleBack(values)}
                   activeStep={activeStep}
@@ -97,7 +95,7 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
               </Box>
             </ShowOnMobile>
             <HideOnMobile>
-              <Paper className={"overflow-hidden"}>
+              <Paper className="overflow-hidden">
                 <Box p={2} m={1}>
                   <FormStepper {...{ activeStep, steps }} />
                   <StepContent step={activeStep} orderData={values} />
@@ -124,7 +122,7 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
       />
     </Box>
   );
-};
+}
 
 const mapStateToProps = (state: StoreState) => ({ cart: state.cartState });
 const mapDispatchToProps = (dispatch) => ({

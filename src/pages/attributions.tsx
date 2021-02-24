@@ -8,43 +8,55 @@ export default function Attributions() {
       <List>
         <ListItem>
           <ListItemText>
-            <Typography variant={"h1"}>Иконки</Typography>
+            <Typography variant="h1">Иконки</Typography>
             <div>
-              Icons made by{" "}
+              Icons made by
+              {" "}
               <a href="https://smashicons.com/" title="Smashicons">
                 Smashicons
-              </a>{" "}
-              from{" "}
+              </a>
+              {" "}
+              from
+              {" "}
               <a href="https://www.flaticon.com/" title="Flaticon">
                 www.flaticon.com
               </a>
             </div>
             <div>
-              Icons made by{" "}
+              Icons made by
+              {" "}
               <a href="" title="photo3idea_studio">
                 photo3idea_studio
-              </a>{" "}
-              from{" "}
+              </a>
+              {" "}
+              from
+              {" "}
               <a href="https://www.flaticon.com/" title="Flaticon">
                 www.flaticon.com
               </a>
             </div>
             <div>
-              Icons made by{" "}
+              Icons made by
+              {" "}
               <a href="https://www.freepik.com" title="Freepik">
                 Freepik
-              </a>{" "}
-              from{" "}
+              </a>
+              {" "}
+              from
+              {" "}
               <a href="https://www.flaticon.com/" title="Flaticon">
                 www.flaticon.com
               </a>
             </div>
             <div>
-              Icons made by{" "}
+              Icons made by
+              {" "}
               <a href="" title="Kiranshastry">
                 Kiranshastry
-              </a>{" "}
-              from{" "}
+              </a>
+              {" "}
+              from
+              {" "}
               <a href="https://www.flaticon.com/" title="Flaticon">
                 www.flaticon.com
               </a>

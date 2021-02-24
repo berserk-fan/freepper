@@ -1,9 +1,9 @@
 import { createStore } from "redux";
 import ShopClient from "@mamat14/shop-server";
+import { Product } from "@mamat14/shop-server/shop_model";
 import { categories, shopProducts } from "../../configs/Data";
 import { CartState } from "../components/Cart/Cart";
 import { CartProduct } from "../pages/checkout";
-import { Product } from "@mamat14/shop-server/shop_model";
 
 const initialState: StoreState = {
   cartState: {
@@ -18,9 +18,9 @@ export const loadState: () => StoreState = () => {
     const serializedState = localStorage.getItem("state");
     if (!serializedState) {
       return initialState;
-    } else {
-      return JSON.parse(serializedState);
-    }
+    } 
+    return JSON.parse(serializedState);
+    
   } catch (err) {
     return initialState;
   }
@@ -68,13 +68,13 @@ type CartUpdate = SET_PRODUCT_COUNT | ADD_PRODUCT | DELETE_PRODUCT | CLEAR_CART;
 export function addProductAction(product: CartProduct): ADD_PRODUCT {
   return {
     type: "ADD_PRODUCT",
-    product: product,
+    product,
   };
 }
 
 export function setProductCountAction(
   productId: string,
-  count: number
+  count: number,
 ): SET_PRODUCT_COUNT {
   return {
     type: "SET_PRODUCT_COUNT",
@@ -140,7 +140,7 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
         selectedProducts: Object.fromEntries(
           Object.values(selectedProducts)
             .filter((p) => p.id !== action.productId)
-            .map((p) => [p.id, p])
+            .map((p) => [p.id, p]),
         ),
       };
     }
@@ -165,7 +165,7 @@ const initialStoreState = loadState();
 
 function storeReducer(
   store: StoreState = initialStoreState,
-  action: StoreUpdate
+  action: StoreUpdate,
 ): StoreState {
   return {
     cartState: cartReducer(store.cartState, action),
@@ -180,6 +180,6 @@ store.subscribe(() => {
 
 export const shopClient = new ShopClient({
   products: shopProducts,
-  categories: categories,
+  categories,
   settings: { timeout: 100, errorPercentage: 0 },
 });

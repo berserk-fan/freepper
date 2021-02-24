@@ -23,7 +23,7 @@ export default function PrivacyPolicy() {
     <LayoutWithHeaderAndFooter>
       <Container>
         <Box py={10} px={2}>
-          <Typography variant={"h3"} component={"h1"}>
+          <Typography variant="h3" component="h1">
             Политика конфеденциальности
           </Typography>
           <List>
@@ -38,13 +38,14 @@ export default function PrivacyPolicy() {
             ].map((text) => (
               <ListItem>
                 <ListItemText>
-                  <Typography variant={"body2"}>{text}</Typography>
+                  <Typography variant="body2">{text}</Typography>
                 </ListItemText>
               </ListItem>
             ))}
           </List>
-          <Typography variant={"caption"}>
-            Политика конфеденциальности имейл провайдера{" "}
+          <Typography variant="caption">
+            Политика конфеденциальности имейл провайдера
+            {" "}
             <a>https://www.zoho.com/privacy.html</a>
           </Typography>
         </Box>

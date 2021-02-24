@@ -23,7 +23,7 @@ import { usePlainNavigationMenuStyles } from "@mui-treasury/styles/navigationMen
 import Link from "next/link";
 import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
 import Logo from "../Logo/Logo";
-import {modelPages, pages} from "../Header/pages";
+import { modelPages, pages } from "../Header/pages";
 
 const useStyles = makeStyles(({ palette, typography }) => ({
   top: {
@@ -76,37 +76,36 @@ const useStyles = makeStyles(({ palette, typography }) => ({
     ...typography.caption,
     color: palette.text.hint,
     marginTop: 8,
-  },
+    fontFamily: "Monospace"
+  }
 }));
 
-const Footer = React.memo(function AppFooter() {
+const Footer = React.memo(() => {
   const classes = useStyles();
   const [contactsOpen, setContactsOpen] = useState(false);
   return (
-    <Box width={"100%"}>
+    <Box width="100%">
       <Box px={2} pt={10} pb={10} className={classes.middle}>
         <Container disableGutters>
           <Grid container spacing={4}>
             <Grid item xs={12} md={4} lg={3}>
               <Box
-                marginRight={"auto"}
+                marginRight="auto"
                 mt={-3}
-                width={"100%"}
+                width="100%"
                 height={120}
                 borderRadius={12}
-                className={"center overflow-hidden"}
+                className="center overflow-hidden"
                 fontSize={400}
               >
-                <Logo/>
+                <Logo />
               </Box>
               <Typography className={classes.info}>
-                <Box fontFamily={"Monospace"}>
-                  ZooHugge, Dnipro
-                </Box>
+                ZooHugge, Dnipro
               </Typography>
 
               <Typography className={classes.info}>
-                <Box fontFamily={"Monospace"}>lika@pogladit-mozhno.com</Box>
+                lika@pogladit-mozhno.com
               </Typography>
             </Grid>
             <Grid item xs={12} md={8} lg={6}>
@@ -117,11 +116,11 @@ const Footer = React.memo(function AppFooter() {
                       <Typography>Модели</Typography>
                     </CategoryTitle>
                     {Object.values(modelPages).map((page) => (
-                      <Link href={pages.about.path}>
-                        <CategoryItem key={page.path}>
+                      <CategoryItem key={page.id}>
+                        <Link href={pages.about.path}>
                           <Typography>{page.name}</Typography>
-                        </CategoryItem>
-                      </Link>
+                        </Link>
+                      </CategoryItem>
                     ))}
                   </CategoryProvider>
                 </Grid>
@@ -135,11 +134,11 @@ const Footer = React.memo(function AppFooter() {
                       pages["delivery-and-payment-info"],
                       pages["returns-policy"],
                     ].map((page) => (
-                      <Link href={page.path} color={"textPrimary"}>
-                        <CategoryItem key={page.path}>
+                      <CategoryItem key={page.id}>
+                        <Link href={page.path} color={"textPrimary"}>
                           <Typography>{page.name}</Typography>
-                        </CategoryItem>
-                      </Link>
+                        </Link>
+                      </CategoryItem>
                     ))}
                     <CategoryItem>
                       <Typography onClick={() => setContactsOpen(true)}>
@@ -163,11 +162,11 @@ const Footer = React.memo(function AppFooter() {
                       pages["privacy-policy"],
                       pages.attributions,
                     ].map((page) => (
-                      <Link href={page.path} color={"textPrimary"}>
-                        <CategoryItem key={page.path}>
+                      <CategoryItem key={page.id}>
+                        <Link href={page.path} color={"textPrimary"}>
                           <Typography>{page.name}</Typography>
-                        </CategoryItem>
-                      </Link>
+                        </Link>
+                      </CategoryItem>
                     ))}
                   </CategoryProvider>
                 </Grid>
@@ -180,8 +179,8 @@ const Footer = React.memo(function AppFooter() {
                 </CategoryTitle>
               </CategoryProvider>
               <SocialProvider useStyles={usePoofSocialLinkStyles}>
-                <SocialLink brand={"Envelope"} />
-                <SocialLink brand={"Instagram"} />
+                <SocialLink brand="Envelope" />
+                <SocialLink brand="Instagram" />
               </SocialProvider>
             </Grid>
           </Grid>
@@ -193,20 +192,20 @@ const Footer = React.memo(function AppFooter() {
       <Box px={2} py={2} className={classes.bottom}>
         <Container disableGutters>
           <ColumnToRow
-            at={"md"}
+            at="md"
             columnStyle={{ alignItems: "center" }}
             rowStyle={{ alignItems: "unset" }}
           >
             <Item grow ml={-2} shrink={0}>
               <NavMenu useStyles={usePlainNavigationMenuStyles}>
-                <ColumnToRow at={"sm"}>
+                <ColumnToRow at="sm">
                   {[
                     pages.cooperation,
                     pages["privacy-policy"],
                   ].map((page) => (
-                    <NavItem className={classes.legalLink}>
+                    <NavItem key={page.id} className={classes.legalLink}>
                       <Link href={page.path}>
-                        <Typography align={"center"}>{page.name}</Typography>
+                        <Typography align="center">{page.name}</Typography>
                       </Link>
                     </NavItem>
                   ))}
@@ -216,11 +215,11 @@ const Footer = React.memo(function AppFooter() {
             <Item>
               <Box py={1} textAlign={{ xs: "center", md: "right" }}>
                 <Typography
-                  component={"p"}
-                  variant={"caption"}
-                  color={"textSecondary"}
+                  component="p"
+                  variant="caption"
+                  color="textSecondary"
                 >
-                  <Box component={"span"} fontFamily={"Monospace"}>
+                  <Box component="span" fontFamily="Monospace">
                     Designed by Dima © Home Studio 2021 All right reserved
                   </Box>
                 </Typography>

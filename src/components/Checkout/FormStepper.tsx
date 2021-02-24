@@ -91,7 +91,7 @@ export default function FormStepper({
       alternativeLabel
       activeStep={activeStep}
       connector={<ColorlibConnector />}
-      color={""}
+      color=""
     >
       {steps.map((label) => (
         <Step key={label}>

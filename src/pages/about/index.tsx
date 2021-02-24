@@ -4,12 +4,12 @@ import LayoutWithHeaderAndFooter from "../../components/Layout/LayoutWithHeaderA
 export default function AboutUs() {
   return (
     <LayoutWithHeaderAndFooter>
-      <Container maxWidth={"md"}>
+      <Container maxWidth="md">
         <Typography variant="h1">О нас</Typography>
         <Box>
-          <Typography variant={"h2"}>Секция 1</Typography>
-          <Typography variant={"body1"}>Коротко о вопросе</Typography>
-          <Typography variant={"body2"}>
+          <Typography variant="h2">Секция 1</Typography>
+          <Typography variant="body1">Коротко о вопросе</Typography>
+          <Typography variant="body2">
             Товарищи! начало повседневной работы по формированию позиции влечет
             за собой процесс внедрения и модернизации направлений прогрессивного
             развития. Разнообразный и богатый опыт консультация с широким
@@ -18,9 +18,9 @@ export default function AboutUs() {
           </Typography>
         </Box>
         <Box>
-          <Typography variant={"h2"}>Секция 2</Typography>
-          <Typography variant={"body1"}>Коротко о вопросе</Typography>
-          <Typography variant={"body2"}>
+          <Typography variant="h2">Секция 2</Typography>
+          <Typography variant="body1">Коротко о вопросе</Typography>
+          <Typography variant="body2">
             Товарищи! начало повседневной работы по формированию позиции влечет
             за собой процесс внедрения и модернизации направлений прогрессивного
             развития. Разнообразный и богатый опыт консультация с широким
@@ -31,8 +31,8 @@ export default function AboutUs() {
             и административных условий. Идейные соображения высшего порядка.
           </Typography>
         </Box>
-        <Typography variant={"h2"}>Секция 3</Typography>
-        <Typography variant={"body1"}>
+        <Typography variant="h2">Секция 3</Typography>
+        <Typography variant="body1">
           С другой стороны реализация намеченных плановых заданий влечет за
           собой процесс внедрения и модернизации существенных финансовых и
           административных условий.

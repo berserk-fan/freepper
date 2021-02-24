@@ -1,11 +1,11 @@
 import { makeStyles } from "@material-ui/styles";
-import { StoreState } from "../../store";
 import React, { memo } from "react";
-import {Box, Button, Theme, Typography} from "@material-ui/core";
-import CartItem from "./CartItem";
+import { Box, Button, Theme, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
-import { CartProduct } from "../../pages/checkout";
 import Link from "next/link";
+import CartItem from "./CartItem";
+import { CartProduct } from "../../pages/checkout";
+import { StoreState } from "../../store";
 
 export type CartState = {
   cartSize: number;
@@ -69,18 +69,21 @@ function NonEmptyCart({ productsList, total }) {
           <CartItem product={product} />
         </Box>
       ))}
-      <Box marginTop={2} className={`flex justify-end items-center`}>
+      <Box marginTop={2} className="flex justify-end items-center">
         <div className={`rounded ${classes.mainButtonContainer}`}>
           <div className={classes.textWrapper}>
-            <Typography variant={"h5"} classes={{ root: classes.prePriceText }}>
+            <Typography variant="h5" classes={{ root: classes.prePriceText }}>
               Итого
             </Typography>
-            <Typography variant="h5">{total}₴</Typography>
+            <Typography variant="h5">
+              {total}
+              ₴
+            </Typography>
           </div>
-          <Link href={"/checkout"}>
+          <Link href="/checkout">
             <Button
               classes={{ root: classes.mainButton }}
-              color={"primary"}
+              color="primary"
               variant="contained"
               size="large"
             >
@@ -101,10 +104,10 @@ function Cart({
   const productsList = Object.values(selectedProducts);
   return (
     <div>
-      <Box marginTop={2} minHeight={"360px"}>
+      <Box marginTop={2} minHeight="360px">
         {cartSize === 0 ? (
           <Box>
-            <Typography variant={"h3"} align={"center"}>
+            <Typography variant="h3" align="center">
               Здесь пока ничего нет
             </Typography>
           </Box>

@@ -1,9 +1,9 @@
 import { Fabric } from "@mamat14/shop-server/shop_model";
 import React from "react";
-import Picker from "./Picker";
 import Image from "next/image";
 import { Avatar, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
+import Picker from "./Picker";
 
 function Icon({ item: fabric }: { item: Fabric }) {
   return (
@@ -25,7 +25,7 @@ export default function FabricPicker({
 }) {
   return (
     <div>
-      <Typography gutterBottom variant={"subtitle2"} component={"h3"}>
+      <Typography gutterBottom variant="subtitle2" component="h3">
         Цвет
       </Typography>
       <Picker

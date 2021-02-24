@@ -25,19 +25,19 @@ export default function Picker<T>({
 }) {
   const classes = useStyles();
   return (
-    <Box className={"flex overflow-x-auto"}>
+    <Box className="flex overflow-x-auto">
       {items.map((item) => (
-        <Link key={item.href} href={item.href} scroll={false} replace={true}>
+        <Link key={item.href} href={item.href} scroll={false} replace>
           <Chip
             className={classes.fabricNode}
             avatar={
               icon ? (
-                <Avatar>{React.createElement(icon, { item: item })}</Avatar>
+                <Avatar>{React.createElement(icon, { item })}</Avatar>
               ) : undefined
             }
-            clickable={true}
+            clickable
             color={selectedId === item.id ? "secondary" : "default"}
-            variant={"outlined"}
+            variant="outlined"
             label={item.displayName}
           />
         </Link>

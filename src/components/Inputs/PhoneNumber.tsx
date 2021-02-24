@@ -31,20 +31,20 @@ export const PhoneNumber = (props) => {
 
   return (
     <PhoneInput
-      color={"secondary"}
+      color="secondary"
       required
-      label={"Номер телефона"}
+      label="Номер телефона"
       error={isError}
       helperText={isError ? error || submitError : helperText}
-      type={"tel"}
+      type="tel"
       fullWidth
       value={value}
       onChange={handleChange}
-      defaultCountry={"ua"}
-      regions={"europe"}
+      defaultCountry="ua"
+      regions="europe"
       localization={locale}
       onlyCountries={["ua", "ru", "by", "fr"]}
-      variant={"filled"}
+      variant="filled"
       inputProps={{ required, ...restInput }}
       {...rest}
     />

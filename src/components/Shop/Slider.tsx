@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import {Box, Theme, Typography} from "@material-ui/core";
+import { Box, Theme, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -60,12 +60,14 @@ export default function Slider({
 }) {
   const classes = useStyles();
   const [currentSlide, setCurrentSlide] = React.useState(0);
+
   function changeSlide(slideIdx: number) {
     setCurrentSlide(slideIdx);
     if (onChange) {
       onChange(slideIdx);
     }
   }
+
   const [sliderRef, slider] = useKeenSlider({
     initial: 0,
     spacing: 15,
@@ -101,9 +103,9 @@ export default function Slider({
 
   const Numbers = () => (
     <Box className={classes.navigationContainer}>
-      <Typography variant={"caption"} align={"center"}>
-        <Box fontFamily={"Monospace"}>
-          {currentSlide + 1} / {slider.details().size}
+      <Typography variant="caption" align="center">
+        <Box fontFamily="Monospace">
+          {currentSlide + 1} /{slider.details().size}
         </Box>
       </Typography>
     </Box>
@@ -114,14 +116,14 @@ export default function Slider({
   }
 
   return (
-    <Box className={className} position={"relative"}>
-      <div ref={sliderRef as any} className={`keen-slider`}>
-          {slides.map((slide, idx) => (
-            <div className="keen-slider__slide">
-              {shouldLoad(idx) ? slide : <></>}
-            </div>
-          ))}
-        </div>
+    <Box className={className} position="relative">
+      <div ref={sliderRef as any} className="keen-slider">
+        {slides.map((slide, idx) => (
+          <div className="keen-slider__slide">
+            {shouldLoad(idx) ? slide : null}
+          </div>
+        ))}
+      </div>
       {slider &&
         slides.length > 1 &&
         (slides.length <= 7 ? <Dots /> : <Numbers />)}

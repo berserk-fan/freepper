@@ -1,8 +1,8 @@
-import { OrderForm } from "./Definitions";
 import dynamic from "next/dynamic";
+import React from "react";
+import { OrderForm } from "./Definitions";
 import { SummaryProps } from "./SummaryStep";
 import DeliveryDetailsStep from "./DeliveryDetailsStep";
-import React from "react";
 
 const SummaryStep = dynamic<SummaryProps>(() => import("./SummaryStep"));
 const PaymentStep = dynamic(() => import("./Payment"));
@@ -16,7 +16,7 @@ export function StepContent({
 }) {
   switch (step) {
     case 0:
-      return <DeliveryDetailsStep/>;
+      return <DeliveryDetailsStep />;
     case 1:
       return <SummaryStep orderForm={orderData} />;
     case 2:

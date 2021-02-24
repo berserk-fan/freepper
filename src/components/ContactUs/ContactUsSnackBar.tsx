@@ -1,8 +1,8 @@
 import Box from "@material-ui/core/Box";
-import {IconButton, Snackbar, useTheme} from "@material-ui/core";
+import { IconButton, Snackbar, useTheme } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
-import ContactUs from "./ContactUs";
 import React from "react";
+import ContactUs from "./ContactUs";
 
 export default function ContactUsSnackBar({
   open,
@@ -21,7 +21,7 @@ export default function ContactUsSnackBar({
       open={open}
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
     >
-      <Box bgcolor={theme.palette.grey["50"]} position={"relative"}>
+      <Box bgcolor={theme.palette.grey["50"]} position="relative">
         <IconButton
           style={{
             position: "absolute",

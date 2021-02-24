@@ -37,14 +37,14 @@ export default function Detail(props: { text: string } & any) {
         disableHoverListener
         disableTouchListener
         title={text}
-        placement={"bottom"}
+        placement="bottom"
         {...rest}
       >
-        <Button size={"small"} onClick={handleTooltipClicked}>
+        <Button size="small" onClick={handleTooltipClicked}>
           {open ? (
-            <CloseIcon fontSize={"small"} />
+            <CloseIcon fontSize="small" />
           ) : (
-            <HelpOutlineIcon fontSize={"small"} />
+            <HelpOutlineIcon fontSize="small" />
           )}
         </Button>
       </Tooltip>
