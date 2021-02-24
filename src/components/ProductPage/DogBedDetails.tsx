@@ -22,10 +22,12 @@ export default function DogBedDetails({
     ...s,
     ...{ href: hrefMap.get(`${curFabric}-${s.id}`) },
   }));
+  const selectedFabric = fabrics.find(f => f.id === curFabric);
+  const selectedSize = sizes.find(s => s.id === curSize);
   return (
     <div>
-      <FabricPicker selected={curFabric} fabrics={fabricsWithRefs} />
-      <SizePicker selected={curSize} sizes={sizesWithRefs} />
+      <FabricPicker selected={selectedFabric} fabrics={fabricsWithRefs} />
+      <SizePicker selected={selectedSize} sizes={sizesWithRefs} />
     </div>
   );
 }

@@ -20,16 +20,16 @@ export default function FabricPicker({
   selected,
   fabrics,
 }: {
-  selected: string;
+  selected: Fabric;
   fabrics: (Fabric & { href: string })[];
 }) {
   return (
     <div>
       <Typography gutterBottom variant="subtitle2" component="h3">
-        Цвет
+        Цвет - {selected.displayName}
       </Typography>
       <Picker
-        selectedId={selected}
+        selectedId={selected.id}
         items={fabrics.sort((a, b) => a.id.localeCompare(b.id))}
         icon={Icon}
       />

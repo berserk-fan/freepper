@@ -19,7 +19,7 @@ const Markdown = dynamic(() => import("../Markdown/Renderers"));
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
-function getDetails(categoryName: string, product: Product): React.ReactNode {
+function Details({categoryName, product}: {categoryName: string, product: Product}) {
   switch (product.details.$case) {
     case "dogBed":
       return (
@@ -29,7 +29,7 @@ function getDetails(categoryName: string, product: Product): React.ReactNode {
         />
       );
     default:
-      return false;
+      return <></>;
   }
 }
 
@@ -39,15 +39,7 @@ const useStyles = makeStyles({
   },
 });
 
-function MakeFab({
-  icon,
-  label,
-  className,
-  onClick,
-  href,
-  color,
-  style,
-}: {
+type MakeFabProps = {
   href?: string;
   onClick?: () => void;
   color: "secondary";
@@ -55,7 +47,9 @@ function MakeFab({
   className: string;
   label: string;
   style?: any;
-}) {
+}
+
+function MakeFab({icon, label, className, onClick, href, color, style}: MakeFabProps) {
   const innerPart = (
     <Fab
       className={className}
@@ -116,7 +110,6 @@ function ProductPage({
     exit: theme.transitions.duration.leavingScreen,
   };
 
-  const productDetailsPart = getDetails(categoryName, product);
   return (
     <Box marginX="auto" maxWidth="500px" padding={1}>
       <SliderThumbs
@@ -142,9 +135,9 @@ function ProductPage({
         <Typography variant="h5">
           <Price price={price} />
         </Typography>
-        {productDetailsPart && <Divider />}
-        {productDetailsPart}
-        {productDetailsPart && <Divider />}
+        <Divider />
+        <Details categoryName={categoryName} product={product}/>
+        <Divider />
         <Box width="100%" height="50px">
           {(inCart ? fabs : fabs.reverse()).map((fab) => (
             <Zoom

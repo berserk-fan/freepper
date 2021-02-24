@@ -8,16 +8,16 @@ export default function SizePicker({
   selected,
   sizes,
 }: {
-  selected: string;
+  selected: Size;
   sizes: (Size & { href: string })[];
 }) {
   return (
     <div>
       <Typography gutterBottom variant="subtitle2" component="h3">
-        Размер
+        Размер - {selected.description}
       </Typography>
       <Picker
-        selectedId={selected}
+        selectedId={selected.id}
         items={sizes.sort((a, b) => a.id.localeCompare(b.id))}
       />
     </div>
