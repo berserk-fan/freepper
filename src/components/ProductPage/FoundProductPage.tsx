@@ -1,5 +1,12 @@
 import { Product } from "@mamat14/shop-server/shop_model";
-import { Box, Divider, Fab, Typography, useTheme, Zoom } from "@material-ui/core";
+import {
+  Box,
+  Divider,
+  Fab,
+  Typography,
+  useTheme,
+  Zoom,
+} from "@material-ui/core";
 import Image from "next/image";
 import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlineOutlined";
 import React, { memo } from "react";
@@ -19,7 +26,13 @@ const Markdown = dynamic(() => import("../Markdown/Renderers"));
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
-function Details({categoryName, product}: {categoryName: string, product: Product}) {
+function Details({
+  categoryName,
+  product,
+}: {
+  categoryName: string;
+  product: Product;
+}) {
   switch (product.details.$case) {
     case "dogBed":
       return (
@@ -47,9 +60,17 @@ type MakeFabProps = {
   className: string;
   label: string;
   style?: any;
-}
+};
 
-function MakeFab({icon, label, className, onClick, href, color, style}: MakeFabProps) {
+function MakeFab({
+  icon,
+  label,
+  className,
+  onClick,
+  href,
+  color,
+  style,
+}: MakeFabProps) {
   const innerPart = (
     <Fab
       className={className}
@@ -58,9 +79,7 @@ function MakeFab({icon, label, className, onClick, href, color, style}: MakeFabP
       onClick={onClick}
       style={style}
     >
-      {icon || false}
-      {" "}
-      <Typography variant="button">{label}</Typography>
+      {icon} <Typography variant="button">{label}</Typography>
     </Fab>
   );
   return href ? <Link href={href}>{innerPart}</Link> : innerPart;
@@ -77,14 +96,14 @@ function ProductPage({
   cart: CartState;
   addProduct: (product: Product) => void;
 }) {
+  const classes = useStyles();
   const theme = useTheme();
-  const { id, displayName, images, price, details } = product;
+  const { displayName, images, price } = product;
   const inCart = !!cart.selectedProducts[product.id];
   function addToCart() {
     addProduct(product);
   }
-  const x = 1;
-  const classes = useStyles();
+
   const fabs = [
     {
       key: "fabAddToCart",
@@ -115,7 +134,14 @@ function ProductPage({
       <SliderThumbs
         slides={images.map((image, idx) => (
           <Box key={image.src} className="flex overflow-hidden items-center">
-            <Image priority={idx === 0} width={500} height={500} src={image.src} alt={displayName} layout="intrinsic" />
+            <Image
+              priority={idx === 0}
+              width={500}
+              height={500}
+              src={image.src}
+              alt={displayName}
+              layout="intrinsic"
+            />
           </Box>
         ))}
         thumbs={images.map((image) => (
@@ -124,11 +150,7 @@ function ProductPage({
           </Box>
         ))}
       />
-      <Spacing
-        spacing={1}
-        className="flex flex-col"
-        childClassName="w-full"
-      >
+      <Spacing spacing={1} className="flex flex-col" childClassName="w-full">
         <Typography variant="h4" component="h1">
           {displayName}
         </Typography>
@@ -136,7 +158,7 @@ function ProductPage({
           <Price price={price} />
         </Typography>
         <Divider />
-        <Details categoryName={categoryName} product={product}/>
+        <Details categoryName={categoryName} product={product} />
         <Divider />
         <Box width="100%" height="50px">
           {(inCart ? fabs : fabs.reverse()).map((fab) => (
@@ -156,10 +178,8 @@ function ProductPage({
         </Box>
         <ul>
           {checkMarks.map((text) => (
-            <li className="flex">
-              <CheckCircleOutlineOutlinedIcon />
-              {" "}
-              <Typography>{text}</Typography>
+            <li key={text} className="flex">
+              <CheckCircleOutlineOutlinedIcon /> <Typography>{text}</Typography>
             </li>
           ))}
         </ul>
