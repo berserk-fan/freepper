@@ -18,7 +18,7 @@ export default function SizePicker({
       </Typography>
       <Picker
         selectedId={selected.id}
-        items={sizes.sort((a, b) => a.id.localeCompare(b.id))}
+        items={sizes.sort((a, b) => a.weight - b.weight)}
       />
     </div>
   );
