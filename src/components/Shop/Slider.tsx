@@ -105,7 +105,7 @@ export default function Slider({
     <Box className={classes.navigationContainer}>
       <Typography variant="caption" align="center">
         <Box fontFamily="Monospace">
-          {currentSlide + 1} /{slider.details().size}
+          {currentSlide + 1}/{slider.details().size}
         </Box>
       </Typography>
     </Box>
