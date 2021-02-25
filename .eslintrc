@@ -29,6 +29,10 @@
         "jsxBracketSameLine": false
       }
     ],
+    "arrow-body-style": [
+      "error",
+      "as-needed"
+    ],
     "max-len": [
       "warn",
       {

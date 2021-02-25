@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import KeenSlider, { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { Box, Theme } from "@material-ui/core";
@@ -24,35 +24,25 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const nolock = (lock: { current: number }): boolean => lock.current == -1;
+const THUMBSER_SLIDES_AMOUNT_PER_VIEW = 7;
+
+const nolock = (lock: { current: number }): boolean => lock.current === -1;
 const lockEnded = (lock: { current: number }, idx: number): boolean =>
-  lock.current == idx;
-const unlock = (lock: { current: number }): void => {
-  lock.current = -1;
-};
+  lock.current === idx;
 
 export default function SliderThumbs({
   slides,
   thumbs,
   className = "",
 }: {
-  slides: React.ReactNode[];
+  slides: ReactElement[];
   className?: string;
-  thumbs: React.ReactNode[];
+  thumbs: ReactElement[];
 }) {
   const classes = useStyles();
-  const [activeSlide, setActiveSlide] = useState(0);
-
-  const lock = useRef(-1);
-
   const thumbserDirRef = useRef<KeenSlider>(null);
-
-  function changeSlide(idx) {
-    lock.current = idx;
-    slider.moveToSlideRelative(idx);
-    thumbser.moveToSlideRelative(idx);
-  }
-
+  const [activeSlide, setActiveSlide] = useState(0);
+  const lock = useRef(-1);
   const [sliderRef, slider] = useKeenSlider({
     initial: 0,
     spacing: 15,
@@ -66,30 +56,33 @@ export default function SliderThumbs({
       }
 
       if (lockEnded(lock, idx)) {
-        unlock(lock);
+        lock.current = -1;
       }
     },
   });
 
-  const slidesPerView = 7;
   const [thumbsRef, thumbser] = useKeenSlider({
     spacing: 4,
     initial: 0,
-    slidesPerView,
-    centered: true,
+    slidesPerView: THUMBSER_SLIDES_AMOUNT_PER_VIEW,
     duration: 400,
-    slideChanged(s) {
-      const idx = s.details().relativeSlide;
-    },
+    // centered: true, // I'd rather turned it off...
   });
 
-  React.useEffect(() => {
+  function changeSlide(idx) {
+    lock.current = idx;
+    slider.moveToSlideRelative(idx);
+    thumbser.moveToSlideRelative(idx);
+  }
+
+  useEffect(() => {
     slider?.refresh();
     thumbser?.refresh();
+    thumbser?.moveToSlide(0);
     setActiveSlide(0);
   }, [slides, thumbs]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     thumbserDirRef.current = thumbser;
   }, [thumbser]);
 
@@ -98,7 +91,9 @@ export default function SliderThumbs({
       <div className={`${classes.navigationContainer}`}>
         <div ref={sliderRef as any} className="keen-slider">
           {slides.map((slide) => (
-            <div className="keen-slider__slide">{slide}</div>
+            <div key={slide.key} className="keen-slider__slide">
+              {slide}
+            </div>
           ))}
         </div>
         <div
@@ -107,7 +102,7 @@ export default function SliderThumbs({
         >
           {thumbs.map((thumb, idx) => (
             <Box
-              key={idx}
+              key={thumb.key}
               onClick={() => changeSlide(idx)}
               className={`${classes.thumb} ${
                 activeSlide === idx ? classes.thumbActive : ""

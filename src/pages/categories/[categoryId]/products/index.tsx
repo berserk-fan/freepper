@@ -4,7 +4,7 @@ import { tmpProducts } from "../../../../../configs/tmpProducts";
 import ShopPage, { ShopPageProps } from "../../../../components/Shop/ShopPage";
 
 export default function Shop(props: ShopPageProps) {
-  return (<ShopPage {...props} />);
+  return <ShopPage {...props} />;
 }
 
 export const getStaticProps: GetStaticProps = async () => {

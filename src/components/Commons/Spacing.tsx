@@ -1,5 +1,5 @@
-import { Grid, GridProps, GridTypeMap } from "@material-ui/core";
-import React from "react";
+import { Grid } from "@material-ui/core";
+import React, { Children } from "react";
 
 export default function Spacing(props) {
   const {
@@ -11,7 +11,7 @@ export default function Spacing(props) {
   } = props;
   return (
     <Grid container className={className} spacing={spacing} {...otherProps}>
-      {children.map((c) => (
+      {Children.map(children, (c) => (
         <Grid item className={childClassName}>
           {c}
         </Grid>
