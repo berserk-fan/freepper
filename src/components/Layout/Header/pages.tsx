@@ -26,11 +26,12 @@ type PageGroup = {
   icon?: OverridableComponent<SvgIconTypeMap>;
   children: Page[];
 };
+
 export type Page = {
   id: string;
   name: string;
   path: string;
-  Icon?: FunctionComponent;
+  Icon?: OverridableComponent<SvgIconTypeMap>;
 };
 export const pages: Record<Pages, Page> = {
   home: { id: "home", path: "/", name: "Домой", Icon: HouseIcon },

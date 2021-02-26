@@ -48,14 +48,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function HeaderMobileSidebar({ open, toggle }) {
   const classes = useStyles();
   const router = useRouter();
-  const [curPath, _] = router.asPath.split("?");
+  const [curPath] = router.asPath.split("?");
   const [shopGroupOpen, setShopGroupOpen] = React.useState(true);
   const toggleShopGroupOpen = () => {
     setShopGroupOpen(!shopGroupOpen);
   };
 
   const handleListClick = (path) => (event) => {
-    if (path == curPath) {
+    if (path === curPath) {
       toggle(false)(event);
     }
   };
@@ -78,7 +78,7 @@ export default function HeaderMobileSidebar({ open, toggle }) {
           onClick={handleListClick(path)}
         >
           <ListItemIcon>
-            {React.createElement(Icon, { fontSize: "large", style: styleProp })}
+            <Icon fontSize="large" style={styleProp} />
           </ListItemIcon>
           <ListItemText primary={name}>{name}</ListItemText>
         </ListItem>

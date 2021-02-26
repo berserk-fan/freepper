@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Box } from "@material-ui/core";
 import Logo from "../Logo/Logo";
 
-function HeaderLogo({ className }: { className: string }) {
+function HeaderLogo({ className = "" }: { className?: string }) {
   return (
     <Box className={className}>
       <Link href="/">

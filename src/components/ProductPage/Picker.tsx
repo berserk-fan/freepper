@@ -55,8 +55,8 @@ function Picker<T>({
               selected={selectedId === item.id}
             />
           </a>
-        </Link>,
-      )}
+        </Link>
+      ))}
     </Box>
   );
 }
