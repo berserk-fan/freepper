@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: "10px",
   },
   thumbSlide: {
-    display: "inline-flex",
+    display: "flex",
     marginTop: theme.spacing(0.5),
     marginBottom: theme.spacing(1),
   },
@@ -72,7 +72,6 @@ export default function SliderThumbs({
   function changeSlide(idx) {
     lock.current = idx;
     slider.moveToSlideRelative(idx);
-    thumbser.moveToSlideRelative(idx);
   }
 
   useEffect(() => {
@@ -111,6 +110,13 @@ export default function SliderThumbs({
               {thumb}
             </Box>
           ))}
+          {thumbs.length < THUMBSER_SLIDES_AMOUNT_PER_VIEW && // КОСТЫЛИК ))
+            new Array(THUMBSER_SLIDES_AMOUNT_PER_VIEW - thumbs.length)
+              .fill(1)
+              .map((el, index) => index)
+              .map((element) => (
+                <Box key={element} className="keen-slider__slide" />
+              ))}
         </div>
       </div>
     </div>
