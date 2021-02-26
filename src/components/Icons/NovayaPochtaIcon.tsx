@@ -1,5 +1,5 @@
 import { SvgIcon } from "@material-ui/core";
-import React from "react";
+import React, {memo} from "react";
 import { makeStyles } from "@material-ui/styles";
 import NovayaPochta from "./svg/Nova_Poshta_2014_logo.svg";
 
@@ -10,7 +10,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function NovayaPochtaIcon() {
+function NovayaPochtaIcon() {
   const classes = useStyles();
   return (
     <SvgIcon className={classes.largeIcon} viewBox="0 0 210 75">
@@ -18,3 +18,5 @@ export default function NovayaPochtaIcon() {
     </SvgIcon>
   );
 }
+
+export default memo(NovayaPochtaIcon)

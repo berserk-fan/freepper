@@ -45,11 +45,11 @@ export const components = {
     return memo(Blockquote);
   })(),
   ul: (() => {
-    const Ul = props => <List dense disablePadding {...props} component="ul" />;
+    const Ul = props => <List dense {...props} component="ul" />;
     return memo(Ul);
   })(),
   ol: (() => {
-    const Ol = props => <List dense disablePadding {...props} component="ol" />;
+    const Ol = props => <List dense {...props} component="ol" />;
     return memo(Ol);
   })(),
   li: (() => {
@@ -62,7 +62,7 @@ export const components = {
         >
           <ListItemIcon style={{ minWidth: 18 }}>
             <FiberManualRecordIcon
-              style={{ fontSize: "12px", color: theme.palette.grey["800"] }}
+              style={{ fontSize: "12px", color: theme.palette.secondary.dark }}
             />
           </ListItemIcon>
           <ListItemText style={{ marginTop: 2 }}>

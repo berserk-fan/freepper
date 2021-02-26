@@ -5,6 +5,7 @@ import HouseIcon from "../../Icons/HouseIcon";
 import PetBedIcon from "../../Icons/PetBedIcon";
 import Collar from "../../Icons/Collar";
 import GroupIcon from "../../Icons/GroupIcon";
+import {FunctionComponent} from "react";
 
 type Pages =
   | "home"
@@ -27,27 +28,27 @@ export type Page = {
   id: string;
   name: string;
   path: string;
-  icon?: OverridableComponent<SvgIconTypeMap>;
+  Icon?: FunctionComponent;
 };
 export const pages: Record<Pages, Page> = {
-  home: { id: "home", path: "/", name: "Домой", icon: HouseIcon },
+  home: { id: "home", path: "/", name: "Домой", Icon: HouseIcon },
   beds: {
     id: "beds",
     path: "/categories/beds/products",
     name: "Лежанки",
-    icon: PetBedIcon,
+    Icon: PetBedIcon,
   },
   ammo: {
     id: "ammo",
     path: "/categories/ammo/products",
     name: "Аммуниция",
-    icon: Collar,
+    Icon: Collar,
   },
   about: {
     id: "about",
     path: "/about",
     name: "О наc",
-    icon: GroupIcon,
+    Icon: GroupIcon,
   },
   "delivery-and-payment-info": {
     id: "delivery-and-payment-info",

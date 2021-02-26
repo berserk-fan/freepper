@@ -20,9 +20,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Provider store={store}>
-          <Component {...pageProps} />
-        </Provider>
+          <React.StrictMode>
+              <Provider store={store}>
+                  <Component {...pageProps} />
+              </Provider>
+          </React.StrictMode>
       </ThemeProvider>
     </>
   );

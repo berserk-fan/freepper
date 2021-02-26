@@ -1,4 +1,4 @@
-import React from "react";
+import React, {memo} from "react";
 import { Theme, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
@@ -29,10 +29,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default function ValueProp() {
+function ValueProp() {
   const classes = useStyles();
   return (
-    <div className={classes.container}>
+    <section className={classes.container}>
       <Typography
         align='center'
         className={classes.valueText}
@@ -42,6 +42,7 @@ export default function ValueProp() {
         <span className={classes.boldSpan}>Бесплатная доставка </span>
         по Украине, Бесплатные возвраты
       </Typography>
-    </div>
+    </section>
   );
 }
+export default memo(ValueProp)

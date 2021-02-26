@@ -1,19 +1,23 @@
-import React from "react";
+import React, {memo} from "react";
 import Link from "next/link";
 import { Box } from "@material-ui/core";
 import Logo from "../Logo/Logo";
 
-export default function HeaderLogo() {
+function HeaderLogo({className}: {className: string}) {
   return (
-    <Link href="/">
-      <Box
-        width={200}
-        height={100}
-        className="flex justify-center items-center overflow-hidden"
-        fontSize={240}
-      >
-        <Logo />
+      <Box className={className}>
+          <Link href="/">
+              <Box
+                  width={200}
+                  height={100}
+                  className="flex justify-center items-center overflow-hidden"
+                  fontSize={240}
+              >
+                  <Logo />
+              </Box>
+          </Link>
       </Box>
-    </Link>
   );
 }
+
+export default memo(HeaderLogo)

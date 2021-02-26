@@ -67,7 +67,7 @@ export default function HeaderMobileSidebar({ open, toggle }) {
     className: string = "",
     fontSizeOverride?: string,
   ): React.ReactNode {
-    const { name, path, icon } = page;
+    const { name, path, Icon } = page;
     const styleProp = fontSizeOverride ? { fontSize: fontSizeOverride } : {};
     return (
       <Link key={name + path} href={path}>
@@ -78,7 +78,7 @@ export default function HeaderMobileSidebar({ open, toggle }) {
           onClick={handleListClick(path)}
         >
           <ListItemIcon>
-            {React.createElement(icon, { fontSize: "large", style: styleProp })}
+            {React.createElement(Icon, { fontSize: "large", style: styleProp })}
           </ListItemIcon>
           <ListItemText primary={name}>{name}</ListItemText>
         </ListItem>

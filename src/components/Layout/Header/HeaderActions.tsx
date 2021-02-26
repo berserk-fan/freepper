@@ -1,10 +1,10 @@
 import Link from "next/link";
-import React from "react";
+import React, {memo} from "react";
 import { Box, Typography } from "@material-ui/core";
 import { NavItem, NavMenu } from "@mui-treasury/components/menu/navigation";
 import { Page, pages, shopPageGroup } from "./pages";
 
-export default function HeaderActions(props) {
+function HeaderActions(props) {
   const bigHeaderPages: Page[] = [
     pages.home,
     ...shopPageGroup.children,
@@ -12,11 +12,11 @@ export default function HeaderActions(props) {
   ];
   return (
     <NavMenu {...props} aria-label="page tabs">
-      {bigHeaderPages.map(({ id, path, name, icon }) => (
+      {bigHeaderPages.map(({ id, path, name, Icon }) => (
         <NavItem key={id}>
           <Link href={path}>
             <Box className="flex justify-between items-center">
-              {React.createElement(icon)}
+              <Icon/>
               <Typography style={{ paddingLeft: "8px" }} variant="button">
                 {name}
               </Typography>
@@ -27,3 +27,5 @@ export default function HeaderActions(props) {
     </NavMenu>
   );
 }
+
+export default memo(HeaderActions)

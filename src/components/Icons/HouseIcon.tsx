@@ -1,11 +1,12 @@
-import React from "react";
+import React, {memo} from "react";
 import { SvgIcon } from "@material-ui/core";
 import House from "./svg/house.svg";
 
-export default function HouseIcon(props) {
+function HouseIcon(props) {
   return (
     <SvgIcon fontSize="large" viewBox="0 0 512 512" {...props}>
       <House />
     </SvgIcon>
   );
 }
+export default memo(HouseIcon)

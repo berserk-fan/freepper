@@ -52,9 +52,7 @@ export default function Header() {
         <Box className={classes.menu}>
           <HeaderMenu />
         </Box>
-        <Box className={`${classes.title} cursor-default uppercase`}>
-          <HeaderLogo />
-        </Box>
+        <HeaderLogo className={`${classes.title} cursor-default uppercase`}/>
         <HeaderActions className={`${classes.mainButtonGroup}`} />
         <HeaderCart />
       </Toolbar>
