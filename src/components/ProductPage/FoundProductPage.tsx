@@ -18,9 +18,8 @@ import dynamic from "next/dynamic";
 import DogBedDetails from "./DogBedDetails";
 import Spacing from "../Commons/Spacing";
 import SliderThumbs from "../Shop/SliderThumbs";
-import { addProductAction, StoreState } from "../../store";
+import { addProductAction, CartState, StoreState } from "../../store";
 import Price from "../Shop/Price";
-import { CartState } from "../Cart/Cart";
 
 const Markdown = dynamic(() => import("../Markdown/Renderers"));
 

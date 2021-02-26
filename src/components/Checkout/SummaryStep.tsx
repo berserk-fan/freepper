@@ -7,14 +7,24 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Divider from "@material-ui/core/Divider";
-import { Box, Grid, makeStyles, Theme, Typography, useMediaQuery, useTheme } from "@material-ui/core";
+import {
+  Box,
+  Grid,
+  makeStyles,
+  Theme,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
 import Image from "next/image";
 import { connect } from "react-redux";
-import { CartProduct } from "../../pages/checkout";
-import { StoreState } from "../../store";
-import { CartState } from "../Cart/Cart";
+import { CartProduct, CartState, StoreState } from "../../store";
 import Spacing from "../Commons/Spacing";
-import { getDeliveryOptionName, getDeliveryProviderName, OrderForm } from "./Definitions";
+import {
+  getDeliveryOptionName,
+  getDeliveryProviderName,
+  OrderForm,
+} from "./Definitions";
 
 type Column<T> = {
   name: string;
@@ -26,9 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(0.5),
   },
-  tableCell2: {
-
-  },
+  tableCell2: {},
 }));
 
 const formSummaryColumns: Column<OrderForm>[] = [
@@ -52,7 +60,8 @@ const formSummaryColumns: Column<OrderForm>[] = [
   },
   {
     name: "Адрес",
-    extractor: (t: OrderForm) => `${t?.city} Отделение номер ${t?.warehouseNumber}`,
+    extractor: (t: OrderForm) =>
+      `${t?.city} Отделение номер ${t?.warehouseNumber}`,
   },
 ];
 
@@ -71,10 +80,7 @@ function FormSummaryTable({ orderForm }: { orderForm: OrderForm }) {
         <TableBody>
           {formSummaryColumns.map((col) => (
             <TableRow key={col.name}>
-              <TableCell
-                className={classes.tableCell1}
-                colSpan={1}
-              >
+              <TableCell className={classes.tableCell1} colSpan={1}>
                 {col.name}
               </TableCell>
               <TableCell className={classes.tableCell2} colSpan={3}>
@@ -103,7 +109,7 @@ function Summary({
   const columns: Column<CartProduct>[] = [
     {
       name: "Цена",
-      extractor: (p: CartProduct) => `${p.price.price.toString()  } ₴`,
+      extractor: (p: CartProduct) => `${p.price.price.toString()} ₴`,
     },
     {
       name: "Количество",
@@ -112,7 +118,7 @@ function Summary({
     {
       name: "Сумма",
       extractor: (p: CartProduct) =>
-        `${(p.count * p.price.price).toString()  } ₴`,
+        `${(p.count * p.price.price).toString()} ₴`,
     },
   ];
 
@@ -135,14 +141,12 @@ function Summary({
                 <Typography variant="body1" display="inline">
                   на сумму:
                 </Typography>
-                {invoiceTotal}
-                {" "}
-                ₴
+                {invoiceTotal} ₴
               </Typography>
             </Box>
             <Divider />
             {cartProducts.map((product, i, arr) => (
-              <Box margin={1}>
+              <Box key={product.id} margin={1}>
                 <Grid
                   container
                   spacing={2}
@@ -178,12 +182,12 @@ function Summary({
                     item
                   >
                     {columns.map((col) => (
-                      <div className="flex flex-col justify-center">
+                      <div
+                        key={col.name}
+                        className="flex flex-col justify-center"
+                      >
                         <div>
-                          <Typography
-                            color="textSecondary"
-                            variant="caption"
-                          >
+                          <Typography color="textSecondary" variant="caption">
                             {col.name}
                           </Typography>
                         </div>
@@ -196,7 +200,7 @@ function Summary({
                     ))}
                   </Spacing>
                 </Grid>
-                {i != arr.length - 1 ? <Divider /> : false}
+                {i !== arr.length - 1 ? <Divider /> : false}
               </Box>
             ))}
           </Box>

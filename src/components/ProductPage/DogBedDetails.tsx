@@ -12,7 +12,10 @@ export default function DogBedDetails({
 }) {
   const hrefMap = new Map<string, string>();
   variants.forEach((v) =>
-    hrefMap.set(`${v.fabricId}-${v.sizeId}`, `/${categoryName}/${v.variantName}`),
+    hrefMap.set(
+      `${v.fabricId}-${v.sizeId}`,
+      `/${categoryName}/${v.variantName}`,
+    ),
   );
   const fabricsWithRefs = fabrics.map((f) => ({
     ...f,
@@ -22,8 +25,8 @@ export default function DogBedDetails({
     ...s,
     ...{ href: hrefMap.get(`${curFabric}-${s.id}`) },
   }));
-  const selectedFabric = fabrics.find(f => f.id === curFabric);
-  const selectedSize = sizes.find(s => s.id === curSize);
+  const selectedFabric = fabrics.find((f) => f.id === curFabric);
+  const selectedSize = sizes.find((s) => s.id === curSize);
   return (
     <div>
       <FabricPicker selected={selectedFabric} fabrics={fabricsWithRefs} />

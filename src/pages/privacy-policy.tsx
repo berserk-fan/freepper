@@ -17,6 +17,7 @@ How information is collected (including through cookies and other tracking techn
 Who information is shared with or sold to
 What rights users have over their data
  */
+const providerPrivacyPolicyLink = "https://www.zoho.com/privacy.html";
 
 export default function PrivacyPolicy() {
   return (
@@ -35,8 +36,8 @@ export default function PrivacyPolicy() {
               "5. Информация не передается никому другому и не продается.",
               "6. Мы не используем куки.",
               "7. Пользователи могут попросить удалить информацию о них после успешного сделанного заказа.",
-            ].map((text) => (
-              <ListItem>
+            ].map((text, idx) => (
+              <ListItem key={idx}>
                 <ListItemText>
                   <Typography variant="body2">{text}</Typography>
                 </ListItemText>
@@ -44,9 +45,8 @@ export default function PrivacyPolicy() {
             ))}
           </List>
           <Typography variant="caption">
-            Политика конфеденциальности имейл провайдера
-            {" "}
-            <a>https://www.zoho.com/privacy.html</a>
+            Политика конфеденциальности имейл провайдера{" "}
+            <a href={providerPrivacyPolicyLink}>{providerPrivacyPolicyLink}</a>
           </Typography>
         </Box>
       </Container>

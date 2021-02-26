@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, {memo} from "react";
+import React, { memo } from "react";
 import { Box, Typography } from "@material-ui/core";
 import { NavItem, NavMenu } from "@mui-treasury/components/menu/navigation";
 import { Page, pages, shopPageGroup } from "./pages";
@@ -16,7 +16,7 @@ function HeaderActions(props) {
         <NavItem key={id}>
           <Link href={path}>
             <Box className="flex justify-between items-center">
-              <Icon/>
+              <Icon />
               <Typography style={{ paddingLeft: "8px" }} variant="button">
                 {name}
               </Typography>
@@ -28,4 +28,4 @@ function HeaderActions(props) {
   );
 }
 
-export default memo(HeaderActions)
+export default memo(HeaderActions);

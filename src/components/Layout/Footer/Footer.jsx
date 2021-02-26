@@ -76,8 +76,8 @@ const useStyles = makeStyles(({ palette, typography }) => ({
     ...typography.caption,
     color: palette.text.hint,
     marginTop: 8,
-    fontFamily: "Monospace"
-  }
+    fontFamily: "Monospace",
+  },
 }));
 
 const Footer = React.memo(() => {
@@ -100,9 +100,7 @@ const Footer = React.memo(() => {
               >
                 <Logo />
               </Box>
-              <Typography className={classes.info}>
-                ZooHugge, Dnipro
-              </Typography>
+              <Typography className={classes.info}>ZooHugge, Dnipro</Typography>
 
               <Typography className={classes.info}>
                 lika@pogladit-mozhno.com
@@ -135,7 +133,7 @@ const Footer = React.memo(() => {
                       pages["returns-policy"],
                     ].map((page) => (
                       <CategoryItem key={page.id}>
-                        <Link href={page.path} color={"textPrimary"}>
+                        <Link href={page.path} color="textPrimary">
                           <Typography>{page.name}</Typography>
                         </Link>
                       </CategoryItem>
@@ -163,7 +161,7 @@ const Footer = React.memo(() => {
                       pages.attributions,
                     ].map((page) => (
                       <CategoryItem key={page.id}>
-                        <Link href={page.path} color={"textPrimary"}>
+                        <Link href={page.path} color="textPrimary">
                           <Typography>{page.name}</Typography>
                         </Link>
                       </CategoryItem>
@@ -199,10 +197,7 @@ const Footer = React.memo(() => {
             <Item grow ml={-2} shrink={0}>
               <NavMenu useStyles={usePlainNavigationMenuStyles}>
                 <ColumnToRow at="sm">
-                  {[
-                    pages.cooperation,
-                    pages["privacy-policy"],
-                  ].map((page) => (
+                  {[pages.cooperation, pages["privacy-policy"]].map((page) => (
                     <NavItem key={page.id} className={classes.legalLink}>
                       <Link href={page.path}>
                         <Typography align="center">{page.name}</Typography>

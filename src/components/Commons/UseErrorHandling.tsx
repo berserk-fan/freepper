@@ -28,7 +28,6 @@ export default function useErrorHandling(
   const [retryNumber, setRetryNumber] = useState(0);
   const currentState = useRef("NOT_SUBMITTED");
   const abortController = useRef<AbortController>(null);
-  console.log(currentState.current);
 
   useEffect(() => {
     abortController.current = new AbortController();
@@ -59,16 +58,16 @@ export default function useErrorHandling(
   function customFetch(r: RequestInfo, i: RequestInit): Promise<void> {
     changeState("SENDING");
     return promiseRetry(
-      async (retry, retryNumber) => {
+      async (retry, curRetryNumber) => {
         const curState = currentState.current;
         if (
           curState === "CANCELLED" ||
-          (retryNumber != 1 && curState === "NOT_SUBMITTED")
+          (curRetryNumber !== 1 && curState === "NOT_SUBMITTED")
         ) {
           return;
         }
-        setRetryNumber(retryNumber);
-        if (retryNumber !== 1) {
+        setRetryNumber(curRetryNumber);
+        if (curRetryNumber !== 1) {
           changeState("RETRYING");
         }
         let newState: SubmitState = "OK";
@@ -77,7 +76,7 @@ export default function useErrorHandling(
             ...i,
             signal: abortController.current.signal,
           });
-          if (res.status != 201) {
+          if (res.status !== 201) {
             newState = "SERVER_ERROR";
           }
         } catch (err) {
@@ -92,7 +91,7 @@ export default function useErrorHandling(
           }
         }
 
-        if (newState === "SERVER_ERROR" && retryNumber <= maxServerRetries) {
+        if (newState === "SERVER_ERROR" && curRetryNumber <= maxServerRetries) {
           newState = "RETRY_TIMEOUT";
         }
 

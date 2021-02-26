@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { Box, Theme, Typography } from "@material-ui/core";
@@ -49,12 +49,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   arrow_disabled: { fill: "rgba(255, 255, 255, 0.5)" },
 }));
 
+const WINDOWSIZE = 2;
 export default function Slider({
   slides,
   className = "",
   onChange,
 }: {
-  slides: any[];
+  slides: [string, ReactNode][];
   className?: string;
   onChange?: (slideNum: number) => void;
 }) {
@@ -63,9 +64,7 @@ export default function Slider({
 
   function changeSlide(slideIdx: number) {
     setCurrentSlide(slideIdx);
-    if (onChange) {
-      onChange(slideIdx);
-    }
+    onChange && onChange(slideIdx);
   }
 
   const [sliderRef, slider] = useKeenSlider({
@@ -77,7 +76,6 @@ export default function Slider({
     },
   });
 
-  const WINDOWSIZE = 2;
   const [toLoad, setToLoad] = useState([0, 2]);
   useEffect(() => {
     setToLoad([
@@ -118,8 +116,8 @@ export default function Slider({
   return (
     <Box className={className} position="relative">
       <div ref={sliderRef as any} className="keen-slider">
-        {slides.map((slide, idx) => (
-          <div className="keen-slider__slide">
+        {slides.map(([key, slide], idx) => (
+          <div key={key} className="keen-slider__slide">
             {shouldLoad(idx) ? slide : null}
           </div>
         ))}

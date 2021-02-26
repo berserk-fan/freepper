@@ -1,4 +1,4 @@
-import React, {memo} from "react";
+import React, { memo } from "react";
 import { SvgIcon } from "@material-ui/core";
 import ShopingCart from "./svg/shopping-cart.svg";
 
@@ -10,4 +10,4 @@ function ShoppingCartIcon(props) {
   );
 }
 
-export default memo(ShoppingCartIcon)
+export default memo(ShoppingCartIcon);

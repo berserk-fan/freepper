@@ -8,52 +8,58 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
-import { List, ListItem, ListItemIcon, ListItemText, useTheme } from "@material-ui/core";
+import {
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  useTheme,
+} from "@material-ui/core";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import MdPage from "./MdPage";
 
 export const components = {
   p: Typography,
   h1: (() => {
-    const H1 = props => <Typography {...props} component="h1" variant="h1" />;
+    const H1 = (props) => <Typography {...props} component="h1" variant="h1" />;
     return memo(H1);
   })(),
   h2: (() => {
-    const H2 = props => <Typography {...props} component="h2" variant="h2" />;
+    const H2 = (props) => <Typography {...props} component="h2" variant="h2" />;
     return memo(H2);
   })(),
   h3: (() => {
-    const H3 = props => <Typography {...props} component="h3" variant="h3" />;
+    const H3 = (props) => <Typography {...props} component="h3" variant="h3" />;
     return memo(H3);
   })(),
   h4: (() => {
-    const H4 = props => <Typography {...props} component="h4" variant="h4" />;
+    const H4 = (props) => <Typography {...props} component="h4" variant="h4" />;
     return memo(H4);
   })(),
   h5: (() => {
-    const H5 = props => <Typography {...props} component="h5" variant="h5" />;
+    const H5 = (props) => <Typography {...props} component="h5" variant="h5" />;
     return memo(H5);
   })(),
   h6: (() => {
-    const H6 = props => <Typography {...props} component="h6" variant="h6" />;
+    const H6 = (props) => <Typography {...props} component="h6" variant="h6" />;
     return memo(H6);
   })(),
   blockquote: (() => {
-    const Blockquote = props => (
+    const Blockquote = (props) => (
       <Paper style={{ borderLeft: "4px solid grey", padding: 8 }} {...props} />
     );
     return memo(Blockquote);
   })(),
   ul: (() => {
-    const Ul = props => <List dense {...props} component="ul" />;
+    const Ul = (props) => <List dense {...props} component="ul" />;
     return memo(Ul);
   })(),
   ol: (() => {
-    const Ol = props => <List dense {...props} component="ol" />;
+    const Ol = (props) => <List dense {...props} component="ol" />;
     return memo(Ol);
   })(),
   li: (() => {
-    const Li = props => {
+    const Li = (props) => {
       const theme = useTheme();
       return (
         <ListItem
@@ -76,11 +82,11 @@ export const components = {
     return memo(Li);
   })(),
   table: (() => {
-    const Table = props => <MuiTable {...props} />;
+    const Table = (props) => <MuiTable {...props} />;
     return memo(Table);
   })(),
   tr: (() => {
-    const Tr = props => <TableRow {...props} />;
+    const Tr = (props) => <TableRow {...props} />;
     return memo(Tr);
   })(),
   td: (() => {
@@ -90,7 +96,7 @@ export const components = {
     return memo(Td);
   })(),
   tbody: (() => {
-    const TBody = props => <TableBody {...props} />;
+    const TBody = (props) => <TableBody {...props} />;
     return memo(TBody);
   })(),
   th: (() => {
@@ -100,12 +106,12 @@ export const components = {
     return memo(Th);
   })(),
   thead: (() => {
-    const THead = props => <TableHead {...props} />;
+    const THead = (props) => <TableHead {...props} />;
     return memo(THead);
   })(),
   hr: Divider,
   input: (() => {
-    const Input = props => {
+    const Input = (props) => {
       const { type } = props;
       if (type === "checkbox") {
         return <Checkbox {...props} disabled={false} readOnly />;

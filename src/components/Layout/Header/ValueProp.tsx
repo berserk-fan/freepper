@@ -1,4 +1,4 @@
-import React, {memo} from "react";
+import React, { memo } from "react";
 import { Theme, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
@@ -34,10 +34,10 @@ function ValueProp() {
   return (
     <section className={classes.container}>
       <Typography
-        align='center'
+        align="center"
         className={classes.valueText}
-        variant='subtitle2'
-        color='textSecondary'
+        variant="subtitle2"
+        color="textSecondary"
       >
         <span className={classes.boldSpan}>Бесплатная доставка </span>
         по Украине, Бесплатные возвраты
@@ -45,4 +45,4 @@ function ValueProp() {
     </section>
   );
 }
-export default memo(ValueProp)
+export default memo(ValueProp);

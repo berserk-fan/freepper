@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import nodemailer from "nodemailer";
 import { Order } from "../../order-model";
-import { CartProduct } from "../checkout";
 import { renderJSONPlusCss } from "../../utils/utils";
+import { CartProduct } from "../../store";
 
 function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
   const ret: any = {};
@@ -15,11 +15,11 @@ function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
 function prepareCart(cart: Record<string, CartProduct>): any {
   const val = Object.entries(cart).map(([id, product]) => {
     const fabric = product.details.dogBed.fabrics.find(
-      (f) => f.id == product.details.dogBed.fabricId,
+      (f) => f.id === product.details.dogBed.fabricId,
     );
     const prepFabric = fabric.displayName;
     const size = product.details.dogBed.sizes.find(
-      (s) => s.id == product.details.dogBed.sizeId,
+      (s) => s.id === product.details.dogBed.sizeId,
     );
     const prepSize = size.displayName;
     return [

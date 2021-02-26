@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -61,7 +61,8 @@ export default function ItemView({
         <Box className={classes.mediaChild}>
           <Slider
             onChange={useSlideId}
-            slides={images.map((image, idx) => (
+            slides={images.map((image, idx): [string, ReactNode] => [
+              image.src,
               <Box key={image.src} className={classes.media}>
                 <Link href={productHref(image.name)}>
                   <Box>
@@ -74,8 +75,8 @@ export default function ItemView({
                     />
                   </Box>
                 </Link>
-              </Box>
-            ))}
+              </Box>,
+            ])}
           />
         </Box>
       </Box>

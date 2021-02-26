@@ -1,4 +1,12 @@
-import { Box, Dialog, Fab, IconButton, Slide, Theme, useTheme } from "@material-ui/core";
+import {
+  Box,
+  Dialog,
+  Fab,
+  IconButton,
+  Slide,
+  Theme,
+  useTheme,
+} from "@material-ui/core";
 
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -35,10 +43,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const Transition = React.forwardRef((
-  props: TransitionProps & { children?: React.ReactElement<any, any> },
-  ref: React.Ref<unknown>,
-) => <Slide direction="up" ref={ref} {...props} />);
+const Transition = React.forwardRef(
+  (
+    props: TransitionProps & { children?: React.ReactElement<any, any> },
+    ref: React.Ref<unknown>,
+  ) => <Slide direction="up" ref={ref} {...props} />,
+);
 
 function HeaderCart({ cartSize }: { cartSize: number }) {
   const classes = useStyles();

@@ -14,7 +14,9 @@ export default function ProductPage({
   categoryName: string;
 }) {
   return (
-    <LayoutWithHeaderAndFooter breadcrumbsOverrides={{ [product.id]: product.displayName }}>
+    <LayoutWithHeaderAndFooter
+      breadcrumbsOverrides={{ [product.id]: product.displayName }}
+    >
       <Box padding={1}>
         {product == null ? "Product not found" : false}
         {product && (

@@ -1,29 +1,24 @@
-import { Product } from "@mamat14/shop-server/shop_model";
 import {
   Box,
-  Button,
   Card,
   CardContent,
   IconButton,
-  Popover,
   Typography,
 } from "@material-ui/core";
 import Image from "next/image";
-import PopupStateComponent, {
-  bindPopover,
-  bindTrigger,
-} from "material-ui-popup-state";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import DeleteIcon from "@material-ui/icons/Delete";
-import CloseIcon from "@material-ui/icons/Close";
-import React, { useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/styles";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { connect } from "react-redux";
 import AddIcon from "@material-ui/icons/Add";
 
-import { CartProduct } from "../../pages/checkout";
-import { deleteProductAction, setProductCountAction } from "../../store";
+import {
+  CartProduct,
+  deleteProductAction,
+  setProductCountAction,
+} from "../../store";
+import ActionsPopover from "./ActionsPopover";
+import AdditionalInfo from "./AdditionalInfo";
 
 const useStyles = makeStyles({
   root: {
@@ -112,15 +107,8 @@ const cartItem = function CartItem({
             <Typography noWrap align="right" variant="h6">
               {displayName}
             </Typography>
-            <Typography
-              noWrap
-              color="textSecondary"
-              align="right"
-              variant="h6"
-            >
-              {price.price}
-              {" "}
-              ₴
+            <Typography noWrap color="textSecondary" align="right" variant="h6">
+              {price.price} ₴
             </Typography>
           </div>
         </CardContent>
@@ -130,10 +118,12 @@ const cartItem = function CartItem({
           paddingRight={2}
           className="flex justify-between items-center"
         >
-          <Box marginLeft={1}>{getAdditionalInfo(product)}</Box>
+          <Box marginLeft={1}>
+            <AdditionalInfo {...product} />
+          </Box>
           <Box marginLeft={1} className="flex place-items-center">
             <QuantityControls />
-            {ActionsPopover(id, deleteProduct)}
+            <ActionsPopover productId={id} deleteProduct={deleteProduct} />
           </Box>
         </Box>
       </div>
@@ -149,70 +139,3 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(null, mapDispatchToProps)(cartItem);
-
-function getAdditionalInfo({ details }: Product) {
-  switch (details.$case) {
-    case "dogBed":
-      const size = details.dogBed.sizes.find(
-        (s) => s.id == details.dogBed.sizeId,
-      );
-      return (
-        <div>
-          <Typography noWrap display="inline" variant="caption">
-            Размер:
-          </Typography>
-          <Typography noWrap display="inline" variant="h6">
-            {` ${  size.displayName}`}
-          </Typography>
-        </div>
-      );
-  }
-}
-
-export function ActionsPopover(
-  productId: string,
-  deleteProduct: (id: string) => void,
-) {
-  return (
-    <PopupStateComponent variant="popover" popupId="cart-action-popover">
-      {(popupState) => (
-        <div>
-          <IconButton size="small" {...bindTrigger(popupState)}>
-            <MoreVertIcon />
-          </IconButton>
-          <Popover
-            {...bindPopover(popupState)}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "left",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-          >
-            <div className="flex flex-col">
-              <Button
-                onClick={() => {
-                  deleteProduct(productId);
-                  popupState.close();
-                }}
-                fullWidth
-                startIcon={<DeleteIcon />}
-              >
-                <Typography>Удалить из корзины</Typography>
-              </Button>
-              <Button
-                onClick={popupState.close}
-                fullWidth
-                startIcon={<CloseIcon />}
-              >
-                <Typography>Закрыть</Typography>
-              </Button>
-            </div>
-          </Popover>
-        </div>
-      )}
-    </PopupStateComponent>
-  );
-}

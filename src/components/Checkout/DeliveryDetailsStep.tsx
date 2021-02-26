@@ -22,7 +22,7 @@ export default function DeliveryDetailsForm() {
       <Spacing spacing={1} childClassName="w-full">
         <TextField
           color="secondary"
-          name={pathName<OrderForm>( "name")}
+          name={pathName<OrderForm>("name")}
           required
           fullWidth
           id="full-name-input"
@@ -33,7 +33,7 @@ export default function DeliveryDetailsForm() {
         />
         <Field
           id="phone-input"
-          name={pathName<OrderForm>( "phone")}
+          name={pathName<OrderForm>("phone")}
           placeholder="Номер телефона"
           component={PhoneNumber}
         />
@@ -50,7 +50,7 @@ export default function DeliveryDetailsForm() {
         />
         <Radios
           required
-          name={pathName<OrderForm>( "deliveryOption")}
+          name={pathName<OrderForm>("deliveryOption")}
           id="select-devilery-option"
           label="Способ доставки"
           color="secondary"
@@ -62,7 +62,7 @@ export default function DeliveryDetailsForm() {
 
         <TextField
           color="secondary"
-          name={pathName<OrderForm>( "city")}
+          name={pathName<OrderForm>("city")}
           required
           fullWidth
           id="address-input"
@@ -73,7 +73,7 @@ export default function DeliveryDetailsForm() {
         />
         <TextField
           color="secondary"
-          name={pathName<OrderForm>( "warehouseNumber")}
+          name={pathName<OrderForm>("warehouseNumber")}
           required
           fullWidth
           id="warehouse-number-input"

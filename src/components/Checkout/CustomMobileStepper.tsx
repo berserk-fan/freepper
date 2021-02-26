@@ -5,13 +5,11 @@ import { KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/styles";
 import { buttonTexts } from "./Definitions";
 
-
 const useStyles = makeStyles((theme: Theme) => ({
   dotActive: {
     backgroundColor: theme.palette.secondary.dark,
   },
 }));
-
 
 type MobileForm = {
   handleBack: MouseEventHandler;
@@ -36,18 +34,18 @@ export default function CustomMobileStepper({
       steps={maxSteps}
       position="static"
       activeStep={activeStep}
-      nextButton={(
+      nextButton={
         <Button size="small" onClick={handleNext} disabled={isNextDisabled}>
           {buttonTexts[activeStep]}
           <KeyboardArrowRight />
         </Button>
-      )}
-      backButton={(
+      }
+      backButton={
         <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
           <KeyboardArrowLeft />
           Назад
         </Button>
-      )}
+      }
     />
   );
 }

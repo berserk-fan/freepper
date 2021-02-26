@@ -4,14 +4,8 @@ import { Box, Button, Theme, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
 import Link from "next/link";
 import CartItem from "./CartItem";
-import { CartProduct } from "../../pages/checkout";
-import { StoreState } from "../../store";
-
-export type CartState = {
-  cartSize: number;
-  total: number;
-  selectedProducts: Record<string, CartProduct>;
-};
+import { CartState, StoreState } from "../../store";
+import { pages } from "../Layout/Header/pages";
 
 const useStyles = makeStyles((theme: Theme) => ({
   textWrapper: {
@@ -75,12 +69,9 @@ function NonEmptyCart({ productsList, total }) {
             <Typography variant="h5" classes={{ root: classes.prePriceText }}>
               Итого
             </Typography>
-            <Typography variant="h5">
-              {total}
-              ₴
-            </Typography>
+            <Typography variant="h5">{total}₴</Typography>
           </div>
-          <Link href="/checkout">
+          <Link href={pages.checkout.path}>
             <Button
               classes={{ root: classes.mainButton }}
               color="primary"

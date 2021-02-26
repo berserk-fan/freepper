@@ -98,8 +98,7 @@ function RetryMessage({
     <Alert severity="warning">
       <FailedHeader onClose={onClose} />
       <Typography>
-        Попробую еще раз через
-        {" "}
+        Попробую еще раз через{" "}
         <CountDown countDownId={retryNumber} periodSec={retryPeriod} />
       </Typography>
     </Alert>
@@ -118,7 +117,7 @@ function Sending({ onCancel }: { onCancel: () => void }): React.ReactElement {
   return (
     <Alert
       severity="info"
-      action={(
+      action={
         <ButtonWithDetail
           detailText="Отменить запрос и попробовать другой способ"
           size="small"
@@ -126,7 +125,7 @@ function Sending({ onCancel }: { onCancel: () => void }): React.ReactElement {
         >
           ОТМЕНА
         </ButtonWithDetail>
-      )}
+      }
     >
       <Typography>Отправляю заказ...</Typography>
       <Offline>
@@ -176,6 +175,8 @@ export default function OrderFallback({
         return [<Sending onCancel={onCancel} />, undefined];
       case "NOT_SUBMITTED":
         return [<></>, undefined];
+      default:
+        throw new Error("unreachable code");
     }
   }
 
@@ -185,7 +186,7 @@ export default function OrderFallback({
       TransitionComponent={Slide}
       autoHideDuration={autoHide}
       onClose={onClose}
-      open={orderSubmitState != "NOT_SUBMITTED"}
+      open={orderSubmitState !== "NOT_SUBMITTED"}
     >
       <Box>{currentMessage}</Box>
     </Snackbar>

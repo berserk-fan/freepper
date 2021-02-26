@@ -28,10 +28,10 @@ export default function HeaderMenu() {
     <>
       <IconButton
         onClick={toggleDrawer(true)}
-        edge='start'
+        edge="start"
         className={classes.menuButton}
-        color='inherit'
-        aria-label='menu'
+        color="inherit"
+        aria-label="menu"
       >
         <MenuIcon />
       </IconButton>

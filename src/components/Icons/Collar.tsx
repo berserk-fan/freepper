@@ -1,4 +1,4 @@
-import React, {memo} from "react";
+import React, { memo } from "react";
 import { SvgIcon } from "@material-ui/core";
 import CollarIcon from "./svg/collar.svg";
 
@@ -10,4 +10,4 @@ function Collar(props) {
   );
 }
 
-export default memo(Collar)
+export default memo(Collar);

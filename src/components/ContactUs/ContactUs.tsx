@@ -35,9 +35,7 @@ export default function ContactUs() {
   const telegramChat = "https://t.me/pogladit_mozhno";
   return (
     <Box>
-      <Typography variant="caption">
-        Нажмите на интересующий вариант
-      </Typography>
+      <Typography variant="caption">Нажмите на интересующий вариант</Typography>
       <List dense component="nav" aria-label="main mailbox folders">
         <ListItem button onClick={telToggle}>
           <ListItemIcon>

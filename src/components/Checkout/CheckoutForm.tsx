@@ -3,7 +3,7 @@ import { Box, Paper } from "@material-ui/core";
 import { Form } from "react-final-form";
 import { connect } from "react-redux";
 import FormStepper from "./FormStepper";
-import { clearCartAction, StoreState } from "../../store";
+import { CartState, clearCartAction, StoreState } from "../../store";
 import useErrorHandling from "../Commons/UseErrorHandling";
 import CustomMobileStepper from "./CustomMobileStepper";
 import OrderFallback from "./OrderFallback";
@@ -19,7 +19,6 @@ import { StepContent } from "./StepContext";
 import HideOnMobile from "../Commons/HideOnMobile";
 import ShowOnMobile from "../Commons/ShowOnMobile";
 import FullScreenButtons from "./FullScreenButtons";
-import { CartState } from "../Cart/Cart";
 
 type CheckoutProps = {
   cart: CartState;
@@ -41,8 +40,14 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
 
   const isLastStep = activeStep === steps.length - 1;
   const wasSubmitted = orderSubmitState !== "NOT_SUBMITTED";
-  const processing =
-    orderSubmitState === "SENDING" || orderSubmitState === "RETRYING";
+
+  async function postForm(orderForm: OrderForm): Promise<void> {
+    const order = toOrder(cart, orderForm);
+    return customFetch("/api/orders", {
+      method: "POST",
+      body: JSON.stringify(order),
+    });
+  }
 
   function retryPostForm() {
     reset();
@@ -62,14 +67,6 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
     setFormState(newFormState);
     setActiveStep((p) => p - 1);
   };
-
-  async function postForm(orderForm: OrderForm): Promise<void> {
-    const order = toOrder(cart, orderForm);
-    return customFetch("/api/orders", {
-      method: "POST",
-      body: JSON.stringify(order),
-    });
-  }
 
   function isNextDisabled<FormValues>(values: FormValues) {
     return !schema.isValidSync(values) || (wasSubmitted && isLastStep);

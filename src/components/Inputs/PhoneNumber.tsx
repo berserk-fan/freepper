@@ -10,7 +10,7 @@ const locale = {
 
 export const PhoneNumber = (props) => {
   const {
-    input: { name, value, type, onChange, ...restInput },
+    input: { value, onChange, ...restInput },
     meta,
     required,
     helperText,
@@ -21,12 +21,12 @@ export const PhoneNumber = (props) => {
   const { error, submitError } = meta;
   const isError = showError({ meta });
 
-  function handleChange(value, country) {
+  function handleChange(val, country) {
     if (country.countryCode === "ua") {
-      onChange(value.replace("+380 (0", "+380 ("));
+      onChange(val.replace("+380 (0", "+380 ("));
       return;
     }
-    onChange(value);
+    onChange(val);
   }
 
   return (

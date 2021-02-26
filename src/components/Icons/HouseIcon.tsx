@@ -1,4 +1,4 @@
-import React, {memo} from "react";
+import React, { memo } from "react";
 import { SvgIcon } from "@material-ui/core";
 import House from "./svg/house.svg";
 
@@ -9,4 +9,4 @@ function HouseIcon(props) {
     </SvgIcon>
   );
 }
-export default memo(HouseIcon)
+export default memo(HouseIcon);

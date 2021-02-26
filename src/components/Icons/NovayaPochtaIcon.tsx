@@ -1,5 +1,5 @@
 import { SvgIcon } from "@material-ui/core";
-import React, {memo} from "react";
+import React, { memo } from "react";
 import { makeStyles } from "@material-ui/styles";
 import NovayaPochta from "./svg/Nova_Poshta_2014_logo.svg";
 
@@ -19,4 +19,4 @@ function NovayaPochtaIcon() {
   );
 }
 
-export default memo(NovayaPochtaIcon)
+export default memo(NovayaPochtaIcon);

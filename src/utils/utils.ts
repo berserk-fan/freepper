@@ -12,13 +12,12 @@ function renderPrimitive(p: any) {
 function renderJSON(obj: any, depth: number = 0, indentation: string = "  ") {
   let retValue = "";
   if (typeof obj !== "object") {
-    return ` ${  renderPrimitive(obj)}`;
+    return ` ${renderPrimitive(obj)}`;
   }
   for (const [key, value] of Object.entries(obj)) {
-    retValue +=
-      `<div class='tree'>${ 
-        indentation.repeat(depth) 
-      }<span class="key">${key}</span>:`;
+    retValue += `<div class='tree'>${indentation.repeat(
+      depth,
+    )}<span class="key">${key}</span>:`;
     retValue += renderJSON(value, depth + 1);
     retValue += "</div>";
   }
