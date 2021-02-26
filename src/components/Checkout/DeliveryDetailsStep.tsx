@@ -1,6 +1,6 @@
 import { Box, Typography } from "@material-ui/core";
 import React from "react";
-import { Radios, TextField } from "mui-rff";
+import {Radios, showErrorOnBlur, TextField} from "mui-rff";
 import { Field } from "react-final-form";
 import { DeliveryOption, DeliveryProvider } from "../../order-model";
 import { PhoneNumber } from "../Inputs/PhoneNumber";
@@ -30,6 +30,7 @@ export default function DeliveryDetailsForm() {
           variant="filled"
           type="text"
           autoComplete="name"
+          showError={showErrorOnBlur}
         />
         <Field
           id="phone-input"

@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from "react";
+import React, {memo, MouseEventHandler} from "react";
 import { MobileStepper, Theme } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
@@ -19,7 +19,7 @@ type MobileForm = {
   maxSteps: number;
 };
 
-export default function CustomMobileStepper({
+function CustomMobileStepper({
   handleBack,
   handleNext,
   activeStep,
@@ -49,3 +49,5 @@ export default function CustomMobileStepper({
     />
   );
 }
+
+export default memo(CustomMobileStepper);

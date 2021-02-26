@@ -1,6 +1,6 @@
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { StepIconProps } from "@material-ui/core/StepIcon";
-import React from "react";
+import React, {memo} from "react";
 import LocalShippingIcon from "@material-ui/icons/LocalShipping";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import PaymentIcon from "@material-ui/icons/Payment";
@@ -79,7 +79,7 @@ function ColorlibStepIcon(props: StepIconProps) {
   );
 }
 
-export default function FormStepper({
+function FormStepper({
   activeStep,
   steps,
 }: {
@@ -101,3 +101,4 @@ export default function FormStepper({
     </Stepper>
   );
 }
+export default memo(FormStepper)

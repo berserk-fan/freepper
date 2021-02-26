@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/styles";
 import NovayaPochta from "./svg/Nova_Poshta_2014_logo.svg";
 
 const useStyles = makeStyles({
-  largeIcon: {
+  root: {
     width: "4.2rem",
     height: "1.5rem",
   },
@@ -13,7 +13,7 @@ const useStyles = makeStyles({
 function NovayaPochtaIcon() {
   const classes = useStyles();
   return (
-    <SvgIcon className={classes.largeIcon} viewBox="0 0 210 75">
+    <SvgIcon classes={classes} viewBox="0 0 210 75">
       <NovayaPochta />
     </SvgIcon>
   );
