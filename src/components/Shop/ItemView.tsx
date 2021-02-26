@@ -10,7 +10,7 @@ import Price from "./Price";
 import { TmpGroupedProduct } from "../../../configs/tmpProducts";
 import { SIZES } from "./ShopDefinitions";
 
-const Slider = dynamic(() => import("./Slider"));
+const Slider = dynamic(() => import("../Slider/Slider"));
 
 const useStyles = makeStyles({
   media: {
