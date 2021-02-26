@@ -1,6 +1,5 @@
 import { OverridableComponent } from "@material-ui/core/OverridableComponent";
 import { SvgIconTypeMap } from "@material-ui/core/SvgIcon/SvgIcon";
-import { FunctionComponent } from "react";
 import ShopIcon from "../../Icons/ShopIcon";
 import HouseIcon from "../../Icons/HouseIcon";
 import PetBedIcon from "../../Icons/PetBedIcon";
@@ -18,7 +17,8 @@ type Pages =
   | "attributions"
   | "ammo"
   | "beds"
-  | "checkout";
+  | "checkout"
+  | "checkout-success";
 
 type PageGroup = {
   id: string;
@@ -87,6 +87,11 @@ export const pages: Record<Pages, Page> = {
     id: "checkout",
     path: "/checkout",
     name: "Оформелние заказа",
+  },
+  "checkout-success": {
+    id: "checkout-success",
+    path: "/checkout/success",
+    name: "Заказ успешен",
   },
 };
 

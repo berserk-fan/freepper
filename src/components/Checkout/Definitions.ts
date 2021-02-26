@@ -13,6 +13,7 @@ export const buttonTexts = [
   "К оплате заказа",
   "Отправить заказ",
 ];
+
 export type OrderForm = Partial<{
   city: string;
   warehouseNumber: number;

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Paper } from "@material-ui/core";
 import { Form } from "react-final-form";
 import { connect } from "react-redux";
+import { useRouter } from "next/router";
 import FormStepper from "./FormStepper";
 import { CartState, clearCartAction, StoreState } from "../../store";
 import useErrorHandling from "../Commons/UseErrorHandling";
@@ -19,6 +20,7 @@ import { StepContent } from "./StepContext";
 import HideOnMobile from "../Commons/HideOnMobile";
 import ShowOnMobile from "../Commons/ShowOnMobile";
 import FullScreenButtons from "./FullScreenButtons";
+import { pages } from "../Layout/Header/pages";
 
 type CheckoutProps = {
   cart: CartState;
@@ -26,6 +28,7 @@ type CheckoutProps = {
 };
 
 function Checkout({ cart, clearCart }: CheckoutProps) {
+  const router = useRouter();
   const [activeStep, setActiveStep] = React.useState(0);
   const [formState, setFormState] = useState(initialValues);
   const serverRetries = 2;
@@ -72,8 +75,14 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
     return !schema.isValidSync(values) || (wasSubmitted && isLastStep);
   }
 
+  useEffect(() => {
+    if (orderSubmitState === "OK") {
+      router.push(pages["checkout-success"].path);
+    }
+  }, [orderSubmitState]);
+
   return (
-    <Box>
+    <Box marginX={"16px"}>
       <Form
         {...{ onSubmit: handleNext, validate }}
         initialValues={formState}
@@ -81,6 +90,7 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
           <form noValidate>
             <ShowOnMobile>
               <Box className="flex flex-col justify-center w-full">
+                <StepContent step={activeStep} orderData={values} />
                 <CustomMobileStepper
                   handleBack={handleBack(values)}
                   activeStep={activeStep}
@@ -88,7 +98,6 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
                   handleNext={handleSubmit}
                   maxSteps={steps.length}
                 />
-                <StepContent step={activeStep} orderData={values} />
               </Box>
             </ShowOnMobile>
             <HideOnMobile>

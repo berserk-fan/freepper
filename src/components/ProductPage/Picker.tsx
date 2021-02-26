@@ -14,7 +14,15 @@ const useStyles = makeStyles({
   },
 });
 
-function MyChipNoMemo<T>({ icon, item, selected }: { icon: React.FunctionComponent<{ item: T }>, item: T & { href: string; id: string; displayName: React.ReactNode }, selected: boolean }) {
+function MyChipNoMemo<T>({
+  icon,
+  item,
+  selected,
+}: {
+  icon: React.FunctionComponent<{ item: T }>;
+  item: T & { href: string; id: string; displayName: React.ReactNode };
+  selected: boolean;
+}) {
   const classes = useStyles();
   return (
     <Chip
@@ -32,7 +40,10 @@ function MyChipNoMemo<T>({ icon, item, selected }: { icon: React.FunctionCompone
   );
 }
 
-const MyChip = React.memo(MyChipNoMemo, (prev, cur) => prev.item.id === cur.item.id && prev.selected === cur.selected);
+const MyChip = React.memo(
+  MyChipNoMemo,
+  (prev, cur) => prev.item.id === cur.item.id && prev.selected === cur.selected,
+);
 
 function Picker<T>({
   selectedId,
