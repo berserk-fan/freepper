@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { Box, IconButton } from "@material-ui/core";
-import { ArrowForwardIos } from "@material-ui/icons";
+import { ArrowBackIosOutlined, ArrowForwardIos } from "@material-ui/icons";
 import { useStyles } from "./styles";
 import { Dots, Numbers } from "./helpers";
 
@@ -19,6 +19,7 @@ export default function Slider({
 }) {
   const classes = useStyles();
   const [currentSlide, setCurrentSlide] = React.useState(0);
+  const [isShowingArrows, setIsShowingArrows] = useState(true);
   const [toLoad, setToLoad] = useState([0, 2]);
 
   function changeSlide(slideIdx: number) {
@@ -34,6 +35,19 @@ export default function Slider({
     slideChanged(s) {
       const slideIdx = s.details().relativeSlide;
       changeSlide(slideIdx);
+    },
+    move(sliderInstance) {
+      const {
+        size,
+        speed,
+        progressTrack,
+        relativeSlide,
+      } = sliderInstance.details();
+      if ((relativeSlide / progressTrack + 0.001) % size < 0.01) {
+        setIsShowingArrows(true);
+      } else if (speed !== 0) {
+        setIsShowingArrows(false);
+      }
     },
   });
 
@@ -61,6 +75,9 @@ export default function Slider({
         <IconButton
           onClick={() => slider.next()}
           className={`${classes.forwardButton}`}
+          style={{
+            display: isShowingArrows ? "flex" : "none",
+          }}
         >
           <ArrowForwardIos className={classes.icon} />
         </IconButton>
@@ -69,8 +86,11 @@ export default function Slider({
         <IconButton
           onClick={() => slider.prev()}
           className={`${classes.backButton}`}
+          style={{
+            display: isShowingArrows ? "flex" : "none",
+          }}
         >
-          <ArrowForwardIos className={classes.icon} />
+          <ArrowBackIosOutlined className={classes.icon} />
         </IconButton>
       )}
       {slider &&

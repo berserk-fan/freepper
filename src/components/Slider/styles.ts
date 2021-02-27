@@ -1,5 +1,4 @@
-import { makeStyles } from "@material-ui/styles";
-import { Theme } from "@material-ui/core";
+import { makeStyles, Theme } from "@material-ui/core";
 
 export const useStyles = makeStyles((theme: Theme) => ({
   dot: {
@@ -46,38 +45,39 @@ export const useStyles = makeStyles((theme: Theme) => ({
   arrow_disabled: { fill: "rgba(255, 255, 255, 0.5)" },
   forwardButton: {
     position: "absolute",
-    right: 0,
+    right: 3,
     top: "50%",
-    transform: "translate(20%,-50%)",
+    transform: "translate(0,-50%)",
     zIndex: 10,
-    background: "#fff",
+    background: "rgba(255, 255, 255, 0.3);",
     borderRadius: "50%",
     width: 30,
     height: 30,
     boxShadow: "0 2px 4px 0 rgba(0,0,0,0.5)",
     "&:hover": {
-      background: "#fff",
+      background: "rgba(255, 255, 255, 0.7);",
     },
   },
   backButton: {
     position: "absolute",
-    left: 0,
+    left: 3,
     top: "50%",
-    transform: "translate(-20%,-50%) rotate(180deg)",
+    transform: "translate(0,-50%)",
     zIndex: 10,
-    background: "#fff",
+    background: "rgba(255, 255, 255, 0.3);",
     borderRadius: "50%",
     width: 30,
     height: 30,
-    boxShadow: "0 -2px 4px 0 rgba(0,0,0,0.5)",
+    boxShadow: "0 2px 4px 0 rgba(0,0,0,0.5)",
     outline: "none",
     "&:hover": {
-      background: "#fff",
+      background: "rgba(255, 255, 255, 0.7);",
     },
   },
   icon: {
     width: 20,
     height: 20,
-    color: theme.palette.secondary.main,
+    color: "black",
+    // background: "red",
   },
 }));
