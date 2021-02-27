@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { Box, IconButton } from "@material-ui/core";
-import { ArrowBackIosOutlined, ArrowForwardIos } from "@material-ui/icons";
+import {
+  ArrowBackIosOutlined,
+  ArrowForwardIosOutlined,
+} from "@material-ui/icons";
 import { useStyles } from "./styles";
 import { Dots, Numbers } from "./helpers";
 
@@ -13,7 +16,7 @@ export default function Slider({
   className = "",
   onChange,
 }: {
-  slides: any[];
+  slides: ReactElement[];
   className?: string;
   onChange?: (slideNum: number) => void;
 }) {
@@ -79,7 +82,7 @@ export default function Slider({
             display: isShowingArrows ? "flex" : "none",
           }}
         >
-          <ArrowForwardIos className={classes.icon} />
+          <ArrowForwardIosOutlined className={classes.icon} />
         </IconButton>
       )}
       {currentSlide !== 0 && (

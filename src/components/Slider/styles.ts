@@ -78,6 +78,5 @@ export const useStyles = makeStyles((theme: Theme) => ({
     width: 20,
     height: 20,
     color: "black",
-    // background: "red",
   },
 }));

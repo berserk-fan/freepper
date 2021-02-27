@@ -63,8 +63,7 @@ export default function ItemView({
         <Box className={classes.mediaChild}>
           <Slider
             onChange={useSlideId}
-            slides={images.map((image, idx): [string, ReactNode] => [
-              image.src,
+            slides={images.map((image, idx) => (
               <Box key={image.src} className={classes.media}>
                 <Link href={productHref(image.name)}>
                   <Box>
@@ -77,8 +76,8 @@ export default function ItemView({
                     />
                   </Box>
                 </Link>
-              </Box>,
-            ])}
+              </Box>
+            ))}
           />
         </Box>
       </Box>

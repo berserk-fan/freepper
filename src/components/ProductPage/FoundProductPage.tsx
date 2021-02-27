@@ -9,7 +9,7 @@ import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import dynamic from "next/dynamic";
 import DogBedDetails from "./DogBedDetails";
 import Spacing from "../Commons/Spacing";
-import SliderThumbs from "../SliderWithThumbs/SliderThumbs";
+import SliderWithThumbs from "../SliderWithThumbs";
 import { addProductAction, CartState, StoreState } from "../../store";
 import Fab from "@material-ui/core/Fab";
 import Typography from "@material-ui/core/Typography";
@@ -132,7 +132,7 @@ function ProductPage({
 
   return (
     <Box marginX="auto" maxWidth="500px" padding={1}>
-      <SliderThumbs
+      <SliderWithThumbs
         slides={images.map((image, idx) => (
           <Box key={image.src} className="flex overflow-hidden items-center">
             <Image
