@@ -1,14 +1,16 @@
 import React, { ReactNode, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
-import { Box } from "@material-ui/core";
 import Image from "next/image";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import Box from "@material-ui/core/Box";
+import dynamic from "next/dynamic";
 import Price from "./Price";
 import { TmpGroupedProduct } from "../../../configs/tmpProducts";
 import { SIZES } from "./ShopDefinitions";
-import Slider from "./Slider";
+
+const Slider = dynamic(() => import("./Slider"));
 
 const useStyles = makeStyles({
   media: {

@@ -1,8 +1,7 @@
 import { Fabric } from "@mamat14/shop-server/shop_model";
 import React from "react";
 import Image from "next/image";
-import { Avatar, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
+import Typography from "@material-ui/core/Typography";
 import Picker from "./Picker";
 
 function Icon({ item: fabric }: { item: Fabric }) {

@@ -1,5 +1,5 @@
 import { makeValidateSync } from "mui-rff";
-import { mixed, number, object, ObjectSchema, string } from "yup";
+import { mixed, number, object, string } from "yup";
 import {
   DeliveryOption,
   DeliveryProvider,
@@ -23,7 +23,7 @@ export type OrderForm = Partial<{
   phone: string;
   paymentOption: PaymentOption;
 }>;
-export const schema: ObjectSchema<OrderForm> = object({
+export const schema = object({
   paymentOption: mixed().oneOf([PaymentOption.COD]).default(PaymentOption.COD),
   city: string()
     .required("Введите город, пожалуйста")
