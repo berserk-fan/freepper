@@ -1,12 +1,4 @@
 import { Product } from "@mamat14/shop-server/shop_model";
-import {
-  Box,
-  Divider,
-  Fab,
-  Typography,
-  useTheme,
-  Zoom,
-} from "@material-ui/core";
 import Image from "next/image";
 import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlineOutlined";
 import React, { memo } from "react";
@@ -15,11 +7,17 @@ import Link from "next/link";
 import { makeStyles } from "@material-ui/styles";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import dynamic from "next/dynamic";
-import DogBedDetails from "./DogBedDetails";
-import Spacing from "../Commons/Spacing";
-import SliderThumbs from "../Shop/SliderThumbs";
-import { addProductAction, CartState, StoreState } from "../../store";
+import Fab from "@material-ui/core/Fab";
+import Typography from "@material-ui/core/Typography";
+import useTheme from "@material-ui/core/styles/useTheme";
+import Box from "@material-ui/core/Box";
+import Divider from "@material-ui/core/Divider";
+import Zoom from "@material-ui/core/Zoom";
 import Price from "../Shop/Price";
+import { addProductAction, CartState, StoreState } from "../../store";
+import SliderThumbs from "../Shop/SliderThumbs";
+import Spacing from "../Commons/Spacing";
+import DogBedDetails from "./DogBedDetails";
 
 const Markdown = dynamic(() => import("../Markdown/Renderers"));
 
