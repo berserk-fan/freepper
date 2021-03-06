@@ -4,9 +4,9 @@ import {
   Price,
   Product,
 } from "@mamat14/shop-server/shop_model";
-import lukoshkoSizes, {LukoshkoSizeKeys} from "../sizes/lukoshkoSizes";
-import vicFabrics, {VicFabricKey} from "../fabrics/vicFabrics";
-import {makeProductName} from "./commons";
+import lukoshkoSizes, {LukoshkoSizeKeys} from "configs/sizes/lukoshkoSizes";
+import vicFabrics, {VicFabricKey} from "configs/fabrics/vicFabrics";
+import {makeProductName} from "configs/beds/commons";
 
 const lukoshkoName = "lukoshkoDuo";
 

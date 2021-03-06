@@ -1,7 +1,7 @@
 import { createStore } from "redux";
 import ShopClient from "@mamat14/shop-server";
 import { Product } from "@mamat14/shop-server/shop_model";
-import { categories, shopProducts } from "../../configs/Data";
+import { categories, shopProducts } from "../configs/Data";
 
 const initialState: StoreState = {
   cartState: {

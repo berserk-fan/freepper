@@ -2,9 +2,9 @@ import React from "react";
 import { Product } from "@mamat14/shop-server/shop_model";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { Box } from "@material-ui/core";
-import { shopClient } from "../../../../store";
-import FoundProductPage from "../../../../components/ProductPage/FoundProductPage";
-import LayoutWithHeaderAndFooter from "../../../../components/Layout/LayoutWithHeaderAndFooter";
+import { shopClient } from "store";
+import FoundProductPage from "components/ProductPage/FoundProductPage";
+import LayoutWithHeaderAndFooter from "components/Layout/LayoutWithHeaderAndFooter";
 
 export default function ProductPage({
   product,

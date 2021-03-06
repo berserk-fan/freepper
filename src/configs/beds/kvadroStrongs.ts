@@ -4,8 +4,8 @@ import {
   Price,
   Product,
 } from "@mamat14/shop-server/shop_model";
-import avFabrics, {AvFabricKeys} from "../fabrics/avFabrics";
-import kvadroSizes, {KvadroSizeKeys} from "../sizes/kvadroSizes";
+import avFabrics, {AvFabricKeys} from "configs/fabrics/avFabrics";
+import kvadroSizes, {KvadroSizeKeys} from "configs/sizes/kvadroSizes";
 
 function getVariants(): DogBed_Variant[] {
   const res: DogBed_Variant[] = [];

@@ -1,7 +1,7 @@
 import React from "react";
 import { GetStaticProps } from "next";
-import { tmpProducts } from "../../../../../configs/tmpProducts";
-import ShopPage, { ShopPageProps } from "../../../../components/Shop/ShopPage";
+import { tmpProducts } from "configs/tmpProducts";
+import ShopPage, { ShopPageProps } from "components/Shop/ShopPage";
 import "keen-slider/keen-slider.min.css";
 
 export default function Shop(props: ShopPageProps) {

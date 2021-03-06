@@ -7,7 +7,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
 import dynamic from "next/dynamic";
 import Price from "./Price";
-import { TmpGroupedProduct } from "../../../configs/tmpProducts";
+import { TmpGroupedProduct } from "../../configs/tmpProducts";
 import { SIZES } from "./ShopDefinitions";
 
 const Slider = dynamic(() => import("../Slider/Slider"));

@@ -1,9 +1,9 @@
 import { Price, Product, ImageData } from "@mamat14/shop-server/shop_model";
-import {lukoshkoDuoImages, lukoshkoDuos} from "./beds/lukoshkoDuos";
-import lukoshkoTrios, {lukoshkoTrioImages} from "./beds/lukoshkoTrios";
-import chemodans, {chemodanImages} from "./beds/chemodans";
-import kvadroSofts, {kvadroImages} from "./beds/kvadroSofts";
-import kvadroStrongs, {kvadroStrongImages} from "./beds/kvadroStrongs";
+import {lukoshkoDuoImages, lukoshkoDuos} from "configs/beds/lukoshkoDuos";
+import lukoshkoTrios, {lukoshkoTrioImages} from "configs/beds/lukoshkoTrios";
+import chemodans, {chemodanImages} from "configs/beds/chemodans";
+import kvadroSofts, {kvadroImages} from "configs/beds/kvadroSofts";
+import kvadroStrongs, {kvadroStrongImages} from "configs/beds/kvadroStrongs";
 
 function min(arr: Product[]): Price {
   const min = arr.map((s) => s.price.price).reduce((a, b) => Math.min(a, b));
