@@ -1,19 +1,14 @@
 import React, { ReactElement, useEffect, useRef, useState } from "react";
 import KeenSlider, { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import { Box, IconButton } from "@material-ui/core";
-import {
-  ArrowBackIosOutlined,
-  ArrowForwardIos,
-  ArrowForwardIosOutlined,
-} from "@material-ui/icons";
+import Box from "@material-ui/core/Box";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowBackIosOutlined from "@material-ui/icons/ArrowBackIosOutlined";
+import ArrowForwardIosOutlined from "@material-ui/icons/ArrowForwardIosOutlined";
+import { SliderArrows } from "../Slider/helpers";
 import { useStyles } from "./styles";
 
 const THUMBSER_SLIDES_AMOUNT_PER_VIEW = 7;
-
-const nolock = (lock: { current: number }): boolean => lock.current === -1;
-const lockEnded = (lock: { current: number }, idx: number): boolean =>
-  lock.current === idx;
 
 export default function SliderWithThumbs({
   slides,
@@ -28,7 +23,6 @@ export default function SliderWithThumbs({
   const thumbserDirRef = useRef<KeenSlider>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [thumserSlide, setThumbserSlide] = useState(0);
-  const [isShowingArrows, setIsShowingArrows] = useState(true);
   const lock = useRef(-1);
   const [sliderRef, slider] = useKeenSlider({
     initial: 0,
@@ -38,25 +32,12 @@ export default function SliderWithThumbs({
       const thumbser = thumbserDirRef.current;
       setActiveSlide(idx);
 
-      if (nolock(lock)) {
+      if (lock.current === -1) {
         thumbser?.moveToSlideRelative(idx);
       }
 
-      if (lockEnded(lock, idx)) {
+      if (lock.current === idx) {
         lock.current = -1;
-      }
-    },
-    move(sliderInstance) {
-      const {
-        size,
-        speed,
-        progressTrack,
-        relativeSlide,
-      } = sliderInstance.details();
-      if ((relativeSlide / progressTrack + 0.001) % size < 0.01) {
-        setIsShowingArrows(true);
-      } else if (speed !== 0) {
-        setIsShowingArrows(false);
       }
     },
   });
@@ -70,7 +51,6 @@ export default function SliderWithThumbs({
       const idx = sliderInstance.details().relativeSlide;
       setThumbserSlide(idx);
     },
-    // centered: true, // I'd rather turned it off...
   });
 
   function changeSlide(idx) {
@@ -100,28 +80,12 @@ export default function SliderWithThumbs({
               </div>
             ))}
           </div>
-          {activeSlide !== thumbs.length - 1 && (
-            <IconButton
-              onClick={() => slider.next()}
-              className={classes.forwardButton}
-              style={{
-                display: isShowingArrows ? "flex" : "none",
-              }}
-            >
-              <ArrowForwardIosOutlined className={classes.icon} />
-            </IconButton>
-          )}
-          {activeSlide !== 0 && (
-            <IconButton
-              onClick={() => slider.prev()}
-              className={classes.backButton}
-              style={{
-                display: isShowingArrows ? "flex" : "none",
-              }}
-            >
-              <ArrowBackIosOutlined className={classes.icon} />
-            </IconButton>
-          )}
+          <SliderArrows
+            showForwardButton={activeSlide !== thumbs.length - 1}
+            showBackButton={activeSlide !== 0}
+            forwardHandler={() => slider.next()}
+            backHandler={() => slider.prev()}
+          />
         </Box>
         <Box position="relative">
           <div

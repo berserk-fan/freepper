@@ -62,6 +62,7 @@ export const useStyles = makeStyles((theme: Theme) => ({
   smallButton: {
     width: 20,
     height: 20,
+    background: "rgba(255, 255, 255, 0.9);",
   },
   smallIcon: {
     width: 15,

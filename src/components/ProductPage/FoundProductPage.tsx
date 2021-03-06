@@ -7,21 +7,17 @@ import Link from "next/link";
 import { makeStyles } from "@material-ui/styles";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import dynamic from "next/dynamic";
-import DogBedDetails from "./DogBedDetails";
-import Spacing from "../Commons/Spacing";
-import SliderWithThumbs from "../SliderWithThumbs";
-import { addProductAction, CartState, StoreState } from "../../store";
 import Fab from "@material-ui/core/Fab";
 import Typography from "@material-ui/core/Typography";
 import useTheme from "@material-ui/core/styles/useTheme";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import Zoom from "@material-ui/core/Zoom";
-import Price from "../Shop/Price";
 import { addProductAction, CartState, StoreState } from "../../store";
-import SliderThumbs from "../Shop/SliderThumbs";
+import SliderWithThumbs from "../SliderWithThumbs";
 import Spacing from "../Commons/Spacing";
 import DogBedDetails from "./DogBedDetails";
+import Price from "../Shop/Price";
 
 const Markdown = dynamic(() => import("../Markdown/Renderers"));
 

@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
@@ -52,6 +52,7 @@ export default function ItemView({
   const classes = useStyles();
   const { displayName, images, price } = product;
   const [slideId, useSlideId] = useState(0);
+  const [isShowingArrows, setIsShowingArrows] = useState(false);
 
   function productHref(productName: string) {
     return `/${categoryName}/${productName}`;
@@ -63,6 +64,7 @@ export default function ItemView({
         <Box className={classes.mediaChild}>
           <Slider
             onChange={useSlideId}
+            isShowingArrows={isShowingArrows}
             slides={images.map((image, idx) => (
               <Box key={image.src} className={classes.media}>
                 <Link href={productHref(image.name)}>
@@ -73,6 +75,7 @@ export default function ItemView({
                       alt={image.alt}
                       layout="fill"
                       sizes={SIZES}
+                      onLoad={() => setIsShowingArrows(true)}
                     />
                   </Box>
                 </Link>
