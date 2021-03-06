@@ -1,7 +1,8 @@
 import Link from "next/link";
 import React, { memo } from "react";
-import { Box, Typography } from "@material-ui/core";
 import { NavItem, NavMenu } from "@mui-treasury/components/menu/navigation";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
 import { Page, pages, shopPageGroup } from "./pages";
 
 function HeaderActions(props) {
