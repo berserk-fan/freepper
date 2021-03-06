@@ -1,25 +1,22 @@
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import Link from "next/link";
-import {
-  Box,
-  Collapse,
-  Drawer,
-  Fade,
-  IconButton,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Theme,
-} from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import { makeStyles } from "@material-ui/core/styles";
-import ContactsIcon from "../../Icons/ContactsIcon";
-import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
+import { makeStyles, Theme } from "@material-ui/core/styles";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import Drawer from "@material-ui/core/Drawer";
+import Fade from "@material-ui/core/Fade";
+import Box from "@material-ui/core/Box";
+import IconButton from "@material-ui/core/IconButton";
+import List from "@material-ui/core/List";
+import Collapse from "@material-ui/core/Collapse";
+import Link from "next/link";
 import { Page, pages, shopPageGroup } from "./pages";
+import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
+import ContactsIcon from "../../Icons/ContactsIcon";
 
 const useStyles = makeStyles((theme: Theme) => ({
   list: {

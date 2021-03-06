@@ -1,7 +1,7 @@
 import React from "react";
-import { Skeleton } from "@material-ui/lab";
+import Skeleton from "@material-ui/lab/Skeleton";
 import dynamic from "next/dynamic";
-import { Box } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
 
 const Header = dynamic(() => import("./Header/Header"), {
   ssr: false,

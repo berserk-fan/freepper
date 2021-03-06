@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --fix -c .eslintrc --ext .jsx,.ts,.tsx src/"
+    "lint": "eslint --fix -c .eslintrc --ext .jsx,.ts,.tsx src/",
+    "find:unused": "next-unused"
   },
   "dependencies": {
     "@mamat14/shop-server": "1.0.9",
@@ -78,6 +79,7 @@
     "sass-loader": "^11.0.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.3",
     "typescript": "^4.2.2",
-    "webpack": "^5.24.2"
+    "webpack": "^5.24.2",
+    "next-unused": "^0.0.3"
   }
 }

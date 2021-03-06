@@ -1,6 +1,7 @@
+import { Theme } from "@material-ui/core/styles";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import Typography from "@material-ui/core/Typography";
 import React, { memo } from "react";
-import { Theme, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -45,4 +46,5 @@ function ValueProp() {
     </section>
   );
 }
+
 export default memo(ValueProp);
