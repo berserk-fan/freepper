@@ -18,7 +18,7 @@ export default function ProductPage({
       breadcrumbsOverrides={{ [product.id]: product.displayName }}
     >
       <Box padding={1}>
-        {product == null ? "Product not found" : false}
+        {!product && "Product not found"}
         {product && (
           <FoundProductPage categoryName={categoryName} product={product} />
         )}
