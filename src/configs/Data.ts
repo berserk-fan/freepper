@@ -1,9 +1,9 @@
 import { Category, Product } from "@mamat14/shop-server/shop_model";
-import { lukoshkoDuos } from "./beds/lukoshkoDuos";
-import lukoshkoTrios from "./beds/lukoshkoTrios";
-import chemodans from "./beds/chemodans";
-import kvadroSofts from "./beds/kvadroSofts";
-import kvadroStrongs from "./beds/kvadroStrongs";
+import { lukoshkoDuos } from "configs/beds/lukoshkoDuos";
+import lukoshkoTrios from "configs/beds/lukoshkoTrios";
+import chemodans from "configs/beds/chemodans";
+import kvadroSofts from "configs/beds/kvadroSofts";
+import kvadroStrongs from "configs/beds/kvadroStrongs";
 
 export const shopProducts: Product[] = lukoshkoDuos
   .concat(lukoshkoTrios)

@@ -4,9 +4,9 @@ import {
   Price,
   Product,
 } from "@mamat14/shop-server/shop_model";
-import avFabrics from "../fabrics/avFabrics";
-import chemodanSizes, {ChemodanSizeKeys} from "../sizes/chemodanSizes";
-import {makeProductName} from "./commons";
+import avFabrics from "configs/fabrics/avFabrics";
+import chemodanSizes, {ChemodanSizeKeys} from "configs/sizes/chemodanSizes";
+import {makeProductName} from "configs/beds/commons";
 
 function getVariants(): DogBed_Variant[] {
   const res: DogBed_Variant[] = [];

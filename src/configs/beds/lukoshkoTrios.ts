@@ -4,8 +4,8 @@ import {
   Price,
   Product,
 } from "@mamat14/shop-server/shop_model";
-import vicFabrics, {VicFabricKey} from "../fabrics/vicFabrics";
-import lukoshkoSizes, {LukoshkoSizeKeys} from "../sizes/lukoshkoSizes";
+import vicFabrics, {VicFabricKey} from "configs/fabrics/vicFabrics";
+import lukoshkoSizes, {LukoshkoSizeKeys} from "configs/sizes/lukoshkoSizes";
 
 function getVariants(): DogBed_Variant[] {
   const res: DogBed_Variant[] = [];

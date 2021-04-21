@@ -1,8 +1,8 @@
-import {VicFabricKey} from "../fabrics/vicFabrics";
-import {AvFabricKeys} from "../fabrics/avFabrics";
-import {ChemodanSizeKeys} from "../sizes/chemodanSizes";
-import {KvadroSizeKeys} from "../sizes/kvadroSizes";
-import {LukoshkoSizeKeys} from "../sizes/lukoshkoSizes";
+import {VicFabricKey} from "configs/fabrics/vicFabrics";
+import {AvFabricKeys} from "configs/fabrics/avFabrics";
+import {ChemodanSizeKeys} from "configs/sizes/chemodanSizes";
+import {KvadroSizeKeys} from "configs/sizes/kvadroSizes";
+import {LukoshkoSizeKeys} from "configs/sizes/lukoshkoSizes";
 
 export type FabricKey = VicFabricKey | AvFabricKeys;
 export type SizeKey = ChemodanSizeKeys | KvadroSizeKeys | LukoshkoSizeKeys;

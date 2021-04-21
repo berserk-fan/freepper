@@ -13,11 +13,11 @@ import useTheme from "@material-ui/core/styles/useTheme";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import Zoom from "@material-ui/core/Zoom";
-import Price from "../Shop/Price";
 import { addProductAction, CartState, StoreState } from "../../store";
-import SliderThumbs from "../Shop/SliderThumbs";
+import SliderWithThumbs from "../SliderWithThumbs";
 import Spacing from "../Commons/Spacing";
 import DogBedDetails from "./DogBedDetails";
+import Price from "../Shop/Price";
 
 const Markdown = dynamic(() => import("../Markdown/Renderers"));
 
@@ -128,7 +128,7 @@ function ProductPage({
 
   return (
     <Box marginX="auto" maxWidth="500px" padding={1}>
-      <SliderThumbs
+      <SliderWithThumbs
         slides={images.map((image, idx) => (
           <Box key={image.src} className="flex overflow-hidden items-center">
             <Image

@@ -2,9 +2,9 @@ import React from "react";
 import { Product } from "@mamat14/shop-server/shop_model";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { Box } from "@material-ui/core";
-import { shopClient } from "../../../../store";
-import FoundProductPage from "../../../../components/ProductPage/FoundProductPage";
-import LayoutWithHeaderAndFooter from "../../../../components/Layout/LayoutWithHeaderAndFooter";
+import { shopClient } from "store";
+import FoundProductPage from "components/ProductPage/FoundProductPage";
+import LayoutWithHeaderAndFooter from "components/Layout/LayoutWithHeaderAndFooter";
 
 export default function ProductPage({
   product,
@@ -18,7 +18,7 @@ export default function ProductPage({
       breadcrumbsOverrides={{ [product.id]: product.displayName }}
     >
       <Box padding={1}>
-        {product == null ? "Product not found" : false}
+        {!product && "Product not found"}
         {product && (
           <FoundProductPage categoryName={categoryName} product={product} />
         )}
