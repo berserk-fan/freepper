@@ -1,21 +1,18 @@
 import React from "react";
-import {
-  Box,
-  Button,
-  Theme,
-  Typography,
-  useTheme,
-  withStyles,
-} from "@material-ui/core";
 import Image from "next/image";
 import { GetStaticProps } from "next";
 import { Product } from "@mamat14/shop-server/shop_model";
 import Link from "next/link";
-import { makeStyles } from "@material-ui/styles";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import { shopClient } from "store";
+import withStyles from "@material-ui/styles/withStyles";
+import Button from "@material-ui/core/Button/Button";
+import useTheme from "@material-ui/core/styles/useTheme";
+import Box from "@material-ui/core/Box/Box";
+import Typography from "@material-ui/core/Typography/Typography";
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
 
-const ColorButton = withStyles((theme: Theme) => ({
+const ColorButton = withStyles((theme) => ({
   root: {
     color: theme.palette.getContrastText(theme.palette.secondary.light),
     backgroundColor: theme.palette.secondary.main,
@@ -28,7 +25,7 @@ const ColorButton = withStyles((theme: Theme) => ({
   },
 }))(Button);
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     width: "100%",
     height: "calc(100vh - 135px)",

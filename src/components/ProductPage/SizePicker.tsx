@@ -1,7 +1,6 @@
-import { Fabric, Size } from "@mamat14/shop-server/shop_model";
+import { Size } from "@mamat14/shop-server/shop_model";
+import Typography from "@material-ui/core/Typography/Typography";
 import React from "react";
-import Image from "next/image";
-import { Typography } from "@material-ui/core";
 import Picker from "./Picker";
 
 export default function SizePicker({

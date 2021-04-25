@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { SvgIcon } from "@material-ui/core";
+import SvgIcon from "@material-ui/core/SvgIcon";
 import Group from "./svg/group.svg";
 
 function GroupIcon(props) {

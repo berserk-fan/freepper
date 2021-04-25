@@ -1,11 +1,12 @@
-import React, {memo, MouseEventHandler} from "react";
-import { MobileStepper, Theme } from "@material-ui/core";
+import React, { memo, MouseEventHandler } from "react";
 import Button from "@material-ui/core/Button";
-import { KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
-import { makeStyles } from "@material-ui/styles";
+import MobileStepper from "@material-ui/core/MobileStepper/MobileStepper";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import { buttonTexts } from "./Definitions";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   dotActive: {
     backgroundColor: theme.palette.secondary.dark,
   },

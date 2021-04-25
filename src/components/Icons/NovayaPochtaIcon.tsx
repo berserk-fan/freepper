@@ -1,6 +1,6 @@
-import { SvgIcon } from "@material-ui/core";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import SvgIcon from "@material-ui/core/SvgIcon";
 import React, { memo } from "react";
-import { makeStyles } from "@material-ui/styles";
 import NovayaPochta from "./svg/Nova_Poshta_2014_logo.svg";
 
 const useStyles = makeStyles({

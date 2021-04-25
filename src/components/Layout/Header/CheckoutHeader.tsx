@@ -1,5 +1,6 @@
+import Box from "@material-ui/core/Box/Box";
+import Toolbar from "@material-ui/core/Toolbar/Toolbar";
 import React from "react";
-import { Box, Toolbar } from "@material-ui/core";
 import { CustomAppBar } from "./CustomAppBar";
 import HeaderLogo from "./HeaderLogo";
 

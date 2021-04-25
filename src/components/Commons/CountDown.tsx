@@ -1,5 +1,5 @@
+import Typography from "@material-ui/core/Typography/Typography";
 import React, { useEffect, useState } from "react";
-import { Typography } from "@material-ui/core";
 
 export default function CountDown({
   countDownId,

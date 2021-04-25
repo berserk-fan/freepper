@@ -1,6 +1,6 @@
 import React, { MouseEventHandler } from "react";
-import { Box } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import Box from "@material-ui/core/Box/Box";
 import { buttonTexts } from "./Definitions";
 
 type FullScreenButtonsProps = {

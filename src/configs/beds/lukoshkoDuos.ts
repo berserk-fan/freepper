@@ -4,9 +4,9 @@ import {
   Price,
   Product,
 } from "@mamat14/shop-server/shop_model";
-import lukoshkoSizes, {LukoshkoSizeKeys} from "configs/sizes/lukoshkoSizes";
-import vicFabrics, {VicFabricKey} from "configs/fabrics/vicFabrics";
-import {makeProductName} from "configs/beds/commons";
+import lukoshkoSizes, { LukoshkoSizeKeys } from "configs/sizes/lukoshkoSizes";
+import vicFabrics, { VicFabricKey } from "configs/fabrics/vicFabrics";
+import { makeProductName } from "configs/beds/commons";
 
 const lukoshkoName = "lukoshkoDuo";
 
@@ -17,7 +17,7 @@ function getLukoshkoVariants(): DogBed_Variant[] {
       res.push({
         fabricId: fabric.id,
         sizeId: size.id,
-        variantName: makeProductName(lukoshkoName,fabric.id, size.id),
+        variantName: makeProductName(lukoshkoName, fabric.id, size.id),
       });
     }
   }
@@ -27,49 +27,51 @@ function getLukoshkoVariants(): DogBed_Variant[] {
 const lukoshkoVariants: DogBed_Variant[] = getLukoshkoVariants();
 
 const folder = "/beds/lukoshko2";
-export const lukoshkoDuoImages =  {
-    Dogs_7043: {
-        src: `${folder}/Dogs-7043.jpg`,
-        alt: "фото лежанки Лукошко",
-        name:  makeProductName(lukoshkoName, "vic-32", "lukoshko-xs")
-    },
-    IMG_4036: {
-        src: `${folder}/IMG_4036.HEIC`,
-        alt: "Лукошко Дуо крупным планом",
-        name: makeProductName(lukoshkoName, "vic-66", "lukoshko-xs")
-    },
-    IMG_4037: {
-        src: `${folder}/IMG_4037.HEIC`,
-        alt: "Лукошко Дуо цвета орхидея в которой сидит черный кот",
-        name: makeProductName(lukoshkoName, "vic-66", "lukoshko-xs")
-    },
-    IMG_4116: {
-        src: `${folder}/IMG_4116.HEIC`,
-        alt: "Лукошко Дуо цвета орхидея спереди с цветком",
-        name: makeProductName(lukoshkoName, "vic-66", "lukoshko-xs")
-    },
+export const lukoshkoDuoImages = {
+  Dogs_7043: {
+    src: `${folder}/Dogs-7043.jpg`,
+    alt: "фото лежанки Лукошко",
+    name: makeProductName(lukoshkoName, "vic-32", "lukoshko-xs"),
+  },
+  IMG_4036: {
+    src: `${folder}/IMG_4036.HEIC`,
+    alt: "Лукошко Дуо крупным планом",
+    name: makeProductName(lukoshkoName, "vic-66", "lukoshko-xs"),
+  },
+  IMG_4037: {
+    src: `${folder}/IMG_4037.HEIC`,
+    alt: "Лукошко Дуо цвета орхидея в которой сидит черный кот",
+    name: makeProductName(lukoshkoName, "vic-66", "lukoshko-xs"),
+  },
+  IMG_4116: {
+    src: `${folder}/IMG_4116.HEIC`,
+    alt: "Лукошко Дуо цвета орхидея спереди с цветком",
+    name: makeProductName(lukoshkoName, "vic-66", "lukoshko-xs"),
+  },
 };
 
 const images = lukoshkoDuoImages;
 
 const imagesRaw: Record<VicFabricKey, ImageData[]> = {
-    "vic-32": [images.Dogs_7043],
-    "vic-20": [],
-    "vic-21": [],
-    "vic-22": [],
-    "vic-34": [],
-    "vic-36": [],
-    "vic-66": [images.IMG_4036, images.IMG_4037, images.IMG_4116],
-    "vic-70": [],
-    "vic-80": [],
-    "vic-88": [],
-    "vic-93": [],
-    "vic-100": [],
+  "vic-32": [images.Dogs_7043],
+  "vic-20": [],
+  "vic-21": [],
+  "vic-22": [],
+  "vic-34": [],
+  "vic-36": [],
+  "vic-66": [images.IMG_4036, images.IMG_4037, images.IMG_4116],
+  "vic-70": [],
+  "vic-80": [],
+  "vic-88": [],
+  "vic-93": [],
+  "vic-100": [],
 };
 
 const lukoshkoImages: Record<string, ImageData[]> = Object.fromEntries(
-  Object.entries(imagesRaw)
-      .map(([id, photos]) => [id, photos.concat([{ src: `/fabrics/vic/${id}.JPG`, alt: "Фото ткани" }])])
+  Object.entries(imagesRaw).map(([id, photos]) => [
+    id,
+    photos.concat([{ src: `/fabrics/vic/${id}.JPG`, alt: "Фото ткани" }]),
+  ]),
 );
 
 const lukoshkoPrices: Record<LukoshkoSizeKeys, Price> = {

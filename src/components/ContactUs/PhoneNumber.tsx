@@ -1,4 +1,7 @@
-import { Box, Link, ListItem, ListItemText } from "@material-ui/core";
+import Box from "@material-ui/core/Box/Box";
+import Link from "@material-ui/core/Link";
+import ListItem from "@material-ui/core/ListItem/ListItem";
+import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 import React from "react";
 
 export default function PhoneNumber({

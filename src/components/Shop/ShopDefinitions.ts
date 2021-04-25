@@ -1,6 +1,6 @@
 import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
 import { GridSize } from "@material-ui/core";
-import { noMedia } from "../../utils/Breakpoint";
+import { noMedia } from "utils/Breakpoint";
 import theme from "../../theme";
 
 export const PAGE_SIZES: Record<Breakpoint, Exclude<GridSize, "auto">> = {

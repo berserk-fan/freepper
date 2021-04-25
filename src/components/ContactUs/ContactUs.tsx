@@ -3,8 +3,7 @@ import PhoneIcon from "@material-ui/icons/Phone";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import TelegramIcon from "@material-ui/icons/Telegram";
-import { makeStyles } from "@material-ui/styles";
-import { Theme } from "@material-ui/core/styles";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
@@ -15,7 +14,7 @@ import Collapse from "@material-ui/core/Collapse";
 import ButtonWithDetail from "../Commons/ButtonWithDetail";
 import PhoneNumber from "./PhoneNumber";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   nested: {
     paddingLeft: theme.spacing(4),
   },

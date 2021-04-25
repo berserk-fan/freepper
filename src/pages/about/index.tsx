@@ -1,4 +1,7 @@
-import { Box, Container, Typography } from "@material-ui/core";
+import React from "react";
+import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography/Typography";
+import Box from "@material-ui/core/Box/Box";
 import LayoutWithHeaderAndFooter from "../../components/Layout/LayoutWithHeaderAndFooter";
 
 export default function AboutUs() {

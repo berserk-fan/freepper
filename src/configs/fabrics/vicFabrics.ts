@@ -1,20 +1,20 @@
 import { Fabric } from "@mamat14/shop-server/shop_model";
 
 export type VicFabricKey =
-    | "vic-20"
-    | "vic-21"
-    | "vic-22"
-    | "vic-32"
-    | "vic-34"
-    | "vic-36"
-    | "vic-66"
-    | "vic-70"
-    | "vic-80"
-    | "vic-88"
-    | "vic-93"
-    | "vic-100"
+  | "vic-20"
+  | "vic-21"
+  | "vic-22"
+  | "vic-32"
+  | "vic-34"
+  | "vic-36"
+  | "vic-66"
+  | "vic-70"
+  | "vic-80"
+  | "vic-88"
+  | "vic-93"
+  | "vic-100";
 
-const fabrics: Record<VicFabricKey, Fabric & {id: VicFabricKey}> = {
+const fabrics: Record<VicFabricKey, Fabric & { id: VicFabricKey }> = {
   "vic-20": {
     id: "vic-20",
     displayName: "Молочный",

@@ -4,8 +4,8 @@ import {
   Price,
   Product,
 } from "@mamat14/shop-server/shop_model";
-import avFabrics, {AvFabricKeys} from "configs/fabrics/avFabrics";
-import kvadroSizes, {KvadroSizeKeys} from "configs/sizes/kvadroSizes";
+import avFabrics, { AvFabricKeys } from "configs/fabrics/avFabrics";
+import kvadroSizes, { KvadroSizeKeys } from "configs/sizes/kvadroSizes";
 
 function getVariants(): DogBed_Variant[] {
   const res: DogBed_Variant[] = [];
@@ -24,73 +24,75 @@ function getVariants(): DogBed_Variant[] {
 const variants: DogBed_Variant[] = getVariants();
 
 export const kvadroStrongImages = {
-    "kvadroStrongWithDog": {
-        src: "/beds/kvadro-strong/Dogs-24890.jpg",
-        alt: "Собака прямо в Квадро стронг",
-        name: "products/kvadroStrong-av-11-kvadro-xs",
-    },
-    "kvadroStrongFull": {
-        src: "/beds/kvadro-strong/Dogs-7248.jpg",
-        alt: " Квадро стронг полностью",
-        name: "products/kvadroStrong-av-11-kvadro-xs",
-    },
-    "kvadroStrongLabel": {
-        src: "/beds/kvadro-strong/Dogs-7249.jpg",
-        alt: "Этикетка в Квадро стронг",
-        name: "products/kvadroStrong-av-11-kvadro-xs",
-    },
-    "kvadroStrongPillow": {
-        src: "/beds/kvadro-strong/Dogs-7251.jpg",
-        alt: "Подушка в Квадро стронг",
-        name: "products/kvadroStrong-av-11-kvadro-xs",
-    },
-    "kvadroStrongFabric": {
-        src: "/beds/kvadro-strong/Dogs-7326.jpg",
-        alt: "Фото ткани в Квадро стронг",
-        name: "products/kvadroStrong-av-11-kvadro-xs",
-    },
-    "kvadroStrongFabric2": {
-        src: "/beds/kvadro-strong/Dogs-7332.jpg",
-        alt: "Фото ткани в Квадро стронг",
-        name: "products/kvadroStrong-av-11-kvadro-xs",
-    },
-    "kvadroStrongDogFromAbove": {
-        src: "/beds/kvadro-strong/Dogs-24875.jpg",
-        alt: "Собака сверху в Квадро стронг",
-        name: "products/kvadroStrong-av-11-kvadro-xs",
-    },
+  kvadroStrongWithDog: {
+    src: "/beds/kvadro-strong/Dogs-24890.jpg",
+    alt: "Собака прямо в Квадро стронг",
+    name: "products/kvadroStrong-av-11-kvadro-xs",
+  },
+  kvadroStrongFull: {
+    src: "/beds/kvadro-strong/Dogs-7248.jpg",
+    alt: " Квадро стронг полностью",
+    name: "products/kvadroStrong-av-11-kvadro-xs",
+  },
+  kvadroStrongLabel: {
+    src: "/beds/kvadro-strong/Dogs-7249.jpg",
+    alt: "Этикетка в Квадро стронг",
+    name: "products/kvadroStrong-av-11-kvadro-xs",
+  },
+  kvadroStrongPillow: {
+    src: "/beds/kvadro-strong/Dogs-7251.jpg",
+    alt: "Подушка в Квадро стронг",
+    name: "products/kvadroStrong-av-11-kvadro-xs",
+  },
+  kvadroStrongFabric: {
+    src: "/beds/kvadro-strong/Dogs-7326.jpg",
+    alt: "Фото ткани в Квадро стронг",
+    name: "products/kvadroStrong-av-11-kvadro-xs",
+  },
+  kvadroStrongFabric2: {
+    src: "/beds/kvadro-strong/Dogs-7332.jpg",
+    alt: "Фото ткани в Квадро стронг",
+    name: "products/kvadroStrong-av-11-kvadro-xs",
+  },
+  kvadroStrongDogFromAbove: {
+    src: "/beds/kvadro-strong/Dogs-24875.jpg",
+    alt: "Собака сверху в Квадро стронг",
+    name: "products/kvadroStrong-av-11-kvadro-xs",
+  },
 };
 const images = kvadroStrongImages;
 
 const fabricToImages: Record<AvFabricKeys, ImageData[]> = {
-    "av-01": [],
-    "av-02": [],
-    "av-04": [],
-    "av-06": [],
-    "av-07": [],
-    "av-10": [],
-    "av-11": [
-        images.kvadroStrongWithDog,
-        images.kvadroStrongFull,
-        images.kvadroStrongLabel,
-        images.kvadroStrongPillow,
-        images.kvadroStrongFabric,
-        images.kvadroStrongDogFromAbove,
-        images.kvadroStrongFabric2,
-    ],
-    "av-12": [],
-    "av-13": [],
-    "av-14": [],
-    "av-15": [],
-    "av-17": [],
-    "av-18": [],
+  "av-01": [],
+  "av-02": [],
+  "av-04": [],
+  "av-06": [],
+  "av-07": [],
+  "av-10": [],
+  "av-11": [
+    images.kvadroStrongWithDog,
+    images.kvadroStrongFull,
+    images.kvadroStrongLabel,
+    images.kvadroStrongPillow,
+    images.kvadroStrongFabric,
+    images.kvadroStrongDogFromAbove,
+    images.kvadroStrongFabric2,
+  ],
+  "av-12": [],
+  "av-13": [],
+  "av-14": [],
+  "av-15": [],
+  "av-17": [],
+  "av-18": [],
 };
 
 const imagesWithFabric: Record<string, ImageData[]> = Object.fromEntries(
   Object.entries(fabricToImages).map(([id, photos]: [string, ImageData[]]) => [
     id,
-    photos.concat([{src: `/fabrics/av/${id}.png`, alt: "Фото ткани лежанки квадро стронг"}]),
-  ])
+    photos.concat([
+      { src: `/fabrics/av/${id}.png`, alt: "Фото ткани лежанки квадро стронг" },
+    ]),
+  ]),
 );
 
 const prices: Record<KvadroSizeKeys, Price> = {
@@ -117,7 +119,7 @@ const kvadroStrongs: Product[] = variants.map((v) => ({
   id: v.variantName.split("/").filter((x) => !!x)[1],
   name: v.variantName,
   displayName: `Чемодан`,
-  description: description,
+  description,
   price: prices[v.sizeId],
   images: imagesWithFabric[v.fabricId],
   details: {
@@ -127,7 +129,7 @@ const kvadroStrongs: Product[] = variants.map((v) => ({
       fabricId: v.fabricId,
       fabrics: avFabrics,
       sizes: kvadroSizes,
-      variants: variants,
+      variants,
     },
   },
 }));

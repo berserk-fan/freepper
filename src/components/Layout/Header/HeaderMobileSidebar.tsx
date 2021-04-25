@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import CloseIcon from "@material-ui/icons/Close";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import { makeStyles, Theme } from "@material-ui/core/styles";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -14,11 +13,12 @@ import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import Collapse from "@material-ui/core/Collapse";
 import Link from "next/link";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import { Page, pages, shopPageGroup } from "./pages";
 import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
 import ContactsIcon from "../../Icons/ContactsIcon";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   list: {
     width: 250,
   },

@@ -1,8 +1,11 @@
 import React from "react";
-import { Box, Button, Container, Typography } from "@material-ui/core";
 import Link from "next/link";
+import { pages } from "components/Layout/Header/pages";
+import Box from "@material-ui/core/Box/Box";
+import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography/Typography";
+import Button from "@material-ui/core/Button/Button";
 import CheckoutHeader from "../../components/Layout/Header/CheckoutHeader";
-import { pages } from "../../components/Layout/Header/pages";
 
 export default function Success() {
   return (
