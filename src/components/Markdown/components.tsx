@@ -8,15 +8,12 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
-import {
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  useTheme,
-} from "@material-ui/core";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-import MdPage from "./MdPage";
+import List from "@material-ui/core/List";
+import useTheme from "@material-ui/core/styles/useTheme";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
 
 export const components = {
   p: Typography,
@@ -120,5 +117,4 @@ export const components = {
     };
     return memo(Input);
   })(),
-  wrapper: MdPage,
 };
