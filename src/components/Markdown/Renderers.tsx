@@ -1,24 +1,23 @@
 import React, { ReactNode } from "react";
-import { withStyles, Theme } from "@material-ui/core/styles";
+import withStyles, {
+  StyledComponentProps,
+} from "@material-ui/core/styles/withStyles";
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import Table from "@material-ui/core/Table";
 import Paper from "@material-ui/core/Paper";
-import {
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  StyledComponentProps,
-  ListItem,
-  ListItemText,
-  List,
-  ListItemIcon,
-  useTheme,
-} from "@material-ui/core";
 import ReactMarkdown from "react-markdown";
-import { ListContent, List as MdList } from "mdast";
+import { List as MdList, ListContent } from "mdast";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import useTheme from "@material-ui/core/styles/useTheme";
+import ListItemText from "@material-ui/core/ListItemText";
+import List from "@material-ui/core/List";
+import TableCell from "@material-ui/core/TableCell";
+import TableRow from "@material-ui/core/TableRow";
+import TableBody from "@material-ui/core/TableBody";
+import TableHead from "@material-ui/core/TableHead";
 
 const styles = {
   header: {
