@@ -16,22 +16,6 @@ const useStyles = makeStyles((theme: Theme) => ({
       marginLeft: "0",
     },
   },
-  mainButtonGroup: {
-    position: "absolute",
-    width: 570,
-    marginLeft: theme.spacing(2),
-    marginRight: "auto",
-    left: 120,
-    right: 0,
-    textAlign: "center",
-    justifyContent: "center",
-    display: "none",
-    [theme.breakpoints.up("md")]: {
-      marginLeft: "auto",
-      display: "flex",
-      alignItems: "stretch",
-    },
-  },
   toolbar: {
     position: "relative",
     display: "flex",
@@ -54,7 +38,7 @@ export default function Header() {
           <HeaderMenu />
         </Box>
         <HeaderLogo className={`${classes.title} cursor-default uppercase`} />
-        <HeaderActions className={`${classes.mainButtonGroup}`} />
+        <HeaderActions />
         <HeaderCart />
       </Toolbar>
     </CustomAppBar>
