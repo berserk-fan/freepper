@@ -2,9 +2,9 @@ import React from "react";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
+import { TmpGroupedProduct } from "configs/tmpProducts";
 import ItemView from "./ItemView";
 import LayoutWithHeaderAndFooter from "../Layout/LayoutWithHeaderAndFooter";
-import { TmpGroupedProduct } from "../../configs/tmpProducts";
 import { PAGE_SIZES } from "./ShopDefinitions";
 
 export type ShopPageProps = {
