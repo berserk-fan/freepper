@@ -73,31 +73,33 @@ function HeaderCart({ cartSize }: { cartSize: number }) {
         </StyledBadge>
       </Fab>
 
-      <Dialog
-        scroll={isSmallScreen ? "body" : "paper"}
-        fullScreen={isSmallScreen}
-        fullWidth
-        maxWidth="md"
-        onClose={handleClose}
-        open={open}
-        TransitionComponent={Transition}
-      >
-        <CustomAppBar show>
-          <Toolbar className="flex justify-between">
-            <Typography variant="h5">Корзина</Typography>
-            <IconButton
-              className={classes.closeButton}
-              onClick={handleClose}
-              aria-label="close cart"
-            >
-              <CloseIcon fontSize="large" />
-            </IconButton>
-          </Toolbar>
-        </CustomAppBar>
-        <Box paddingX={2} paddingBottom={2}>
-          <Cart />
-        </Box>
-      </Dialog>
+      {open && (
+        <Dialog
+          scroll={isSmallScreen ? "body" : "paper"}
+          fullScreen={isSmallScreen}
+          fullWidth
+          maxWidth="md"
+          onClose={handleClose}
+          open={open}
+          TransitionComponent={Transition}
+        >
+          <CustomAppBar show>
+            <Toolbar className="flex justify-between">
+              <Typography variant="h5">Корзина</Typography>
+              <IconButton
+                className={classes.closeButton}
+                onClick={handleClose}
+                aria-label="close cart"
+              >
+                <CloseIcon fontSize="large" />
+              </IconButton>
+            </Toolbar>
+          </CustomAppBar>
+          <Box paddingX={2} paddingBottom={2}>
+            <Cart />
+          </Box>
+        </Dialog>
+      )}
     </>
   );
 }
