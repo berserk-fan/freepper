@@ -12,7 +12,7 @@ import { GetStaticProps } from "next";
 import { Product } from "@mamat14/shop-server/shop_model";
 import Link from "next/link";
 import { makeStyles } from "@material-ui/styles";
-import { shopClient } from "../store";
+import { shopClient } from "store";
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
 
 const ColorButton = withStyles((theme: Theme) => ({

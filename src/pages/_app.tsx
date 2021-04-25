@@ -4,11 +4,11 @@ import React from "react";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { Provider } from "react-redux";
-import { ThemeProvider } from "@material-ui/styles";
-import { CssBaseline } from "@material-ui/core";
+import ThemeProvider from "@material-ui/styles/ThemeProvider";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import dynamic from "next/dynamic";
+import { store } from "store";
 import theme from "../theme";
-import { store } from "../store";
 
 dynamic(() => import("abortcontroller-polyfill/dist/polyfill-patch-fetch"));
 
