@@ -1,8 +1,10 @@
-import { Button, ClickAwayListener, Tooltip } from "@material-ui/core";
 import React from "react";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import CloseIcon from "@material-ui/icons/CancelOutlined";
-import { makeStyles } from "@material-ui/styles";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener/ClickAwayListener";
+import Tooltip from "@material-ui/core/Tooltip/Tooltip";
+import Button from "@material-ui/core/Button/Button";
 
 const useStyles = makeStyles({
   tooltip: {

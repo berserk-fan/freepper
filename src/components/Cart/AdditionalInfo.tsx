@@ -1,5 +1,5 @@
 import { Product } from "@mamat14/shop-server/shop_model";
-import { Typography } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography/Typography";
 import React from "react";
 
 export default function AdditionalInfo({ details }: Product) {

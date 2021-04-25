@@ -1,5 +1,8 @@
+import List from "@material-ui/core/List/List";
+import ListItem from "@material-ui/core/ListItem/ListItem";
+import ListItemText from "@material-ui/core/ListItemText/ListItemText";
+import Typography from "@material-ui/core/Typography/Typography";
 import React from "react";
-import { List, ListItem, ListItemText, Typography } from "@material-ui/core";
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
 
 export default function Attributions() {

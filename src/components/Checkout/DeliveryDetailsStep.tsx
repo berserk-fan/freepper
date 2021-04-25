@@ -1,8 +1,9 @@
-import { Box, Typography } from "@material-ui/core";
 import React from "react";
-import {Radios, showErrorOnBlur, TextField} from "mui-rff";
+import { Radios, showErrorOnBlur, TextField } from "mui-rff";
 import { Field } from "react-final-form";
-import { DeliveryOption, DeliveryProvider } from "../../order-model";
+import { DeliveryOption, DeliveryProvider } from "order-model";
+import Typography from "@material-ui/core/Typography/Typography";
+import Box from "@material-ui/core/Box/Box";
 import { PhoneNumber } from "../Inputs/PhoneNumber";
 import Spacing from "../Commons/Spacing";
 import { getDeliveryOptionName, OrderForm } from "./Definitions";

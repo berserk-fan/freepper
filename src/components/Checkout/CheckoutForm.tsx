@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Box, Paper } from "@material-ui/core";
 import { Form } from "react-final-form";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
+import { CartState, clearCartAction, StoreState } from "store";
+import Box from "@material-ui/core/Box/Box";
+import Paper from "@material-ui/core/Paper/Paper";
 import FormStepper from "./FormStepper";
-import { CartState, clearCartAction, StoreState } from "../../store";
 import useErrorHandling from "../Commons/UseErrorHandling";
 import CustomMobileStepper from "./CustomMobileStepper";
 import OrderFallback from "./OrderFallback";
@@ -82,7 +83,7 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
   }, [orderSubmitState]);
 
   return (
-    <Box marginX={"16px"}>
+    <Box marginX="16px">
       <Form
         {...{ onSubmit: handleNext, validate }}
         initialValues={formState}

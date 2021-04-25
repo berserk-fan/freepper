@@ -1,28 +1,25 @@
-import {
-  Box,
-  Dialog,
-  Fab,
-  IconButton,
-  Slide,
-  Theme,
-  useTheme,
-} from "@material-ui/core";
-
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import React, { memo, useState } from "react";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { makeStyles, withStyles } from "@material-ui/styles";
 import { TransitionProps } from "@material-ui/core/transitions";
 import { connect } from "react-redux";
 import Badge from "@material-ui/core/Badge";
-import { CustomAppBar } from "./CustomAppBar";
-import ShoppingCartIcon from "../../Icons/ShoppingCartIcon";
+import { StoreState } from "store";
+import useTheme from "@material-ui/core/styles/useTheme";
+import withStyles from "@material-ui/styles/withStyles";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import Slide from "@material-ui/core/Slide/Slide";
+import Fab from "@material-ui/core/Fab/Fab";
+import Dialog from "@material-ui/core/Dialog/Dialog";
+import IconButton from "@material-ui/core/IconButton/IconButton";
+import Box from "@material-ui/core/Box/Box";
 import Cart from "../../Cart/Cart";
-import { StoreState } from "../../../store";
+import ShoppingCartIcon from "../../Icons/ShoppingCartIcon";
+import { CustomAppBar } from "./CustomAppBar";
 
-const StyledBadge = withStyles((theme: Theme) => ({
+const StyledBadge = withStyles((theme) => ({
   badge: {
     right: 6,
     top: 30,
@@ -33,7 +30,7 @@ const StyledBadge = withStyles((theme: Theme) => ({
   },
 }))(Badge);
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   cart: {
     marginLeft: "auto",
     color: theme.palette.grey["800"],

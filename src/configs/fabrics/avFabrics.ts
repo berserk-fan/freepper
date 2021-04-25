@@ -1,8 +1,21 @@
 import { Fabric } from "@mamat14/shop-server/shop_model";
 
-export type AvFabricKeys =  | "av-01" | "av-02" | "av-04" | "av-06" | "av-07" | "av-10" | "av-11" | "av-12" | "av-13" | "av-14" | "av-15" | "av-17" | "av-18"
+export type AvFabricKeys =
+  | "av-01"
+  | "av-02"
+  | "av-04"
+  | "av-06"
+  | "av-07"
+  | "av-10"
+  | "av-11"
+  | "av-12"
+  | "av-13"
+  | "av-14"
+  | "av-15"
+  | "av-17"
+  | "av-18";
 
-const avFabrics: Record<string, Fabric & {id: AvFabricKeys}> = {
+const avFabrics: Record<string, Fabric & { id: AvFabricKeys }> = {
   "av-01": {
     id: "av-01",
     displayName: "Алюминий",

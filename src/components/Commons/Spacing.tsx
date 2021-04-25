@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid/Grid";
 import React, { Children } from "react";
 
 export default function Spacing(props) {

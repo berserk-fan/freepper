@@ -4,7 +4,7 @@ import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlin
 import React, { memo } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
-import { makeStyles } from "@material-ui/styles";
+import makeStyles from "@material-ui/styles/makeStyles";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import dynamic from "next/dynamic";
 import Fab from "@material-ui/core/Fab";
@@ -13,7 +13,7 @@ import useTheme from "@material-ui/core/styles/useTheme";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import Zoom from "@material-ui/core/Zoom";
-import { addProductAction, CartState, StoreState } from "../../store";
+import { addProductAction, CartState, StoreState } from "store";
 import SliderWithThumbs from "../SliderWithThumbs";
 import Spacing from "../Commons/Spacing";
 import DogBedDetails from "./DogBedDetails";

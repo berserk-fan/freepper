@@ -1,6 +1,4 @@
-import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { StepIconProps } from "@material-ui/core/StepIcon";
-import React, {memo} from "react";
+import React, { memo } from "react";
 import LocalShippingIcon from "@material-ui/icons/LocalShipping";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import PaymentIcon from "@material-ui/icons/Payment";
@@ -9,6 +7,9 @@ import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import StepConnector from "@material-ui/core/StepConnector";
+import withStyles from "@material-ui/styles/withStyles";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import { StepIconProps } from "@material-ui/core";
 
 const ColorlibConnector = withStyles({
   alternativeLabel: {
@@ -101,4 +102,4 @@ function FormStepper({
     </Stepper>
   );
 }
-export default memo(FormStepper)
+export default memo(FormStepper);

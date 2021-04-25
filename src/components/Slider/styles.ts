@@ -1,6 +1,6 @@
-import { makeStyles, Theme } from "@material-ui/core";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
-export const useStyles = makeStyles((theme: Theme) => ({
+export const useStyles = makeStyles((theme) => ({
   dot: {
     border: "none",
     width: "10px",

@@ -1,7 +1,7 @@
-import { IconButton } from "@material-ui/core";
+import IconButton from "@material-ui/core/IconButton/IconButton";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import MenuIcon from "@material-ui/icons/Menu";
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import HeaderMobileSidebar from "./HeaderMobileSidebar";
 
 const useStyles = makeStyles({

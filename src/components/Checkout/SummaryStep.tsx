@@ -7,31 +7,28 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Divider from "@material-ui/core/Divider";
-import {
-  Box,
-  Grid,
-  makeStyles,
-  Theme,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@material-ui/core";
 import Image from "next/image";
 import { connect } from "react-redux";
-import { CartProduct, CartState, StoreState } from "../../store";
-import Spacing from "../Commons/Spacing";
+import { CartProduct, CartState, StoreState } from "store";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import Typography from "@material-ui/core/Typography/Typography";
+import useTheme from "@material-ui/core/styles/useTheme";
+import useMediaQuery from "@material-ui/core/useMediaQuery/useMediaQuery";
+import Box from "@material-ui/core/Box/Box";
+import Grid from "@material-ui/core/Grid/Grid";
 import {
   getDeliveryOptionName,
   getDeliveryProviderName,
   OrderForm,
 } from "./Definitions";
+import Spacing from "../Commons/Spacing";
 
 type Column<T> = {
   name: string;
   extractor: (product: T) => string;
 };
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   tableCell1: {
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(0.5),

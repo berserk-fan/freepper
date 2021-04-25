@@ -1,7 +1,9 @@
 import React, { FunctionComponent } from "react";
-import { Avatar, Box, Chip } from "@material-ui/core";
 import Link from "next/link";
-import { makeStyles } from "@material-ui/styles";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import Chip from "@material-ui/core/Chip/Chip";
+import Avatar from "@material-ui/core/Avatar/Avatar";
+import Box from "@material-ui/core/Box/Box";
 
 type Selectable<T> = T & {
   href: string;

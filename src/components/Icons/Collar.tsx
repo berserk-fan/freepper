@@ -1,5 +1,5 @@
+import SvgIcon from "@material-ui/core/SvgIcon";
 import React, { memo } from "react";
-import { SvgIcon } from "@material-ui/core";
 import CollarIcon from "./svg/collar.svg";
 
 function Collar(props) {

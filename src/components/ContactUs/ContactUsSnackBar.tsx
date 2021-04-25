@@ -1,5 +1,7 @@
 import Box from "@material-ui/core/Box";
-import { IconButton, Snackbar, useTheme } from "@material-ui/core";
+import IconButton from "@material-ui/core/IconButton/IconButton";
+import Snackbar from "@material-ui/core/Snackbar/Snackbar";
+import useTheme from "@material-ui/core/styles/useTheme";
 import CloseIcon from "@material-ui/icons/Close";
 import React from "react";
 import ContactUs from "./ContactUs";

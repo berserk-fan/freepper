@@ -1,18 +1,15 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Collapse,
-  Divider,
-  IconButton,
-  Slide,
-  Snackbar,
-  Typography,
-} from "@material-ui/core";
 import React, { useState } from "react";
-import { Alert, AlertTitle } from "@material-ui/lab";
 import CloseIcon from "@material-ui/icons/Close";
 import { Offline } from "react-detect-offline";
+import AlertTitle from "@material-ui/lab/AlertTitle/AlertTitle";
+import Box from "@material-ui/core/Box/Box";
+import Typography from "@material-ui/core/Typography/Typography";
+import IconButton from "@material-ui/core/IconButton/IconButton";
+import Alert from "@material-ui/lab/Alert/Alert";
+import Collapse from "@material-ui/core/Collapse/Collapse";
+import Divider from "@material-ui/core/Divider/Divider";
+import Snackbar from "@material-ui/core/Snackbar/Snackbar";
+import Slide from "@material-ui/core/Slide/Slide";
 import ContactUs from "../ContactUs/ContactUs";
 import { SubmitState } from "../Commons/UseErrorHandling";
 import CountDown from "../Commons/CountDown";
