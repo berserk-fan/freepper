@@ -70,7 +70,7 @@ export default function ItemView({
                 <Link href={productHref(image.name)}>
                   <Box>
                     <Image
-                      priority={idx === 0 && priority}
+                      priority={(idx === 0 && priority) || idx > 1}
                       src={image.src}
                       alt={image.alt}
                       layout="fill"

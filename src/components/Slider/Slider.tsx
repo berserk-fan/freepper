@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, {ReactElement, useCallback, useState} from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import Box from "@material-ui/core/Box";
@@ -35,6 +35,9 @@ export default function Slider({
     totalLength: slides.length,
   });
 
+  const sliderPrev = useCallback(() => slider.prev(), [slider]);
+  const sliderNext = useCallback(() => slider.next(), [slider]);
+
   return (
     <Box className={className} position="relative">
       <div ref={sliderRef as any} className="keen-slider">
@@ -48,8 +51,8 @@ export default function Slider({
         <SliderArrows
           showForwardButton={currentSlide !== slides.length - 1}
           showBackButton={currentSlide !== 0}
-          forwardHandler={() => slider.next()}
-          backHandler={() => slider.prev()}
+          forwardHandler={sliderNext}
+          backHandler={sliderPrev}
         />
       )}
       {slider &&
