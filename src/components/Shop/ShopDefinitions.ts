@@ -6,9 +6,9 @@ import theme from "../../theme";
 export const PAGE_SIZES: Record<Breakpoint, Exclude<GridSize, "auto">> = {
   xs: 12,
   sm: 6,
-  md: 4,
-  lg: 3,
-  xl: 3,
+  md: 6,
+  lg: 6,
+  xl: 6,
 };
 
 export const SIZES = Object.entries(PAGE_SIZES)

@@ -11,6 +11,7 @@ import useTheme from "@material-ui/core/styles/useTheme";
 import Box from "@material-ui/core/Box/Box";
 import Typography from "@material-ui/core/Typography/Typography";
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
+import { fade } from '@material-ui/core/styles/colorManipulator';
 
 const ColorButton = withStyles((theme) => ({
   root: {
@@ -26,30 +27,28 @@ const ColorButton = withStyles((theme) => ({
 }))(Button);
 
 const useStyles = makeStyles((theme) => ({
-  container: {
-    width: "100%",
-    height: "calc(100vh - 135px)",
-  },
-  imageContainer: {
-    overflowY: "hidden",
-    width: "100%",
-    height: "calc(100% - 200px)",
-    minHeight: "300px",
-    maxHeight: "400px",
-    marginLeft: "auto",
-    marginRight: "auto",
-    [theme.breakpoints.up("sm")]: {
-      paddingBottom: 0,
-      maxHeight: "none",
-      minHeight: "none",
-    },
-    [theme.breakpoints.up("md")]: {
-      width: "calc(50% + 400px)",
-    },
-  },
   saleText: {
     paddingTop: theme.spacing(3),
   },
+  homeImage: {
+    width: "100%",
+    zIndex: -1,
+    height: "70%",
+    position: "relative",
+    [theme.breakpoints.up("sm")]: {
+      position: "absolute",
+      height: "100%",
+    }
+  },
+  mainText: {
+    height: "30%",
+    [theme.breakpoints.up("sm")]: {
+      height: "auto",
+      backgroundColor: fade(theme.palette.grey.A100, 0.8),
+      padding: theme.spacing(4),
+      borderRadius: "10px"
+    }
+  }
 }));
 
 const GoToShopButton = React.memo(() => {
@@ -70,28 +69,30 @@ const GoToShopButton = React.memo(() => {
 
 export default function Home({ products }: { products: Product[] }) {
   const classes = useStyles();
+  const theme = useTheme();
   return (
     <LayoutWithHeaderAndFooter showValueProp disableBreadcrumbs>
       <Box width="100%">
         <Box
-          className={`flex flex-col ${classes.container}`}
-          height="calc(100vh - 135px)"
+          className={`flex flex-col items-center justify-center`}
+          position={"relative"}
+          height="calc(100vh - 139px)"
           aria-label="Main screen"
           component="section"
         >
-          <Box className={`${classes.imageContainer} overflow-hidden`}>
-            <Box className="relative" width="100%" height="100%">
-              <Image
-                priority
-                src="/beds/kvadro-strong/Dogs-7248.jpg"
-                alt="Заставка лежанки"
-                layout="fill"
-                objectFit="cover"
-                quality={100}
-              />
-            </Box>
+          <Box className={classes.homeImage}>
+            <Box display={{xs: "none"}}></Box>
+            <Image
+              priority
+              src="/main-image.jpg"
+              alt="Заставка лежанки"
+              layout="fill"
+              objectFit="cover"
+              sizes={"100vw"}
+              quality={100}
+            />
           </Box>
-          <Box>
+          <Box className={classes.mainText}>
             <Typography
               className={classes.saleText}
               align="center"
