@@ -12,6 +12,7 @@ import Box from "@material-ui/core/Box/Box";
 import Typography from "@material-ui/core/Typography/Typography";
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
 import { fade } from '@material-ui/core/styles/colorManipulator';
+import {useMediaQuery} from "@material-ui/core";
 
 const ColorButton = withStyles((theme) => ({
   root: {
@@ -69,7 +70,6 @@ const GoToShopButton = React.memo(() => {
 
 export default function Home({ products }: { products: Product[] }) {
   const classes = useStyles();
-  const theme = useTheme();
   return (
     <LayoutWithHeaderAndFooter showValueProp disableBreadcrumbs>
       <Box width="100%">
@@ -80,16 +80,26 @@ export default function Home({ products }: { products: Product[] }) {
           aria-label="Main screen"
           component="section"
         >
-          <Box className={classes.homeImage}>
-            <Box display={{xs: "none"}}></Box>
+          <Box display={{xs: "block", md: "none"}} className={classes.homeImage}>
             <Image
               priority
-              src="/main-image.jpg"
+              src={"/main-image.jpg"}
               alt="Заставка лежанки"
               layout="fill"
               objectFit="cover"
               sizes={"100vw"}
-              quality={100}
+              quality={85}
+            />
+          </Box>
+          <Box display={{xs: "none", md: "block"}} className={classes.homeImage}>
+            <Image
+                priority
+                src={"/main-image-full-width.jpg"}
+                alt="Заставка лежанки"
+                layout="fill"
+                objectFit="cover"
+                sizes={"100vw"}
+                quality={85}
             />
           </Box>
           <Box className={classes.mainText}>
