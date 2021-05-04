@@ -22,21 +22,21 @@ module.exports = withBundleAnalyzer(
         use: ["@svgr/webpack"]
       });
 
-      if (dev) {
-        config.module.rules.push({
-          test: /\.(ts|tsx|js|jsx)$/,
-          enforce: "pre",
-          exclude: [/node_modules/, /configs/],
-          use: [
-            {
-              loader: "eslint-loader",
-              options: {
-                emitWarning: dev
-              }
-            }
-          ]
-        });
-      }
+      // if (dev) {
+      //   config.module.rules.push({
+      //     test: /\.(ts|tsx|js|jsx)$/,
+      //     enforce: "pre",
+      //     exclude: [/node_modules/, /configs/],
+      //     use: [
+      //       {
+      //         loader: "eslint-loader",
+      //         options: {
+      //           emitWarning: dev
+      //         }
+      //       }
+      //     ]
+      //   });
+      // }
 
       return config;
     }

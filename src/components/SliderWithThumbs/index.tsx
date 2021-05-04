@@ -5,25 +5,35 @@ import Box from "@material-ui/core/Box";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIosOutlined from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlined from "@material-ui/icons/ArrowForwardIosOutlined";
+import { ImageData } from "@mamat14/shop-server/shop_model";
+import Image from "next/image";
 import { SliderArrows } from "../Slider/helpers";
 import { useStyles } from "./styles";
+import { useSliderVirtualization } from "../Slider/utils";
 
-const THUMBSER_SLIDES_AMOUNT_PER_VIEW = 7;
+const THUMBSER_SLIDES_AMOUNT_PER_VIEW = 5;
 
 export default function SliderWithThumbs({
-  slides,
+  images,
   thumbs,
   className = "",
 }: {
-  slides: ReactElement[];
+  images: ImageData[];
   className?: string;
-  thumbs: ReactElement[];
+  thumbs: ImageData[];
 }) {
   const classes = useStyles();
   const thumbserDirRef = useRef<KeenSlider>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [thumserSlide, setThumbserSlide] = useState(0);
+
+  //main slider
+
   const lock = useRef(-1);
+  function changeSlide(idx) {
+    lock.current = idx;
+    slider.moveToSlideRelative(idx);
+  }
   const [sliderRef, slider] = useKeenSlider({
     initial: 0,
     spacing: 15,
@@ -42,6 +52,8 @@ export default function SliderWithThumbs({
     },
   });
 
+  //thumbs slider
+
   const [thumbsRef, thumbser] = useKeenSlider({
     spacing: 4,
     initial: 0,
@@ -53,17 +65,18 @@ export default function SliderWithThumbs({
     },
   });
 
-  function changeSlide(idx) {
-    lock.current = idx;
-    slider.moveToSlideRelative(idx);
-  }
+  //virtualization
+
+  const { isRendering } = useSliderVirtualization({
+    currentSlide: activeSlide,
+    virtualizationRange: 2,
+    totalLength: images.length,
+  });
 
   useEffect(() => {
     slider?.refresh();
     thumbser?.refresh();
-    thumbser?.moveToSlide(0);
-    setActiveSlide(0);
-  }, [slides, thumbs]);
+  }, [images, thumbs]);
 
   useEffect(() => {
     thumbserDirRef.current = thumbser;
@@ -74,9 +87,20 @@ export default function SliderWithThumbs({
       <div className={`${classes.navigationContainer}`}>
         <Box position="relative">
           <div ref={sliderRef as any} className="keen-slider">
-            {slides.map((slide) => (
-              <div key={slide.key} className="keen-slider__slide">
-                {slide}
+            {images.map((image, idx) => (
+              <div key={image.src} className="keen-slider__slide">
+                {isRendering(idx) && (
+                  <Box className="flex overflow-hidden items-center">
+                    <Image
+                      priority={idx === 0}
+                      width={500}
+                      height={500}
+                      src={image.src}
+                      alt={image.alt}
+                      layout="intrinsic"
+                    />
+                  </Box>
+                )}
               </div>
             ))}
           </div>
@@ -92,15 +116,17 @@ export default function SliderWithThumbs({
             ref={thumbsRef as any}
             className={`keen-slider ${classes.thumbSlide}`}
           >
-            {thumbs.map((thumb, idx) => (
+            {thumbs.map((image, idx) => (
               <Box
-                key={thumb.key}
+                key={image.src}
                 onClick={() => changeSlide(idx)}
                 className={`${classes.thumb} ${
                   activeSlide === idx ? classes.thumbActive : ""
                 } keen-slider__slide`}
               >
-                {thumb}
+                <Box key={image.src} className="flex overflow-hidden items-center">
+                    <Image width={90} height={90} src={image.src} alt={image.alt} />
+                </Box>
               </Box>
             ))}
             {thumbs.length < THUMBSER_SLIDES_AMOUNT_PER_VIEW && // КОСТЫЛИК ))

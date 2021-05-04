@@ -1,4 +1,4 @@
-import React, {ReactElement, useCallback, useState} from "react";
+import React, { ReactElement, useCallback, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import Box from "@material-ui/core/Box";

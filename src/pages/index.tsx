@@ -10,63 +10,92 @@ import Button from "@material-ui/core/Button/Button";
 import useTheme from "@material-ui/core/styles/useTheme";
 import Box from "@material-ui/core/Box/Box";
 import Typography from "@material-ui/core/Typography/Typography";
+import Grid from "@material-ui/core/Grid";
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
-import { fade } from '@material-ui/core/styles/colorManipulator';
-import {useMediaQuery} from "@material-ui/core";
 
 const ColorButton = withStyles((theme) => ({
   root: {
-    color: theme.palette.getContrastText(theme.palette.secondary.light),
-    backgroundColor: theme.palette.secondary.main,
-    fontWeight: 400,
+    fontWeight: 700,
+    fontSize: "1rem",
     paddingLeft: "14px",
     paddingRight: "14px",
-    "&:hover": {
-      backgroundColor: theme.palette.secondary.main,
+    width: "200px",
+    height: "50px",
+    [theme.breakpoints.up("sm")]: {
+      width: "300px",
+      height: "80px",
+      fontSize: "1.4rem",
     },
   },
 }))(Button);
 
 const useStyles = makeStyles((theme) => ({
-  saleText: {
-    paddingTop: theme.spacing(3),
-  },
   homeImage: {
     width: "100%",
     zIndex: -1,
-    height: "70%",
+    height: "40%",
     position: "relative",
     [theme.breakpoints.up("sm")]: {
       position: "absolute",
       height: "100%",
-    }
+    },
   },
-  mainText: {
-    height: "30%",
+  chooseButtonConteiner: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    [theme.breakpoints.up("sm")]: {
+      marginTop: theme.spacing(4),
+      marginBottom: theme.spacing(3),
+    },
+  },
+  textContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "justify-start",
+    height: "60%",
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    marginLeft: theme.spacing(1.5),
+    marginRight: theme.spacing(1.5),
     [theme.breakpoints.up("sm")]: {
       height: "auto",
-      backgroundColor: fade(theme.palette.grey.A100, 0.8),
-      padding: theme.spacing(4),
-      borderRadius: "10px"
-    }
-  }
+      padding: theme.spacing(2),
+      margin: theme.spacing(4),
+      borderRadius: "3px",
+    },
+  },
+  mainText: {
+    padding: theme.spacing(1),
+    [theme.breakpoints.up("sm")]: {
+      backgroundColor: theme.palette.primary.light,
+    },
+  },
+  profitText: {
+    [theme.breakpoints.up("sm")]: {
+      backgroundColor: theme.palette.primary.light,
+    },
+  },
+  propositionImageContainer: {
+    width: "100%",
+    paddingTop: "100%",
+    position: "relative",
+  },
 }));
 
-const GoToShopButton = React.memo(() => {
-  const theme = useTheme();
-  return (
-    <Link href="#">
-      <ColorButton size="large" variant="contained">
-        <Box
-          component="span"
-          color={theme.palette.getContrastText(theme.palette.secondary.main)}
-        >
-          В Магазин
-        </Box>
-      </ColorButton>
-    </Link>
-  );
-});
+const GoToShopButton = React.memo(() => (
+  <Link href="#">
+    <ColorButton color="secondary" size="large" variant="contained">
+      Выбрать лежанку
+    </ColorButton>
+  </Link>
+));
+
+const propositions = [
+  { src: "/beds/lukoshko3/Dogs-24838.jpg", alt: "Лежанка 1", href: "#" },
+  { src: "/beds/lukoshko3/Dogs-24838.jpg", alt: "Лежанка 2", href: "#" },
+  { src: "/beds/lukoshko3/Dogs-24838.jpg", alt: "Лежанка 3", href: "#" },
+];
 
 export default function Home({ products }: { products: Product[] }) {
   const classes = useStyles();
@@ -74,73 +103,106 @@ export default function Home({ products }: { products: Product[] }) {
     <LayoutWithHeaderAndFooter showValueProp disableBreadcrumbs>
       <Box width="100%">
         <Box
-          className={`flex flex-col items-center justify-center`}
-          position={"relative"}
+          className="flex flex-col items-center justify-center"
+          position="relative"
           height="calc(100vh - 139px)"
           aria-label="Main screen"
           component="section"
         >
-          <Box display={{xs: "block", md: "none"}} className={classes.homeImage}>
+          <Box
+            display={{ xs: "block", md: "none" }}
+            className={classes.homeImage}
+          >
             <Image
               priority
-              src={"/main-image.jpg"}
+              src="/main-image.jpg"
               alt="Заставка лежанки"
               layout="fill"
               objectFit="cover"
-              sizes={"100vw"}
+              sizes="100vw"
               quality={85}
             />
           </Box>
-          <Box display={{xs: "none", md: "block"}} className={classes.homeImage}>
+          <Box
+            display={{ xs: "none", md: "block" }}
+            className={classes.homeImage}
+          >
             <Image
-                priority
-                src={"/main-image-full-width.jpg"}
-                alt="Заставка лежанки"
-                layout="fill"
-                objectFit="cover"
-                sizes={"100vw"}
-                quality={85}
+              priority
+              src="/main-image-full-width.jpg"
+              alt="Заставка лежанки"
+              layout="fill"
+              objectFit="cover"
+              sizes="100vw"
+              quality={85}
             />
           </Box>
-          <Box className={classes.mainText}>
+          <Box className={classes.textContainer} fontWeight={900}>
             <Typography
-              className={classes.saleText}
               align="center"
               variant="h3"
               component="h1"
+              className={classes.mainText}
             >
-              10% на первую покупку
+              УДОБСТВО. СТИЛЬ. ЛЕЖАНКИ
             </Typography>
             <Box
-              marginTop={2}
-              marginBottom={1}
-              className="flex justify-center items-center"
+              className={`flex justify-center items-center ${classes.chooseButtonConteiner}`}
             >
               <GoToShopButton />
             </Box>
-            <Typography align="center" variant="h5" component="h3">
-              Только сегодня
-            </Typography>
+            <Box
+              padding={1}
+              display="inline-block"
+              marginX="auto"
+              className={classes.profitText}
+            >
+              <Typography align="center" variant="h5" component="h2">
+                Бесплатная доставка. Гарантия 2 месяца.
+              </Typography>
+            </Box>
           </Box>
         </Box>
         <Box
           paddingY={2}
-          aria-label="propositions-block"
+          aria-label="propositions"
           component="section"
           bgcolor={'grey["100"]'}
         >
           <Typography align="center" variant="h2">
-            Новинки
+            Лежанки
           </Typography>
-          <Box aria-label="novelties" component="ul">
-            {products.map((p) => (
-              <Box key={p.id} marginX={4} marginY={5} component="li">
-                {/* <ItemView */}
-                {/*  productRef={`/categories/beds/${p.name}`} */}
-                {/*  product={p} */}
-                {/* /> */}
-              </Box>
-            ))}
+          <Box
+            marginX="auto"
+            aria-label="лежанки"
+            component="ul"
+            display="flex"
+            flexDirection="row"
+            justifyContent="space-around"
+            maxWidth="1600px"
+          >
+            <Grid container spacing={3}>
+              {propositions.map((proposition) => (
+                <Grid item key={1} xs={12} md={4}>
+                  <Box className={classes.propositionImageContainer}>
+                    <Image
+                      src={proposition.src}
+                      alt={proposition.alt}
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                  </Box>
+                  <Typography
+                    gutterBottom
+                    variant="h4"
+                    component="h3"
+                    align="center"
+                  >
+                    {proposition.alt}
+                  </Typography>
+                </Grid>
+              ))}
+            </Grid>
           </Box>
         </Box>
         <Box marginTop={2} aria-label="how do we make it?" component="section">

@@ -129,23 +129,8 @@ function ProductPage({
   return (
     <Box marginX="auto" maxWidth="500px" padding={1}>
       <SliderWithThumbs
-        slides={images.map((image, idx) => (
-          <Box key={image.src} className="flex overflow-hidden items-center">
-            <Image
-              priority={idx === 0}
-              width={500}
-              height={500}
-              src={image.src}
-              alt={displayName}
-              layout="intrinsic"
-            />
-          </Box>
-        ))}
-        thumbs={images.map((image) => (
-          <Box key={image.src} className="flex overflow-hidden items-center">
-            <Image width={75} height={75} src={image.src} alt={displayName} />
-          </Box>
-        ))}
+        images={images}
+        thumbs={images}
       />
       <Spacing spacing={1} className="flex flex-col" childClassName="w-full">
         <Typography variant="h4" component="h1">
