@@ -6,6 +6,8 @@ import {
 } from "@mamat14/shop-server/shop_model";
 import vicFabrics, { VicFabricKey } from "configs/fabrics/vicFabrics";
 import kvadroSizes, { KvadroSizeKeys } from "configs/sizes/kvadroSizes";
+import {makeProductName} from "./commons";
+import chemodanSizes from "../sizes/chemodanSizes";
 
 function getVariants(): DogBed_Variant[] {
   const res: DogBed_Variant[] = [];
@@ -14,7 +16,7 @@ function getVariants(): DogBed_Variant[] {
       res.push({
         fabricId: fabric.id,
         sizeId: size.id,
-        variantName: `products/kvadroSoft-${fabric.id}-${size.id}`,
+        variantName: makeProductName("kvadroSoft", fabric.id, size),
       });
     }
   }
@@ -23,26 +25,27 @@ function getVariants(): DogBed_Variant[] {
 
 const variants: DogBed_Variant[] = getVariants();
 
+const defaultSize = chemodanSizes[0];
 export const kvadroImages = {
   kvadroWithPug: {
     src: "/beds/kvadro-soft/Dogs-7152 (1).jpg",
     alt: "Лежанка Квадро изумрудного цвета на которой сидит мопс",
-    name: "products/kvadroSoft-vic-70-kvadro-xs",
+    name: makeProductName("kvadroSoft", "vic-70", defaultSize),
   },
   kvadroEmerald: {
     src: "/beds/kvadro-soft/Dogs-7234.jpg",
     alt: "Лежанка Квадро изумрудного цвета",
-    name: "products/kvadroSoft-vic-70-kvadro-xs",
+    name:makeProductName("kvadroSoft", "vic-70", defaultSize),
   },
   kvadroEmerald2: {
     src: "/beds/kvadro-soft/Dogs-7239.jpg",
     alt: "Лежанка Квадро изумрудного цвета",
-    name: "products/kvadroSoft-vic-70-kvadro-xs",
+    name: makeProductName("kvadroSoft", "vic-70", defaultSize),
   },
   kvadroEmerald3: {
     src: "/beds/kvadro-soft/Dogs-7278.jpg",
     alt: "Лежанка Квадро изумрудного цвета",
-    name: "products/kvadroSoft-vic-70-kvadro-xs",
+    name: makeProductName("kvadroSoft", "vic-70", defaultSize),
   },
 };
 
@@ -106,6 +109,7 @@ const kvadroSofts: Product[] = variants.map((v) => ({
   description,
   price: prices[v.sizeId],
   images: imagesWithFabrics[v.fabricId],
+  modelName: "kvadroSoft",
   details: {
     $case: "dogBed",
     dogBed: {

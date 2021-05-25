@@ -6,6 +6,7 @@ import {
 } from "@mamat14/shop-server/shop_model";
 import vicFabrics, { VicFabricKey } from "configs/fabrics/vicFabrics";
 import lukoshkoSizes, { LukoshkoSizeKeys } from "configs/sizes/lukoshkoSizes";
+import {makeProductName} from "./commons";
 
 function getVariants(): DogBed_Variant[] {
   const res: DogBed_Variant[] = [];
@@ -14,7 +15,7 @@ function getVariants(): DogBed_Variant[] {
       res.push({
         fabricId: fabric.id,
         sizeId: size.id,
-        variantName: `products/lukoshkoTrio-${fabric.id}-${size.id}`,
+        variantName: makeProductName("lukoshkoTrio", fabric.id, size),
       });
     }
   }
@@ -22,6 +23,7 @@ function getVariants(): DogBed_Variant[] {
 }
 
 const variants: DogBed_Variant[] = getVariants();
+const defaultSize=lukoshkoSizes[0];
 
 export const lukoshkoTrioImages: Record<
   string,
@@ -30,48 +32,47 @@ export const lukoshkoTrioImages: Record<
   lukoshkoTrioFromAbove: {
     src: "/beds/lukoshko3/Dogs-7253.jpg",
     alt: "Фото серого Лукошко Трио сверху",
-    name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    name: makeProductName("lukoshkoTrio", "vic-93", defaultSize),
   },
   lukoshkoTrioFromSide: {
     src: "/beds/lukoshko3/Dogs-7254.jpg",
     alt: "Фото серого Лукошко Трио ракурс",
-    name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    name:  makeProductName("lukoshkoTrio", "vic-93", defaultSize),
   },
   lukoshkoTrioWithDrops: {
     src: "/beds/lukoshko3/Dogs-7309.jpg",
-    alt:
-      "Фото розового Лукошко Трио с каплями на водонепроницаемой поверхности",
-    name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    alt: "Фото розового Лукошко Трио с каплями на водонепроницаемой поверхности",
+    name:  makeProductName("lukoshkoTrio", "vic-93", defaultSize),
   },
   lukoshkoTrioWithDog: {
     src: "/beds/lukoshko3/Dogs-24838.jpg",
     alt: "Фото спереди собачки в сером Лукошко Трио",
-    name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    name:  makeProductName("lukoshkoTrio", "vic-93", defaultSize),
   },
   lukoshkoAndHappyDog: {
     src: "/beds/lukoshko3/Dogs-24849.jpg",
     alt: "Фото спереди веселой собачки в сером Лукошко Трио",
-    name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    name: makeProductName("lukoshkoTrio", "vic-93", defaultSize),
   },
   lukoshkoTrioAndPug: {
     src: "/beds/lukoshko3/Dogs-25105.jpg",
     alt: "Фото довольного мопса в сером Лукошко Трио",
-    name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    name: makeProductName("lukoshkoTrio", "vic-93", defaultSize),
   },
   lukoshkoTrioAndHappyPug: {
     src: "/beds/lukoshko3/Dogs-25115.jpg",
     alt: "Фото довольного мопса в сером Лукошко Трио",
-    name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    name: makeProductName("lukoshkoTrio", "vic-93", defaultSize),
   },
   lukoshkoTrioAndHappyPug2: {
     src: "/beds/lukoshko3/Dogs-25127.jpg",
     alt: "Фото довольного мопса в сером Лукошко Трио",
-    name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    name: makeProductName("lukoshkoTrio", "vic-93", defaultSize),
   },
   lukoshkoTrioAndHappyPug3: {
     src: "/beds/lukoshko3/Dogs-25142.jpg",
     alt: "Фото довольного мопса в сером Лукошко Трио",
-    name: "products/lukoshkoTrio-vic-96-lukoshko-xs",
+    name: makeProductName("lukoshkoTrio", "vic-93", defaultSize),
   },
 };
 
@@ -137,7 +138,8 @@ const lukoshkos: Product[] = variants.map((v) => ({
   description,
   price: prices[v.sizeId],
   images: imagesWithFabric[v.fabricId],
-  details: {
+  modelName: "lukoshkoTrio",
+    details: {
     $case: "dogBed",
     dogBed: {
       sizeId: v.sizeId,

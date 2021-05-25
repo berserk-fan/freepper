@@ -6,6 +6,8 @@ import {
 } from "@mamat14/shop-server/shop_model";
 import avFabrics, { AvFabricKeys } from "configs/fabrics/avFabrics";
 import kvadroSizes, { KvadroSizeKeys } from "configs/sizes/kvadroSizes";
+import {makeProductName} from "./commons";
+import chemodanSizes from "../sizes/chemodanSizes";
 
 function getVariants(): DogBed_Variant[] {
   const res: DogBed_Variant[] = [];
@@ -14,7 +16,7 @@ function getVariants(): DogBed_Variant[] {
       res.push({
         fabricId: fabric.id,
         sizeId: size.id,
-        variantName: `products/kvadroStrong-${fabric.id}-${size.id}`,
+        variantName: makeProductName("kvadroStrong", fabric.id, size),
       });
     }
   }
@@ -23,42 +25,43 @@ function getVariants(): DogBed_Variant[] {
 
 const variants: DogBed_Variant[] = getVariants();
 
+const defaultSize = chemodanSizes[0];
 export const kvadroStrongImages = {
   kvadroStrongWithDog: {
     src: "/beds/kvadro-strong/Dogs-24890.jpg",
     alt: "Собака прямо в Квадро стронг",
-    name: "products/kvadroStrong-av-11-kvadro-xs",
+    name: makeProductName("kvadroStrong", "av-11", defaultSize),
   },
   kvadroStrongFull: {
     src: "/beds/kvadro-strong/Dogs-7248.jpg",
     alt: " Квадро стронг полностью",
-    name: "products/kvadroStrong-av-11-kvadro-xs",
+    name: makeProductName("kvadroStrong", "av-11", defaultSize),
   },
   kvadroStrongLabel: {
     src: "/beds/kvadro-strong/Dogs-7249.jpg",
     alt: "Этикетка в Квадро стронг",
-    name: "products/kvadroStrong-av-11-kvadro-xs",
+    name: makeProductName("kvadroStrong", "av-11", defaultSize),
   },
   kvadroStrongPillow: {
     src: "/beds/kvadro-strong/Dogs-7251.jpg",
     alt: "Подушка в Квадро стронг",
-    name: "products/kvadroStrong-av-11-kvadro-xs",
+    name: makeProductName("kvadroStrong", "av-11", defaultSize),
   },
   kvadroStrongFabric: {
     src: "/beds/kvadro-strong/Dogs-7326.jpg",
     alt: "Фото ткани в Квадро стронг",
-    name: "products/kvadroStrong-av-11-kvadro-xs",
+    name:makeProductName("kvadroStrong", "av-11", defaultSize),
   },
   kvadroStrongFabric2: {
     src: "/beds/kvadro-strong/Dogs-7332.jpg",
     alt: "Фото ткани в Квадро стронг",
-    name: "products/kvadroStrong-av-11-kvadro-xs",
+    name: makeProductName("kvadroStrong", "av-11", defaultSize),
   },
   kvadroStrongDogFromAbove: {
     src: "/beds/kvadro-strong/Dogs-24875.jpg",
     alt: "Собака сверху в Квадро стронг",
-    name: "products/kvadroStrong-av-11-kvadro-xs",
-  },
+    name: makeProductName("kvadroStrong", "av-11", defaultSize)
+  }
 };
 const images = kvadroStrongImages;
 
@@ -122,6 +125,7 @@ const kvadroStrongs: Product[] = variants.map((v) => ({
   description,
   price: prices[v.sizeId],
   images: imagesWithFabric[v.fabricId],
+  modelName: "kvadroStrong",
   details: {
     $case: "dogBed",
     dogBed: {

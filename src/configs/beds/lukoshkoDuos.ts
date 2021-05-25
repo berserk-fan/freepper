@@ -17,7 +17,7 @@ function getLukoshkoVariants(): DogBed_Variant[] {
       res.push({
         fabricId: fabric.id,
         sizeId: size.id,
-        variantName: makeProductName(lukoshkoName, fabric.id, size.id),
+        variantName: makeProductName(lukoshkoName, fabric.id, size),
       });
     }
   }
@@ -25,28 +25,28 @@ function getLukoshkoVariants(): DogBed_Variant[] {
 }
 
 const lukoshkoVariants: DogBed_Variant[] = getLukoshkoVariants();
-
+const defaultSize=lukoshkoSizes[0];
 const folder = "/beds/lukoshko2";
 export const lukoshkoDuoImages = {
   Dogs_7043: {
     src: `${folder}/Dogs-7043.jpg`,
     alt: "фото лежанки Лукошко",
-    name: makeProductName(lukoshkoName, "vic-32", "lukoshko-xs"),
+    name: makeProductName(lukoshkoName, "vic-32", defaultSize),
   },
   IMG_4036: {
     src: `${folder}/IMG_4036.HEIC`,
     alt: "Лукошко Дуо крупным планом",
-    name: makeProductName(lukoshkoName, "vic-66", "lukoshko-xs"),
+    name: makeProductName(lukoshkoName, "vic-66", defaultSize),
   },
   IMG_4037: {
     src: `${folder}/IMG_4037.HEIC`,
     alt: "Лукошко Дуо цвета орхидея в которой сидит черный кот",
-    name: makeProductName(lukoshkoName, "vic-66", "lukoshko-xs"),
+    name: makeProductName(lukoshkoName, "vic-66", defaultSize),
   },
   IMG_4116: {
     src: `${folder}/IMG_4116.HEIC`,
     alt: "Лукошко Дуо цвета орхидея спереди с цветком",
-    name: makeProductName(lukoshkoName, "vic-66", "lukoshko-xs"),
+    name: makeProductName(lukoshkoName, "vic-66", defaultSize),
   },
 };
 
@@ -101,6 +101,7 @@ export const lukoshkoDuos: Product[] = lukoshkoVariants.map((v) => ({
   description: lukoshkoDescription,
   price: lukoshkoPrices[v.sizeId],
   images: lukoshkoImages[v.fabricId],
+  modelName: "lukoshkoDuo",
   details: {
     $case: "dogBed",
     dogBed: {

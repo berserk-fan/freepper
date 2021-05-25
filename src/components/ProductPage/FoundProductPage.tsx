@@ -43,44 +43,34 @@ function Details({
   }
 }
 
-const useStyles = makeStyles({
-  fab: {
-    width: "100%",
-  },
-});
-
 type MakeFabProps = {
   href?: string;
   onClick?: () => void;
-  color: "secondary";
   icon?: any;
-  className: string;
   label: string;
   style?: any;
 };
 
-function MakeFab({
+const MakeFab = React.memo(({
   icon,
   label,
-  className,
   onClick,
   href,
-  color,
-  style,
-}: MakeFabProps) {
+  style
+}: MakeFabProps) => {
   const innerPart = (
     <Fab
-      className={className}
-      color={color}
+      color={"secondary"}
       variant="extended"
       onClick={onClick}
       style={style}
+      component={"a"}
     >
       {icon} <Typography variant="button">{label}</Typography>
     </Fab>
   );
   return href ? <Link href={href}>{innerPart}</Link> : innerPart;
-}
+});
 
 function ProductPage({
   product,
@@ -93,7 +83,6 @@ function ProductPage({
   cart: CartState;
   addProduct: (product: Product) => void;
 }) {
-  const classes = useStyles();
   const theme = useTheme();
   const { displayName, images, price } = product;
   const inCart = !!cart.selectedProducts[product.id];
@@ -105,8 +94,6 @@ function ProductPage({
     {
       key: "fabAddToCart",
       show: !inCart,
-      color: "secondary" as "secondary",
-      className: classes.fab,
       icon: <AddShoppingCartIcon />,
       label: "Добавить в корзину",
       onClick: addToCart,
@@ -114,8 +101,6 @@ function ProductPage({
     {
       key: "fabCheckout",
       show: inCart,
-      color: "secondary" as "secondary",
-      className: classes.fab,
       label: "Заказать сейчас",
       href: "/checkout",
     },
@@ -150,6 +135,7 @@ function ProductPage({
               timeout={transitionDuration}
               style={{
                 transitionDelay: `${fab.show ? transitionDuration.exit : 0}ms`,
+                width: "100%"
               }}
               mountOnEnter
               unmountOnExit
