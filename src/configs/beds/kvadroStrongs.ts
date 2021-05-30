@@ -103,6 +103,8 @@ const prices: Record<KvadroSizeKeys, Price> = {
   "kvadro-s": { price: 1200 },
   "kvadro-m": { price: 1450 },
   "kvadro-l": { price: 1600 },
+  "kvadro-xl": { price: 1850 },
+  "kvadro-xxl": { price: 2150 },
 };
 
 const description = `

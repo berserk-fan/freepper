@@ -75,10 +75,10 @@ const lukoshkoImages: Record<string, ImageData[]> = Object.fromEntries(
 );
 
 const lukoshkoPrices: Record<LukoshkoSizeKeys, Price> = {
-  "lukoshko-xs": { price: 950 },
-  "lukoshko-s": { price: 1050 },
-  "lukoshko-m": { price: 1350 },
-  "lukoshko-l": { price: 1550 },
+  "lukoshko-xs": { price: 1300 },
+  "lukoshko-s": { price: 1400 },
+  "lukoshko-m": { price: 1550 },
+  "lukoshko-l": { price: 1700 },
 };
 
 const lukoshkoDescription = `

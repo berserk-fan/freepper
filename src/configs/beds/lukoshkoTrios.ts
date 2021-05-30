@@ -114,7 +114,7 @@ const imagesWithFabric: Record<string, ImageData[]> = Object.fromEntries<
 const prices: Record<LukoshkoSizeKeys, Price> = {
   "lukoshko-xs": { price: 1350 },
   "lukoshko-s": { price: 1450 },
-  "lukoshko-m": { price: 1550 },
+  "lukoshko-m": { price: 1600 },
   "lukoshko-l": { price: 1750 },
 };
 

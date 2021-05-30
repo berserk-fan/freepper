@@ -31,7 +31,6 @@ export default function FabricPicker({
         selectedId={selected.id}
         items={fabrics.sort((a, b) => a.id.localeCompare(b.id))}
         icon={Icon}
-        forceStart
       />
     </div>
   );

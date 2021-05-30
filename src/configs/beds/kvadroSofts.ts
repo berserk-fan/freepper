@@ -83,10 +83,12 @@ const imagesWithFabrics: Record<string, ImageData[]> = Object.fromEntries(
 );
 
 const prices: Record<KvadroSizeKeys, Price> = {
-  "kvadro-xs": { price: 1350 },
-  "kvadro-s": { price: 1450 },
-  "kvadro-m": { price: 1550 },
-  "kvadro-l": { price: 1750 },
+  "kvadro-xs": { price: 950 },
+  "kvadro-s": { price: 1050 },
+  "kvadro-m": { price: 1350 },
+  "kvadro-l": { price: 1550 },
+  "kvadro-xl": { price: 1750 },
+  "kvadro-xxl": { price: 2000 },
 };
 
 const description = `

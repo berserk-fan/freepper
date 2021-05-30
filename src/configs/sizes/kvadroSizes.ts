@@ -1,6 +1,6 @@
 import { Size } from "@mamat14/shop-server/shop_model";
 
-export type KvadroSizeKeys = "kvadro-xs" | "kvadro-s" | "kvadro-m" | "kvadro-l";
+export type KvadroSizeKeys = "kvadro-xs" | "kvadro-s" | "kvadro-m" | "kvadro-l" | "kvadro-xl" | "kvadro-xxl";
 
 const sizes: Record<KvadroSizeKeys, Size & { id: KvadroSizeKeys }> = {
   "kvadro-xs": {
@@ -12,7 +12,7 @@ const sizes: Record<KvadroSizeKeys, Size & { id: KvadroSizeKeys }> = {
   "kvadro-s": {
     id: "kvadro-s",
     displayName: "S",
-    description: "60x40см",
+    description: "60x45см",
     weight: 2,
   },
   "kvadro-m": {
@@ -26,6 +26,18 @@ const sizes: Record<KvadroSizeKeys, Size & { id: KvadroSizeKeys }> = {
     displayName: "L",
     description: "90х60см",
     weight: 4,
+  },
+  "kvadro-xl": {
+    id: "kvadro-xl",
+    displayName: "XL",
+    description: "110x70см",
+    weight: 5,
+  },
+  "kvadro-xxl": {
+    id: "kvadro-xxl",
+    displayName: "XXL",
+    description: "140x100см",
+    weight: 6,
   },
 };
 
