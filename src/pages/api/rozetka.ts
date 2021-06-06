@@ -1,6 +1,4 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {Order} from "../../order-model";
-import {getEmailContent} from "./orders";
 import {toRozetkaXml} from "../../rozetka";
 import {categories, shopProducts} from "../../configs/Data";
 import * as fs from "fs";
