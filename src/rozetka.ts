@@ -77,8 +77,18 @@ function waterResistance(p: Product): string {
     }
 }
 
+const nonSingleItemImages = [
+    "Dogs-7161",
+    "Dogs-7169",
+    "Dogs-7173",
+    "Dogs-7268",
+    "Dogs-25157",
+];
+
 function realImages(imgs: ImageData[]): ImageData[] {
-    return imgs.filter(img => img.src.includes("/beds"));
+    return imgs
+        .filter(img => img.src.includes("/beds"))
+        .filter(img => !nonSingleItemImages.find(badImage => img.src.includes(badImage)));
 }
 
 const converter = new showdown.Converter();
@@ -104,7 +114,7 @@ function toOffer(p: Product): ElementCompact | undefined {
         categoryId: DogsAndBedsCategoryId,
         picture: imgs.map(image => `https://pogladit-mozhno.vercel.app/_next/image?url=${encodeURIComponent(image.src)}&w=3840&q=85`),
         vendor: 'Погладь можно?',
-        name: `Лежанка "Погладить можно?" "${p.displayName}" ${size.displayName}(${size.description}) ${fabric.displayName} (${p.id})`,
+        name: `Лежанка Погладить можно? ${p.displayName} ${size.displayName}(${size.description}) ${fabric.displayName} (${p.id})`,
         description: {
             _cdata: converter.makeHtml(p.description)
         },

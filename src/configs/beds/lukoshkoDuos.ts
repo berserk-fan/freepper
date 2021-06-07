@@ -34,17 +34,17 @@ export const lukoshkoDuoImages = {
     name: makeProductName(lukoshkoName, "vic-32", defaultSize),
   },
   IMG_4036: {
-    src: `${folder}/IMG_4036.HEIC`,
+    src: `${folder}/IMG_4036.jpg`,
     alt: "Лукошко Дуо крупным планом",
     name: makeProductName(lukoshkoName, "vic-66", defaultSize),
   },
   IMG_4037: {
-    src: `${folder}/IMG_4037.HEIC`,
+    src: `${folder}/IMG_4037.jpg`,
     alt: "Лукошко Дуо цвета орхидея в которой сидит черный кот",
     name: makeProductName(lukoshkoName, "vic-66", defaultSize),
   },
   IMG_4116: {
-    src: `${folder}/IMG_4116.HEIC`,
+    src: `${folder}/IMG_4116.jpg`,
     alt: "Лукошко Дуо цвета орхидея спереди с цветком",
     name: makeProductName(lukoshkoName, "vic-66", defaultSize),
   },
