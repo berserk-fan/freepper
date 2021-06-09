@@ -12,6 +12,8 @@ import Box from "@material-ui/core/Box/Box";
 import Typography from "@material-ui/core/Typography/Typography";
 import Grid from "@material-ui/core/Grid";
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
+import { fade } from '@material-ui/core/styles/colorManipulator';
+import {useMediaQuery} from "@material-ui/core";
 
 const ColorButton = withStyles((theme) => ({
   root: {
@@ -81,6 +83,15 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: "100%",
     position: "relative",
   },
+  mainText: {
+    height: "30%",
+    [theme.breakpoints.up("sm")]: {
+      height: "auto",
+      backgroundColor: fade(theme.palette.grey.A100, 0.8),
+      padding: theme.spacing(4),
+      borderRadius: "10px"
+    }
+  }
 }));
 
 const GoToShopButton = React.memo(() => (
