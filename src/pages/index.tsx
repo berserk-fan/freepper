@@ -83,15 +83,6 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: "100%",
     position: "relative",
   },
-  mainText: {
-    height: "30%",
-    [theme.breakpoints.up("sm")]: {
-      height: "auto",
-      backgroundColor: fade(theme.palette.grey.A100, 0.8),
-      padding: theme.spacing(4),
-      borderRadius: "10px"
-    }
-  }
 }));
 
 const GoToShopButton = React.memo(() => (
