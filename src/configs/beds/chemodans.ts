@@ -182,7 +182,7 @@ const images: Record<string, ImageData[]> = Object.fromEntries(
 );
 
 const prices: Record<ChemodanSizeKeys, Price> = {
-  "chemodan-s": {price: 1350 },
+  "chemodan-s": { price: 1350 },
   "chemodan-m": { price: 1500 },
   "chemodan-l": { price: 1650 },
   "chemodan-xl": { price: 1800 },

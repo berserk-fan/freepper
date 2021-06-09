@@ -27,7 +27,7 @@ export default function SliderWithThumbs({
   const [activeSlide, setActiveSlide] = useState(0);
   const [thumserSlide, setThumbserSlide] = useState(0);
 
-  //main slider
+  // main slider
 
   const lock = useRef(-1);
   function changeSlide(idx) {
@@ -52,7 +52,7 @@ export default function SliderWithThumbs({
     },
   });
 
-  //thumbs slider
+  // thumbs slider
 
   const [thumbsRef, thumbser] = useKeenSlider({
     spacing: 4,
@@ -65,7 +65,7 @@ export default function SliderWithThumbs({
     },
   });
 
-  //virtualization
+  // virtualization
 
   const { isRendering } = useSliderVirtualization({
     currentSlide: activeSlide,
@@ -124,8 +124,16 @@ export default function SliderWithThumbs({
                   activeSlide === idx ? classes.thumbActive : ""
                 } keen-slider__slide`}
               >
-                <Box key={image.src} className="flex overflow-hidden items-center">
-                    <Image width={90} height={90} src={image.src} alt={image.alt} />
+                <Box
+                  key={image.src}
+                  className="flex overflow-hidden items-center"
+                >
+                  <Image
+                    width={90}
+                    height={90}
+                    src={image.src}
+                    alt={image.alt}
+                  />
                 </Box>
               </Box>
             ))}

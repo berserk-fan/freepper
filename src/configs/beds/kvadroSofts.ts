@@ -6,7 +6,7 @@ import {
 } from "@mamat14/shop-server/shop_model";
 import vicFabrics, { VicFabricKey } from "configs/fabrics/vicFabrics";
 import kvadroSizes, { KvadroSizeKeys } from "configs/sizes/kvadroSizes";
-import {makeProductName} from "./commons";
+import { makeProductName } from "./commons";
 import chemodanSizes from "../sizes/chemodanSizes";
 
 function getVariants(): DogBed_Variant[] {
@@ -35,7 +35,7 @@ export const kvadroImages = {
   kvadroEmerald: {
     src: "/beds/kvadro-soft/Dogs-7234.jpg",
     alt: "Лежанка Квадро изумрудного цвета",
-    name:makeProductName("kvadroSoft", "vic-70", defaultSize),
+    name: makeProductName("kvadroSoft", "vic-70", defaultSize),
   },
   kvadroEmerald2: {
     src: "/beds/kvadro-soft/Dogs-7239.jpg",

@@ -11,9 +11,9 @@ import useTheme from "@material-ui/core/styles/useTheme";
 import Box from "@material-ui/core/Box/Box";
 import Typography from "@material-ui/core/Typography/Typography";
 import Grid from "@material-ui/core/Grid";
+import { fade } from "@material-ui/core/styles/colorManipulator";
+import { useMediaQuery } from "@material-ui/core";
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
-import { fade } from '@material-ui/core/styles/colorManipulator';
-import {useMediaQuery} from "@material-ui/core";
 
 const ColorButton = withStyles((theme) => ({
   root: {

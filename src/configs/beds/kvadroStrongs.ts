@@ -6,7 +6,7 @@ import {
 } from "@mamat14/shop-server/shop_model";
 import avFabrics, { AvFabricKeys } from "configs/fabrics/avFabrics";
 import kvadroSizes, { KvadroSizeKeys } from "configs/sizes/kvadroSizes";
-import {makeProductName} from "./commons";
+import { makeProductName } from "./commons";
 import chemodanSizes from "../sizes/chemodanSizes";
 
 function getVariants(): DogBed_Variant[] {
@@ -50,7 +50,7 @@ export const kvadroStrongImages = {
   kvadroStrongFabric: {
     src: "/beds/kvadro-strong/Dogs-7326.jpg",
     alt: "Фото ткани в Квадро стронг",
-    name:makeProductName("kvadroStrong", "av-11", defaultSize),
+    name: makeProductName("kvadroStrong", "av-11", defaultSize),
   },
   kvadroStrongFabric2: {
     src: "/beds/kvadro-strong/Dogs-7332.jpg",
@@ -60,8 +60,8 @@ export const kvadroStrongImages = {
   kvadroStrongDogFromAbove: {
     src: "/beds/kvadro-strong/Dogs-24875.jpg",
     alt: "Собака сверху в Квадро стронг",
-    name: makeProductName("kvadroStrong", "av-11", defaultSize)
-  }
+    name: makeProductName("kvadroStrong", "av-11", defaultSize),
+  },
 };
 const images = kvadroStrongImages;
 

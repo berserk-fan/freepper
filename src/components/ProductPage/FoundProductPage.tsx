@@ -51,26 +51,22 @@ type MakeFabProps = {
   style?: any;
 };
 
-const MakeFab = React.memo(({
-  icon,
-  label,
-  onClick,
-  href,
-  style
-}: MakeFabProps) => {
-  const innerPart = (
-    <Fab
-      color={"secondary"}
-      variant="extended"
-      onClick={onClick}
-      style={style}
-      component={"a"}
-    >
-      {icon} <Typography variant="button">{label}</Typography>
-    </Fab>
-  );
-  return href ? <Link href={href}>{innerPart}</Link> : innerPart;
-});
+const MakeFab = React.memo(
+  ({ icon, label, onClick, href, style }: MakeFabProps) => {
+    const innerPart = (
+      <Fab
+        color="secondary"
+        variant="extended"
+        onClick={onClick}
+        style={style}
+        component="a"
+      >
+        {icon} <Typography variant="button">{label}</Typography>
+      </Fab>
+    );
+    return href ? <Link href={href}>{innerPart}</Link> : innerPart;
+  },
+);
 
 function ProductPage({
   product,
@@ -113,10 +109,7 @@ function ProductPage({
 
   return (
     <Box marginX="auto" maxWidth="500px" padding={1}>
-      <SliderWithThumbs
-        images={images}
-        thumbs={images}
-      />
+      <SliderWithThumbs images={images} thumbs={images} />
       <Spacing spacing={1} className="flex flex-col" childClassName="w-full">
         <Typography variant="h4" component="h1">
           {displayName}
@@ -135,7 +128,7 @@ function ProductPage({
               timeout={transitionDuration}
               style={{
                 transitionDelay: `${fab.show ? transitionDuration.exit : 0}ms`,
-                width: "100%"
+                width: "100%",
               }}
               mountOnEnter
               unmountOnExit

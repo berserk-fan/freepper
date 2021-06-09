@@ -25,7 +25,7 @@ function getLukoshkoVariants(): DogBed_Variant[] {
 }
 
 const lukoshkoVariants: DogBed_Variant[] = getLukoshkoVariants();
-const defaultSize=lukoshkoSizes[0];
+const defaultSize = lukoshkoSizes[0];
 const folder = "/beds/lukoshko2";
 export const lukoshkoDuoImages = {
   Dogs_7043: {

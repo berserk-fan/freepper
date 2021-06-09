@@ -1,6 +1,12 @@
 import { Size } from "@mamat14/shop-server/shop_model";
 
-export type KvadroSizeKeys = "kvadro-xs" | "kvadro-s" | "kvadro-m" | "kvadro-l" | "kvadro-xl" | "kvadro-xxl";
+export type KvadroSizeKeys =
+  | "kvadro-xs"
+  | "kvadro-s"
+  | "kvadro-m"
+  | "kvadro-l"
+  | "kvadro-xl"
+  | "kvadro-xxl";
 
 const sizes: Record<KvadroSizeKeys, Size & { id: KvadroSizeKeys }> = {
   "kvadro-xs": {

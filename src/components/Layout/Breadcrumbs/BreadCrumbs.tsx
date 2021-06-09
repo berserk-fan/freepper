@@ -2,8 +2,8 @@ import React from "react";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { Typography } from "@material-ui/core";
 import { pathNeeded, prefixes, toName, toPath } from "./utils";
-import {Typography} from "@material-ui/core";
 
 // overrides: /collection/element_125 + overrides == {element_125: "My Element"} = /collection/My Element
 export default function BreadCrumbs({
@@ -25,7 +25,7 @@ export default function BreadCrumbs({
         return (
           <Link key={pathAsString} href={pathAsString}>
             <a>
-              <Typography component={"span"} variant={"h5"}>
+              <Typography component="span" variant="h5">
                 {name}
               </Typography>
             </a>
