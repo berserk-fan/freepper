@@ -29,7 +29,7 @@ const variants: DogBed_Variant[] = getVariants();
 const folder = "/beds/chemodan";
 export const chemodanImages = {
   chemodanYellow0: {
-    src: `${folder}/IMG_4965.JPG`,
+    src: `${folder}/IMG_4965.jpg`,
     alt: "Собака на желтом чемодане",
     name: makeProductName("chemodan", "av-07", defaultSize),
   },
