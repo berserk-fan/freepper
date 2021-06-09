@@ -305,5 +305,5 @@ export function toRozetkaXml(
                 offer: products.map(toOffer).filter(x => !!x)
             }
         }
-    }, options)  }\n</yml_catalog>`;
+    }, options)  }\n</yml_catalog>`);
 }
