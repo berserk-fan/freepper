@@ -151,7 +151,7 @@ function toOffer(p: Product): ElementCompact | undefined {
           image.src,
         )}&w=3840&q=85`,
     ),
-    vendor: "Погладь можно?",
+    vendor: "Погладить можно?",
     name: `Лежанка Погладить можно? ${p.displayName} ${size.displayName}(${size.description}) ${fabric.displayName} (${p.id})`,
     description: {
       _cdata: converter.makeHtml(p.description),
