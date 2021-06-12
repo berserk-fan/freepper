@@ -43,44 +43,30 @@ function Details({
   }
 }
 
-const useStyles = makeStyles({
-  fab: {
-    width: "100%",
-  },
-});
-
 type MakeFabProps = {
   href?: string;
   onClick?: () => void;
-  color: "secondary";
   icon?: any;
-  className: string;
   label: string;
   style?: any;
 };
 
-function MakeFab({
-  icon,
-  label,
-  className,
-  onClick,
-  href,
-  color,
-  style,
-}: MakeFabProps) {
-  const innerPart = (
-    <Fab
-      className={className}
-      color={color}
-      variant="extended"
-      onClick={onClick}
-      style={style}
-    >
-      {icon} <Typography variant="button">{label}</Typography>
-    </Fab>
-  );
-  return href ? <Link href={href}>{innerPart}</Link> : innerPart;
-}
+const MakeFab = React.memo(
+  ({ icon, label, onClick, href, style }: MakeFabProps) => {
+    const innerPart = (
+      <Fab
+        color="secondary"
+        variant="extended"
+        onClick={onClick}
+        style={style}
+        component="a"
+      >
+        {icon} <Typography variant="button">{label}</Typography>
+      </Fab>
+    );
+    return href ? <Link href={href}>{innerPart}</Link> : innerPart;
+  },
+);
 
 function ProductPage({
   product,
@@ -93,7 +79,6 @@ function ProductPage({
   cart: CartState;
   addProduct: (product: Product) => void;
 }) {
-  const classes = useStyles();
   const theme = useTheme();
   const { displayName, images, price } = product;
   const inCart = !!cart.selectedProducts[product.id];
@@ -105,8 +90,6 @@ function ProductPage({
     {
       key: "fabAddToCart",
       show: !inCart,
-      color: "secondary" as "secondary",
-      className: classes.fab,
       icon: <AddShoppingCartIcon />,
       label: "Добавить в корзину",
       onClick: addToCart,
@@ -114,8 +97,6 @@ function ProductPage({
     {
       key: "fabCheckout",
       show: inCart,
-      color: "secondary" as "secondary",
-      className: classes.fab,
       label: "Заказать сейчас",
       href: "/checkout",
     },
@@ -128,25 +109,7 @@ function ProductPage({
 
   return (
     <Box marginX="auto" maxWidth="500px" padding={1}>
-      <SliderWithThumbs
-        slides={images.map((image, idx) => (
-          <Box key={image.src} className="flex overflow-hidden items-center">
-            <Image
-              priority={idx === 0}
-              width={500}
-              height={500}
-              src={image.src}
-              alt={displayName}
-              layout="intrinsic"
-            />
-          </Box>
-        ))}
-        thumbs={images.map((image) => (
-          <Box key={image.src} className="flex overflow-hidden items-center">
-            <Image width={75} height={75} src={image.src} alt={displayName} />
-          </Box>
-        ))}
-      />
+      <SliderWithThumbs images={images} thumbs={images} />
       <Spacing spacing={1} className="flex flex-col" childClassName="w-full">
         <Typography variant="h4" component="h1">
           {displayName}
@@ -165,6 +128,7 @@ function ProductPage({
               timeout={transitionDuration}
               style={{
                 transitionDelay: `${fab.show ? transitionDuration.exit : 0}ms`,
+                width: "100%",
               }}
               mountOnEnter
               unmountOnExit

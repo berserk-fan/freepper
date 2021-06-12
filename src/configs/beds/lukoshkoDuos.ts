@@ -17,7 +17,7 @@ function getLukoshkoVariants(): DogBed_Variant[] {
       res.push({
         fabricId: fabric.id,
         sizeId: size.id,
-        variantName: makeProductName(lukoshkoName, fabric.id, size.id),
+        variantName: makeProductName(lukoshkoName, fabric.id, size),
       });
     }
   }
@@ -25,28 +25,28 @@ function getLukoshkoVariants(): DogBed_Variant[] {
 }
 
 const lukoshkoVariants: DogBed_Variant[] = getLukoshkoVariants();
-
+const defaultSize = lukoshkoSizes[0];
 const folder = "/beds/lukoshko2";
 export const lukoshkoDuoImages = {
   Dogs_7043: {
     src: `${folder}/Dogs-7043.jpg`,
     alt: "фото лежанки Лукошко",
-    name: makeProductName(lukoshkoName, "vic-32", "lukoshko-xs"),
+    name: makeProductName(lukoshkoName, "vic-32", defaultSize),
   },
   IMG_4036: {
-    src: `${folder}/IMG_4036.HEIC`,
+    src: `${folder}/IMG_4036.jpg`,
     alt: "Лукошко Дуо крупным планом",
-    name: makeProductName(lukoshkoName, "vic-66", "lukoshko-xs"),
+    name: makeProductName(lukoshkoName, "vic-66", defaultSize),
   },
   IMG_4037: {
-    src: `${folder}/IMG_4037.HEIC`,
+    src: `${folder}/IMG_4037.jpg`,
     alt: "Лукошко Дуо цвета орхидея в которой сидит черный кот",
-    name: makeProductName(lukoshkoName, "vic-66", "lukoshko-xs"),
+    name: makeProductName(lukoshkoName, "vic-66", defaultSize),
   },
   IMG_4116: {
-    src: `${folder}/IMG_4116.HEIC`,
+    src: `${folder}/IMG_4116.jpg`,
     alt: "Лукошко Дуо цвета орхидея спереди с цветком",
-    name: makeProductName(lukoshkoName, "vic-66", "lukoshko-xs"),
+    name: makeProductName(lukoshkoName, "vic-66", defaultSize),
   },
 };
 
@@ -75,23 +75,21 @@ const lukoshkoImages: Record<string, ImageData[]> = Object.fromEntries(
 );
 
 const lukoshkoPrices: Record<LukoshkoSizeKeys, Price> = {
-  "lukoshko-xs": { price: 950 },
-  "lukoshko-s": { price: 1050 },
-  "lukoshko-m": { price: 1350 },
-  "lukoshko-l": { price: 1550 },
+  "lukoshko-xs": { price: 1300 },
+  "lukoshko-s": { price: 1400 },
+  "lukoshko-m": { price: 1550 },
+  "lukoshko-l": { price: 1700 },
 };
 
 const lukoshkoDescription = `
-# О лежанке
-Наша лежаночка состоит из водоотталкивающей ткани
-* подушечки и бортики со съемным чехлом
-* наполнителя: холофайбер.
+Тканина, фурнітура, наповнювачі:
+ - Тканина прошита армованими нитками
+ - Борти і матрац наповнені гіпоалергенним і антибактеріальним холлофайбером
+ - Водовідштовхувальна тканина
 
-# О размерах
-* XS (50 х 40 см) для мини йорков, той-терьеров, чихуахуа и др. малышек
-* S (60 х 40 см) для шпицев, папильонов, мальтийских болонок
-* M (70 х 50 см) для ши-тцу, французских бульдогов, цверг-шнауцеров, вест хайленд уайт терьеров, пекинесов, мейн-кунов, британских вислоухих.
-* L (90 х 60 см) для корги, биглей, американских бультерьеров, английских бульдогов, русских кокер спаниелей.
+«Лукошко» пошито з тканини зі спеціальним водовідштовхувальним просоченням: волога скачується і легко струшується з цього матеріалу. ⠀ 
+Ми любимо її за оксамитову обробку матеріалу і повітряне наповнення. 
+Матеріал має таке щільне переплетення, що навіть гостру, як ялинкові голочки шерсть, можна струсити одним рухом. Це ж властивість робить тканину дуже міцною і зносостійкого. Лежаночка має знімний чохол на подушечку, який можна прати в машинці.
 `;
 
 export const lukoshkoDuos: Product[] = lukoshkoVariants.map((v) => ({
@@ -101,6 +99,7 @@ export const lukoshkoDuos: Product[] = lukoshkoVariants.map((v) => ({
   description: lukoshkoDescription,
   price: lukoshkoPrices[v.sizeId],
   images: lukoshkoImages[v.fabricId],
+  modelName: "lukoshkoDuo",
   details: {
     $case: "dogBed",
     dogBed: {

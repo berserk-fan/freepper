@@ -11,7 +11,7 @@ function min(arr: Product[]): Price {
 }
 
 export type ImageWithName = ImageData & { name: string };
-export type TmpGroupedProduct = Omit<Product, "images"> & {
+export type TmpGroupedProduct = Omit<Product, "images" | "modelName"> & {
   images: ImageWithName[];
 };
 

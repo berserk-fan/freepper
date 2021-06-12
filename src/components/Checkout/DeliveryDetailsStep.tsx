@@ -1,5 +1,11 @@
 import React from "react";
-import { Radios, showErrorOnBlur, TextField } from "mui-rff";
+import {
+  Radios,
+  showErrorOnBlur,
+  TextField,
+  Checkboxes,
+  Switches,
+} from "mui-rff";
 import { Field } from "react-final-form";
 import { DeliveryOption, DeliveryProvider } from "order-model";
 import Typography from "@material-ui/core/Typography/Typography";
@@ -61,7 +67,6 @@ export default function DeliveryDetailsForm() {
             value: option,
           }))}
         />
-
         <TextField
           color="secondary"
           name={pathName<OrderForm>("city")}
@@ -83,6 +88,11 @@ export default function DeliveryDetailsForm() {
           variant="filled"
           type="number"
           autoComplete="warehouseNumber"
+        />
+        <Switches
+          name={pathName<OrderForm>("deleteData")}
+          required
+          data={{ label: "Не хранить данные", value: false }}
         />
       </Spacing>
     </Box>

@@ -10,19 +10,17 @@ const theme = createMuiTheme({
     h1: {
       fontSize: 96,
       fontFamily: "Roboto, sans-serif",
-      fontWeight: 900,
-      fontStyle: "italic",
+      fontWeight: 500,
     },
     h2: {
       fontSize: 60,
       fontFamily: "Roboto, sans-serif",
-      fontWeight: 300,
+      fontWeight: 700,
     },
     h3: {
       fontSize: 48,
       fontFamily: "Roboto, sans-serif",
-      fontWeight: 900,
-      fontStyle: "italic",
+      fontWeight: 700,
     },
     h4: {
       fontSize: 34,

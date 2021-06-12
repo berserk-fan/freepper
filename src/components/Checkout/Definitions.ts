@@ -1,5 +1,5 @@
 import { makeValidateSync } from "mui-rff";
-import { mixed, number, object, string } from "yup";
+import { boolean, mixed, number, object, string } from "yup";
 import {
   DeliveryOption,
   DeliveryProvider,
@@ -22,6 +22,7 @@ export type OrderForm = Partial<{
   deliveryOption: DeliveryOption;
   phone: string;
   paymentOption: PaymentOption;
+  deleteData: boolean;
 }>;
 export const schema = object({
   paymentOption: mixed().oneOf([PaymentOption.COD]).default(PaymentOption.COD),
@@ -47,6 +48,7 @@ export const schema = object({
     .required("Введите номер телефона, пожалуйста")
     .min(6, "Слишком короткий номер телефона")
     .max(100, "Слишком длинный номер телефона"),
+  deleteData: boolean().required(),
 });
 export const validate = makeValidateSync(schema);
 export const steps = ["Доставка", "Проверка", "Оплата"];
@@ -54,6 +56,7 @@ export const initialValues: Partial<OrderForm> = {
   paymentOption: PaymentOption.COD,
   deliveryProvider: DeliveryProvider.NOVAYA_POCHTA,
   deliveryOption: DeliveryOption.TO_WAREHOUSE,
+  deleteData: false,
 };
 
 export function toOrder(cart: CartState, orderForm: OrderForm) {
