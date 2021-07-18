@@ -1,0 +1,127 @@
+syntax = "proto3";
+package pogladitMozhno.product.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/wrappers.proto";
+
+service Catalog {
+    rpc GetCategory (GetCategoryRequest) returns (Category) {
+        option (google.api.http) = {
+           // Note the URL template variable which captures the multi-segment resource
+           // name of the requested book, such as "shelves/shelf1/books/book2"
+           get: "/v1/{name=categories/*}"
+        };
+    }
+
+    rpc GetProduct (GetProductRequest) returns (Product);
+    rpc ListProducts (ListProductsRequest) returns (ListProductsResponse);
+}
+
+message GetCategoryRequest {
+    string name = 1;
+}
+
+message GetProductRequest {
+    string name = 1;
+}
+
+message ListProductsRequest {
+    // The parent resource name, for example, "categories/category1".
+    string parent = 1;
+
+    // The maximum number of items to return.
+    int32 page_size = 2;
+
+    // The next_page_token value returned from a previous List request, if any.
+    string page_token = 3;
+}
+
+message ListProductsResponse {
+    //There will be a maximum number of items returned based on the page_size field
+    // in the request.
+    repeated Product products = 1;
+
+    // Token to retrieve the next page of results, or empty if there are no
+    // more results in the list.
+    string next_page_token = 2;
+}
+
+message ImageData {
+    string src = 1;
+    string alt = 2;
+    string name = 3;
+}
+
+message Category {
+    string name = 1;
+    string id = 2;
+    string display_name = 3;
+    string description = 4;
+    ImageData image = 5;
+    repeated string products = 6;
+}
+
+message Fabric {
+    string id = 1;
+    string display_name = 2;
+    string description = 3;
+    string image_src = 4;
+    string image_alt = 5;
+}
+
+enum Size {
+    SIZE_UNSPECIFIED = 0;
+    XXXS = 1;
+    XXS = 2;
+    XS = 3;
+    S = 4;
+    M = 5;
+    L = 6;
+    XL = 7;
+    XXL = 8;
+    XXXL = 9;
+}
+
+message SizeDetails {
+    string description = 1;
+}
+
+message Price {
+    int32 price = 1;
+    google.protobuf.Int32Value promo = 2;
+}
+
+message DogBed {
+    message Variant {
+        string fabric_id = 1;
+        Size size = 2;
+        string variant_name = 3;
+    }
+    string fabric_id = 1;
+    Size size = 2;
+    repeated Variant variants = 3;
+    repeated Fabric fabrics = 4;
+    map<string, SizeDetails> sizes = 5;
+}
+
+message Product {
+    string name = 1;
+    string id = 2;
+    string display_name = 3;
+    string description = 4;
+    Price price = 5;
+    repeated ImageData images = 6;
+    string modelId = 7;
+    oneof details {
+        DogBed dog_bed = 10;
+    }
+}
+
+message Model {
+    string name = 1;
+    string id = 2;
+    string display_name = 3;
+    string description = 4;
+    int32 minimal_price = 5;
+    repeated ImageData images = 6;
+}
