@@ -6,7 +6,7 @@
     "dev": "next dev",
     "generate:apis": "sh ../commons/proto_gen.sh server catalog.proto apis",
     "generate:images": "ts-node -O '{\"module\": \"commonjs\"}' src/scripts/generateImagesJson.ts",
-    "build": "npm run generate:images && npm run generate:apis && next build",
+    "build": "npm run generate:apis && npm run generate:images && next build",
     "start": "next start",
     "lint": "eslint --fix -c .eslintrc --ext .jsx,.ts,.tsx src/",
     "find:unused": "next-unused"
