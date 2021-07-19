@@ -1,5 +1,5 @@
 import responsiveFontSizes from "@material-ui/core/styles/responsiveFontSizes";
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
+import createMuiTheme from "@material-ui/core/styles/createTheme";
 import red from "@material-ui/core/colors/red";
 
 // Create a theme instance.
