@@ -75,6 +75,7 @@ export default function ItemView({
                       layout="fill"
                       sizes={SIZES}
                       onLoad={() => setIsShowingArrows(true)}
+                      objectFit="cover"
                     />
                   </Box>
                 </Link>

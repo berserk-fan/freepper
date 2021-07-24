@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Category, Product, ImageData } from "apis/catalog";
 import convert, { ElementCompact, Options } from "xml-js";
 import showdown from "showdown";
-import { categories, all_beds, BedKey } from "../../configs/catalog/beds";
+import { categories, all_products, BedKey } from "../../configs/catalog/beds";
 
 const DogsAndBedsCategoryId = "beds_and_begs";
 
@@ -317,5 +317,5 @@ export default async function postOrderHandler(
   if (req.headers.authorization !== "aezakmiaezakmiaezakmiaezakmi") {
     return res.status(403).end();
   }
-  return res.send(toRozetkaXml(categories, all_beds));
+  return res.send(toRozetkaXml(categories, all_products));
 }

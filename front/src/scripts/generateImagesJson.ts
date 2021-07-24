@@ -5,28 +5,31 @@ import {
   FabricKey2,
   isFabricKeyOf,
   isProductKey,
-  BedKey,
+  ProductKey,
   makeProductName,
   ALL_SIZES,
-} from "../configs/catalog/beds";
+} from "../configs/catalog/defs";
 
-type ParsedBedImage<T extends BedKey> = {
+type ParsedBedImage<T extends ProductKey> = {
   modelId: T;
   fabricId: FabricKey2<T>;
   imageName: string;
   src: string;
 };
 
-function parse(pathToImage: string): ParsedBedImage<BedKey> {
-  const commonPrefix = "public/beds/";
+const HOME_FOLDER = "public";
+const PRODUCT_FOLDER = "beds";
+const commonPrefix = `${HOME_FOLDER}/${PRODUCT_FOLDER}/`;
+
+function parse(pathToImage: string): ParsedBedImage<ProductKey> {
   if (!pathToImage.startsWith(commonPrefix)) {
     throw new Error("this is unexpected");
   }
   const pathNoPrefix = pathToImage.substr(commonPrefix.length);
   const [modelId, fabricId, imageName] = pathNoPrefix.split("/");
-  assert(isProductKey(modelId), modelId);
+  assert(isProductKey(modelId), `QWEQWE ${pathToImage} ${pathNoPrefix}`);
   assert(isFabricKeyOf(modelId, fabricId), `${modelId} ${fabricId}`);
-  const src = pathToImage.substring("public".length); // to correctly refer to image in code. correct reference is without public
+  const src = pathToImage.substring(HOME_FOLDER.length); // to correctly refer to image in code. correct reference is without public
   return {
     fabricId,
     src,
@@ -49,7 +52,7 @@ function listFiles(dir: string): string[] {
 }
 
 function genForFabric(
-  files: ParsedBedImage<BedKey>[],
+  files: ParsedBedImage<ProductKey>[],
 ): Record<string, ImageData[]> {
   const res: Record<string, ImageData[]> = {};
   files.forEach((cur) => {
@@ -72,9 +75,9 @@ function genForFabric(
 }
 
 function genForModel(
-  files: ParsedBedImage<BedKey>[],
-): Record<string, ParsedBedImage<BedKey>[]> {
-  const res: Record<string, ParsedBedImage<BedKey>[]> = {};
+  files: ParsedBedImage<ProductKey>[],
+): Record<string, ParsedBedImage<ProductKey>[]> {
+  const res: Record<string, ParsedBedImage<ProductKey>[]> = {};
   files.forEach((cur) => {
     if (!res[cur.modelId]) {
       res[cur.modelId] = [cur];
@@ -86,7 +89,7 @@ function genForModel(
 }
 
 function gen(): Record<string, Record<string, ImageData[]>> {
-  const files = listFiles("public/beds").map(parse);
+  const files = listFiles(`${HOME_FOLDER}/${PRODUCT_FOLDER}`).map(parse);
   const groupByModelId = genForModel(files);
   const groupByFabricAndUseImageData = Object.entries(groupByModelId).map(
     ([model, modelFiles]) => [model, genForFabric(modelFiles)],

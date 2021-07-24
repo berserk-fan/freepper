@@ -9,7 +9,7 @@ import Button from "@material-ui/core/Button/Button";
 const useStyles = makeStyles({
   tooltip: {
     backgroundColor: "#FFFFFF",
-    color: "black",
+    color: "kr_black",
     maxWidth: 220,
     border: "1px solid #dadde9",
     padding: 4,

@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const GoToShopButton = React.memo(() => (
-  <Link href="#">
+  <Link href="categories/beds/products">
     <ColorButton color="secondary" size="large" variant="contained">
       Выбрать лежанку
     </ColorButton>

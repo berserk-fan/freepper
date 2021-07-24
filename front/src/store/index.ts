@@ -1,7 +1,7 @@
 import { createStore } from "redux";
 import CatalogImpl from "apis/catalog_impl";
 import { Product } from "apis/catalog";
-import { categories, all_beds } from "../configs/catalog/beds";
+import { categories, all_products } from "../configs/catalog/beds";
 
 const initialState: StoreState = {
   cartState: {
@@ -184,7 +184,7 @@ store.subscribe(() => {
 });
 
 export const shopClient = new CatalogImpl({
-  products: all_beds,
+  products: all_products,
   categories,
   settings: { timeout: 100, errorPercentage: 0 },
 });

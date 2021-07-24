@@ -77,6 +77,6 @@ export const useStyles = makeStyles((theme) => ({
   icon: {
     width: 20,
     height: 20,
-    color: "black",
+    color: "kr_black",
   },
 }));
