@@ -58,8 +58,7 @@ export default class StaticCatalog implements Catalog {
     const end = offset + request.pageSize;
     const res = {
       products: this.props.products.slice(offset, end),
-      nextPageToken:
-        end >= this.props.products.length ? "" : btoa(end.toString()),
+      nextPageToken: Buffer.from(end.toString()).toString("base64"),
     };
     return this.wrapErrorTimeout(res);
   }

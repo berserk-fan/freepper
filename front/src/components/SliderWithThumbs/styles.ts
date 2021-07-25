@@ -9,10 +9,6 @@ export const useStyles = makeStyles((theme) => ({
     border: `3px solid ${theme.palette.secondary.main}`,
     borderRadius: "3px",
   },
-  navigationContainer: {
-    bottom: 0,
-    padding: "10px",
-  },
   thumbSlide: {
     display: "flex",
     marginTop: theme.spacing(0.5),

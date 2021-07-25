@@ -349,16 +349,14 @@ export function makeProducts<T extends ProductKey>(
   const fabricsSeq = allFabrics.filter(
     (fabric: Fabric & { id: FabricKey2<T> }) => !!images[fabric.id],
   );
-  const variants: DogBed_Variant[] = [];
-  for (const fabric of fabricsSeq) {
-    for (const size of sizesIds) {
-      variants.push({
-        fabricId: fabric.id,
-        size,
-        variantName: makeProductName(productKey, fabric.id, size),
-      });
-    }
-  }
+
+  const variants: DogBed_Variant[] = fabricsSeq.flatMap((fabric) =>
+    sizesIds.map((size) => ({
+      fabricId: fabric.id,
+      size,
+      variantName: makeProductName(productKey, fabric.id, size),
+    })),
+  );
 
   const beds: Product[] = variants.map((v) => {
     const price = prices[v.size];
@@ -401,3 +399,15 @@ export const allProductKeys: Record<ProductKey, 1> = {
   lukoshkoTrio: 1,
 };
 
+export type CategoryId = "beds" | "ammo";
+export const modelToCategory: Record<ProductKey, CategoryId> = {
+  kreslo: "ammo",
+  chemodan: "beds",
+  kolorado: "beds",
+  kvadroSoft: "beds",
+  kvadroStrong: "beds",
+  lukoshkoDuo: "beds",
+  lukoshkoTrio: "beds",
+  norka: "beds",
+  podushka: "beds",
+};

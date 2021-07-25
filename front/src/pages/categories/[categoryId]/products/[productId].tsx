@@ -17,7 +17,7 @@ export default function ProductPage({
     <LayoutWithHeaderAndFooter
       breadcrumbsOverrides={{ [product.id]: product.displayName }}
     >
-      <Box padding={1}>
+      <Box>
         {!product && "Product not found"}
         {product && (
           <FoundProductPage categoryName={categoryName} product={product} />
@@ -37,7 +37,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const categories = ["categories/beds"];
+  // TODO replace with listCategories or listProducts or listModels
+  const categories = ["categories/beds", "categories/ammo"];
   const paths = (
     await Promise.all(
       categories.map((c) => shopClient.getCategory({ name: c })),

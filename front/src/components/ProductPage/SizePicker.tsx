@@ -31,7 +31,7 @@ export default function SizePicker({
   return (
     <div>
       <Typography gutterBottom variant="subtitle2" component="h3">
-        Размер - ${selectedDetails.description}
+        Размер - {selectedDetails.description}
       </Typography>
       <Picker selectedId={selected} items={items} />
     </div>

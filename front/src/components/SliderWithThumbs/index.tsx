@@ -11,19 +11,21 @@ import { SliderArrows } from "../Slider/helpers";
 import { useStyles } from "./styles";
 import { useSliderVirtualization } from "../Slider/utils";
 
-const THUMBSER_SLIDES_AMOUNT_PER_VIEW = 5;
+const THUMBS_SLIDES_PER_VIEW = 5;
 
 export default function SliderWithThumbs({
   images,
   thumbs,
+  sizes,
 }: {
   images: ImageData[];
   thumbs: ImageData[];
+  sizes: string;
 }) {
   const classes = useStyles();
   const thumbserDirRef = useRef<KeenSlider>(null);
   const [activeSlide, setActiveSlide] = useState(0);
-  const [thumserSlide, setThumbserSlide] = useState(0);
+  const [thumbSlide, setThumbSlide] = useState(0);
 
   // main slider
 
@@ -57,11 +59,11 @@ export default function SliderWithThumbs({
   const [thumbsRef, thumbser] = useKeenSlider({
     spacing: 4,
     initial: 0,
-    slidesPerView: THUMBSER_SLIDES_AMOUNT_PER_VIEW,
+    slidesPerView: THUMBS_SLIDES_PER_VIEW,
     duration: 400,
     slideChanged(sliderInstance) {
       const idx = sliderInstance.details().relativeSlide;
-      setThumbserSlide(idx);
+      setThumbSlide(idx);
     },
   });
 
@@ -83,20 +85,22 @@ export default function SliderWithThumbs({
   }, [thumbser]);
 
   return (
-    <div className={`${classes.navigationContainer}`}>
+    <>
       <Box position="relative">
         <div ref={sliderRef as any} className="keen-slider">
           {images.map((image, idx) => (
             <div key={image.src} className="keen-slider__slide">
               {isRendering(idx) && (
-                <Image
-                  loading={idx === 1 ? "lazy" : "eager"}
-                  src={image.src}
-                  alt={image.alt}
-                  layout="fixed"
-                  width={500}
-                  height={500}
-                />
+                <Box height="500px">
+                  <Image
+                    loading={idx === 1 ? "lazy" : "eager"}
+                    src={image.src}
+                    alt={image.alt}
+                    layout="fill"
+                    sizes={sizes}
+                    objectFit="contain"
+                  />
+                </Box>
               )}
             </div>
           ))}
@@ -121,23 +125,26 @@ export default function SliderWithThumbs({
                 activeSlide === idx ? classes.thumbActive : ""
               } keen-slider__slide`}
             >
-              <Box
-                key={image.src}
-                className="flex overflow-hidden items-center"
-              >
-                <Image width={90} height={90} src={image.src} alt={image.alt} />
+              <Box width="90px" height="90px">
+                <Image
+                  layout="fill"
+                  objectFit="cover"
+                  sizes="90px"
+                  src={image.src}
+                  alt={image.alt}
+                />
               </Box>
             </Box>
           ))}
-          {thumbs.length < THUMBSER_SLIDES_AMOUNT_PER_VIEW && // КОСТЫЛИК ))
-            new Array(THUMBSER_SLIDES_AMOUNT_PER_VIEW - thumbs.length)
+          {thumbs.length < THUMBS_SLIDES_PER_VIEW && // КОСТЫЛИК ))
+            new Array(THUMBS_SLIDES_PER_VIEW - thumbs.length)
               .fill(1)
               .map((el, index) => index)
               .map((element) => (
                 <Box key={element} className="keen-slider__slide" />
               ))}
         </div>
-        {thumserSlide + THUMBSER_SLIDES_AMOUNT_PER_VIEW < thumbs.length && (
+        {thumbSlide + THUMBS_SLIDES_PER_VIEW < thumbs.length && (
           <IconButton
             onClick={() => thumbser.next()}
             className={`${classes.forwardButton} ${classes.smallButton}`}
@@ -145,7 +152,7 @@ export default function SliderWithThumbs({
             <ArrowForwardIosOutlined className={classes.smallIcon} />
           </IconButton>
         )}
-        {thumserSlide !== 0 && (
+        {thumbSlide !== 0 && (
           <IconButton
             onClick={() => thumbser.prev()}
             className={`${classes.backButton} ${classes.smallButton}`}
@@ -154,6 +161,6 @@ export default function SliderWithThumbs({
           </IconButton>
         )}
       </Box>
-    </div>
+    </>
   );
 }

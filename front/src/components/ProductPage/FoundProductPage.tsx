@@ -12,12 +12,21 @@ import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import Zoom from "@material-ui/core/Zoom";
 import { addProductAction, CartState, StoreState } from "store";
+import Grid from "@material-ui/core/Grid";
+import Container from "@material-ui/core/Container";
 import SliderWithThumbs from "../SliderWithThumbs";
 import Spacing from "../Commons/Spacing";
 import DogBedDetails from "./DogBedDetails";
 import Price from "../Shop/Price";
+import { createSizes, SizesSpec } from "../../commons/sizes";
 
 const Markdown = dynamic(() => import("../Markdown/Renderers"));
+
+const sizesSpec: SizesSpec = {
+  xs: 12,
+  md: 6,
+};
+const SIZES = createSizes(sizesSpec);
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
@@ -106,49 +115,66 @@ function ProductPage({
   };
 
   return (
-    <Box marginX="auto" maxWidth="500px" padding={1}>
-      <SliderWithThumbs images={images} thumbs={images} />
-      <Spacing spacing={1} className="flex flex-col" childClassName="w-full">
-        <Typography variant="h4" component="h1">
-          {displayName}
-        </Typography>
-        <Typography variant="h5">
-          <Price price={price} />
-        </Typography>
-        <Divider />
-        <Details categoryName={categoryName} product={product} />
-        <Divider />
-        <Box width="100%" height="50px">
-          {(inCart ? fabs : fabs.reverse()).map((fab) => (
-            <Zoom
-              key={fab.key}
-              in={fab.show}
-              timeout={transitionDuration}
-              style={{
-                transitionDelay: `${fab.show ? transitionDuration.exit : 0}ms`,
-                width: "100%",
-              }}
-              mountOnEnter
-              unmountOnExit
-            >
-              <MakeFab {...fab} />
-            </Zoom>
-          ))}
-        </Box>
-        <ul>
-          {checkMarks.map((text) => (
-            <li key={text} className="flex">
-              <CheckCircleOutlineOutlinedIcon /> <Typography>{text}</Typography>
-            </li>
-          ))}
-        </ul>
-        <Divider />
-        <Typography variant="h4">Описание</Typography>
-        <Box marginLeft={1} paddingTop={0}>
-          <Markdown>{product.description}</Markdown>
-        </Box>
-      </Spacing>
-    </Box>
+    <Container disableGutters>
+      <Grid container spacing={2}>
+        <Grid item {...sizesSpec}>
+          <SliderWithThumbs images={images} thumbs={images} sizes={SIZES} />
+        </Grid>
+        <Grid
+          item
+          {...sizesSpec}
+          style={{ maxWidth: "500px", marginRight: "auto" }}
+        >
+          <Spacing
+            spacing={1}
+            className="flex flex-col"
+            childClassName="w-full"
+          >
+            <Typography variant="h4" component="h1">
+              {displayName}
+            </Typography>
+            <Typography variant="h5">
+              <Price price={price} />
+            </Typography>
+            <Divider />
+            <Details categoryName={categoryName} product={product} />
+            <Divider />
+            <Box width="100%" height="50px">
+              {(inCart ? fabs : fabs.reverse()).map((fab) => (
+                <Zoom
+                  key={fab.key}
+                  in={fab.show}
+                  timeout={transitionDuration}
+                  style={{
+                    transitionDelay: `${
+                      fab.show ? transitionDuration.exit : 0
+                    }ms`,
+                    width: "100%",
+                  }}
+                  mountOnEnter
+                  unmountOnExit
+                >
+                  <MakeFab {...fab} />
+                </Zoom>
+              ))}
+            </Box>
+            <ul>
+              {checkMarks.map((text) => (
+                <li key={text} className="flex">
+                  <CheckCircleOutlineOutlinedIcon />
+                  <Typography>{text}</Typography>
+                </li>
+              ))}
+            </ul>
+            <Divider />
+            <Typography variant="h4">Описание</Typography>
+            <Box marginLeft={1} paddingTop={0}>
+              <Markdown>{product.description}</Markdown>
+            </Box>
+          </Spacing>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 
