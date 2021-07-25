@@ -42,6 +42,7 @@ export const useStyles = makeStyles(({ palette, typography, spacing }) => ({
   },
   info: {
     ...typography.caption,
+    position: "static",
     color: palette.text.hint,
     marginTop: 8,
     fontFamily: "Monospace",

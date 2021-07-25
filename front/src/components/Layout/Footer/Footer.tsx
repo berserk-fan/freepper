@@ -33,7 +33,6 @@ const Footer = React.memo(() => {
                 <Logo />
               </Box>
               <Typography className={classes.info}>ZooHugge, Dnipro</Typography>
-
               <Typography className={classes.info}>
                 lika@pogladit-mozhno.com
               </Typography>

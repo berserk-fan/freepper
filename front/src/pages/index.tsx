@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button/Button";
 import Box from "@material-ui/core/Box/Box";
 import Typography from "@material-ui/core/Typography/Typography";
 import Grid from "@material-ui/core/Grid";
+import Container from "@material-ui/core/Container";
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
 
 const ColorButton = withStyles((theme) => ({
@@ -90,9 +91,9 @@ const GoToShopButton = React.memo(() => (
 ));
 
 const propositions = [
-  { src: "/beds/lukoshko3/Dogs-24838.jpg", alt: "Лежанка 1", href: "#" },
-  { src: "/beds/lukoshko3/Dogs-24838.jpg", alt: "Лежанка 2", href: "#" },
-  { src: "/beds/lukoshko3/Dogs-24838.jpg", alt: "Лежанка 3", href: "#" },
+  { src: "/beds/norka/av-14/IMG_2492.jpg", alt: "Лежанка 1", href: "#" },
+  { src: "/beds/norka/av-14/IMG_2492.jpg", alt: "Лежанка 2", href: "#" },
+  { src: "/beds/norka/av-14/IMG_2492.jpg", alt: "Лежанка 3", href: "#" },
 ];
 
 export default function Home() {
@@ -149,83 +150,87 @@ export default function Home() {
             >
               <GoToShopButton />
             </Box>
-            <Box
-              padding={1}
-              display="inline-block"
-              marginX="auto"
-              className={classes.profitText}
-            >
+            <Box padding={1} marginX="auto" className={classes.profitText}>
               <Typography align="center" variant="h5" component="h2">
                 Бесплатная доставка. Гарантия 2 месяца.
               </Typography>
             </Box>
           </Box>
         </Box>
-        <Box
-          paddingY={2}
-          aria-label="propositions"
-          component="section"
-          bgcolor={'grey["100"]'}
-        >
-          <Typography align="center" variant="h2">
-            Лежанки
-          </Typography>
+        <Container>
           <Box
-            marginX="auto"
-            aria-label="лежанки"
-            component="ul"
-            display="flex"
-            flexDirection="row"
-            justifyContent="space-around"
-            maxWidth="1600px"
+            padding={2}
+            aria-label="propositions"
+            component="section"
+            bgcolor={'grey["100"]'}
           >
-            <Grid container spacing={3}>
-              {propositions.map((proposition) => (
-                <Grid item key={1} xs={12} md={4}>
-                  <Box className={classes.propositionImageContainer}>
+            <Typography align="center" variant="h2">
+              Лежанки
+            </Typography>
+            <Box
+              marginX="auto"
+              aria-label="лежанки"
+              component="ul"
+              display="flex"
+              flexDirection="row"
+              justifyContent="space-around"
+              maxWidth="1600px"
+            >
+              <Grid container spacing={3}>
+                {propositions.map((proposition) => (
+                  <Grid item key={1} xs={12} md={4}>
+                    <Box className={classes.propositionImageContainer}>
+                      <Image
+                        src={proposition.src}
+                        alt={proposition.alt}
+                        layout="fill"
+                        objectFit="cover"
+                      />
+                    </Box>
+                    <Typography
+                      gutterBottom
+                      variant="h4"
+                      component="h3"
+                      align="center"
+                    >
+                      {proposition.alt}
+                    </Typography>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          </Box>
+          <Box aria-label="how do we make it?" component="section">
+            <Box>
+              <Typography variant="h2" gutterBottom>
+                Как они это делают?
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={4}>
+                  <Box position="relative" height="500px">
                     <Image
-                      src={proposition.src}
-                      alt={proposition.alt}
                       layout="fill"
                       objectFit="cover"
+                      src="/howWeMakeIt.jpg"
+                      alt="фото того как делается лежанка"
                     />
                   </Box>
-                  <Typography
-                    gutterBottom
-                    variant="h4"
-                    component="h3"
-                    align="center"
-                  >
-                    {proposition.alt}
+                </Grid>
+                <Grid item xs={12} md={8}>
+                  <Typography>
+                    Широкую на широкую, широкую на широкую широкую на широкую.
                   </Typography>
                 </Grid>
-              ))}
-            </Grid>
+              </Grid>
+            </Box>
           </Box>
-        </Box>
-        <Box marginTop={2} aria-label="how do we make it?" component="section">
-          <Box className="flex flex-col">
-            <Typography variant="h2" gutterBottom>
-              Как они это делают?
-            </Typography>
-            <Typography>
-              Широкую на широкую, широкую на широкую широкую на широкую.
-            </Typography>
-          </Box>
-          <Box className="justify-center items-center">
-            <Image
-              width="500px"
-              height="500px"
-              src="/howWeMakeIt.jpg"
-              alt="фото того как делается лежанка"
-            />
-          </Box>
-        </Box>
-        <Box>
-          <Box marginY={4} className="flex justify-center items-center">
+          <div
+            style={{ marginTop: "16px", marginBottom: "16px" }}
+            className="center"
+          >
             <GoToShopButton />
-          </Box>
-        </Box>
+          </div>
+        </Container>
       </Box>
     </LayoutWithHeaderAndFooter>
   );
