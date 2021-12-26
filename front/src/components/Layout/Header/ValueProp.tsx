@@ -22,11 +22,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     color: theme.palette.text.disabled,
     textTransform: "uppercase",
-    fontWeight: theme.typography.fontWeightLight,
+    fontWeight: theme.typography.fontWeightLight as Exclude<
+      React.CSSProperties["fontWeight"],
+      string & {}
+    >,
   },
   boldSpan: {
     color: theme.palette.text.secondary,
-    fontWeight: theme.typography.fontWeightBold,
+    fontWeight: theme.typography.fontWeightBold as Exclude<
+      React.CSSProperties["fontWeight"],
+      string & {}
+    >,
   },
 }));
 

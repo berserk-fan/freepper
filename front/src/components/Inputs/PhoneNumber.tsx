@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import PhoneInput from "mui-phone-input-ssr";
 import { showErrorOnChange } from "mui-rff";
 
@@ -7,6 +7,14 @@ const locale = {
   Russia: "Россия",
   Belarus: "Беларусь",
 };
+
+function handleChange(val, country, onChange) {
+  if (country.countryCode === "ua") {
+    onChange(val.replace("+380 (0", "+380 ("));
+    return;
+  }
+  onChange(val);
+}
 
 export const PhoneNumber = (props) => {
   const {
@@ -21,13 +29,12 @@ export const PhoneNumber = (props) => {
   const { error, submitError } = meta;
   const isError = showError({ meta });
 
-  function handleChange(val, country) {
-    if (country.countryCode === "ua") {
-      onChange(val.replace("+380 (0", "+380 ("));
-      return;
-    }
-    onChange(val);
-  }
+  const handleChangeMemoized = useCallback(
+    (val, country) => {
+      handleChange(val, country, onChange);
+    },
+    [onChange],
+  );
 
   return (
     <PhoneInput
@@ -39,7 +46,7 @@ export const PhoneNumber = (props) => {
       type="tel"
       fullWidth
       value={value}
-      onChange={handleChange}
+      onChange={handleChangeMemoized}
       defaultCountry="ua"
       regions="europe"
       localization={locale}

@@ -3,8 +3,13 @@ import IconButton from "@material-ui/core/IconButton/IconButton";
 import Snackbar from "@material-ui/core/Snackbar/Snackbar";
 import useTheme from "@material-ui/core/styles/useTheme";
 import CloseIcon from "@material-ui/icons/Close";
-import React from "react";
+import React, { useCallback } from "react";
 import ContactUs from "./ContactUs";
+
+function handleClose(ev, close) {
+  ev.stopPropagation();
+  close();
+}
 
 export default function ContactUsSnackBar({
   open,
@@ -14,10 +19,12 @@ export default function ContactUsSnackBar({
   close: () => void;
 }) {
   const theme = useTheme();
-  function handleClose(ev) {
-    ev.stopPropagation();
-    close();
-  }
+  const handleCloseMemoized = useCallback(
+    (ev) => {
+      handleClose(ev, close);
+    },
+    [close],
+  );
   return (
     <Snackbar
       open={open}
@@ -33,7 +40,7 @@ export default function ContactUsSnackBar({
           }}
           aria-label="закрыть"
           color="inherit"
-          onClick={handleClose}
+          onClick={handleCloseMemoized}
         >
           <CloseIcon fontSize="small" />
         </IconButton>

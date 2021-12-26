@@ -28,6 +28,63 @@ type CheckoutProps = {
   clearCart: () => void;
 };
 
+function retryPostForm(reset, postform, formState) {
+  reset();
+  postform(formState).catch(console.error);
+}
+
+function postForm(
+  cart: CartState,
+  orderForm: OrderForm,
+  customFetch: (r: RequestInfo, i: RequestInit) => Promise<void>,
+) {
+  const order = toOrder(cart, orderForm);
+  return customFetch("/api/orders", {
+    method: "POST",
+    body: JSON.stringify(order),
+  });
+}
+
+function handleNext(
+  setFormState: (
+    value:
+      | ((prevState: Partial<OrderForm>) => Partial<OrderForm>)
+      | Partial<OrderForm>,
+  ) => void,
+  newFormState: OrderForm,
+  isLastStep: boolean,
+  postFormMemoized: (orderForm: OrderForm) => Promise<void>,
+  setActiveStep: (value: ((prevState: number) => number) | number) => void,
+) {
+  setFormState(newFormState);
+  if (isLastStep) {
+    postFormMemoized(newFormState).catch(console.error);
+  } else {
+    setActiveStep((p) => p + 1);
+  }
+}
+
+function handleBack(
+  setFormState: (
+    value:
+      | ((prevState: Partial<OrderForm>) => Partial<OrderForm>)
+      | Partial<OrderForm>,
+  ) => void,
+  newFormState: OrderForm,
+  setActiveStep: (value: ((prevState: number) => number) | number) => void,
+) {
+  setFormState(newFormState);
+  setActiveStep((p) => p - 1);
+}
+
+function isNextDisabled(
+  values: any,
+  wasSubmitted: boolean,
+  isLastStep: boolean,
+): boolean {
+  return !schema.isValidSync(values) || (wasSubmitted && isLastStep);
+}
+
 function Checkout({ cart, clearCart }: CheckoutProps) {
   const router = useRouter();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -45,36 +102,37 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
   const isLastStep = activeStep === steps.length - 1;
   const wasSubmitted = orderSubmitState !== "NOT_SUBMITTED";
 
-  async function postForm(orderForm: OrderForm): Promise<void> {
-    const order = toOrder(cart, orderForm);
-    return customFetch("/api/orders", {
-      method: "POST",
-      body: JSON.stringify(order),
-    });
-  }
+  const postFormMemoized = React.useCallback(
+    (orderForm: OrderForm) => postForm(cart, orderForm, customFetch),
+    [cart, customFetch],
+  );
 
-  function retryPostForm() {
-    reset();
-    postForm(formState).catch(console.error);
-  }
+  const retryPostFormMemoized = React.useCallback(
+    () => retryPostForm(reset, postFormMemoized, formState),
+    [reset, formState, postFormMemoized],
+  );
 
-  const handleNext = (newFormState: OrderForm) => {
-    setFormState(newFormState);
-    if (isLastStep) {
-      postForm(newFormState).catch(console.error);
-    } else {
-      setActiveStep((p) => p + 1);
-    }
-  };
-
-  const handleBack = (newFormState: OrderForm) => () => {
-    setFormState(newFormState);
-    setActiveStep((p) => p - 1);
-  };
-
-  function isNextDisabled<FormValues>(values: FormValues) {
-    return !schema.isValidSync(values) || (wasSubmitted && isLastStep);
-  }
+  const handleNextMemoized = React.useCallback(
+    (newFormState: OrderForm) =>
+      handleNext(
+        setFormState,
+        newFormState,
+        isLastStep,
+        postFormMemoized,
+        setActiveStep,
+      ),
+    [setFormState, isLastStep, postFormMemoized, setActiveStep],
+  );
+  const handleBackMemoized = React.useCallback(
+    (newFormState: OrderForm) => () => {
+      handleBack(setFormState, newFormState, setActiveStep);
+    },
+    [setFormState, setActiveStep],
+  );
+  const isNextDisabledMemoized = React.useCallback(
+    (values: any) => isNextDisabled(values, wasSubmitted, isLastStep),
+    [wasSubmitted, isLastStep],
+  );
 
   useEffect(() => {
     if (orderSubmitState === "OK") {
@@ -85,7 +143,7 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
   return (
     <Box marginX="16px">
       <Form
-        {...{ onSubmit: handleNext, validate }}
+        {...{ onSubmit: handleNextMemoized, validate }}
         initialValues={formState}
         render={({ handleSubmit, values }) => (
           <form noValidate>
@@ -93,9 +151,9 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
               <Box className="flex flex-col justify-center w-full">
                 <StepContent step={activeStep} orderData={values} />
                 <CustomMobileStepper
-                  handleBack={handleBack(values)}
+                  handleBack={handleBackMemoized(values)}
                   activeStep={activeStep}
-                  isNextDisabled={isNextDisabled(values)}
+                  isNextDisabled={isNextDisabledMemoized(values)}
                   handleNext={handleSubmit}
                   maxSteps={steps.length}
                 />
@@ -109,9 +167,9 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
                   <FullScreenButtons
                     activeStep={activeStep}
                     backDisabled={activeStep === 0}
-                    nextDisabled={isNextDisabled(values)}
+                    nextDisabled={isNextDisabledMemoized(values)}
                     onNext={handleSubmit}
-                    onBack={handleBack(values)}
+                    onBack={handleBackMemoized(values)}
                   />
                 </Box>
               </Paper>
@@ -125,7 +183,7 @@ function Checkout({ cart, clearCart }: CheckoutProps) {
         retryPeriod={retryPeriod}
         onClose={reset}
         onCancel={cancel}
-        onRetry={retryPostForm}
+        onRetry={retryPostFormMemoized}
       />
     </Box>
   );
