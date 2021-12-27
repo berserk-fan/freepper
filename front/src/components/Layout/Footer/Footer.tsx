@@ -59,6 +59,7 @@ const Footer = React.memo(() => {
                     pages.about,
                     pages["delivery-and-payment-info"],
                     pages["returns-policy"],
+                    pages["ua-version"],
                   ].map((page) => (
                     <Link key={page.id} href={page.path}>
                       <a className={classes.item}>
@@ -139,7 +140,13 @@ const Footer = React.memo(() => {
             <Box py={1} flexGrow={1} textAlign={{ xs: "center", md: "right" }}>
               <Typography component="p" variant="caption" color="textSecondary">
                 <Box component="span" fontFamily="Monospace">
-                  Designed by Dima © Home Studio 2021 All right reserved
+                  Designed{" "}
+                  <span style={{ textDecorationLine: "line-through" }}>
+                    in California
+                  </span>{" "}
+                  in Dnipro and Kyiv. © Dimas Home Studio
+                  <br />
+                  2021 All rights reserved
                 </Box>
               </Typography>
             </Box>

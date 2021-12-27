@@ -18,7 +18,8 @@ type Pages =
   | "ammo"
   | "beds"
   | "checkout"
-  | "checkout-success";
+  | "checkout-success"
+  | "ua-version";
 
 type PageGroup = {
   id: string;
@@ -35,6 +36,11 @@ export type Page = {
 };
 export const pages: Record<Pages, Page> = {
   home: { id: "home", path: "/", name: "Домой", Icon: HouseIcon },
+  "ua-version": {
+    id: "ua-version",
+    path: "/ua-version-info",
+    name: "Где украинская версия",
+  },
   beds: {
     id: "beds",
     path: "/categories/beds/products",

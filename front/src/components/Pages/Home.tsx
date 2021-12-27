@@ -106,12 +106,12 @@ export function Home({
   const allBedsHref = "categories/beds/products";
 
   return (
-    <LayoutWithHeaderAndFooter disableBreadcrumbs>
+    <LayoutWithHeaderAndFooter disableBreadcrumbs showValueProp>
       <Box width="100%">
         <Box
           className="flex flex-col items-center justify-center"
           position="relative"
-          height="calc(100vh - 100px)"
+          height="calc(100vh - 130px)"
           aria-label="Main screen"
           component="section"
         >

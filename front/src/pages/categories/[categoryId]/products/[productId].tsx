@@ -15,6 +15,7 @@ export default function ProductPage({
 }) {
   return (
     <LayoutWithHeaderAndFooter
+      showValueProp
       breadcrumbsOverrides={{ [product.id]: product.displayName }}
     >
       <Box>

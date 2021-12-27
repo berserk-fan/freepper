@@ -14,7 +14,7 @@ export type ShopPageProps = {
 
 export default function ShopPage({ products, categoryName }: ShopPageProps) {
   return (
-    <LayoutWithHeaderAndFooter>
+    <LayoutWithHeaderAndFooter showValueProp>
       <Container>
         <Box paddingTop={1}>
           <Grid container spacing={3}>
