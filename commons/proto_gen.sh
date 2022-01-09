@@ -15,12 +15,11 @@ mkdir -p ${OUTPUT_PATH}
     --js_out="import_style=commonjs,binary:${OUTPUT_PATH}" \
     --ts_proto_out=${OUTPUT_PATH} \
     --ts_proto_opt=oneof=unions \
-    --ts_proto_opt=outputClientImpl=false \
     --ts_proto_opt=lowerCaseServiceMethods=true \
-    --ts_proto_opt=outputJsonMethods=false \
+    --ts_proto_opt=outputClientImpl=grpc-web \
     --ts_proto_opt=outputEncodeMethods=false \
     --ts_proto_opt=emitImportedFiles=false \
-    --ts_proto_opt=useOptionals=true \
+    --ts_proto_opt=useOptionals='messages' \
     --ts_proto_opt=stringEnums=true \
     --ts_proto_opt=unrecognizedEnum=false \
     "../${BASE_URL}/api/${PROTO_SERVICE_PATH}"

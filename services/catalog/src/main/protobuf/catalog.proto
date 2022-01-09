@@ -1,0 +1,171 @@
+syntax = "proto3";
+
+package ua.pomo.catalog.api;
+
+import "google/protobuf/wrappers.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/api/client.proto";
+
+service Catalog {
+  rpc GetCategory (GetCategoryRequest) returns (Category);
+
+  rpc GetProduct (GetProductRequest) returns (Product);
+
+  rpc GetModel (GetModelRequest) returns (Model);
+
+  rpc ListModels (ListModelsRequest) returns (ListModelsResponse) {
+    option (google.api.method_signature) = "parent";
+  };
+
+  rpc ListProducts (ListProductsRequest) returns (ListProductsResponse) {
+    option (google.api.method_signature) = "parent";
+  };
+}
+
+message Product {
+  option (google.api.resource) = {
+    type: "api.pomo.in.ua/Product"
+    pattern: "categories/{category}/models/{model}/products/{product}"
+  };
+  string name = 1;
+  string id = 2;
+  string display_name = 3;
+  Price price = 4;
+  repeated ImageData images = 5;
+  string model = 6 [(google.api.resource_reference) = {
+    type: "api.pomo.in.ua/Model"
+  }];
+  string category = 7 [(google.api.resource_reference) = {
+    type: "api.pomo.in.ua/Category"
+  }];
+  oneof details {
+    DogBedDetails dog_bed = 10;
+  }
+}
+
+
+message Model {
+  option (google.api.resource) = {
+    type: "api.pomo.in.ua/Model"
+    pattern: "categories/{category}/models/{model}"
+  };
+  string name = 1;
+  string id = 2;
+  string display_name = 3;
+  string description = 4;
+  int32 minimal_price = 5;
+  repeated ImageData images = 6;
+}
+
+message Category {
+  option (google.api.resource) = {
+    type: "api.pomo.in.ua/Category"
+    pattern: "categories/{category}"
+  };
+  string name = 1;
+  string id = 2;
+  string display_name = 3;
+  string description = 4;
+  ImageData image = 5;
+}
+
+message ListProductsRequest {
+  // The parent resource name, for example, "categories/category1/model/modelId"
+  string parent = 1 [(google.api.resource_reference) = {
+    type: "api.pomo.in.ua/Model"
+  }];
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+}
+
+message ListProductsResponse {
+  //There will be a maximum number of items returned based on the page_size field
+  // in the request.
+  repeated Product products = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no
+  // more results in the list.
+  string next_page_token = 2;
+}
+
+message GetCategoryRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.in.ua/Category"
+    }];
+}
+
+
+message ListModelsRequest {
+  // The parent resource name, for example, "categories/category1".
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      child_type: "api.pomo.in.ua/Model"
+    }];
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+}
+
+message ListModelsResponse {
+  //There will be a maximum number of items returned based on the page_size field
+  // in the request.
+  repeated Model models = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no
+  // more results in the list.
+  string next_page_token = 2;
+}
+
+message GetModelRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.in.ua/Model"
+    }];
+}
+
+message GetProductRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.in.ua/Product"
+    }];
+}
+
+message ImageData {
+  string src = 1;
+  string alt = 2;
+  string name = 3;
+}
+
+message Fabric {
+  string id = 1;
+  string display_name = 2;
+  string description = 3;
+  ImageData image = 4;
+}
+
+message Size {
+  string display_name = 1;
+}
+
+message Price {
+  int32 price = 1;
+  google.protobuf.Int32Value promo = 2;
+}
+
+message DogBedDetails {
+  Fabric fabric = 1;
+  Size size = 2;
+}
