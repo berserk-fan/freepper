@@ -1,6 +1,6 @@
 package ua.pomo.catalog.domain
 
-import cats.instances.uuid
+import ua.pomo.catalog.optics.uuid
 import derevo.cats.{ eqv, show }
 import derevo.circe.magnolia.{ keyDecoder, keyEncoder }
 import derevo.derive

@@ -1,0 +1,22 @@
+version: '3.4'
+services:
+  catalog:
+    restart: 'no'
+    image: catalog:latest
+    network_mode: host
+    environment:
+      - DEBUG=false
+    env_file:
+        ../.env.it
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 2000M
+
+  envoy:
+    image: envoyproxy/envoy-dev:b136310d14ceb5ce66c96ac6b3b2f445aac943e7
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml

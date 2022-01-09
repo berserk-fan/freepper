@@ -1,4 +1,4 @@
-CREATE TABLE films
+CREATE TABLE categories
 (
     code      char(5)
         CONSTRAINT firstkey PRIMARY KEY,
@@ -7,10 +7,4 @@ CREATE TABLE films
     date_prod date,
     kind      varchar(10),
     len       interval hour to minute
-);
-
-CREATE TABLE distributors
-(
-    did  integer PRIMARY KEY DEFAULT nextval('serial'),
-    name varchar(40) NOT NULL CHECK (name <> '')
 );

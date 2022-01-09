@@ -1,10 +1,10 @@
 package ua.pomo.catalog.domain
 
-import cats.instances.uuid
-import derevo.cats.{ eqv, show }
+import derevo.cats._
 import derevo.derive
 import io.estatico.newtype.macros.newtype
 import ua.pomo.catalog.domain.image.ImageData
+import ua.pomo.catalog.optics.uuid
 
 import java.util.UUID
 

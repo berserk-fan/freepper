@@ -67,6 +67,8 @@ object Dependencies {
 
     val newtype = "io.estatico" %% "newtype" % V.newtype
 
+    val monocleCore = "dev.optics" %% "monocle-core" % V.monocle
+
     val circeCore    = circe("core")
     val circeGeneric = circe("generic")
     val circeParser  = circe("parser")

@@ -1,16 +1,17 @@
 package ua.pomo.catalog.infrastructure
 
+import cats.effect.IO
 import com.typesafe.scalalogging.LazyLogging
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.Location
 import org.flywaydb.core.api.configuration.FluentConfiguration
 import ua.pomo.catalog.JdbcDatabaseConfig
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.jdk.CollectionConverters._
 
 object DBMigrations extends LazyLogging {
-  def migrate(config: JdbcDatabaseConfig)(implicit ec: ExecutionContext): Future[Int] =
-    Future {
+  def migrate(config: JdbcDatabaseConfig): IO[Int] =
+    IO.blocking {
       logger.info(
         "Running migrations from locations: " +
           config.migrationsLocations.mkString(", ")
@@ -41,24 +42,20 @@ object DBMigrations extends LazyLogging {
   }
 
   private def logValidationErrorsIfAny(m: FluentConfiguration): Unit = {
-    val validated = m.ignorePendingMigrations(true)
+    val validated = m
+      .ignorePendingMigrations(true)
       .load()
       .validateWithResult()
 
     if (!validated.validationSuccessful)
       for (error <- validated.invalidMigrations.asScala)
-        logger.warn(
-          s"""
+        logger.warn(s"""
              |Failed validation:
              |  - version: ${error.version}
-
-                       |  - path: ${error.filepath}
-
-
-             on: ${error.description}
-                       |  - errorCode: ${error
-             .errorDetails.errorCode}
-                       |  - errorMessage: ${error.errorDetails.errorMessage}
+             |  - path: ${error.filepath}
+             |  - on: ${error.description}
+             |  - errorCode: ${error.errorDetails.errorCode}
+             |  - errorMessage: ${error.errorDetails.errorMessage}
         """.stripMargin.strip)
   }
 }

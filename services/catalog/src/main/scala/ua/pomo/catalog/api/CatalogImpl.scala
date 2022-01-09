@@ -1,13 +1,15 @@
 package ua.pomo.catalog.api
 
-class CatalogImpl[F[_]] extends CatalogFs2Grpc[F, Unit] {
-  override def getCategory(request: GetCategoryRequest, ctx: Unit): F[Category] = ???
+import io.grpc.Metadata
 
-  override def getProduct(request: GetProductRequest, ctx: Unit): F[Product] = ???
+class CatalogImpl[F[_]] extends CatalogFs2Grpc[F, Metadata] {
+  override def getCategory(request: GetCategoryRequest, ctx: Metadata): F[Category] = ???
 
-  override def getModel(request: GetModelRequest, ctx: Unit): F[Model] = ???
+  override def getProduct(request: GetProductRequest, ctx: Metadata): F[Product] = ???
 
-  override def listModels(request: ListModelsRequest, ctx: Unit): F[ListModelsResponse] = ???
+  override def getModel(request: GetModelRequest, ctx: Metadata): F[Model] = ???
 
-  override def listProducts(request: ListProductsRequest, ctx: Unit): F[ListProductsResponse] = ???
+  override def listModels(request: ListModelsRequest, ctx: Metadata): F[ListModelsResponse] = ???
+
+  override def listProducts(request: ListProductsRequest, ctx: Metadata): F[ListProductsResponse] = ???
 }
