@@ -10,30 +10,31 @@ import ua.pomo.catalog.domain.category._
 object CategoryRepositoryImpl {
   def apply(): CategoryRepository[ConnectionIO] = new CategoryRepositoryImpl()
   private class CategoryRepositoryImpl() extends CategoryRepository[ConnectionIO] {
-    override def findCategory(id: CategoryId): ConnectionIO[Option[Category]] = {
+    override def find(id: CategoryId): ConnectionIO[Option[Category]] = {
       Queries.findCategory(id).option
+    }
+
+    override def get(id: CategoryId): doobie.ConnectionIO[Category] = {
+      Queries.findCategory(id).unique
     }
 
     override def findAll(): ConnectionIO[List[Category]] = {
       Queries.findCategories.to[List]
     }
 
-    override def deleteCategory(id: CategoryId): ConnectionIO[Unit] = {
+    override def delete(id: CategoryId): ConnectionIO[Unit] = {
       Queries.deleteCategory(id).run.as(())
     }
 
-    override def updateCategory(cat: UpdateCategory): ConnectionIO[Int] =
+    override def update(cat: UpdateCategory): ConnectionIO[Int] =
       Queries
         .updateCategory(cat)
         .run
 
-    override def createCategory(category: Category): ConnectionIO[Category] =
+    override def create(category: Category): ConnectionIO[CategoryUUID] =
       Queries
         .insertCategory(category)
-        .withUniqueGeneratedKeys[
-          CategoryUUID :: CategoryReadableId :: CategoryDisplayName :: CategoryDescription :: HNil
-        ]("id", "readable_id", "display_name", "description")
-        .map { Generic[Category].from(_) }
+        .withUniqueGeneratedKeys[CategoryUUID]("id")
   }
 
   private[persistance] object Queries {
@@ -81,8 +82,8 @@ object CategoryRepositoryImpl {
 
     def insertCategory(cat: Category): Update0 = {
       sql"""
-           insert into categories (id, readable_id, display_name, description)
-           VALUES (${cat.id}, ${cat.readableId}, ${cat.displayName}, ${cat.description})
+           insert into categories (readable_id, display_name, description)
+           VALUES (${cat.readableId}, ${cat.displayName}, ${cat.description})
          """.update
     }
   }

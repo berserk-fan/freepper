@@ -9,6 +9,10 @@ import java.util.UUID
 
 object category {
   type CategoryId = CategoryUUID Either CategoryReadableId
+  object CategoryId {
+    def apply(id: CategoryUUID): CategoryId = Left(id)
+    def apply(id: CategoryReadableId)(implicit d: DummyImplicit): CategoryId = Right(id)
+  }
 
   @derive(eqv, show)
   @newtype
@@ -39,15 +43,17 @@ object category {
                             description: Option[CategoryDescription])
 
   trait CategoryRepository[F[_]] {
-    def createCategory(category: Category): F[Category]
+    def create(category: Category): F[CategoryUUID]
 
-    def findCategory(id: CategoryId): F[Option[Category]]
+    def get(id: CategoryId): F[Category]
+
+    def find(id: CategoryId): F[Option[Category]]
 
     def findAll(): F[List[Category]]
 
-    def updateCategory(req: UpdateCategory): F[Int]
+    def update(req: UpdateCategory): F[Int]
 
-    def deleteCategory(id: CategoryId): F[Unit]
+    def delete(id: CategoryId): F[Unit]
   }
 
   trait CategoryService[F[_]] {

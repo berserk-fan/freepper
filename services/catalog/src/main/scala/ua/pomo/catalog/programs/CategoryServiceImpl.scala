@@ -20,7 +20,7 @@ object CategoryServiceImpl {
   ) extends CategoryService[F] {
     override def getCategory(id: CategoryId): F[Category] = {
       repository
-        .findCategory(id)
+        .find(id)
         .transact(xa)
         .flatMap { _.fold(new RuntimeException("category not found").raiseError[F,Category])(_.pure[F]) }
     }
@@ -31,10 +31,10 @@ object CategoryServiceImpl {
 
     override def updateCategory(req: UpdateCategory): F[Category] = {
       repository
-        .updateCategory(req)
+        .update(req)
         .flatMap { count =>
           val res: ConnectionIO[Category] = if (count > 0) {
-            repository.findCategory(req.id).flatMap {
+            repository.find(req.id).flatMap {
               case Some(updatedCategory) => updatedCategory.pure[ConnectionIO]
               case None =>
                 new IllegalStateException("no category after non zero update").raiseError[ConnectionIO, Category]
@@ -49,11 +49,13 @@ object CategoryServiceImpl {
     }
 
     override def deleteCategory(id: CategoryId): F[Unit] = {
-      repository.deleteCategory(id).transact(xa)
+      repository.delete(id).transact(xa)
     }
 
     override def createCategory(category: Category): F[Category] = {
-      repository.createCategory(category).transact(xa)
+      repository.create(category)
+        .flatMap { id => repository.get(Left(id)) }
+        .transact(xa)
     }
   }
 }

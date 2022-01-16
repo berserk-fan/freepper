@@ -1,19 +1,22 @@
 package ua.pomo.catalog.infrastructure.persistance
 
+import doobie.ConnectionIO
+import doobie.implicits._
 import org.scalacheck.Gen
-import org.scalatest._
-import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.AsyncTestSuite
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.shared.DbUnitTestSuite
 
 import java.util.UUID
 import ua.pomo.catalog.shared.Generators
 
-class CategoryRepositoryImplTest extends DbUnitTestSuite with matchers.must.Matchers with ScalaCheckDrivenPropertyChecks {
+class CategoryRepositoryImplTest extends DbUnitTestSuite with AsyncTestSuite {
 
   import CategoryRepositoryImpl._
 
-  test("sqls") {
+  val impl: CategoryRepository[ConnectionIO] = CategoryRepositoryImpl()
+
+  test("queries") {
     val catuuid = CategoryUUID(UUID.randomUUID())
     val uuid: CategoryId = Left(catuuid)
     val readableId: CategoryId = Right(CategoryReadableId("some-id"))
@@ -24,19 +27,32 @@ class CategoryRepositoryImplTest extends DbUnitTestSuite with matchers.must.Matc
     check(Queries.deleteCategory(uuid))
     check(Queries.deleteCategory(readableId))
 
-    val updateGen: Gen[UpdateCategory] = for {
-      id <- Gen.oneOf(uuid, readableId)
-      readableId <- Gen.option(Generators.Category.readableId)
-      displayName <- Gen.option(Generators.Category.displayName)
-      descr <- Gen.option(Generators.Category.description)
-    } yield UpdateCategory(id, readableId, displayName, descr)
-
-    forAll(updateGen) { update: UpdateCategory =>
+    forAll(Generators.Category.update) { update: UpdateCategory =>
       check(Queries.updateCategory(update))
     }
 
     forAll(Generators.Category.self) { cat: Category =>
       check(Queries.insertCategory(cat))
+    }
+  }
+
+  test("api") {
+    forAll(Generators.Category.self) { cat =>
+      val found = impl.create(cat)
+        .flatMap { insertId => impl.get(Left(insertId)) }
+        .trRun()
+
+      found should equal(cat.copy(id = found.id))
+  
+      val dbId = found.id
+      val rId = CategoryReadableId("some_id_2")
+      val newDisplayName = CategoryDisplayName("qq2")
+      impl.update(UpdateCategory(Left(dbId), Some(rId), Some(newDisplayName), None)).trRun()
+      impl.get(Right(rId)).trRun().displayName.value should equal(newDisplayName)
+      impl.delete(Left(dbId)).trRun()
+      intercept[Exception] {
+        impl.get(Left(dbId)).trRun()
+      }
     }
   }
 }

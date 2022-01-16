@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA public;
 CREATE TABLE images
 (
     id  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    src VARCHAR NOT NULL,
+    src VARCHAR UNIQUE NOT NULL,
     alt VARCHAR NOT NULL
 );
 
@@ -21,19 +21,19 @@ CREATE TABLE models
     readable_id  VARCHAR UNIQUE NOT NULL,
     display_name VARCHAR        NOT NULL,
     description  VARCHAR        NOT NULL,
-    category_id  UUID            NOT NULL REFERENCES categories (id)
+    category_id  UUID           NOT NULL REFERENCES categories (id)
 );
 
 CREATE TABLE image_lists
 (
     id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    display_name VARCHAR
+    display_name VARCHAR NOT NULL
 );
 
 CREATE TABLE image_list_member
 (
-    image_list_id UUID NOT NULL REFERENCES image_lists (id),
-    image_id     UUID NOT NULL REFERENCES images (id),
+    image_list_id UUID NOT NULL REFERENCES image_lists (id) ON DELETE CASCADE,
+    image_id      UUID NOT NULL REFERENCES images (id),
     UNIQUE (image_list_id, image_id)
 );
 
@@ -65,8 +65,8 @@ CREATE TABLE products
 
 CREATE TABLE model_images
 (
-    model_id     UUID NOT NULL references models (id),
-    fabric_id    UUID NOT NULL references fabrics (id),
+    model_id      UUID NOT NULL references models (id),
+    fabric_id     UUID NOT NULL references fabrics (id),
     image_list_id UUID NOT NULL references image_lists (id),
     UNIQUE (model_id, fabric_id, image_list_id)
 );
