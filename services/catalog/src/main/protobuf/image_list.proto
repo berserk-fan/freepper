@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package ua.pomo.catalog.api;
+
+import "commons.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+
+message ImageList {
+  option (google.api.resource) = {
+    type: "api.pomo.in.ua/ImageList"
+    pattern: "image_lists/{image_list}"
+  };
+  string name = 1;
+  string display_name = 2;
+  repeated Image images = 3;
+}
+
+message GetImageListRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.in.ua/ImageList"
+    }];
+}
+
+message DeleteImageListRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.in.ua/ImageList"
+    }];
+}
+
+message CreateImageListRequest {
+  string parent = 1;
+  ImageList image_list = 3;
+}

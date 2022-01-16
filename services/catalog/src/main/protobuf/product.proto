@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package ua.pomo.catalog.api;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "commons.proto";
+import "model.proto";
+
+message Product {
+  option (google.api.resource) = {
+    type: "api.pomo.in.ua/Product"
+    pattern: "categories/{category}/models/{model}/products/{product}"
+  };
+  string name = 1;
+  string id = 2;
+  string display_name = 3;
+  Price price = 4;
+  repeated Image images = 5;
+  Model model = 6;
+  oneof details {
+    DogBedDetails dog_bed = 10;
+  }
+}
+
+message DogBedDetails {
+  Fabric fabric = 1;
+  Size size = 2;
+}
+
+message ListProductsRequest {
+  // The parent resource name, for example, "categories/category1/model/modelId"
+  string parent = 1 [(google.api.resource_reference) = {
+    type: "api.pomo.in.ua/Model"
+  }];
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+}
+
+message ListProductsResponse {
+  //There will be a maximum number of items returned based on the page_size field
+  // in the request.
+  repeated Product products = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no
+  // more results in the list.
+  string next_page_token = 2;
+}
+
+
+message GetProductRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.in.ua/Product"
+    }];
+}
+

@@ -25,30 +25,38 @@ object Dependencies {
 
     val weaver = "0.7.6"
 
-    val scalaLogging   = "3.9.4"
-    val pureConfig     = "0.17.1"
-    val scalaTest      = "3.2.9"
-    val scalaPb        = "2.5.0-2"
-    val doobie         = "1.0.0-RC1"
-    val flyway         = "7.2.0"
-    val typeSafeConfig = "1.4.1"
+    val scalaLogging        = "3.9.4"
+    val pureConfig          = "0.17.1"
+    val scalaTest           = "3.2.9"
+    val scalaPb             = "2.5.0-2"
+    val doobie              = "1.0.0-RC1"
+    val flyway              = "7.2.0"
+    val typeSafeConfig      = "1.4.1"
+    val postgresJdbcDriver  = "42.3.1"
+    val scalaCheck          = "1.15.4"
+    val scalaTestScalaCheck = "3.2.9.0"
   }
 
   object Libraries {
     def circe(artifact: String): ModuleID  = "io.circe" %% s"circe-$artifact"  % V.circe
     def derevo(artifact: String): ModuleID = "tf.tofu"  %% s"derevo-$artifact" % V.derevo
 
-    lazy val scalaTest       = "org.scalatest" %% "scalatest"        % V.scalaTest % Test
-    lazy val grpcNetty       = "io.grpc"       % "grpc-netty"        % scalapb.compiler.Version.grpcJavaVersion
-    lazy val grpcNettyShaded = "io.grpc"       % "grpc-netty-shaded" % scalapb.compiler.Version.grpcJavaVersion
+    lazy val scalaTest           = "org.scalatest"     %% "scalatest"       % V.scalaTest           % Test
+    lazy val scalaCheck          = "org.scalacheck"    %% "scalacheck"      % V.scalaCheck          % Test
+    lazy val scalaTestScalaCheck = "org.scalatestplus" %% "scalacheck-1-15" % V.scalaTestScalaCheck % Test
+
+    lazy val grpcNetty       = "io.grpc" % "grpc-netty"        % scalapb.compiler.Version.grpcJavaVersion
+    lazy val grpcNettyShaded = "io.grpc" % "grpc-netty-shaded" % scalapb.compiler.Version.grpcJavaVersion
 
     // (optional) If you need scalapb/scalapb.proto or anything from
     // google/protobuf/*.proto
     lazy val scalaPbCommonProtosProtobuf = "com.thesamet.scalapb.common-protos" %% "proto-google-common-protos-scalapb_0.11" % V.scalaPb % "protobuf"
     lazy val scalaPbCommonProtosScala    = "com.thesamet.scalapb.common-protos" %% "proto-google-common-protos-scalapb_0.11" % V.scalaPb
 
-    lazy val doobieCore     = "org.tpolecat" %% "doobie-core"     % V.doobie
-    lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % V.doobie
+    lazy val doobieCore         = "org.tpolecat"   %% "doobie-core"      % V.doobie
+    lazy val doobiePostgres     = "org.tpolecat"   %% "doobie-postgres"  % V.doobie
+    lazy val doobieScalaTest    = "org.tpolecat"   %% "doobie-scalatest" % V.doobie
+    lazy val postgresJdbcDriver = "org.postgresql" % "postgresql"        % V.postgresJdbcDriver
 
     lazy val flyway         = "org.flywaydb"               % "flyway-core"     % V.flyway
     lazy val typesafeConfig = "com.typesafe"               % "config"          % V.typeSafeConfig

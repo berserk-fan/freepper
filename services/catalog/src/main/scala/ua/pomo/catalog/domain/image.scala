@@ -1,10 +1,17 @@
 package ua.pomo.catalog.domain
 
-import derevo.cats.{ eqv, show }
+import derevo.cats.{eqv, show}
 import derevo.derive
+import eu.timepit.refined.util.string.uuid
 import io.estatico.newtype.macros.newtype
 
+import java.util.UUID
+
+
 object image {
+  @derive(eqv, show, uuid)
+  case class ImageId(value: String)
+
   @derive(eqv, show)
   @newtype
   case class ImageSrc(value: String)
@@ -14,9 +21,32 @@ object image {
   case class ImageAlt(value: String)
 
   @derive(eqv, show)
+  case class Image(id: ImageId, src: ImageSrc, alt: ImageAlt)
+
+  @derive(eqv, show, uuid)
   @newtype
-  case class ImageObjectName(value: String)
+  case class ImageListId(uuid: UUID)
 
   @derive(eqv, show)
-  case class ImageData(src: ImageSrc, alt: ImageAlt, objectName: Option[ImageObjectName])
+  @newtype
+  case class ImageListName(value: String)
+
+  @derive(eqv, show)
+  case class ImageList(name: ImageListName, images: List[Image])
+
+  trait ImageListRepository[F[_]] {
+    def create(imageList: ImageList): F[ImageList]
+
+    def findImageList(id: ImageListId): F[ImageList]
+
+    def update(imageList: ImageList): F[ImageList]
+  }
+
+  trait ImageListService[F[_]] {
+    def create(imageList: ImageList): F[ImageList]
+
+    def findImageList(id: ImageListId): F[ImageList]
+
+    def update(imageList: ImageList): F[ImageList]
+  }
 }

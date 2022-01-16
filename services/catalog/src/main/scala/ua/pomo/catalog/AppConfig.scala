@@ -13,10 +13,11 @@ import scala.io.Source
 final case class JdbcDatabaseConfig(
     url: String,
     driver: String,
-    user: Option[String],
-    password: Option[String],
+    user: String,
+    password: String,
     migrationsTable: String,
-    migrationsLocations: List[String]
+    migrationsLocations: List[String],
+    schema: String
 )
 
 final case class ServerConfig(serverPort: Int)

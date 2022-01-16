@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package ua.pomo.catalog.api;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "commons.proto";
+import "model.proto";
+
+message Category {
+  option (google.api.resource) = {
+    type: "api.pomo.in.ua/Category"
+    pattern: "categories/{category}"
+  };
+  string name = 1;
+  string id = 2;
+  string display_name = 3;
+  string description = 4;
+//  Image image = 5;
+}
+
+message GetCategoryRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.in.ua/Category"
+    }];
+}

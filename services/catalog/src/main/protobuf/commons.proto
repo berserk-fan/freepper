@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package ua.pomo.catalog.api;
+
+import "google/protobuf/wrappers.proto";
+
+message Image {
+  string src = 1;
+  string alt = 2;
+}
+
+message Fabric {
+  string id = 1;
+  string display_name = 2;
+  string description = 3;
+  Image image = 4;
+}
+
+message Size {
+  string display_name = 1;
+}
+
+message Price {
+  int32 price = 1;
+  google.protobuf.Int32Value promo = 2;
+}

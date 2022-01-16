@@ -5,10 +5,13 @@ services:
     ports:
       - "${DB_PORT}:5432"
     environment:
+      - POSTGRES_USER=${DB_USER}
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_PASSWORD=${DB_PASS}
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} --dbname=${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
