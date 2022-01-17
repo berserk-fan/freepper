@@ -6,37 +6,38 @@ import doobie.implicits._
 import doobie.postgres.implicits._
 import shapeless._
 import ua.pomo.catalog.domain.category._
+import ua.pomo.catalog.infrastructure.persistance.CategoryRepositoryImpl.Queries
+
+class CategoryRepositoryImpl private () extends CategoryRepository[ConnectionIO] {
+  override def find(id: CategoryId): ConnectionIO[Option[Category]] = {
+    Queries.findCategory(id).option
+  }
+
+  override def get(id: CategoryId): doobie.ConnectionIO[Category] = {
+    Queries.findCategory(id).unique
+  }
+
+  override def findAll(): ConnectionIO[List[Category]] = {
+    Queries.findCategories.to[List]
+  }
+
+  override def delete(id: CategoryId): ConnectionIO[Unit] = {
+    Queries.deleteCategory(id).run.as(())
+  }
+
+  override def update(cat: UpdateCategory): ConnectionIO[Int] =
+    Queries
+      .updateCategory(cat)
+      .run
+
+  override def create(category: Category): ConnectionIO[CategoryUUID] =
+    Queries
+      .insertCategory(category)
+      .withUniqueGeneratedKeys[CategoryUUID]("id")
+}
 
 object CategoryRepositoryImpl {
   def apply(): CategoryRepository[ConnectionIO] = new CategoryRepositoryImpl()
-  private class CategoryRepositoryImpl() extends CategoryRepository[ConnectionIO] {
-    override def find(id: CategoryId): ConnectionIO[Option[Category]] = {
-      Queries.findCategory(id).option
-    }
-
-    override def get(id: CategoryId): doobie.ConnectionIO[Category] = {
-      Queries.findCategory(id).unique
-    }
-
-    override def findAll(): ConnectionIO[List[Category]] = {
-      Queries.findCategories.to[List]
-    }
-
-    override def delete(id: CategoryId): ConnectionIO[Unit] = {
-      Queries.deleteCategory(id).run.as(())
-    }
-
-    override def update(cat: UpdateCategory): ConnectionIO[Int] =
-      Queries
-        .updateCategory(cat)
-        .run
-
-    override def create(category: Category): ConnectionIO[CategoryUUID] =
-      Queries
-        .insertCategory(category)
-        .withUniqueGeneratedKeys[CategoryUUID]("id")
-  }
-
   private[persistance] object Queries {
     private def toWhereClause(id: Option[CategoryId]): Fragment = {
       id.map(_.fold(uuid => fr"cat.id = $uuid", readableId => fr"cat.readable_id = $readableId"))

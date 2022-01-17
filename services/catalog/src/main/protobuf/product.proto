@@ -17,7 +17,6 @@ message Product {
   string display_name = 3;
   Price price = 4;
   repeated Image images = 5;
-  Model model = 6;
   oneof details {
     DogBedDetails dog_bed = 10;
   }

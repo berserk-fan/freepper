@@ -4,7 +4,7 @@ CREATE TABLE images
 (
     id  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     src VARCHAR UNIQUE NOT NULL,
-    alt VARCHAR NOT NULL
+    alt VARCHAR        NOT NULL
 );
 
 CREATE TABLE categories
@@ -17,11 +17,12 @@ CREATE TABLE categories
 
 CREATE TABLE models
 (
-    id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    readable_id  VARCHAR UNIQUE NOT NULL,
-    display_name VARCHAR        NOT NULL,
-    description  VARCHAR        NOT NULL,
-    category_id  UUID           NOT NULL REFERENCES categories (id)
+    id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    readable_id   VARCHAR UNIQUE NOT NULL,
+    display_name  VARCHAR        NOT NULL,
+    description   VARCHAR        NOT NULL,
+    category_id   UUID           NOT NULL REFERENCES categories (id),
+    image_list_id UUID           NOT NULL REFERENCES image_lists (id)
 );
 
 CREATE TABLE image_lists
@@ -63,10 +64,9 @@ CREATE TABLE products
     size_id         UUID references sizes (id)
 );
 
-CREATE TABLE model_images
+CREATE TABLE product_images
 (
-    model_id      UUID NOT NULL references models (id),
-    fabric_id     UUID NOT NULL references fabrics (id),
+    product_id    UUID NOT NULL references models (id),
     image_list_id UUID NOT NULL references image_lists (id),
-    UNIQUE (model_id, fabric_id, image_list_id)
+    UNIQUE (product_id, image_list_id)
 );

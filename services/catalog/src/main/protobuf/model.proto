@@ -20,6 +20,16 @@ message Model {
   ImageList image_list = 6;
 }
 
+message CreateModelRequest {
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.in.ua/Category"
+    }];
+
+  Model model = 2;
+}
+
 message GetModelRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,

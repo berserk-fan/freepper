@@ -2,7 +2,6 @@ package ua.pomo.catalog.infrastructure.persistance
 
 import cats.MonadThrow
 import cats.data.OptionT
-import cats.effect.Sync
 import cats.implicits._
 import doobie._
 import doobie.implicits._

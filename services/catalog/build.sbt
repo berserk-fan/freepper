@@ -37,7 +37,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "catalog",
     Docker / packageName := "catalog",
-    scalacOptions ++= List("-Ymacro-annotations", "-Yrangepos", "-Wconf:cat=unused:info"),
+    scalacOptions ++= List("-Ymacro-annotations", "-Yrangepos", "-Wconf:cat=unused:info", "-Ywarn-macros:after"),
     dockerExposedPorts ++= Seq(9090),
     dockerUpdateLatest := true,
     dockerBaseImage := "openjdk:17",

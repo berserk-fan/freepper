@@ -1,7 +1,6 @@
 package ua.pomo.catalog
 
 import cats.effect.{ IO, IOApp, Resource }
-import doobie.Transactor
 import fs2.grpc.syntax.all.fs2GrpcSyntaxServerBuilder
 import io.grpc.ServerServiceDefinition
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder
