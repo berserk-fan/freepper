@@ -13,14 +13,18 @@ import "product.proto";
 service Catalog {
   rpc GetCategory (GetCategoryRequest) returns (Category);
 
+  rpc CreateModel (CreateModelRequest) returns (Model);
   rpc GetModel (GetModelRequest) returns (Model);
-
+  rpc UpdateModel (UpdateModelRequest) returns (Model);
+  rpc DeleteModel (DeleteModelRequest) returns (google.protobuf.Empty);
   rpc ListModels (ListModelsRequest) returns (ListModelsResponse) {
     option (google.api.method_signature) = "parent";
   };
 
+  //rpc CreateProduct (CreateProductRequest) returns (Product);
   rpc GetProduct (GetProductRequest) returns (Product);
-
+  //rpc UpdateProduct (UpdateProductRequest) returns (Product);
+  //rpc DeleteProduct (DeleteProductRequest) returns (google.protobuf.Empty);
   rpc ListProducts (ListProductsRequest) returns (ListProductsResponse) {
     option (google.api.method_signature) = "parent";
   };

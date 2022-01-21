@@ -7,6 +7,19 @@ CREATE TABLE images
     alt VARCHAR        NOT NULL
 );
 
+CREATE TABLE image_lists
+(
+    id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    display_name VARCHAR NOT NULL
+);
+
+CREATE TABLE image_list_member
+(
+    image_list_id UUID NOT NULL REFERENCES image_lists (id) ON DELETE CASCADE,
+    image_id      UUID NOT NULL REFERENCES images (id),
+    UNIQUE (image_list_id, image_id)
+);
+
 CREATE TABLE categories
 (
     id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -23,19 +36,6 @@ CREATE TABLE models
     description   VARCHAR        NOT NULL,
     category_id   UUID           NOT NULL REFERENCES categories (id),
     image_list_id UUID           NOT NULL REFERENCES image_lists (id)
-);
-
-CREATE TABLE image_lists
-(
-    id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    display_name VARCHAR NOT NULL
-);
-
-CREATE TABLE image_list_member
-(
-    image_list_id UUID NOT NULL REFERENCES image_lists (id) ON DELETE CASCADE,
-    image_id      UUID NOT NULL REFERENCES images (id),
-    UNIQUE (image_list_id, image_id)
 );
 
 CREATE TABLE fabrics
@@ -56,10 +56,10 @@ CREATE TABLE sizes
 CREATE TABLE products
 (
     id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    display_name    VARCHAR,
-    price_usd       FLOAT,
-    promo_price_usd FLOAT,
-    model_id        UUID references models (id),
+    display_name    VARCHAR NOT NULL,
+    price_usd       FLOAT NOT NULL,
+    promo_price_usd FLOAT NOT NULL,
+    model_id        UUID NOT NULL references models (id),
     fabric_id       UUID references fabrics (id),
     size_id         UUID references sizes (id)
 );

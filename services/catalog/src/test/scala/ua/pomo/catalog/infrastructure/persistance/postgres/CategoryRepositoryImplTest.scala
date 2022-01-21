@@ -1,14 +1,11 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import doobie.ConnectionIO
-import doobie.implicits._
-import org.scalacheck.Gen
 import org.scalatest.AsyncTestSuite
 import ua.pomo.catalog.domain.category._
-import ua.pomo.catalog.shared.DbUnitTestSuite
+import ua.pomo.catalog.shared.{DbUnitTestSuite, Generators}
 
 import java.util.UUID
-import ua.pomo.catalog.shared.Generators
 
 class CategoryRepositoryImplTest extends DbUnitTestSuite with AsyncTestSuite {
 
@@ -43,7 +40,7 @@ class CategoryRepositoryImplTest extends DbUnitTestSuite with AsyncTestSuite {
         .trRun()
 
       found should equal(cat.copy(id = found.id))
-  
+
       val dbId = found.id
       val rId = CategoryReadableId("some_id_2")
       val newDisplayName = CategoryDisplayName("qq2")

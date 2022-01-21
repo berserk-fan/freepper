@@ -4,7 +4,6 @@ package ua.pomo.catalog.api;
 
 import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
-import "commons.proto";
 import "image_list.proto";
 
 message Model {
@@ -36,6 +35,24 @@ message GetModelRequest {
     (google.api.resource_reference) = {
       type: "api.pomo.in.ua/Model"
     }];
+}
+
+message DeleteModelRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.in.ua/Model"
+    }];
+}
+
+message UpdateModelRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.in.ua/Model"
+    }];
+
+  Model model = 2;
 }
 
 message ListModelsRequest {

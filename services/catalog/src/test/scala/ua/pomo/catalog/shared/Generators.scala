@@ -1,20 +1,24 @@
 package ua.pomo.catalog.shared
 
+import cats.implicits.catsSyntaxTuple3Semigroupal
 import org.scalacheck.Gen
+import squants.market.{Money, USD}
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.category
 import ua.pomo.catalog.domain.image
+import ua.pomo.catalog.domain.model
+import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.image.{Image, ImageAlt, ImageId, ImageListDisplayName, ImageListId, ImageSrc}
 
 object Generators {
   object Category {
-    private val uuid: Gen[CategoryUUID] = Gen.uuid.map(CategoryUUID.apply)
+    private val catId: Gen[CategoryUUID] = Gen.uuid.map(CategoryUUID.apply)
     private val readableId: Gen[CategoryReadableId] = Gen.alphaNumStr.map(CategoryReadableId.apply)
     private val displayName: Gen[CategoryDisplayName] = Gen.alphaNumStr.map(CategoryDisplayName.apply)
     private val description: Gen[CategoryDescription] = Gen.alphaNumStr.map(CategoryDescription.apply)
 
     val update: Gen[UpdateCategory] = for {
-      uuid <- uuid
+      uuid <- catId
       rId <- readableId
       id <- Gen.oneOf[CategoryId](CategoryId(uuid), CategoryId(rId))
       readableId <- Gen.option(Generators.Category.readableId)
@@ -23,7 +27,7 @@ object Generators {
     } yield UpdateCategory(id, readableId, displayName, descr)
 
     val self: Gen[Category] = for {
-      id <- uuid
+      id <- catId
       readableId <- readableId
       displayName <- displayName
       descr <- description
@@ -50,5 +54,33 @@ object Generators {
       dName <- displayName
       images <- imageListGen
     } yield image.ImageList(id, dName, images)
+  }
+
+  object Model {
+    private val id = Gen.const(ModelUUID(Gen.uuid.sample.get))
+    private val catId = Gen.const(CategoryUUID(Gen.uuid.sample.get))
+    private val rId = Gen.alphaNumStr.map(ModelReadableId.apply)
+    private val rDisplayName = Gen.alphaNumStr.map(ModelDisplayName.apply)
+    private val rDescription = Gen.alphaNumStr.map(ModelDescription.apply)
+    private val rMoney = Gen.posNum[Double].map(Money(_, USD)).map(ModelMinimalPrice.apply)
+
+    val self: Gen[model.Model] = for {
+      id <- id
+      rId <- rId
+      catId <- catId
+      rDisplayName <- rDisplayName
+      rDescription <- rDescription
+      minPrice <- rMoney
+      imgList <- ImageList.self
+    } yield model.Model(id, rId, catId, rDisplayName, rDescription, minPrice, imgList)
+
+    def update(imageListId: ImageListId, categoryId: CategoryUUID): Gen[model.UpdateModel] = for {
+      id <- id
+      rId <- Gen.option(rId)
+      catId <- Gen.option(Gen.const(categoryId))
+      rDisplayName <- Gen.option(rDisplayName)
+      rDescription <- Gen.option(rDescription)
+      imgList <- Gen.option(Gen.const(imageListId))
+    } yield model.UpdateModel(id, rId, catId, rDisplayName, rDescription, imgList)
   }
 }

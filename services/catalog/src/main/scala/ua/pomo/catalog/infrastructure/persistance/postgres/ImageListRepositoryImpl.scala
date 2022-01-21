@@ -1,8 +1,8 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.MonadThrow
 import cats.data.OptionT
-import cats.implicits._
+import cats.implicits.catsSyntaxApplicativeId
 import doobie._
 import doobie.implicits._
 import doobie.postgres.implicits._
@@ -43,13 +43,16 @@ object ImageListRepositoryImpl {
       _ <- Queries.createMembership.updateMany(ids.map(id => (imageListId, id)))
     } yield ()
 
-    override def update(imageList: ImageListUpdate): ConnectionIO[Int] = {
-      for {
-        updated <- imageList.displayName.fold(0.pure[ConnectionIO]){
-         Queries.updateImageList(imageList.id, _).run
+    override def update(req: ImageListUpdate): ConnectionIO[Int] = {
+      OptionT(find(req.id))
+        .foldF(0.pure[ConnectionIO]) { _ =>
+          for {
+            updated <- req.displayName.fold(0.pure[ConnectionIO]) {
+              Queries.updateImageList(req.id, _).run
+            }
+            _ <- req.images.fold(().pure[ConnectionIO])(updateImages(req.id, _))
+          } yield updated
         }
-        _ <- imageList.images.fold(().pure[ConnectionIO])(updateImages(imageList.id, _))
-      } yield updated
     }
 
     override def delete(id: ImageListId): ConnectionIO[Int] = Queries.delete(id).run

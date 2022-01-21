@@ -1,4 +1,4 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.data.OptionT
 import cats.implicits.catsSyntaxApplicativeErrorId
@@ -42,7 +42,9 @@ class ModelRepositoryImpl private(imageListRepository: ImageListRepository[Conne
     Queries.delete(id).run
   }
 
-  override def update(req: UpdateModel): ConnectionIO[Int] = ???
+  override def update(req: UpdateModel): ConnectionIO[Int] = for {
+    updated <- Queries.update(req).run
+  } yield updated
 }
 
 object ModelRepositoryImpl {
@@ -52,7 +54,7 @@ object ModelRepositoryImpl {
     private implicit val readModelMinimalPrice: Read[ModelMinimalPrice] = Read[Double].map(x => ModelMinimalPrice(Money(x, USD)))
 
     private def toWhereClause(modelId: ModelId): Fragment = {
-      modelId.fold(uuid => fr"p.id = $uuid", readableId => fr"p.readable_id = $readableId")
+      modelId.fold(uuid => fr"m.id = $uuid", readableId => fr"m.readable_id = $readableId")
     }
 
     def create(model: Model, imageListId: ImageListId): Update0 = {
@@ -66,8 +68,8 @@ object ModelRepositoryImpl {
 
     def getModel(modelId: ModelId): Query0[GetModelQuery] = {
       sql"""
-           select m.image_list_id, m.id, m.readable_id, m.category_id, m.display_name, m.description, min(p.promo_price_usd)
-           from models m join products p on m.id = p.model_id
+           select m.image_list_id, m.id, m.readable_id, m.category_id, m.display_name, m.description, min(COALESCE(p.promo_price_usd, 0))
+           from models m left join products p on m.id = p.model_id
            where ${toWhereClause(modelId)}
            group by m.id
          """.query[GetModelQuery]
@@ -75,26 +77,28 @@ object ModelRepositoryImpl {
 
     def delete(modelId: ModelId): Update0 = {
       sql"""
-           delete from models
+           delete from models m
            where ${toWhereClause(modelId)}
          """.update
     }
 
     private type FindQuery = ModelUUID :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice ::
       ImageListId :: ImageListDisplayName :: List[Image] :: HNil
+
     def find(req: FindModel): Query0[Model] = {
       implicit val readImages: Read[List[Image]] = Read[Json].map { _ =>
         ???
       }
 
       sql"""
-        select m.id, m.readable_id, m.category_id, m.display_name, m.description, min(p.promo_price_usd), il.id, il.display_name, json_agg((img.id, img.src, img.alt))
-        from models m join products p on m.id = p.model_id
+        select m.id, m.readable_id, m.category_id, m.display_name, m.description, min(COALESCE(p.promo_price_usd, 0)), il.id, il.display_name, json_agg((img.id, img.src, img.alt))
+        from models m
             join image_lists il on il.id = m.image_list_id
+            join products p on m.id = p.model_id
             join image_list_member ilm on m.image_list_id = ilm.image_list_id
             join images img on ilm.image_id = img.id
         where m.category_id = ${req.categoryUUID}
-        group by m.id
+        group by m.id, il.id
         order by m.id
         limit ${req.limit}
         offset ${req.offset}
@@ -104,6 +108,20 @@ object ModelRepositoryImpl {
           val imageList = Generic[ImageList].from(modelPart_imageListPart._2)
           Generic[Model].from(modelPart_imageListPart._1 :+ imageList)
         }
+    }
+
+    def update(req: UpdateModel): Update0 = {
+      val setFr = Fragments.setOpt(
+        req.readableId.map(x => fr"readable_id=$x"),
+        req.description.map(x => fr"description=$x"),
+        req.categoryId.map(x => fr"category_id=$x"),
+        req.displayName.map(x => fr"display_name=$x"),
+        req.imageListId.map(x => fr"image_list_id=$x"),
+      )
+      sql"""
+           update models
+           $setFr
+         """.update
     }
   }
 }

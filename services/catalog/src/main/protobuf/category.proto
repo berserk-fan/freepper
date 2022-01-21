@@ -4,8 +4,6 @@ package ua.pomo.catalog.api;
 
 import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
-import "commons.proto";
-import "model.proto";
 
 message Category {
   option (google.api.resource) = {

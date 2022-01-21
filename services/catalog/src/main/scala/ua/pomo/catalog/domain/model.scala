@@ -5,7 +5,7 @@ import derevo.derive
 import io.estatico.newtype.macros.newtype
 import squants.market.Money
 import ua.pomo.catalog.domain.category.CategoryUUID
-import ua.pomo.catalog.domain.image.ImageList
+import ua.pomo.catalog.domain.image.{ImageList, ImageListId}
 import ua.pomo.catalog.optics.uuid
 
 import java.util.UUID
@@ -52,17 +52,19 @@ object model {
                    minimalPrice: ModelMinimalPrice,
                    imageList: ImageList)
 
+
   @derive(eqv, show)
   case class UpdateModel(id: ModelUUID,
                          readableId: Option[ModelReadableId],
                          categoryId: Option[CategoryUUID],
+                         displayName: Option[ModelDisplayName],
                          description: Option[ModelDescription],
-                         imageList: Option[ImageList])
+                         imageListId: Option[ImageListId])
 
   @derive(eqv, show)
   case class FindModel(categoryUUID: CategoryUUID,
-                       limit: Int,
-                       offset: Int)
+                       limit: Long,
+                       offset: Long)
 
   trait ModelRepository[F[_]] {
     def create(category: Model): F[ModelUUID]
@@ -76,5 +78,19 @@ object model {
     def update(req: UpdateModel): F[Int]
 
     def delete(id: ModelId): F[Int]
+  }
+
+  trait ModelService[F[_]] {
+    def create(category: Model): F[Model]
+
+    def get(id: ModelId): F[Model]
+
+    def find(id: ModelId): F[Option[Model]]
+
+    def findAll(req: FindModel): F[List[Model]]
+
+    def update(req: UpdateModel): F[Model]
+
+    def delete(id: ModelId): F[Unit]
   }
 }

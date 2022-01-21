@@ -1,14 +1,14 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
-import cats.implicits.toFunctorOps
+import cats.syntax.functor._
 import doobie._
 import doobie.implicits._
 import doobie.postgres.implicits._
 import shapeless._
 import ua.pomo.catalog.domain.category._
-import ua.pomo.catalog.infrastructure.persistance.CategoryRepositoryImpl.Queries
 
 class CategoryRepositoryImpl private () extends CategoryRepository[ConnectionIO] {
+  import CategoryRepositoryImpl.Queries
   override def find(id: CategoryId): ConnectionIO[Option[Category]] = {
     Queries.findCategory(id).option
   }
