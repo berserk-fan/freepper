@@ -1,7 +1,9 @@
 package ua.pomo.catalog.domain
 
+import cats.{Eq, Show}
 import derevo.cats._
 import derevo.derive
+import cats.implicits.toShow
 import io.estatico.newtype.macros.newtype
 import squants.market.Money
 import ua.pomo.catalog.domain.category.CategoryUUID
@@ -11,12 +13,13 @@ import ua.pomo.catalog.optics.uuid
 import java.util.UUID
 
 object model {
-  type ModelId = ModelUUID Either ModelReadableId
-
+  private type ModelIdType = ModelUUID Either ModelReadableId
+  sealed abstract case class ModelId private (value: ModelIdType)
   object ModelId {
-    def apply(id: ModelUUID): ModelId = Left(id)
-
-    def apply(id: ModelReadableId)(implicit d: DummyImplicit): ModelId = Right(id)
+    def apply(id: ModelUUID): ModelId = new ModelId(Left(id)) {}
+    def apply(id: ModelReadableId)(implicit d: DummyImplicit): ModelId = new ModelId(Right(id)) {}
+    implicit val show: Show[ModelId] = _.value.fold(_.show, _.show)
+    implicit val eqv: Eq[ModelId] = _ == _
   }
 
   @derive(eqv, show, uuid)
@@ -25,7 +28,7 @@ object model {
 
   @derive(eqv, show)
   @newtype
-  case class ModelReadableId(value: String)
+  case class ModelReadableId(value: ReadableId)
 
   @derive(eqv, show)
   @newtype
@@ -67,7 +70,7 @@ object model {
                        offset: Long)
 
   trait ModelRepository[F[_]] {
-    def create(category: Model): F[ModelUUID]
+    def create(model: Model): F[ModelUUID]
 
     def get(id: ModelId): F[Model]
 
@@ -77,7 +80,7 @@ object model {
 
     def update(req: UpdateModel): F[Int]
 
-    def delete(id: ModelId): F[Int]
+    def delete(id: ModelId): F[Unit]
   }
 
   trait ModelService[F[_]] {

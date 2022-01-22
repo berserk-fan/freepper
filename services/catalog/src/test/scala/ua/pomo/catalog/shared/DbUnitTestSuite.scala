@@ -24,20 +24,24 @@ object DbUnitTestSuite {
   private def createIORuntime(ec: ExecutionContext): unsafe.IORuntime = {
     val (blocking, blockingSD) = unsafe.IORuntime.createDefaultBlockingExecutionContext()
     val (scheduler, schedulerSD) = unsafe.IORuntime.createDefaultScheduler()
-    unsafe.IORuntime(ec, blocking, scheduler, { () => blockingSD(); schedulerSD(); }, unsafe.IORuntimeConfig())
+    unsafe.IORuntime(ec, blocking, scheduler, { () =>
+      blockingSD(); schedulerSD();
+    }, unsafe.IORuntimeConfig())
   }
   private lazy val ioRuntime: IORuntime = createIORuntime(DbUnitTestSuite.ec)
 }
 
-trait DbUnitTestSuite extends AnyFunSuite
-  with doobie.scalatest.IOChecker
-  with BeforeAndAfterAll
-  with Matchers
-  with ScalaCheckDrivenPropertyChecks {
+trait DbUnitTestSuite
+    extends AnyFunSuite
+    with doobie.scalatest.IOChecker
+    with BeforeAndAfterAll
+    with Matchers
+    with ScalaCheckDrivenPropertyChecks {
   private implicit val logger: LogHandler = LogHandler.jdkLogHandler
   implicit class ConnIOOps[T](t: ConnectionIO[T]) {
-    def trRun(): T = t.transact(xa).unsafeRunSync()(cats.effect.unsafe.implicits.global)
+    def trRun(): T = t.transact(xa).unsafeRunSync()
   }
+
   implicit lazy val ioRuntime: IORuntime = DbUnitTestSuite.ioRuntime
   private val config: JdbcDatabaseConfig = AppConfig
     .loadDefault[IO]

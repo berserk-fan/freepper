@@ -76,6 +76,7 @@ lazy val root = (project in file("."))
       Libraries.squants,
       Libraries.monocleCore,
       Libraries.postgresJdbcDriver,
+      Libraries.parserCombinators,
       CompilerPlugin.kindProjector,
       CompilerPlugin.betterMonadicFor,
       CompilerPlugin.semanticDB

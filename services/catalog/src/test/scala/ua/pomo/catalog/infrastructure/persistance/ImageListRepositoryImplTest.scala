@@ -1,9 +1,8 @@
-package ua.pomo.catalog.infrastructure.persistance.postgres
+package ua.pomo.catalog.infrastructure.persistance
 
 import doobie.ConnectionIO
 import ua.pomo.catalog.domain.image._
-import ua.pomo.catalog.infrastructure.persistance.inmemory.InMemoryImageListRepositoryImpl
-import ua.pomo.catalog.infrastructure.persistance.postgres.ImageListRepositoryImpl.Queries
+import ua.pomo.catalog.infrastructure.persistance.ImageListRepositoryImpl.Queries
 import ua.pomo.catalog.shared.{DbUnitTestSuite, Generators}
 
 import java.util.UUID

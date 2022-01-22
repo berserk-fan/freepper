@@ -1,11 +1,14 @@
-package ua.pomo.catalog.infrastructure.persistance.postgres
+package ua.pomo.catalog.infrastructure.persistance
 
+import cats.effect.{Ref, Sync}
 import cats.syntax.functor._
 import doobie._
 import doobie.implicits._
 import doobie.postgres.implicits._
 import shapeless._
 import ua.pomo.catalog.domain.category._
+
+import scala.collection.mutable
 
 class CategoryRepositoryImpl private () extends CategoryRepository[ConnectionIO] {
   import CategoryRepositoryImpl.Queries
@@ -38,9 +41,13 @@ class CategoryRepositoryImpl private () extends CategoryRepository[ConnectionIO]
 
 object CategoryRepositoryImpl {
   def apply(): CategoryRepository[ConnectionIO] = new CategoryRepositoryImpl()
+  def makeInMemory[F[_]: Sync]: F[CategoryRepository[F]] = {
+    Ref[F].of(mutable.Map[CategoryId, Category]()).map(new InMemoryCategoryRepositoryImpl(_))
+  }
+
   private[persistance] object Queries {
     private def toWhereClause(id: Option[CategoryId]): Fragment = {
-      id.map(_.fold(uuid => fr"cat.id = $uuid", readableId => fr"cat.readable_id = $readableId"))
+      id.map(_.value.fold(uuid => fr"cat.id = $uuid", readableId => fr"cat.readable_id = $readableId"))
         .map(fr"where " ++ _)
         .getOrElse(Fragment.empty)
     }

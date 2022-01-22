@@ -1,4 +1,4 @@
-package ua.pomo.catalog.infrastructure.persistance.postgres
+package ua.pomo.catalog.infrastructure.persistance
 
 import cats.MonadThrow
 import cats.data.OptionT
@@ -16,13 +16,16 @@ object ImageListRepositoryImpl {
   }
 
   private class ImageListRepositoryImpl() extends ImageListRepository[ConnectionIO] {
-    override def create(imageList: ImageList): ConnectionIO[ImageListId] = for {
-      generatedId <- Queries.createImageList(imageList.displayName)
-        .withUniqueGeneratedKeys[ImageListId]("id")
-      imagesIds <- Queries.upsertImage.updateManyWithGeneratedKeys[ImageId]("id")(imageList.images).compile.toList
-      _ <- MonadThrow[ConnectionIO].raiseWhen(imagesIds.size != imageList.images.size)(new Exception("returned ids..."))
-      _ <- Queries.createMembership.updateMany(imagesIds.map((generatedId, _)))
-    } yield generatedId
+    override def create(imageList: ImageList): ConnectionIO[ImageListId] =
+      for {
+        generatedId <- Queries
+          .createImageList(imageList.displayName)
+          .withUniqueGeneratedKeys[ImageListId]("id")
+        imagesIds <- Queries.upsertImage.updateManyWithGeneratedKeys[ImageId]("id")(imageList.images).compile.toList
+        _ <- MonadThrow[ConnectionIO].raiseWhen(imagesIds.size != imageList.images.size)(
+          new Exception("returned ids..."))
+        _ <- Queries.createMembership.updateMany(imagesIds.map((generatedId, _)))
+      } yield generatedId
 
     override def find(id: ImageListId): ConnectionIO[Option[ImageList]] = {
       val res = for {
@@ -32,16 +35,18 @@ object ImageListRepositoryImpl {
       res.value
     }
 
-    override def get(id: ImageListId): ConnectionIO[ImageList] = for {
-      (id, displayName) <- Queries.selectImageList(id).unique
-      images <- Queries.selectImages(id).to[List]
-    } yield ImageList(id, displayName, images)
+    override def get(id: ImageListId): ConnectionIO[ImageList] =
+      for {
+        (id, displayName) <- Queries.selectImageList(id).unique
+        images <- Queries.selectImages(id).to[List]
+      } yield ImageList(id, displayName, images)
 
-    def updateImages(imageListId: ImageListId, imageListImages: List[Image]): ConnectionIO[Unit] = for {
-      _ <- Queries.clearMembership(imageListId).run
-      ids <- Queries.upsertImage.updateManyWithGeneratedKeys[ImageId]("id")(imageListImages).compile.toList
-      _ <- Queries.createMembership.updateMany(ids.map(id => (imageListId, id)))
-    } yield ()
+    def updateImages(imageListId: ImageListId, imageListImages: List[Image]): ConnectionIO[Unit] =
+      for {
+        _ <- Queries.clearMembership(imageListId).run
+        ids <- Queries.upsertImage.updateManyWithGeneratedKeys[ImageId]("id")(imageListImages).compile.toList
+        _ <- Queries.createMembership.updateMany(ids.map(id => (imageListId, id)))
+      } yield ()
 
     override def update(req: ImageListUpdate): ConnectionIO[Int] = {
       OptionT(find(req.id))
@@ -91,7 +96,8 @@ object ImageListRepositoryImpl {
     }
 
     def createMembership: Update[(ImageListId, ImageId)] = {
-      implicit val w: Write[(ImageListId, ImageId)] = Write[(UUID, UUID)].contramap((v: (ImageListId, ImageId)) => (v._1.uuid, v._2.uuid))
+      implicit val w: Write[(ImageListId, ImageId)] =
+        Write[(UUID, UUID)].contramap((v: (ImageListId, ImageId)) => (v._1.uuid, v._2.uuid))
       val sql =
         """
          insert into image_list_member (image_list_id, image_id)
@@ -107,8 +113,7 @@ object ImageListRepositoryImpl {
         update image_lists
         $setFr
         where id=$id
-        """
-        .update
+        """.update
     }
 
     def clearMembership(id: ImageListId): Update0 = {

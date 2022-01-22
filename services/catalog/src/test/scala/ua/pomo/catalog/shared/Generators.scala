@@ -1,19 +1,20 @@
 package ua.pomo.catalog.shared
 
-import cats.implicits.catsSyntaxTuple3Semigroupal
 import org.scalacheck.Gen
 import squants.market.{Money, USD}
 import ua.pomo.catalog.domain.category._
-import ua.pomo.catalog.domain.category
-import ua.pomo.catalog.domain.image
-import ua.pomo.catalog.domain.model
+import ua.pomo.catalog.domain.{ReadableId, category, image, model}
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.image.{Image, ImageAlt, ImageId, ImageListDisplayName, ImageListId, ImageSrc}
 
 object Generators {
+  private val rIdGen: Gen[ReadableId] = {
+    Gen.alphaNumStr.filter(_.nonEmpty).map(ReadableId.parse(_).getOrElse(throw new Exception("Gen generated invalid ReadableId")))
+  }
+
   object Category {
     private val catId: Gen[CategoryUUID] = Gen.uuid.map(CategoryUUID.apply)
-    private val readableId: Gen[CategoryReadableId] = Gen.alphaNumStr.map(CategoryReadableId.apply)
+    private val readableId: Gen[CategoryReadableId] = rIdGen.map(CategoryReadableId.apply)
     private val displayName: Gen[CategoryDisplayName] = Gen.alphaNumStr.map(CategoryDisplayName.apply)
     private val description: Gen[CategoryDescription] = Gen.alphaNumStr.map(CategoryDescription.apply)
 
@@ -59,7 +60,7 @@ object Generators {
   object Model {
     private val id = Gen.const(ModelUUID(Gen.uuid.sample.get))
     private val catId = Gen.const(CategoryUUID(Gen.uuid.sample.get))
-    private val rId = Gen.alphaNumStr.map(ModelReadableId.apply)
+    private val rId = rIdGen.map(ModelReadableId.apply)
     private val rDisplayName = Gen.alphaNumStr.map(ModelDisplayName.apply)
     private val rDescription = Gen.alphaNumStr.map(ModelDescription.apply)
     private val rMoney = Gen.posNum[Double].map(Money(_, USD)).map(ModelMinimalPrice.apply)
@@ -73,6 +74,8 @@ object Generators {
       minPrice <- rMoney
       imgList <- ImageList.self
     } yield model.Model(id, rId, catId, rDisplayName, rDescription, minPrice, imgList)
+    
+    val selfLazyList: LazyList[model.Model] = LazyList.continually(Generators.Model.self.sample.get)
 
     def update(imageListId: ImageListId, categoryId: CategoryUUID): Gen[model.UpdateModel] = for {
       id <- id

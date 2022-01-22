@@ -1,5 +1,7 @@
 package ua.pomo.catalog.domain
 
+import cats.{Eq, Show}
+import cats.implicits._
 import derevo.cats._
 import derevo.derive
 import io.estatico.newtype.macros.newtype
@@ -8,15 +10,18 @@ import ua.pomo.catalog.optics.uuid
 import java.util.UUID
 
 object category {
-  type CategoryId = CategoryUUID Either CategoryReadableId
+  private type CategoryIdValue = CategoryUUID Either CategoryReadableId
+  sealed abstract case class CategoryId private (value: CategoryIdValue)
   object CategoryId {
-    def apply(id: CategoryUUID): CategoryId = Left(id)
-    def apply(id: CategoryReadableId)(implicit d: DummyImplicit): CategoryId = Right(id)
+    def apply(id: CategoryUUID): CategoryId = new CategoryId(Left(id)) {}
+    def apply(id: CategoryReadableId)(implicit d: DummyImplicit): CategoryId = new CategoryId(Right(id)) {}
+    implicit val show: Show[CategoryId] = _.value.fold(_.show, _.show)
+    implicit val eqv: Eq[CategoryId] = _ == _
   }
 
   @derive(eqv, show)
   @newtype
-  case class CategoryReadableId(value: String)
+  case class CategoryReadableId(value: ReadableId)
 
   @derive(eqv, show, uuid)
   @newtype
@@ -59,7 +64,7 @@ object category {
   trait CategoryService[F[_]] {
     def createCategory(category: Category): F[Category]
 
-    def getCategory(id: CategoryId): F[Category]
+    def get(id: CategoryId): F[Category]
 
     def findAll(): F[List[Category]]
 

@@ -1,7 +1,8 @@
-package ua.pomo.catalog.infrastructure.persistance.postgres
+package ua.pomo.catalog.infrastructure.persistance
 
 import cats.data.OptionT
-import cats.implicits.catsSyntaxApplicativeErrorId
+import cats.effect.{Ref, Sync}
+import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
 import doobie._
 import doobie.implicits._
 import doobie.postgres.implicits._
@@ -38,8 +39,8 @@ class ModelRepositoryImpl private(imageListRepository: ImageListRepository[Conne
     .find(req)
     .to[List]
 
-  override def delete(id: ModelId): ConnectionIO[Int] = {
-    Queries.delete(id).run
+  override def delete(id: ModelId): ConnectionIO[Unit] = {
+    Queries.delete(id).run.as(())
   }
 
   override def update(req: UpdateModel): ConnectionIO[Int] = for {
@@ -49,12 +50,17 @@ class ModelRepositoryImpl private(imageListRepository: ImageListRepository[Conne
 
 object ModelRepositoryImpl {
   def apply(impl: ImageListRepository[ConnectionIO]): ModelRepository[ConnectionIO] = new ModelRepositoryImpl(impl)
+  def makeInMemory[F[_]: Sync]: F[ModelRepository[F]] = {
+    Ref[F].of(Map[ModelUUID, Model]()).map(
+      new InMemoryModelRepositoryImpl[F](_)
+    )
+  }
 
   private[persistance] object Queries {
     private implicit val readModelMinimalPrice: Read[ModelMinimalPrice] = Read[Double].map(x => ModelMinimalPrice(Money(x, USD)))
 
     private def toWhereClause(modelId: ModelId): Fragment = {
-      modelId.fold(uuid => fr"m.id = $uuid", readableId => fr"m.readable_id = $readableId")
+      modelId.value.fold(uuid => fr"m.id = $uuid", readableId => fr"m.readable_id = $readableId")
     }
 
     def create(model: Model, imageListId: ImageListId): Update0 = {

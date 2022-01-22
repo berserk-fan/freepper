@@ -35,6 +35,8 @@ object Dependencies {
     val postgresJdbcDriver  = "42.3.1"
     val scalaCheck          = "1.15.4"
     val scalaTestScalaCheck = "3.2.9.0"
+
+    val parserCombinators = "2.1.0"
   }
 
   object Libraries {
@@ -76,6 +78,8 @@ object Dependencies {
     val newtype = "io.estatico" %% "newtype" % V.newtype
 
     val monocleCore = "dev.optics" %% "monocle-core" % V.monocle
+
+    val parserCombinators = "org.scala-lang.modules" %% "scala-parser-combinators" % V.parserCombinators
 
     val circeCore    = circe("core")
     val circeGeneric = circe("generic")

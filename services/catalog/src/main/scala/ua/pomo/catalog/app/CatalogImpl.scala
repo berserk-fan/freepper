@@ -7,6 +7,8 @@ import io.grpc.Metadata
 import ua.pomo.catalog.api.{CatalogFs2Grpc, Category, CreateImageListRequest, DeleteImageListRequest, GetCategoryRequest, GetImageListRequest, GetModelRequest, GetProductRequest, ImageList, ListModelsRequest, ListModelsResponse, ListProductsRequest, ListProductsResponse, Model, Product}
 import ua.pomo.catalog.domain.{category, model}
 import ua.pomo.catalog.api._
+import ua.pomo.catalog.domain.category.CategoryId
+import ua.pomo.catalog.domain.model.FindModel
 
 object CatalogImpl {
   def apply[F[_]: Async](categoryService: category.CategoryService[F],
@@ -19,16 +21,26 @@ object CatalogImpl {
       extends CatalogFs2Grpc[F, Metadata] {
     override def getCategory(request: GetCategoryRequest, ctx: Metadata): F[Category] = {
       Async[F]
-        .fromEither(CategoryNameModule.of(request.name).leftMap(new Exception(_)))
-        .flatMap(name => categoryService.getCategory(name.categoryId))
-        .map(Converters.fromDomain(request.name, _))
+        .fromEither(ApiName.category(request.name))
+        .flatMap(name => categoryService.get(name.categoryId))
+        .map(Converters.fromDomain)
     }
 
-    override def getProduct(request: GetProductRequest, ctx: Metadata): F[Product] = ???
+    override def getModel(request: GetModelRequest, ctx: Metadata): F[Model] = {
+      Async[F]
+        .fromEither(ApiName.model(request.name))
+        .flatMap(name => modelService.get(name.modelId))
+        .map(Converters.toApi)
+    }
 
-    override def getModel(request: GetModelRequest, ctx: Metadata): F[Model] = ???
-
-    override def listModels(request: ListModelsRequest, ctx: Metadata): F[ListModelsResponse] = ???
+    override def listModels(request: ListModelsRequest, ctx: Metadata): F[ListModelsResponse] =
+      Async[F]
+        .fromEither(ApiName.models(request.parent))
+        .flatMap(_.categoryId.fold(new Exception("wildCard get models not supported").raiseError[F, CategoryId])(_.pure[F]))
+        .flatMap(id => categoryService.get(id))
+        .map(_.id)
+        .flatMap(id => modelService.findAll(FindModel(id, 100, 0)))
+        .map(models => ListModelsResponse(models.map(Converters.toApi)))
 
     override def listProducts(request: ListProductsRequest, ctx: Metadata): F[ListProductsResponse] = ???
 
@@ -38,8 +50,10 @@ object CatalogImpl {
 
     override def deleteImageList(request: DeleteImageListRequest, ctx: Metadata): F[Empty] = ???
 
-    def createModel(request: CreateModelRequest, ctx: Metadata): F[Model] = ???
-    def deleteModel(request: DeleteModelRequest, ctx: Metadata): F[Empty] = ???
-    def updateModel(request: UpdateModelRequest, ctx: Metadata): F[Model] = ???
+    override def createModel(request: CreateModelRequest, ctx: Metadata): F[Model] = ???
+    override def deleteModel(request: DeleteModelRequest, ctx: Metadata): F[Empty] = ???
+    override def updateModel(request: UpdateModelRequest, ctx: Metadata): F[Model] = ???
+
+    override def getProduct(request: GetProductRequest, ctx: Metadata): F[Product] = ???
   }
 }

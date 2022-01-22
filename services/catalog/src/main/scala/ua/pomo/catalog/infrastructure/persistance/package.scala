@@ -1,4 +1,4 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure
 
 import cats.Show
 import cats.data.NonEmptyList
@@ -9,7 +9,7 @@ import io.estatico.newtype.Coercible
 import io.estatico.newtype.ops.toCoercibleIdOps
 import org.postgresql.util.PGobject
 
-package object postgres {
+package object persistance {
   implicit def newTypePut[B, A](implicit ev: Coercible[B, A], evp: Put[A]): Put[B] = evp.contramap[B](ev(_))
   implicit def newTypeRead[N: Coercible[R, *], R: Read]: Read[N]                   = Read[R].map(_.coerce[N])
   implicit val jsonGet: Get[Json] = {
@@ -19,4 +19,5 @@ package object postgres {
       parser.parse(o.getValue).leftMap(_.show)
     }
   }
+
 }

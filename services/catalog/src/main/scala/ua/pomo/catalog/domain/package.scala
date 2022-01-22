@@ -1,9 +1,25 @@
 package ua.pomo.catalog
 
-import cats.{ Eq, Monoid, Show }
-import squants.market.{ Currency, Money, USD }
+import cats.{Eq, Monoid, Show}
+import derevo.cats.{eqv, show}
+import derevo.derive
+import io.estatico.newtype.macros.newtype
+import squants.market.{Currency, Money, USD}
+import ua.pomo.catalog.optics.uuid
+import scala.util.parsing.combinator.Parsers
 
-package object domain extends OrphanInstances
+package object domain extends OrphanInstances {
+  @derive(eqv, show)
+  @newtype
+  case class ReadableId private (value: String)
+  object ReadableId {
+    private val regex = "^([a-zA-Z0-9\\-]+)$".r
+    def parse(s: String): Either[String, ReadableId] = s match {
+      case regex(res) => Right(ReadableId(res))
+      case _ => Left("Can't create readableId")
+    }
+  }
+}
 
 // instances for types we don't control
 trait OrphanInstances {
