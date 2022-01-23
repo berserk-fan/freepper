@@ -2,6 +2,8 @@ package ua.pomo.catalog.infrastructure.persistance
 
 import cats.effect.{Ref, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
+import squants.market.{Money, USD}
+import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
 
 import java.util.UUID
@@ -14,9 +16,17 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private [persistance] (ref: Ref[F,
     }
   }
 
-  override def create(model: Model): F[ModelUUID] = ref.modify { map =>
-    val id = ModelUUID(UUID.randomUUID())
-    (map + (id -> model.copy(id = id)), id)
+  override def create(req: CreateModel): F[ModelUUID] = ref.modify { map =>
+    val model = Model(
+      ModelUUID(UUID.randomUUID()),
+      req.readableId,
+      req.categoryId,
+      req.displayName,
+      req.description,
+      ModelMinimalPrice(Money(0, USD)),
+      ImageList(req.imageListId, ImageListDisplayName(""), List())
+    )
+    (map + ((model.id, model)), model.id)
   }
 
   override def get(id: ModelId): F[Model] = find(id).flatMap(
@@ -37,5 +47,18 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private [persistance] (ref: Ref[F,
     map.findById(id).fold(map)(map - _.id)
   }
 
-  override def update(req: UpdateModel): F[Int] = ???
+  override def update(req: UpdateModel): F[Int] = ref.modify { map =>
+    map.get(req.id) match {
+      case None => (map, 0)
+      case Some(model) =>
+        var value = model.copy()
+        req.imageListId.foreach(x => value = value.copy(imageList = value.imageList.copy(id = x)))
+        req.description.foreach(x => value = value.copy(description = x))
+        req.displayName.foreach(x => value = value.copy(displayName = x))
+        req.categoryId.foreach(x => value = value.copy(categoryId = x))
+        req.readableId.foreach(x => value = value.copy(readableId = x))
+        println(map + ((req.id, value)))
+        (map + ((req.id, value)), 1)
+    }
+  }
 }

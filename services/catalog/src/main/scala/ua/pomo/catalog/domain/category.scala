@@ -21,7 +21,7 @@ object category {
 
   @derive(eqv, show)
   @newtype
-  case class CategoryReadableId(value: ReadableId)
+  case class CategoryReadableId(value: String)
 
   @derive(eqv, show, uuid)
   @newtype

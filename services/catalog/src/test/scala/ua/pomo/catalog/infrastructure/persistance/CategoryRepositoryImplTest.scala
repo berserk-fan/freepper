@@ -2,7 +2,6 @@ package ua.pomo.catalog.infrastructure.persistance
 
 import doobie.ConnectionIO
 import org.scalatest.{AsyncTestSuite, EitherValues}
-import ua.pomo.catalog.domain.ReadableId
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.shared.{DbUnitTestSuite, Generators}
 
@@ -19,7 +18,7 @@ class CategoryRepositoryImplTest extends DbUnitTestSuite with AsyncTestSuite wit
     test(s"queries ${impl.getClass.getSimpleName}") {
       val catuuid = CategoryUUID(UUID.randomUUID())
       val uuid: CategoryId = CategoryId(catuuid)
-      val readableId: CategoryId = CategoryId(CategoryReadableId(ReadableId.parse("some-id").value))
+      val readableId: CategoryId = CategoryId(CategoryReadableId("some-id"))
 
       check(Queries.findCategory(uuid))
       check(Queries.findCategory(readableId))
@@ -45,7 +44,7 @@ class CategoryRepositoryImplTest extends DbUnitTestSuite with AsyncTestSuite wit
         found should equal(cat.copy(id = found.id))
 
         val dbId = found.id
-        val rId = CategoryReadableId(ReadableId.parse("some_id_2").value)
+        val rId = CategoryReadableId("some_id_2")
         val newDisplayName = CategoryDisplayName("qq2")
         impl.update(UpdateCategory(CategoryId(dbId), Some(rId), Some(newDisplayName), None)).trRun()
         impl.get(CategoryId(rId)).trRun().displayName.value should equal(newDisplayName)

@@ -17,10 +17,9 @@ class ModelRepositoryImpl private(imageListRepository: ImageListRepository[Conne
 
   import ModelRepositoryImpl.Queries
 
-  override def create(model: Model): ConnectionIO[ModelUUID] = for {
-    imageListId <- imageListRepository.create(model.imageList)
-    modelId <- Queries.create(model, imageListId).withUniqueGeneratedKeys[ModelUUID]("id")
-  } yield modelId
+  override def create(model: CreateModel): ConnectionIO[ModelUUID] = {
+    Queries.create(model).withUniqueGeneratedKeys[ModelUUID]("id")
+  }
 
   override def get(id: ModelId): ConnectionIO[Model] = {
     OptionT(find(id))
@@ -63,10 +62,10 @@ object ModelRepositoryImpl {
       modelId.value.fold(uuid => fr"m.id = $uuid", readableId => fr"m.readable_id = $readableId")
     }
 
-    def create(model: Model, imageListId: ImageListId): Update0 = {
+    def create(req: CreateModel): Update0 = {
       sql"""
            insert into models (readable_id, display_name, description, category_id, image_list_id)
-           VALUES (${model.readableId}, ${model.displayName}, ${model.description}, ${model.categoryId}, $imageListId)
+           VALUES (${req.readableId}, ${req.displayName}, ${req.description}, ${req.categoryId}, ${req.imageListId})
          """.update
     }
 

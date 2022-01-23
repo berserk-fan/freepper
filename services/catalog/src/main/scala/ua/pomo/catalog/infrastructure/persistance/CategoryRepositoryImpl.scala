@@ -42,7 +42,7 @@ class CategoryRepositoryImpl private () extends CategoryRepository[ConnectionIO]
 object CategoryRepositoryImpl {
   def apply(): CategoryRepository[ConnectionIO] = new CategoryRepositoryImpl()
   def makeInMemory[F[_]: Sync]: F[CategoryRepository[F]] = {
-    Ref[F].of(mutable.Map[CategoryId, Category]()).map(new InMemoryCategoryRepositoryImpl(_))
+    Ref[F].of(Map[CategoryUUID, Category]()).map(new InMemoryCategoryRepositoryImpl(_))
   }
 
   private[persistance] object Queries {

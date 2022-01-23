@@ -11,6 +11,7 @@ import "model.proto";
 import "product.proto";
 
 service Catalog {
+  rpc CreateCategory (CreateCategoryRequest) returns (Category);
   rpc GetCategory (GetCategoryRequest) returns (Category);
 
   rpc CreateModel (CreateModelRequest) returns (Model);

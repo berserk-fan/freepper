@@ -28,7 +28,7 @@ object model {
 
   @derive(eqv, show)
   @newtype
-  case class ModelReadableId(value: ReadableId)
+  case class ModelReadableId(value: String)
 
   @derive(eqv, show)
   @newtype
@@ -54,7 +54,12 @@ object model {
                    description: ModelDescription,
                    minimalPrice: ModelMinimalPrice,
                    imageList: ImageList)
-
+  @derive(eqv, show)
+  case class CreateModel(readableId: ModelReadableId,
+                         categoryId: CategoryUUID,
+                         displayName: ModelDisplayName,
+                         description: ModelDescription,
+                         imageListId: ImageListId)
 
   @derive(eqv, show)
   case class UpdateModel(id: ModelUUID,
@@ -65,12 +70,10 @@ object model {
                          imageListId: Option[ImageListId])
 
   @derive(eqv, show)
-  case class FindModel(categoryUUID: CategoryUUID,
-                       limit: Long,
-                       offset: Long)
+  case class FindModel(categoryUUID: CategoryUUID, limit: Long, offset: Long)
 
   trait ModelRepository[F[_]] {
-    def create(model: Model): F[ModelUUID]
+    def create(model: CreateModel): F[ModelUUID]
 
     def get(id: ModelId): F[Model]
 
@@ -84,7 +87,7 @@ object model {
   }
 
   trait ModelService[F[_]] {
-    def create(category: Model): F[Model]
+    def create(category: CreateModel): F[Model]
 
     def get(id: ModelId): F[Model]
 

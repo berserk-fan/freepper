@@ -5,6 +5,11 @@ package ua.pomo.catalog.api;
 import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
 
+message CreateCategoryRequest {
+  string parent = 1;
+  Category category = 2;
+}
+
 message Category {
   option (google.api.resource) = {
     type: "api.pomo.in.ua/Category"

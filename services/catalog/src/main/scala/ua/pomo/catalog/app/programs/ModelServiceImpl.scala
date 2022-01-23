@@ -8,7 +8,7 @@ import ua.pomo.catalog.infrastructure.persistance.ModelRepositoryImpl
 
 private class ModelServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: FunctionK[G, F],
                                                                             repository: ModelRepository[G]) extends ModelService[F] {
-  def create(model: Model): F[Model] = repository.create(model).flatMap(id => repository.get(ModelId(id))).toF
+  def create(model: CreateModel): F[Model] = repository.create(model).flatMap(id => repository.get(ModelId(id))).toF
   def delete(id: ModelId): F[Unit] = repository.delete(id).toF
   def find(id: ModelId): F[Option[Model]] = repository.find(id).toF
   def findAll(req: FindModel): F[List[Model]] = repository.findAll(req).toF

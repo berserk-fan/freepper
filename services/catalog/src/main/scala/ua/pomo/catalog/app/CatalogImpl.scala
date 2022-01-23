@@ -23,7 +23,7 @@ object CatalogImpl {
       Async[F]
         .fromEither(ApiName.category(request.name))
         .flatMap(name => categoryService.get(name.categoryId))
-        .map(Converters.fromDomain)
+        .map(Converters.toApi)
     }
 
     override def getModel(request: GetModelRequest, ctx: Metadata): F[Model] = {
@@ -33,15 +33,6 @@ object CatalogImpl {
         .map(Converters.toApi)
     }
 
-    override def listModels(request: ListModelsRequest, ctx: Metadata): F[ListModelsResponse] =
-      Async[F]
-        .fromEither(ApiName.models(request.parent))
-        .flatMap(_.categoryId.fold(new Exception("wildCard get models not supported").raiseError[F, CategoryId])(_.pure[F]))
-        .flatMap(id => categoryService.get(id))
-        .map(_.id)
-        .flatMap(id => modelService.findAll(FindModel(id, 100, 0)))
-        .map(models => ListModelsResponse(models.map(Converters.toApi)))
-
     override def listProducts(request: ListProductsRequest, ctx: Metadata): F[ListProductsResponse] = ???
 
     override def createImageList(request: CreateImageListRequest, ctx: Metadata): F[ImageList] = ???
@@ -50,7 +41,30 @@ object CatalogImpl {
 
     override def deleteImageList(request: DeleteImageListRequest, ctx: Metadata): F[Empty] = ???
 
-    override def createModel(request: CreateModelRequest, ctx: Metadata): F[Model] = ???
+    private def checkIsNotWildcardAndGetCategoryId(name: ModelsName): F[CategoryId] = {
+      name.categoryId.fold(new Exception("wildCard get models not supported").raiseError[F, CategoryId])(_.pure[F])
+    }
+
+    override def createModel(request: CreateModelRequest, ctx: Metadata): F[Model] = {
+      Async[F]
+        .fromEither(ApiName.models(request.parent))
+        .flatMap(checkIsNotWildcardAndGetCategoryId)
+        .flatMap(categoryService.get)
+        .map(_.id)
+        .map(categoryUUID => Converters.toDomain(request, categoryUUID))
+        .flatMap(modelService.create)
+        .map(Converters.toApi)
+    }
+
+    override def listModels(request: ListModelsRequest, ctx: Metadata): F[ListModelsResponse] =
+      Async[F]
+        .fromEither(ApiName.models(request.parent))
+        .flatMap(checkIsNotWildcardAndGetCategoryId)
+        .flatMap(id => categoryService.get(id))
+        .map(_.id)
+        .flatMap(id => modelService.findAll(FindModel(id, 100, 0)))
+        .map(models => ListModelsResponse(models.map(Converters.toApi)))
+
     override def deleteModel(request: DeleteModelRequest, ctx: Metadata): F[Empty] = ???
     override def updateModel(request: UpdateModelRequest, ctx: Metadata): F[Model] = ???
 

@@ -4,7 +4,6 @@ import cats.Show
 
 import java.util.UUID
 import cats.implicits.{catsSyntaxOptionId, toShow}
-import ua.pomo.catalog.domain.ReadableId
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
@@ -54,7 +53,7 @@ object ApiName {
     }
     def imageList: Parser[ImageListName] = ImageLists ~> "/" ~> imageListId ^^ ImageListName.apply
 
-    private def readableId: Parser[ReadableId] = "[^\\/]+".r into (x => ReadableId.parse(x).fold(err, success))
+    private def readableId: Parser[String] = "[^\\/]+".r
     private def uuid: Parser[UUID] =
       "^\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b$".r ^^ UUID.fromString
     private def categoryRId = readableId ^^ CategoryReadableId.apply ^^ CategoryId.apply

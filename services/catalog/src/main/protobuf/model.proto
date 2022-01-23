@@ -12,11 +12,12 @@ message Model {
     pattern: "categories/{category}/models/{model}"
   };
   string name = 1;
-  string id = 2;
-  string display_name = 3;
-  string description = 4;
-  int32 minimal_price = 5;
-  ImageList image_list = 6;
+  string uuid = 2;
+  string readable_id = 3;
+  string display_name = 4;
+  string description = 5;
+  int32 minimal_price_usd = 6;
+  ImageList image_list = 7;
 }
 
 message CreateModelRequest {
