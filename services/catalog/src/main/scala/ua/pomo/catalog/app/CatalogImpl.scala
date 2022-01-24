@@ -62,12 +62,16 @@ object CatalogImpl {
         .flatMap(checkIsNotWildcardAndGetCategoryId)
         .flatMap(id => categoryService.get(id))
         .map(_.id)
-        .flatMap(id => modelService.findAll(FindModel(id, 100, 0)))
+        .flatMap(id => modelService.findAll(FindModel(id, request.pageSize.toLong, 0)))
         .map(models => ListModelsResponse(models.map(Converters.toApi)))
 
     override def deleteModel(request: DeleteModelRequest, ctx: Metadata): F[Empty] = ???
     override def updateModel(request: UpdateModelRequest, ctx: Metadata): F[Model] = ???
 
     override def getProduct(request: GetProductRequest, ctx: Metadata): F[Product] = ???
+
+    override def createCategory(request: CreateCategoryRequest, ctx: Metadata): F[Category] = {
+      categoryService.createCategory(Converters.toDomain(request)).map(Converters.toApi)
+    }
   }
 }

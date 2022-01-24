@@ -17,8 +17,9 @@ message Category {
   };
   string name = 1;
   string id = 2;
-  string display_name = 3;
-  string description = 4;
+  string readableId = 3;
+  string display_name = 4;
+  string description = 5;
 //  Image image = 5;
 }
 

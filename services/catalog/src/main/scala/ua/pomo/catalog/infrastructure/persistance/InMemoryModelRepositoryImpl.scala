@@ -57,7 +57,6 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private [persistance] (ref: Ref[F,
         req.displayName.foreach(x => value = value.copy(displayName = x))
         req.categoryId.foreach(x => value = value.copy(categoryId = x))
         req.readableId.foreach(x => value = value.copy(readableId = x))
-        println(map + ((req.id, value)))
         (map + ((req.id, value)), 1)
     }
   }

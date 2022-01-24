@@ -7,7 +7,7 @@ import ua.pomo.catalog.domain.image._
 import ApiName._
 import cats.implicits.toShow
 import squants.market.{Money, USD}
-import ua.pomo.catalog.api.CreateModelRequest
+import ua.pomo.catalog.api.{CreateCategoryRequest, CreateModelRequest}
 
 import java.util.UUID
 
@@ -29,7 +29,32 @@ object Converters {
       model.displayName.show,
       model.description.value,
       model.minimalPrice.value.amount.toInt,
-      Some(null)
+      Some(toApi(model.imageList))
+    )
+  }
+
+  def toApi(imageList: ImageList): api.ImageList = {
+    api.ImageList(
+      ImageListName(imageList.id).toNameString,
+      imageList.displayName.show,
+      imageList.images.map(toApi)
+    )
+  }
+
+  def toApi(image: Image): api.Image = {
+    api.Image(
+      image.src.show,
+      image.alt.show
+    )
+  }
+
+  def toDomain(request: CreateCategoryRequest): Category = {
+    val category = request.category.get
+    Category(
+      CategoryUUID(UUID.randomUUID()),
+      CategoryReadableId(category.readableId),
+      CategoryDisplayName(category.displayName),
+      CategoryDescription(category.description)
     )
   }
 

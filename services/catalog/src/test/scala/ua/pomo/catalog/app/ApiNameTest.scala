@@ -4,7 +4,7 @@ import org.scalatest.EitherValues
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import ua.pomo.catalog.app.ApiName._
-import ua.pomo.catalog.domain.category.{CategoryId, CategoryReadableId}
+import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.image.ImageListId
 import ua.pomo.catalog.domain.model.{ModelId, ModelReadableId}
 
@@ -15,6 +15,14 @@ class ApiNameTest extends AnyFunSuite with EitherValues with Matchers {
   test("parser") {
     ApiName.category("categories/hello-world").value should equal(
       CategoryName(CategoryId(CategoryReadableId("hello-world")))
+    )
+
+    ApiName.category(s"categories/$Uuid").value should equal(
+      CategoryName(CategoryId(CategoryUUID(Uuid)))
+    )
+
+    ApiName.models(s"categories/$Uuid/models").value should equal(
+      ModelsName(Some(CategoryId(CategoryUUID(Uuid))))
     )
 
     ApiName.model("categories/hello-world/models/some-model").value should equal(
