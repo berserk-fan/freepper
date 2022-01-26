@@ -14,7 +14,8 @@ import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
 
-class ModelRepositoryImpl private(imageListRepository: ImageListRepository[ConnectionIO]) extends ModelRepository[ConnectionIO] {
+class ModelRepositoryImpl private (imageListRepository: ImageListRepository[ConnectionIO])
+    extends ModelRepository[ConnectionIO] {
 
   import ModelRepositoryImpl.Queries
 
@@ -36,12 +37,9 @@ class ModelRepositoryImpl private(imageListRepository: ImageListRepository[Conne
   }
 
   override def findAll(req: FindModel): ConnectionIO[List[Model]] = {
-    req.page match {
-      case PageToken.Empty => List[Model]().pure[ConnectionIO]
-      case PageToken.NotEmpty(size, offset) => Queries
-        .find(req.categoryUUID, size, offset)
-        .to[List]
-    }
+    Queries
+      .find(req.categoryUUID, req.page.size, req.page.offset)
+      .to[List]
   }
 
   override def delete(id: ModelUUID): ConnectionIO[Unit] = {
@@ -56,13 +54,16 @@ class ModelRepositoryImpl private(imageListRepository: ImageListRepository[Conne
 object ModelRepositoryImpl {
   def apply(impl: ImageListRepository[ConnectionIO]): ModelRepository[ConnectionIO] = new ModelRepositoryImpl(impl)
   def makeInMemory[F[_]: Sync]: F[ModelRepository[F]] = {
-    Ref[F].of(Map[ModelUUID, Model]()).map(
-      new InMemoryModelRepositoryImpl[F](_)
-    )
+    Ref[F]
+      .of(Map[ModelUUID, Model]())
+      .map(
+        new InMemoryModelRepositoryImpl[F](_)
+      )
   }
 
   private[persistance] object Queries {
-    private implicit val readModelMinimalPrice: Read[ModelMinimalPrice] = Read[Double].map(x => ModelMinimalPrice(Money(x, USD)))
+    private implicit val readModelMinimalPrice: Read[ModelMinimalPrice] =
+      Read[Double].map(x => ModelMinimalPrice(Money(x, USD)))
 
     def create(req: CreateModel): Update0 = {
       sql"""
@@ -71,7 +72,8 @@ object ModelRepositoryImpl {
          """.update
     }
 
-    type GetModelQuery = ImageListId :: ModelUUID :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice :: HNil
+    type GetModelQuery =
+      ImageListId :: ModelUUID :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice :: HNil
 
     def getModel(modelId: ModelUUID): Query0[GetModelQuery] = {
       sql"""
@@ -89,8 +91,9 @@ object ModelRepositoryImpl {
          """.update
     }
 
-    private type FindQuery = ModelUUID :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice ::
-      ImageListId :: ImageListDisplayName :: List[Image] :: HNil
+    private type FindQuery =
+      ModelUUID :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice ::
+        ImageListId :: ImageListDisplayName :: List[Image] :: HNil
 
     def find(categoryUUID: CategoryUUID, limit: Long, offset: Long): Query0[Model] = {
       implicit val readImages: Read[List[Image]] = Read[Json].map { _ =>
@@ -109,7 +112,8 @@ object ModelRepositoryImpl {
         order by m.id
         limit $limit
         offset $offset
-      """.query[FindQuery]
+      """
+        .query[FindQuery]
         .map { res =>
           val modelPart_imageListPart = res.split(Nat._6)
           val imageList = Generic[ImageList].from(modelPart_imageListPart._2)

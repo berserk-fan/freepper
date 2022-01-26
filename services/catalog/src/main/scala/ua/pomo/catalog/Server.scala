@@ -8,8 +8,7 @@ import ua.pomo.catalog.app.CatalogImpl
 import ua.pomo.catalog.api.CatalogFs2Grpc
 
 object Server extends IOApp.Simple {
-  val catalogService: Resource[IO, ServerServiceDefinition] =
-    CatalogFs2Grpc.bindServiceResource[IO](CatalogImpl[IO](null, null))
+  val catalogService: Resource[IO, ServerServiceDefinition] = CatalogImpl.makeGrpc[IO](null, null, null)
 
   override def run: IO[Nothing] = catalogService.use(run)
 

@@ -5,6 +5,7 @@ package ua.pomo.catalog.api;
 import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
 import "image_list.proto";
+import "validate/validate.proto";
 
 message Model {
   option (google.api.resource) = {
@@ -65,7 +66,9 @@ message ListModelsRequest {
     }];
 
   // The maximum number of items to return.
-  int32 page_size = 2;
+  int32 page_size = 2 [
+    (validate.rules).int32.gte = 0
+  ];
 
   // The next_page_token value returned from a previous List request, if any.
   string page_token = 3;

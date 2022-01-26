@@ -21,8 +21,8 @@ final case class JdbcDatabaseConfig(
 )
 
 final case class ServerConfig(serverPort: Int)
-
-final case class AppConfig(jdbc: JdbcDatabaseConfig, server: ServerConfig)
+final case class CatalogApiConfig(defaultPageSize: Int)
+final case class AppConfig(jdbc: JdbcDatabaseConfig, catalog: CatalogApiConfig, server: ServerConfig)
 
 object AppConfig {
   private val namespace = "pomo"

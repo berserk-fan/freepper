@@ -1,4 +1,5 @@
 import Dependencies._
+import scalapb.GeneratorOption
 
 ThisBuild / scalaVersion := "2.13.6"
 ThisBuild / version := "0.1.0-SNAPSHOT"
@@ -15,8 +16,10 @@ scalapbCodeGeneratorOptions += CodeGeneratorOption.FlatPackage
 
 Compile / managedSourceDirectories -= baseDirectory.value / "target" / "scala-2.13" / "src_managed" / "main"
 Compile / managedSourceDirectories += baseDirectory.value / "target" / "scala-2.13" / "src_managed" / "main" / "scala"
-Compile / PB.targets := Fs2GrpcPlugin.autoImport.scalapbCodeGenerators.value
+
+Compile / PB.targets := scalapbCodeGenerators.value
   .map(_.copy(outputPath = (Compile / sourceManaged).value / "scala"))
+  .:+(scalapb.validate.gen(GeneratorOption.FlatPackage) -> (Compile / sourceManaged).value / "scala": protocbridge.Target)
 
 // add main resources to Tests
 Test / unmanagedResourceDirectories += baseDirectory.value / "src/main/resources"
@@ -52,6 +55,7 @@ lazy val root = (project in file("."))
       Libraries.grpcNettyShaded,
       Libraries.scalaPbCommonProtosProtobuf,
       Libraries.scalaPbCommonProtosScala,
+      Libraries.scalaPbValidation,
       Libraries.doobieCore,
       Libraries.doobiePostgres,
       Libraries.doobieScalaTest,

@@ -15,23 +15,17 @@ private class ModelServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: 
   def delete(id: ModelUUID): F[Unit] = repository.delete(id).toF
   def find(id: ModelUUID): F[Option[Model]] = repository.find(id).toF
   def findAll(req: FindModel): F[FindModelResponse] =
-    for {
-      page <- req.page match {
-        case PageToken.Empty              => new Exception("request page can't be empty").raiseError[F, PageToken.NotEmpty]
-        case x @ PageToken.NotEmpty(_, _) => x.pure[F]
-      }
-      res <- repository
-        .findAll(req)
-        .map { models =>
-          val nextPage = if (models.length != page.size) {
-            PageToken.Empty
-          } else {
-            PageToken.NotEmpty(page.size, page.size + page.offset)
-          }
-          FindModelResponse(models, nextPage)
+    repository
+      .findAll(req)
+      .map { models =>
+        val nextPage = if (models.length != req.page.size) {
+          PageToken.Empty
+        } else {
+          PageToken.NotEmpty(req.page.size, req.page.size + req.page.offset)
         }
-        .toF
-    } yield res
+        FindModelResponse(models, nextPage)
+      }
+      .toF
 
   def get(id: ModelUUID): F[Model] = repository.get(id).toF
   def update(req: UpdateModel): F[Model] =

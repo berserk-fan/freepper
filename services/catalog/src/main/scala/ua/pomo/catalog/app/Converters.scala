@@ -24,25 +24,26 @@ object Converters {
     )
   }
 
-  private val charset = StandardCharsets.UTF_8
-  case class PageTokenStr(value: String)
-  def toApi(pageToken: PageToken): String = {
-    Base64.getEncoder.encodeToString(Encoder[PageToken].apply(pageToken).show.getBytes(charset))
-  }
-  def toDomain(pageToken: PageTokenStr): Try[PageToken] = {
-    Try(new String(Base64.getDecoder.decode(pageToken.value), charset))
-      .flatMap(parser.parse(_).toTry)
-      .flatMap(Decoder[PageToken].decodeJson(_).toTry)
+  private val utf8 = StandardCharsets.UTF_8
+  private def toApi(pageToken: PageToken): String = {
+    Base64.getEncoder.encodeToString {
+      val res = pageToken match {
+        case PageToken.Empty              => ""
+        case x @ PageToken.NotEmpty(_, _) => Encoder[PageToken.NotEmpty].apply(x).show
+      }
+      res.getBytes(utf8)
+    }
   }
 
-  //TODO consider removing logic of pagetoken from converter
   def toDomain(listModels: ListModelsRequest): Try[FindModel] = {
     val categoryId = ApiName.models(listModels.parent).toOption.get.categoryId.get
-    val pageToken = listModels.pageToken match {
-      case "" => Success(PageToken.NotEmpty(listModels.pageSize.toLong, 0L))
-      case s => toDomain(PageTokenStr(s))
-    }
-    pageToken.map(FindModel(categoryId, _))
+    Try(new String(Base64.getDecoder.decode(listModels.pageToken), utf8))
+      .flatMap {
+        case "" => Success(PageToken.NotEmpty(listModels.pageSize.toLong, 0L))
+        case s =>
+          parser.parse(s).toTry.flatMap(Decoder[PageToken.NotEmpty].decodeJson(_).toTry)
+      }
+      .map(FindModel(categoryId, _))
   }
 
   def toApi(findModelResponse: FindModelResponse): ListModelsResponse = {

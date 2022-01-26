@@ -59,7 +59,7 @@ object model {
                          imageListId: Option[ImageListId])
 
   @derive(eqv, show)
-  case class FindModel(categoryUUID: CategoryUUID, page: PageToken)
+  case class FindModel(categoryUUID: CategoryUUID, page: PageToken.NotEmpty)
 
   @derive(eqv,show)
   case class FindModelResponse(models: List[Model], nextPageToken: PageToken)

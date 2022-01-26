@@ -9,7 +9,8 @@ import ua.pomo.catalog.domain.model._
 
 import java.util.UUID
 
-class InMemoryModelRepositoryImpl[F[_]: Sync] private [persistance] (ref: Ref[F, Map[ModelUUID, Model]]) extends ModelRepository[F] {
+class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, Map[ModelUUID, Model]])
+    extends ModelRepository[F] {
 
   override def create(req: CreateModel): F[ModelUUID] = ref.modify { map =>
     val model = Model(
@@ -31,15 +32,11 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private [persistance] (ref: Ref[F,
   override def find(id: ModelUUID): F[Option[Model]] = ref.get.map(_.get(id))
 
   override def findAll(req: FindModel): F[List[Model]] = {
-    req.page match {
-      case PageToken.Empty => List[Model]().pure[F]
-      case PageToken.NotEmpty(size, offset) =>
-        ref.get
-          .map(
-            _.values.toList
-              .filter(_.categoryId == req.categoryUUID)
-              .slice(offset.toInt, offset.toInt + size.toInt))
-    }
+    ref.get
+      .map(
+        _.values.toList
+          .filter(_.categoryId == req.categoryUUID)
+          .slice(req.page.offset.toInt, req.page.offset.toInt + req.page.size.toInt))
   }
 
   override def delete(id: ModelUUID): F[Unit] = ref.update { map =>

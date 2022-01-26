@@ -54,6 +54,8 @@ object Dependencies {
     // google/protobuf/*.proto
     lazy val scalaPbCommonProtosProtobuf = "com.thesamet.scalapb.common-protos" %% "proto-google-common-protos-scalapb_0.11" % V.scalaPb % "protobuf"
     lazy val scalaPbCommonProtosScala    = "com.thesamet.scalapb.common-protos" %% "proto-google-common-protos-scalapb_0.11" % V.scalaPb
+    lazy val scalaPbValidation = "com.thesamet.scalapb" %% "scalapb-validate-core" % scalapb.validate.compiler.BuildInfo.version % "protobuf"
+
 
     lazy val doobieCore         = "org.tpolecat"   %% "doobie-core"      % V.doobie
     lazy val doobiePostgres     = "org.tpolecat"   %% "doobie-postgres"  % V.doobie
