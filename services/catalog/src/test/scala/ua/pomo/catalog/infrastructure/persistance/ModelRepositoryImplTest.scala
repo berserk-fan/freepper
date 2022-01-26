@@ -4,6 +4,7 @@ import doobie.ConnectionIO
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
+import ua.pomo.catalog.domain.{PageToken}
 import ua.pomo.catalog.shared.{DbUnitTestSuite, Generators}
 
 import java.util.UUID
@@ -17,11 +18,11 @@ class ModelRepositoryImplTest extends DbUnitTestSuite {
   private val modelInMemory = ModelRepositoryImpl.makeInMemory[ConnectionIO].trRun()
 
   test("queries") {
-    val modelId = ModelId(ModelUUID(UUID.randomUUID()))
+    val modelId = ModelUUID(UUID.randomUUID())
     val categoryId = CategoryUUID(UUID.randomUUID())
     val imageListId = ImageListId(UUID.randomUUID())
     check(Queries.getModel(modelId))
-    check(Queries.find(FindModel(categoryId, 10, 0)))
+    check(Queries.find(categoryId, 10, 0))
     check(Queries.delete(modelId))
     check(Queries.create(Generators.Model.create(imageListId).sample.get))
     check(Queries.update(Generators.Model.update(imageListId, categoryId).sample.get))
@@ -39,7 +40,7 @@ class ModelRepositoryImplTest extends DbUnitTestSuite {
         val createModel = createModel1.copy(categoryId = categoryId)
 
         val id = modelRepo.create(createModel).trRun()
-        val found = modelRepo.get(ModelId(id)).trRun()
+        val found = modelRepo.get(id).trRun()
 
         createModel.categoryId should equal(found.categoryId)
         createModel.description should equal(found.description)
@@ -47,7 +48,7 @@ class ModelRepositoryImplTest extends DbUnitTestSuite {
         createModel.readableId should equal(found.readableId)
         createModel.imageListId should equal(found.imageList.id)
 
-        modelRepo.delete(ModelId(id)).trRun()
+        modelRepo.delete(id).trRun()
       }
     }
 
@@ -66,7 +67,7 @@ class ModelRepositoryImplTest extends DbUnitTestSuite {
 
       forAll(Generators.Model.update(imageListId2, categoryId2)) { update =>
         modelRepo.update(update.copy(id = modelId)).trRun()
-        val model = modelRepo.get(ModelId(modelId)).trRun()
+        val model = modelRepo.get(modelId).trRun()
 
         update.categoryId.foreach(_ should equal (model.categoryId))
         update.description.foreach(_ should equal (model.description))

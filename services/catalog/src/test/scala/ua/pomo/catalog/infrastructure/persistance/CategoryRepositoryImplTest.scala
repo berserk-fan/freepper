@@ -16,15 +16,11 @@ class CategoryRepositoryImplTest extends DbUnitTestSuite with AsyncTestSuite wit
 
   Seq(postgres, inmemory) foreach { impl =>
     test(s"queries ${impl.getClass.getSimpleName}") {
-      val catuuid = CategoryUUID(UUID.randomUUID())
-      val uuid: CategoryId = CategoryId(catuuid)
-      val readableId: CategoryId = CategoryId(CategoryReadableId("some-id"))
+      val uuid = CategoryUUID(UUID.randomUUID())
 
       check(Queries.findCategory(uuid))
-      check(Queries.findCategory(readableId))
       check(Queries.findCategories)
       check(Queries.deleteCategory(uuid))
-      check(Queries.deleteCategory(readableId))
 
       forAll(Generators.Category.update) { update: UpdateCategory =>
         check(Queries.updateCategory(update))
@@ -35,22 +31,22 @@ class CategoryRepositoryImplTest extends DbUnitTestSuite with AsyncTestSuite wit
       }
     }
 
-    test(s"api${impl.getClass.getSimpleName}") {
+    test(s"api ${impl.getClass.getSimpleName}") {
       forAll(Generators.Category.self) { cat =>
         val found = impl.create(cat)
-          .flatMap { insertId => impl.get(CategoryId(insertId)) }
+          .flatMap(impl.get)
           .trRun()
 
-        found should equal(cat.copy(id = found.id))
+        found should equal(cat.copy(uuid = found.uuid))
 
-        val dbId = found.id
-        val rId = CategoryReadableId("some_id_2")
+        val dbId = found.uuid
+        val rId = CategoryReadableId("some-id 2")
         val newDisplayName = CategoryDisplayName("qq2")
-        impl.update(UpdateCategory(CategoryId(dbId), Some(rId), Some(newDisplayName), None)).trRun()
-        impl.get(CategoryId(rId)).trRun().displayName.value should equal(newDisplayName)
-        impl.delete(CategoryId(dbId)).trRun()
+        impl.update(UpdateCategory(dbId, Some(rId), Some(newDisplayName), None)).trRun()
+        impl.get(dbId).trRun().displayName.value should equal(newDisplayName)
+        impl.delete(dbId).trRun()
         intercept[Exception] {
-          impl.get(CategoryId(dbId)).trRun()
+          impl.get(dbId).trRun()
         }
       }
     }

@@ -30,18 +30,27 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
       .id
 
     val categoryId = CategoryUUID(UUID.fromString(categoryIdStr))
+    val totalModels = 10
     Generators.Model.self
       .map(_.copy(categoryId = categoryId))
       .toLazyList
       .map(model =>
-        CreateModelRequest(ModelsName(Some(CategoryId(model.categoryId))).toNameString, Some(Converters.toApi(model))))
-      .take(10)
+        CreateModelRequest(ModelsName(Some(model.categoryId)).toNameString, Some(Converters.toApi(model))))
+      .take(totalModels)
       .traverse(impl.createModel(_, null))
       .unsafeRunSync()
 
-    val parent = ModelsName(Some(CategoryId(categoryId)))
+    val parent = ModelsName(Some(categoryId))
 
     noException should be thrownBy impl.listModels(ListModelsRequest(parent.toNameString, 0, ""), null).unsafeRunSync()
-    impl.listModels(ListModelsRequest(parent.toNameString, 5, ""), null).unsafeRunSync().models.length should equal(5)
+    val pageLength = 4
+    val page1 = impl.listModels(ListModelsRequest(parent.toNameString, pageLength, ""), null).unsafeRunSync()
+    page1.models.length should equal(pageLength)
+    val page2 = impl.listModels(ListModelsRequest(parent.toNameString, pageLength, page1.nextPageToken), null).unsafeRunSync()
+    page2.models.length should equal(pageLength)
+    val page3 = impl.listModels(ListModelsRequest(parent.toNameString, pageLength, page2.nextPageToken), null).unsafeRunSync()
+    page3.models.length should equal(2)
+
+
   }
 }

@@ -11,9 +11,9 @@ import ua.pomo.catalog.domain.model._
 import scala.util.parsing.combinator._
 
 sealed trait ApiName
-case class CategoryName(categoryId: CategoryId) extends ApiName
-case class ModelsName(categoryId: Option[CategoryId]) extends ApiName
-case class ModelName(categoryId: Option[CategoryId], modelId: ModelId) extends ApiName
+case class CategoryName(categoryId: CategoryUUID) extends ApiName
+case class ModelsName(categoryId: Option[CategoryUUID]) extends ApiName
+case class ModelName(categoryId: Option[CategoryUUID], modelId: ModelUUID) extends ApiName
 case class ImageListName(id: ImageListId) extends ApiName
 
 object ApiName {
@@ -42,13 +42,13 @@ object ApiName {
       case Error(msg, _)       => Left(ParseNameError(msg))
     }
 
-    def category: Parser[CategoryName] = Categories ~> "/" ~> categoryId ^^ CategoryName.apply
+    def category: Parser[CategoryName] = Categories ~> "/" ~> categoryUUID ^^ CategoryName.apply
     def models: Parser[ModelsName] = {
       val modelsVar1 = category <~ s"/$Models" ^^ (_.categoryId.some)
       val modelsVar2 = Categories ~> "/" ~> WildCard ^^ (_ => None)
       (modelsVar1 ||| modelsVar2) ^^ ModelsName.apply
     }
-    def model: Parser[ModelName] = (models <~ "/") ~ modelId ^^ {
+    def model: Parser[ModelName] = (models <~ "/") ~ modelUUID ^^ {
       case col ~ id => ModelName(col.categoryId, id)
     }
     def imageList: Parser[ImageListName] = ImageLists ~> "/" ~> imageListId ^^ ImageListName.apply
@@ -56,12 +56,8 @@ object ApiName {
     private def readableId: Parser[String] = "[^\\/]+".r - uuidStr
     private def uuidStr: Parser[String] = "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b".r
     private def uuid: Parser[UUID] = uuidStr ^^ UUID.fromString
-    private def categoryRId = readableId ^^ CategoryReadableId.apply ^^ CategoryId.apply
-    private def categoryUUID = uuid ^^ CategoryUUID.apply ^^ CategoryId.apply
-    private def categoryId = categoryUUID ||| categoryRId
-    private def modelRId = readableId ^^ ModelReadableId.apply ^^ ModelId.apply
-    private def modelUUID = uuid ^^ ModelUUID.apply ^^ ModelId.apply
-    private def modelId = modelUUID ||| modelRId
+    private def categoryUUID = uuid ^^ CategoryUUID.apply
+    private def modelUUID = uuid ^^ ModelUUID.apply
     private def imageListId = uuid ^^ ImageListId.apply
   }
 

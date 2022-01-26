@@ -5,10 +5,8 @@ import cats.implicits._
 import com.google.protobuf.empty.Empty
 import io.grpc.Metadata
 import ua.pomo.catalog.api.{CatalogFs2Grpc, Category, CreateImageListRequest, DeleteImageListRequest, GetCategoryRequest, GetImageListRequest, GetModelRequest, GetProductRequest, ImageList, ListModelsRequest, ListModelsResponse, ListProductsRequest, ListProductsResponse, Model, Product}
-import ua.pomo.catalog.domain.{category, model}
+import ua.pomo.catalog.domain.{category, model, PageToken}
 import ua.pomo.catalog.api._
-import ua.pomo.catalog.domain.category.CategoryId
-import ua.pomo.catalog.domain.model.FindModel
 
 object CatalogImpl {
   def apply[F[_]: Async](categoryService: category.CategoryService[F],
@@ -41,29 +39,15 @@ object CatalogImpl {
 
     override def deleteImageList(request: DeleteImageListRequest, ctx: Metadata): F[Empty] = ???
 
-    private def checkIsNotWildcardAndGetCategoryId(name: ModelsName): F[CategoryId] = {
-      name.categoryId.fold(new Exception("wildCard get models not supported").raiseError[F, CategoryId])(_.pure[F])
-    }
-
     override def createModel(request: CreateModelRequest, ctx: Metadata): F[Model] = {
-      Async[F]
-        .fromEither(ApiName.models(request.parent))
-        .flatMap(checkIsNotWildcardAndGetCategoryId)
-        .flatMap(categoryService.get)
-        .map(_.id)
-        .map(categoryUUID => Converters.toDomain(request, categoryUUID))
-        .flatMap(modelService.create)
-        .map(Converters.toApi)
+      modelService.create(Converters.toDomain(request)).map(Converters.toApi)
     }
 
     override def listModels(request: ListModelsRequest, ctx: Metadata): F[ListModelsResponse] =
       Async[F]
-        .fromEither(ApiName.models(request.parent))
-        .flatMap(checkIsNotWildcardAndGetCategoryId)
-        .flatMap(id => categoryService.get(id))
-        .map(_.id)
-        .flatMap(id => modelService.findAll(FindModel(id, request.pageSize.toLong, 0)))
-        .map(models => ListModelsResponse(models.map(Converters.toApi)))
+        .fromTry(Converters.toDomain(request))
+        .flatMap(modelService.findAll)
+        .map(Converters.toApi)
 
     override def deleteModel(request: DeleteModelRequest, ctx: Metadata): F[Empty] = ???
     override def updateModel(request: UpdateModelRequest, ctx: Metadata): F[Model] = ???

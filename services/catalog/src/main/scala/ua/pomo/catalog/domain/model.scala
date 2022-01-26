@@ -1,27 +1,16 @@
 package ua.pomo.catalog.domain
 
-import cats.{Eq, Show}
 import derevo.cats._
 import derevo.derive
-import cats.implicits.toShow
 import io.estatico.newtype.macros.newtype
 import squants.market.Money
-import ua.pomo.catalog.domain.category.CategoryUUID
+import ua.pomo.catalog.domain.category.{CategoryReadableId, CategoryUUID}
 import ua.pomo.catalog.domain.image.{ImageList, ImageListId}
 import ua.pomo.catalog.optics.uuid
 
 import java.util.UUID
 
 object model {
-  private type ModelIdType = ModelUUID Either ModelReadableId
-  sealed abstract case class ModelId private (value: ModelIdType)
-  object ModelId {
-    def apply(id: ModelUUID): ModelId = new ModelId(Left(id)) {}
-    def apply(id: ModelReadableId)(implicit d: DummyImplicit): ModelId = new ModelId(Right(id)) {}
-    implicit val show: Show[ModelId] = _.value.fold(_.show, _.show)
-    implicit val eqv: Eq[ModelId] = _ == _
-  }
-
   @derive(eqv, show, uuid)
   @newtype
   case class ModelUUID(value: UUID)
@@ -70,33 +59,36 @@ object model {
                          imageListId: Option[ImageListId])
 
   @derive(eqv, show)
-  case class FindModel(categoryUUID: CategoryUUID, limit: Long, offset: Long)
+  case class FindModel(categoryUUID: CategoryUUID, page: PageToken)
+
+  @derive(eqv,show)
+  case class FindModelResponse(models: List[Model], nextPageToken: PageToken)
 
   trait ModelRepository[F[_]] {
     def create(model: CreateModel): F[ModelUUID]
 
-    def get(id: ModelId): F[Model]
+    def get(id: ModelUUID): F[Model]
 
-    def find(id: ModelId): F[Option[Model]]
+    def find(id: ModelUUID): F[Option[Model]]
 
     def findAll(req: FindModel): F[List[Model]]
 
     def update(req: UpdateModel): F[Int]
 
-    def delete(id: ModelId): F[Unit]
+    def delete(id: ModelUUID): F[Unit]
   }
 
   trait ModelService[F[_]] {
     def create(category: CreateModel): F[Model]
 
-    def get(id: ModelId): F[Model]
+    def get(id: ModelUUID): F[Model]
 
-    def find(id: ModelId): F[Option[Model]]
+    def find(id: ModelUUID): F[Option[Model]]
 
-    def findAll(req: FindModel): F[List[Model]]
+    def findAll(req: FindModel): F[FindModelResponse]
 
     def update(req: UpdateModel): F[Model]
 
-    def delete(id: ModelId): F[Unit]
+    def delete(id: ModelUUID): F[Unit]
   }
 }

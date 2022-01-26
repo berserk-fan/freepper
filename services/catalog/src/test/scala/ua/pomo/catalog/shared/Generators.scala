@@ -4,8 +4,9 @@ import org.scalacheck.Gen
 import squants.market.{Money, USD}
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.{category, image, model}
+import ua.pomo.catalog.domain
 import ua.pomo.catalog.domain.model._
-import ua.pomo.catalog.domain.image.{Image, ImageAlt, ImageId, ImageListDisplayName, ImageListId, ImageSrc}
+import ua.pomo.catalog.domain.image._
 
 object Generators {
   implicit class ToLazyListOps[T](g: Gen[T]) {
@@ -19,9 +20,7 @@ object Generators {
     private val description: Gen[CategoryDescription] = Gen.alphaNumStr.map(CategoryDescription.apply)
 
     val update: Gen[UpdateCategory] = for {
-      uuid <- catId
-      rId <- readableId
-      id <- Gen.oneOf[CategoryId](CategoryId(uuid), CategoryId(rId))
+      id <- catId
       readableId <- Gen.option(Generators.Category.readableId)
       displayName <- Gen.option(Generators.Category.displayName)
       descr <- Gen.option(Generators.Category.description)
@@ -93,5 +92,13 @@ object Generators {
       rDescription <- Gen.option(rDescription)
       imgList <- Gen.option(Gen.const(imageListId))
     } yield model.UpdateModel(id, rId, catId, rDisplayName, rDescription, imgList)
+  }
+
+  object PageToken {
+    def self: Gen[domain.PageToken] = for {
+      size <- Gen.posNum[Long]
+      offset <- Gen.posNum[Long]
+      res <- Gen.oneOf[domain.PageToken](Gen.const(domain.PageToken.Empty), domain.PageToken.NotEmpty(offset, size))
+    } yield res
   }
 }

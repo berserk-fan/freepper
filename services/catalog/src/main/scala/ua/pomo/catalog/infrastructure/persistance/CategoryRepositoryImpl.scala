@@ -12,11 +12,11 @@ import scala.collection.mutable
 
 class CategoryRepositoryImpl private () extends CategoryRepository[ConnectionIO] {
   import CategoryRepositoryImpl.Queries
-  override def find(id: CategoryId): ConnectionIO[Option[Category]] = {
+  override def find(id: CategoryUUID): ConnectionIO[Option[Category]] = {
     Queries.findCategory(id).option
   }
 
-  override def get(id: CategoryId): doobie.ConnectionIO[Category] = {
+  override def get(id: CategoryUUID): doobie.ConnectionIO[Category] = {
     Queries.findCategory(id).unique
   }
 
@@ -24,7 +24,7 @@ class CategoryRepositoryImpl private () extends CategoryRepository[ConnectionIO]
     Queries.findCategories.to[List]
   }
 
-  override def delete(id: CategoryId): ConnectionIO[Unit] = {
+  override def delete(id: CategoryUUID): ConnectionIO[Unit] = {
     Queries.deleteCategory(id).run.as(())
   }
 
@@ -46,30 +46,24 @@ object CategoryRepositoryImpl {
   }
 
   private[persistance] object Queries {
-    private def toWhereClause(id: Option[CategoryId]): Fragment = {
-      id.map(_.value.fold(uuid => fr"cat.id = $uuid", readableId => fr"cat.readable_id = $readableId"))
-        .map(fr"where " ++ _)
-        .getOrElse(Fragment.empty)
-    }
-
-    private def selectCategories(id: Option[CategoryId]): Query0[Category] = {
+    private def selectCategories(id: Option[CategoryUUID]): Query0[Category] = {
       sql"""
         select cat.id, cat.readable_id, cat.display_name, cat.description
         from categories cat
-        ${toWhereClause(id)}"""
+        ${id.fold(Fragment.empty)(id => fr"where id = $id")}"""
         .query[
           CategoryUUID :: CategoryReadableId :: CategoryDisplayName :: CategoryDescription :: HNil
         ]
         .map { Generic[Category].from(_) }
     }
 
-    def findCategory(id: CategoryId): Query0[Category] = selectCategories(Some(id))
+    def findCategory(id: CategoryUUID): Query0[Category] = selectCategories(Some(id))
 
     val findCategories: Query0[Category] = selectCategories(None)
 
-    def deleteCategory(id: CategoryId): Update0 = {
+    def deleteCategory(id: CategoryUUID): Update0 = {
       sql"""delete from categories cat
-            ${toWhereClause(Some(id))}""".update
+            where id=$id""".update
     }
 
     def updateCategory(cat: UpdateCategory): Update0 = {
@@ -84,7 +78,7 @@ object CategoryRepositoryImpl {
       sql"""
            update categories cat
            $setFr
-           ${toWhereClause(Some(cat.id))}
+           where id=${cat.id}
          """.update
     }
 
