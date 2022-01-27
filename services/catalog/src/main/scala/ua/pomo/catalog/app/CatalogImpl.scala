@@ -40,11 +40,12 @@ object CatalogImpl {
         .map(Converters.toApi)
     }
 
-    override def getModel(request: GetModelRequest, ctx: Metadata): F[Model] = {
-      Async[F]
-        .fromEither(ApiName.model(request.name))
-        .flatMap(name => modelService.get(name.modelId))
-        .map(Converters.toApi)
+    override def getModel(request: GetModelRequest, ctx: Metadata): F[Model] = adaptError {
+      validate(request) >>
+        Async[F]
+          .fromEither(ApiName.model(request.name))
+          .flatMap(name => modelService.get(name.modelId))
+          .map(Converters.toApi)
     }
 
     override def listProducts(request: ListProductsRequest, ctx: Metadata): F[ListProductsResponse] = ???
@@ -92,10 +93,12 @@ object CatalogImpl {
 
     private def adaptError[T](f: F[T]): F[T] = f.adaptError {
       case e: Err =>
-        e match {
-          case ValidationErr(msg, _) => Status.INVALID_ARGUMENT.withDescription(msg).withCause(e).asException()
-          case DbErr(msg, _)         => Status.INTERNAL.withDescription(msg).withCause(e).asException()
+        val status = e match {
+          case ValidationErr(_, _) => Status.INVALID_ARGUMENT
+          case DbErr(_, _)         => Status.INTERNAL
+          case NotFound(_, _)      => Status.NOT_FOUND
         }
+        status.withDescription(e.getMessage).withCause(e.getCause).asException()
     }
   }
 }

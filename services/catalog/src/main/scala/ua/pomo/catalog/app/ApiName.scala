@@ -11,12 +11,14 @@ import ua.pomo.catalog.domain.model._
 import scala.util.parsing.combinator._
 
 sealed trait ApiName
-case class CategoryName(categoryId: CategoryUUID) extends ApiName
-case class ModelsName(categoryId: Option[CategoryUUID]) extends ApiName
-case class ModelName(categoryId: Option[CategoryUUID], modelId: ModelUUID) extends ApiName
-case class ImageListName(id: ImageListId) extends ApiName
 
 object ApiName {
+  case object CategoriesName extends ApiName
+  case class CategoryName(categoryId: CategoryUUID) extends ApiName
+  case class ModelsName(categoryId: Option[CategoryUUID]) extends ApiName
+  case class ModelName(categoryId: Option[CategoryUUID], modelId: ModelUUID) extends ApiName
+  case class ImageListName(id: ImageListId) extends ApiName
+
   import Parsers.parseAllToEither
   case class ParseNameError(message: String) extends Exception(message)
   type NameParseResult[T] = Either[ParseNameError, T]
@@ -73,6 +75,7 @@ object ApiName {
       case x @ ModelsName(_)    => models.show(x)
       case x @ ModelName(_, _)  => model.show(x)
       case x @ ImageListName(_) => imageList.show(x)
+      case CategoriesName => Categories
     }
   }
 }

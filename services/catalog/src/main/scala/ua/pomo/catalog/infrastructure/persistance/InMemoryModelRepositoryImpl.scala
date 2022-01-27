@@ -22,7 +22,7 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
       ModelMinimalPrice(Money(0, USD)),
       ImageList(req.imageListId, ImageListDisplayName(""), List())
     )
-    (map + ((model.id, model)), model.id)
+    (map + ((model.uuid, model)), model.uuid)
   }
 
   override def get(id: ModelUUID): F[Model] = find(id).flatMap(
@@ -40,7 +40,7 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
   }
 
   override def delete(id: ModelUUID): F[Unit] = ref.update { map =>
-    map.get(id).fold(map)(map - _.id)
+    map.get(id).fold(map)(map - _.uuid)
   }
 
   override def update(req: UpdateModel): F[Int] = ref.modify { map =>

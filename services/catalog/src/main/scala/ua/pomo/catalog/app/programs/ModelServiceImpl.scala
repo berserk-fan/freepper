@@ -6,6 +6,7 @@ import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, to
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryUUID
+import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.infrastructure.persistance.ModelRepositoryImpl
 
 private class ModelServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: FunctionK[G, F],
@@ -13,7 +14,6 @@ private class ModelServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: 
     extends ModelService[F] {
   def create(model: CreateModel): F[Model] = repository.create(model).flatMap(repository.get).toF
   def delete(id: ModelUUID): F[Unit] = repository.delete(id).toF
-  def find(id: ModelUUID): F[Option[Model]] = repository.find(id).toF
   def findAll(req: FindModel): F[FindModelResponse] =
     repository
       .findAll(req)
@@ -27,7 +27,15 @@ private class ModelServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: 
       }
       .toF
 
-  def get(id: ModelUUID): F[Model] = repository.get(id).toF
+  def get(id: ModelUUID): F[Model] =
+    repository
+      .find(id)
+      .flatMap {
+        case Some(value) => value.pure[G]
+        case None        => NotFound(s"model with id=$id not found").raiseError[G, Model]
+      }
+      .toF
+
   def update(req: UpdateModel): F[Model] =
     repository
       .update(req)

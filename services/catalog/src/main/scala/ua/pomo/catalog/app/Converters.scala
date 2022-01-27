@@ -52,8 +52,8 @@ object Converters {
 
   def toApi(model: Model): api.Model = {
     api.Model(
-      ModelName(None, model.id).toNameString,
-      model.id.show,
+      ModelName(None, model.uuid).toNameString,
+      model.uuid.show,
       model.readableId.show,
       model.displayName.show,
       model.description.value,
@@ -77,14 +77,16 @@ object Converters {
     )
   }
 
-  def toDomain(request: CreateCategoryRequest): Category = {
-    val category = request.category.get
+  def toDomain(category: api.Category): Category = {
     Category(
       CategoryUUID(UUID.randomUUID()),
       CategoryReadableId(category.readableId),
       CategoryDisplayName(category.displayName),
       CategoryDescription(category.description)
     )
+  }
+  def toDomain(request: CreateCategoryRequest): Category = {
+    toDomain(request.category.get)
   }
 
   def toDomain(request: CreateModelRequest): CreateModel = {

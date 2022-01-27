@@ -36,7 +36,7 @@ object model {
   case class ModelMinimalPrice(value: Money)
 
   @derive(eqv, show)
-  case class Model(id: ModelUUID,
+  case class Model(uuid: ModelUUID,
                    readableId: ModelReadableId,
                    categoryId: CategoryUUID,
                    displayName: ModelDisplayName,
@@ -82,8 +82,6 @@ object model {
     def create(category: CreateModel): F[Model]
 
     def get(id: ModelUUID): F[Model]
-
-    def find(id: ModelUUID): F[Option[Model]]
 
     def findAll(req: FindModel): F[FindModelResponse]
 

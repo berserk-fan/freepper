@@ -82,8 +82,6 @@ object Generators {
       imgList <- ImageList.self
     } yield model.Model(id, rId, catId, rDisplayName, rDescription, minPrice, imgList)
 
-    val selfLazyList: LazyList[model.Model] = LazyList.continually(Generators.Model.self.sample.get)
-
     def update(imageListId: ImageListId, categoryId: CategoryUUID): Gen[model.UpdateModel] = for {
       id <- id
       rId <- Gen.option(rId)
