@@ -1,11 +1,13 @@
 package ua.pomo.catalog.infrastructure.persistance
 
 import cats.MonadThrow
-import cats.data.OptionT
-import cats.implicits.catsSyntaxApplicativeId
+import cats.data.{NonEmptyList, OptionT}
+import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId}
 import doobie._
 import doobie.implicits._
 import doobie.postgres.implicits._
+import ua.pomo.catalog.domain.error.NotFound
+import ua.pomo.catalog.domain.image.ImageListWhere.IdsIn
 import ua.pomo.catalog.domain.image._
 
 import java.util.UUID
@@ -28,18 +30,16 @@ object ImageListRepositoryImpl {
       } yield generatedId
 
     override def find(id: ImageListId): ConnectionIO[Option[ImageList]] = {
-      val res = for {
-        (id, displayName) <- OptionT(Queries.selectImageList(id).option)
-        images <- OptionT.liftF(Queries.selectImages(id).to[List])
-      } yield ImageList(id, displayName, images)
-      res.value
+      Queries.findImageList(IdsIn(NonEmptyList.of(id))).option
     }
 
-    override def get(id: ImageListId): ConnectionIO[ImageList] =
-      for {
-        (id, displayName) <- Queries.selectImageList(id).unique
-        images <- Queries.selectImages(id).to[List]
-      } yield ImageList(id, displayName, images)
+    def findAll(where: ImageListWhere): doobie.ConnectionIO[List[ImageList]] = {
+      Queries.findImageList(where).to[List]
+    }
+
+    override def get(id: ImageListId): ConnectionIO[ImageList] = {
+      OptionT(find(id)).getOrElseF(NotFound("imageList", id).raiseError[ConnectionIO, ImageList])
+    }
 
     def updateImages(imageListId: ImageListId, imageListImages: List[Image]): ConnectionIO[Unit] =
       for {
@@ -64,19 +64,31 @@ object ImageListRepositoryImpl {
   }
 
   private[persistance] object Queries {
-    def selectImageList(id: ImageListId): Query0[(ImageListId, ImageListDisplayName)] = {
-      sql"""select id, display_name
-            from image_lists
-            where id=$id"""
-        .query[(ImageListId, ImageListDisplayName)]
+    private def compile(alias: String, where: ImageListWhere): Fragment = {
+      val im = Fragment.const0(alias)
+      where match {
+        case ImageListWhere.IdsIn(ids) => Fragments.in(fr"$im.id", ids)
+      }
     }
 
-    def selectImages(id: ImageListId): Query0[Image] = {
-      sql"""select im.id, im.src, im.alt
-            from images im join image_list_member ilm on im.id = ilm.image_id
-            where ilm.image_list_id=$id
+    def findImageList(where: ImageListWhere): Query0[ImageList] = {
+      implicit val readImages: Get[List[Image]] = jsonAggListJson[Image]
+
+      sql"""
+            select il.id, 
+                   il.display_name,
+                   case 
+                       when count(i.id) = 0 
+                       then '[]'
+                       else json_agg(json_build_object('id', i.id,'src', i.src,'alt', i.alt)) 
+                   end
+            from image_lists il
+                left join image_list_member ilm on il.id = ilm.image_list_id
+                left join images i on ilm.image_id = i.id
+            where ${compile("il", where)}
+            group by il.id
          """
-        .query[Image]
+        .query[ImageList]
     }
 
     def createImageList(displayName: ImageListDisplayName): Update0 = {

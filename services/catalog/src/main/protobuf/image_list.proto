@@ -2,9 +2,13 @@ syntax = "proto3";
 
 package ua.pomo.catalog.api;
 
-import "commons.proto";
 import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
+
+message Image {
+  string src = 1;
+  string alt = 2;
+}
 
 message ImageList {
   option (google.api.resource) = {

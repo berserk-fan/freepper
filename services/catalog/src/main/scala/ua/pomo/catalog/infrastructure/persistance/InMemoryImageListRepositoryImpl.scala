@@ -21,6 +21,12 @@ class InMemoryImageListRepositoryImpl[F[_]: MonadThrow] private(var mapRef: Ref[
   }
 
   override def find(id: ImageListId): F[Option[ImageList]] = mapRef.get.map(_.get(id))
+  override def findAll(where: ImageListWhere): F[List[ImageList]] = mapRef.get.map { map =>
+    val filter = where match {
+      case ImageListWhere.IdsIn(ids) => (i: ImageList) => ids.toList.toSet.contains(i.id)
+    }
+    map.values.filter(filter).toList
+  }
 
   override def update(update: ImageListUpdate): F[Int] = mapRef.modify { map =>
     val updated = map.updateWith(update.id) {

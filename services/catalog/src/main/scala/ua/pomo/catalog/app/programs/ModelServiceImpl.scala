@@ -32,7 +32,7 @@ private class ModelServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: 
       .find(id)
       .flatMap {
         case Some(value) => value.pure[G]
-        case None        => NotFound(s"model with id=$id not found").raiseError[G, Model]
+        case None        => NotFound("model", id).raiseError[G, Model]
       }
       .toF
 

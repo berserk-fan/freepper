@@ -42,31 +42,24 @@ CREATE TABLE fabrics
 (
     id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     display_name VARCHAR NOT NULL,
-    description  VARCHAR NOT NULL,
-    image_id     UUID REFERENCES images (id)
+    image_id     UUID    NOT NULL REFERENCES images (id)
 );
 
 CREATE TABLE sizes
 (
     id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    display_name VARCHAR NOT NULL,
-    description  VARCHAR NOT NULL
+    display_name VARCHAR NOT NULL
 );
 
 CREATE TABLE products
 (
     id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     display_name    VARCHAR NOT NULL,
-    price_usd       FLOAT NOT NULL,
-    promo_price_usd FLOAT NOT NULL,
-    model_id        UUID NOT NULL references models (id),
-    fabric_id       UUID references fabrics (id),
-    size_id         UUID references sizes (id)
+    price_usd       FLOAT   NOT NULL,
+    promo_price_usd FLOAT   NOT NULL,
+    image_list_id   UUID    NOT NULL references image_lists (id),
+    model_id        UUID    NOT NULL references models (id),
+    fabric_id       UUID    NOT NULL references fabrics (id),
+    size_id         UUID    NOT NULL references sizes (id)
 );
 
-CREATE TABLE product_images
-(
-    product_id    UUID NOT NULL references models (id),
-    image_list_id UUID NOT NULL references image_lists (id),
-    UNIQUE (product_id, image_list_id)
-);

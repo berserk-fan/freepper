@@ -96,7 +96,7 @@ object CatalogImpl {
         val status = e match {
           case ValidationErr(_, _) => Status.INVALID_ARGUMENT
           case DbErr(_, _)         => Status.INTERNAL
-          case NotFound(_, _)      => Status.NOT_FOUND
+          case NotFound(_, _, _)      => Status.NOT_FOUND
         }
         status.withDescription(e.getMessage).withCause(e.getCause).asException()
     }

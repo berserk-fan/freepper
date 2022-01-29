@@ -2,30 +2,22 @@ package ua.pomo.catalog
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-import cats.implicits.{catsSyntaxTuple2Semigroupal, toTraverseOps}
+import cats.implicits.toTraverseOps
+import io.grpc.{Metadata, Status, StatusException}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import ua.pomo.catalog.api.{
-  CatalogFs2Grpc,
-  CreateCategoryRequest,
-  CreateModelRequest,
-  GetModelRequest,
-  ListModelsRequest
-}
-import ua.pomo.catalog.app.{ApiName, CatalogImpl, Converters}
-import ApiName._
+import ua.pomo.catalog.api.{CatalogFs2Grpc, CreateModelRequest, GetModelRequest, ListModelsRequest}
+import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ModelServiceImpl}
+import ua.pomo.catalog.app.{ApiName, CatalogImpl}
 import ua.pomo.catalog.domain.category._
+import ua.pomo.catalog.domain.image.ImageListId
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.shared.Generators
-import Generators.ToLazyListOps
-import io.grpc.{Metadata, Status, StatusException}
-import squants.market.{Money, USD}
-import ua.pomo.catalog.domain.image.{ImageList, ImageListDisplayName, ImageListId}
+import ua.pomo.catalog.shared.Generators.ToLazyListOps
 
 import java.util.UUID
-import scala.util.chaining.scalaUtilChainingOps
 
 class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
   private val config = CatalogApiConfig(5)
@@ -109,7 +101,7 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
       10,
       Some(api.ImageList(ImageListName(ImageListId(UUID.randomUUID())).toNameString))
     )
-    val req2 = CreateModelRequest(ModelsName(Some(CategoryUUID(UUID.randomUUID()))).toNameString, Some(modelReq))
+    val req2 = CreateModelRequest(ModelsName(Some(CategoryUUID(UUID.randomUUID()))).toNameString, Some(modelReq2))
     noException should be thrownBy impl.createModel(req2, null).unsafeRunSync()
   }
 }

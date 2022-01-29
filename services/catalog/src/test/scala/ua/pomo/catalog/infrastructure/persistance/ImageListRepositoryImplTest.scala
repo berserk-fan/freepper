@@ -1,6 +1,8 @@
 package ua.pomo.catalog.infrastructure.persistance
 
+import cats.data.NonEmptyList
 import doobie.ConnectionIO
+import ua.pomo.catalog.domain.image.ImageListWhere.IdsIn
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.infrastructure.persistance.ImageListRepositoryImpl.Queries
 import ua.pomo.catalog.shared.{DbUnitTestSuite, Generators}
@@ -13,9 +15,9 @@ class ImageListRepositoryImplTest extends DbUnitTestSuite {
 
   test("queries") {
     val id = ImageListId(UUID.randomUUID())
+    val id2 = ImageListId(UUID.randomUUID())
     val displayName = ImageListDisplayName("qq1")
-    check(Queries.selectImageList(id))
-    check(Queries.selectImages(id))
+    check(Queries.findImageList(IdsIn(NonEmptyList.of(id, id2))))
     check(Queries.createImageList(displayName))
     check(Queries.upsertImage)
     check(Queries.createMembership)
