@@ -5,7 +5,6 @@ import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.decoder
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import ua.pomo.catalog.optics.uuid
 
 import java.util.UUID
 
@@ -40,16 +39,18 @@ object image {
   @derive(eqv, show)
   case class ImageListUpdate(id: ImageListId, displayName: Option[ImageListDisplayName], images: Option[List[Image]])
 
-  sealed trait ImageListWhere
-  object ImageListWhere {
-    final case class IdsIn(ids: NonEmptyList[ImageListId]) extends ImageListWhere
+  case class ImageListQuery(pageToken: PageToken.NonEmpty, selector: ImageListSelector)
+
+  sealed trait ImageListSelector
+  object ImageListSelector {
+    final case class IdsIn(ids: NonEmptyList[ImageListId]) extends ImageListSelector
   }
 
   trait ImageListRepository[F[_]] {
     def create(imageList: ImageList): F[ImageListId]
     def get(id: ImageListId): F[ImageList]
     def find(id: ImageListId): F[Option[ImageList]]
-    def findAll(where: ImageListWhere): F[List[ImageList]]
+    def query(query: ImageListQuery): F[List[ImageList]]
     def update(imageList: ImageListUpdate): F[Int]
     def delete(imageListId: ImageListId): F[Int]
   }

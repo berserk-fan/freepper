@@ -16,7 +16,7 @@ object ApiName {
   case object CategoriesName extends ApiName
   case class CategoryName(categoryId: CategoryUUID) extends ApiName
   case class ModelsName(categoryId: Option[CategoryUUID]) extends ApiName
-  case class ModelName(categoryId: Option[CategoryUUID], modelId: ModelUUID) extends ApiName
+  case class ModelName(categoryId: Option[CategoryUUID], modelId: ModelId) extends ApiName
   case class ImageListName(id: ImageListId) extends ApiName
 
   import Parsers.parseAllToEither
@@ -59,7 +59,7 @@ object ApiName {
     private def uuidStr: Parser[String] = "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b".r
     private def uuid: Parser[UUID] = uuidStr ^^ UUID.fromString
     private def categoryUUID = uuid ^^ CategoryUUID.apply
-    private def modelUUID = uuid ^^ ModelUUID.apply
+    private def modelUUID = uuid ^^ ModelId.apply
     private def imageListId = uuid ^^ ImageListId.apply
   }
 

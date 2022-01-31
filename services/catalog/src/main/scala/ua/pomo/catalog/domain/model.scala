@@ -13,7 +13,7 @@ import java.util.UUID
 object model {
   @derive(eqv, show, uuid)
   @newtype
-  case class ModelUUID(value: UUID)
+  case class ModelId(value: UUID)
 
   @derive(eqv, show)
   @newtype
@@ -36,7 +36,7 @@ object model {
   case class ModelMinimalPrice(value: Money)
 
   @derive(eqv, show)
-  case class Model(uuid: ModelUUID,
+  case class Model(uuid: ModelId,
                    readableId: ModelReadableId,
                    categoryId: CategoryUUID,
                    displayName: ModelDisplayName,
@@ -51,7 +51,7 @@ object model {
                          imageListId: ImageListId)
 
   @derive(eqv, show)
-  case class UpdateModel(id: ModelUUID,
+  case class UpdateModel(id: ModelId,
                          readableId: Option[ModelReadableId],
                          categoryId: Option[CategoryUUID],
                          displayName: Option[ModelDisplayName],
@@ -59,34 +59,34 @@ object model {
                          imageListId: Option[ImageListId])
 
   @derive(eqv, show)
-  case class FindModel(categoryUUID: CategoryUUID, page: PageToken.NotEmpty)
+  case class FindModel(categoryUUID: CategoryUUID, page: PageToken.NonEmpty)
 
   @derive(eqv,show)
   case class FindModelResponse(models: List[Model], nextPageToken: PageToken)
 
   trait ModelRepository[F[_]] {
-    def create(model: CreateModel): F[ModelUUID]
+    def create(model: CreateModel): F[ModelId]
 
-    def get(id: ModelUUID): F[Model]
+    def get(id: ModelId): F[Model]
 
-    def find(id: ModelUUID): F[Option[Model]]
+    def find(id: ModelId): F[Option[Model]]
 
     def findAll(req: FindModel): F[List[Model]]
 
     def update(req: UpdateModel): F[Int]
 
-    def delete(id: ModelUUID): F[Unit]
+    def delete(id: ModelId): F[Unit]
   }
 
   trait ModelService[F[_]] {
     def create(category: CreateModel): F[Model]
 
-    def get(id: ModelUUID): F[Model]
+    def get(id: ModelId): F[Model]
 
     def findAll(req: FindModel): F[FindModelResponse]
 
     def update(req: UpdateModel): F[Model]
 
-    def delete(id: ModelUUID): F[Unit]
+    def delete(id: ModelId): F[Unit]
   }
 }

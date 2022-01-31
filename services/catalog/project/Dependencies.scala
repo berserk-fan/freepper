@@ -10,7 +10,7 @@ object Dependencies {
     val javaxCrypto = "1.0.1"
     val fs2         = "3.1.3"
     val log4cats    = "2.1.1"
-    val monocle     = "3.1.0"
+    val monocle     = "3.0.0-M6"
     val newtype     = "0.4.4"
     val refined     = "0.9.28"
     val redis4cats  = "1.0.0"
@@ -79,7 +79,8 @@ object Dependencies {
 
     val newtype = "io.estatico" %% "newtype" % V.newtype
 
-    val monocleCore = "dev.optics" %% "monocle-core" % V.monocle
+    val monocleCore = "com.github.julien-truffaut"  %%  "monocle-core" % V.monocle
+    val monocleMacro = "com.github.julien-truffaut"  %%  "monocle-macro" % V.monocle
 
     val parserCombinators = "org.scala-lang.modules" %% "scala-parser-combinators" % V.parserCombinators
 

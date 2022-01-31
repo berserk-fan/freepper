@@ -2,7 +2,8 @@ package ua.pomo.catalog.infrastructure.persistance
 
 import cats.data.NonEmptyList
 import doobie.ConnectionIO
-import ua.pomo.catalog.domain.image.ImageListWhere.IdsIn
+import ua.pomo.catalog.domain.PageToken
+import ua.pomo.catalog.domain.image.ImageListSelector.IdsIn
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.infrastructure.persistance.ImageListRepositoryImpl.Queries
 import ua.pomo.catalog.shared.{DbUnitTestSuite, Generators}
@@ -17,7 +18,7 @@ class ImageListRepositoryImplTest extends DbUnitTestSuite {
     val id = ImageListId(UUID.randomUUID())
     val id2 = ImageListId(UUID.randomUUID())
     val displayName = ImageListDisplayName("qq1")
-    check(Queries.findImageList(IdsIn(NonEmptyList.of(id, id2))))
+    check(Queries.findImageList(ImageListQuery(PageToken.NonEmpty(10, 5), IdsIn(NonEmptyList.of(id, id2)))))
     check(Queries.createImageList(displayName))
     check(Queries.upsertImage)
     check(Queries.createMembership)
@@ -27,7 +28,7 @@ class ImageListRepositoryImplTest extends DbUnitTestSuite {
 
   Seq(postgres, inMemory).foreach { impl =>
     test(s"create get contract ${impl.getClass.getSimpleName}") {
-      forAll(Generators.ImageList.self) { imageList =>
+      forAll(Generators.ImageList.gen) { imageList =>
         val dbId = impl.create(imageList).trRun()
         val added = impl.get(dbId).trRun()
         added.copy(images = List()) should equal (imageList.copy(id = dbId, images = List()))
@@ -37,7 +38,7 @@ class ImageListRepositoryImplTest extends DbUnitTestSuite {
     }
 
     test(s"create find delete find ${impl.getClass.getSimpleName}") {
-      forAll(Generators.ImageList.self) { imageList =>
+      forAll(Generators.ImageList.gen) { imageList =>
         val dbId = impl.create(imageList).trRun()
         impl.find(dbId).trRun() shouldBe defined
         impl.delete(dbId).trRun()
@@ -51,7 +52,7 @@ class ImageListRepositoryImplTest extends DbUnitTestSuite {
         case _ =>  false
       }
       forAll(Generators.ImageList.update.filter(nonEmptyUpdate)) { update =>
-        val imageList = Generators.ImageList.self.sample.get
+        val imageList = Generators.ImageList.gen.sample.get
 
         val id = impl.create(imageList).trRun()
         impl.update(update.copy(id=id)).trRun()

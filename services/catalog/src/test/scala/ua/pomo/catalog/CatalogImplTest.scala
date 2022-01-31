@@ -33,7 +33,7 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
     val categoryId = CategoryUUID(UUID.randomUUID())
     val totalModels = 10
     Generators.Model
-      .create(ImageListId(UUID.randomUUID()))
+      .createGen(ImageListId(UUID.randomUUID()))
       .map(_.copy(categoryId = categoryId))
       .toLazyList
       .take(totalModels)
@@ -64,12 +64,12 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
   test("get model") {
     val (_, modelService, impl) = makeImpls
     val ex = intercept[StatusException] {
-      val name = ModelName(Some(CategoryUUID(UUID.randomUUID())), ModelUUID(UUID.randomUUID())).toNameString
+      val name = ModelName(Some(CategoryUUID(UUID.randomUUID())), ModelId(UUID.randomUUID())).toNameString
       impl.getModel(GetModelRequest(name), null).unsafeRunSync()
     }
     ex.getStatus.getCode should equal(Status.Code.NOT_FOUND)
 
-    val model = modelService.create(Generators.Model.create(ImageListId(UUID.randomUUID())).sample.get).unsafeRunSync()
+    val model = modelService.create(Generators.Model.createGen(ImageListId(UUID.randomUUID())).sample.get).unsafeRunSync()
     noException should be thrownBy impl
       .getModel(GetModelRequest(ModelName(Some(model.categoryId), model.uuid).toNameString), null)
       .unsafeRunSync()

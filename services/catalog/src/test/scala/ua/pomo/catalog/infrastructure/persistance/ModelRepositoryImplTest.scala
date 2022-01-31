@@ -18,25 +18,25 @@ class ModelRepositoryImplTest extends DbUnitTestSuite {
   private val modelInMemory = ModelRepositoryImpl.makeInMemory[ConnectionIO].trRun()
 
   test("queries") {
-    val modelId = ModelUUID(UUID.randomUUID())
+    val modelId = ModelId(UUID.randomUUID())
     val categoryId = CategoryUUID(UUID.randomUUID())
     val imageListId = ImageListId(UUID.randomUUID())
     check(Queries.getModel(modelId))
     check(Queries.find(categoryId, 10, 0))
     check(Queries.delete(modelId))
-    check(Queries.create(Generators.Model.create(imageListId).sample.get))
-    check(Queries.update(Generators.Model.update(imageListId, categoryId).sample.get))
+    check(Queries.create(Generators.Model.createGen(imageListId).sample.get))
+    check(Queries.update(Generators.Model.updateGen(imageListId, categoryId).sample.get))
   }
 
   Seq(modelInMemory, modelPostgres).foreach { modelRepo =>
     test(s"create get delete flow ${modelRepo.getClass.getSimpleName}") {
-      val category = Generators.Category.self.sample.get
+      val category = Generators.Category.gen.sample.get
       val categoryId = categoryRepo.create(category).trRun()
 
-      val imageListId1 = imageListRepo.create(Generators.ImageList.self.sample.get).trRun()
+      val imageListId1 = imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
       val imageList1 = imageListRepo.get(imageListId1).trRun()
 
-      forAll(Generators.Model.create(imageListId1)) { createModel1 =>
+      forAll(Generators.Model.createGen(imageListId1)) { createModel1 =>
         val createModel = createModel1.copy(categoryId = categoryId)
 
         val id = modelRepo.create(createModel).trRun()
@@ -53,19 +53,19 @@ class ModelRepositoryImplTest extends DbUnitTestSuite {
     }
 
     test(s"update ${modelRepo.getClass.getSimpleName}") {
-      val category1 = Generators.Category.self.sample.get
+      val category1 = Generators.Category.gen.sample.get
       val categoryId1 = categoryRepo.create(category1).trRun()
-      val category2 = Generators.Category.self.sample.get
+      val category2 = Generators.Category.gen.sample.get
       val categoryId2 = categoryRepo.create(category2).trRun()
 
-      val imageListId1 = imageListRepo.create(Generators.ImageList.self.sample.get).trRun()
+      val imageListId1 = imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
       val imageList1 = imageListRepo.get(imageListId1).trRun()
-      val imageListId2 = imageListRepo.create(Generators.ImageList.self.sample.get).trRun()
+      val imageListId2 = imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
 
-      val createModel = Generators.Model.create(imageListId1).sample.get.copy(categoryId = categoryId1, imageListId = imageList1.id)
+      val createModel = Generators.Model.createGen(imageListId1).sample.get.copy(categoryId = categoryId1, imageListId = imageList1.id)
       val modelId = modelRepo.create(createModel).trRun()
 
-      forAll(Generators.Model.update(imageListId2, categoryId2)) { update =>
+      forAll(Generators.Model.updateGen(imageListId2, categoryId2)) { update =>
         modelRepo.update(update.copy(id = modelId)).trRun()
         val model = modelRepo.get(modelId).trRun()
 

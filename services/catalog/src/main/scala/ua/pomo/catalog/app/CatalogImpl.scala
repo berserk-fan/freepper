@@ -86,7 +86,7 @@ object CatalogImpl {
     }
 
     private def applyDefaults(request: FindModel): FindModel = request.copy(page = applyDefaults(request.page))
-    private def applyDefaults(pageToken: PageToken.NotEmpty): PageToken.NotEmpty = {
+    private def applyDefaults(pageToken: PageToken.NonEmpty): PageToken.NonEmpty = {
       val newSize = if (pageToken.size == 0) config.defaultPageSize.toLong else pageToken.size
       pageToken.copy(size = newSize)
     }

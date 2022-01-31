@@ -6,7 +6,7 @@ import org.scalatest.matchers.should.Matchers
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.image.ImageListId
-import ua.pomo.catalog.domain.model.{ModelReadableId, ModelUUID}
+import ua.pomo.catalog.domain.model.{ModelReadableId, ModelId}
 
 import java.util.UUID
 
@@ -27,7 +27,7 @@ class ApiNameTest extends AnyFunSuite with EitherValues with Matchers {
     )
 
     ApiName.model(s"categories/$Uuid/models/$Uuid2").value should equal(
-      ModelName(Some(CategoryUUID(Uuid)), ModelUUID(Uuid2))
+      ModelName(Some(CategoryUUID(Uuid)), ModelId(Uuid2))
     )
 
     ApiName.imageList(s"imageLists/$Uuid").value should equal(

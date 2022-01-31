@@ -13,7 +13,7 @@ private class ModelServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: 
                                                                             repository: ModelRepository[G])
     extends ModelService[F] {
   def create(model: CreateModel): F[Model] = repository.create(model).flatMap(repository.get).toF
-  def delete(id: ModelUUID): F[Unit] = repository.delete(id).toF
+  def delete(id: ModelId): F[Unit] = repository.delete(id).toF
   def findAll(req: FindModel): F[FindModelResponse] =
     repository
       .findAll(req)
@@ -21,13 +21,13 @@ private class ModelServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: 
         val nextPage = if (models.length != req.page.size) {
           PageToken.Empty
         } else {
-          PageToken.NotEmpty(req.page.size, req.page.size + req.page.offset)
+          PageToken.NonEmpty(req.page.size, req.page.size + req.page.offset)
         }
         FindModelResponse(models, nextPage)
       }
       .toF
 
-  def get(id: ModelUUID): F[Model] =
+  def get(id: ModelId): F[Model] =
     repository
       .find(id)
       .flatMap {

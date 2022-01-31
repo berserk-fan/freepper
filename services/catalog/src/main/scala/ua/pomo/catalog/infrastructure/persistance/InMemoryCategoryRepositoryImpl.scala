@@ -6,6 +6,8 @@ import ua.pomo.catalog.domain.category._
 
 import java.util.UUID
 import scala.collection.mutable
+import monocle.syntax.all._
+import shapeless._
 
 class InMemoryCategoryRepositoryImpl[F[_]: MonadCancelThrow] private[persistance] (
     ref: Ref[F, Map[CategoryUUID, Category]])
@@ -25,6 +27,9 @@ class InMemoryCategoryRepositoryImpl[F[_]: MonadCancelThrow] private[persistance
   override def findAll(): F[List[Category]] = ref.get.map(_.values.toList)
 
   override def update(req: UpdateCategory): F[Int] = ref.modify { map =>
+    object updateObj extends InMemoryUpdaterPoly[Category] {
+      val a: Res[CategoryDisplayName] = gen(_.focus(_.displayName))
+    }
     map.get(req.id).fold((map, 0)) { category =>
       var updated = category.copy()
       req.readableId.foreach { rId =>

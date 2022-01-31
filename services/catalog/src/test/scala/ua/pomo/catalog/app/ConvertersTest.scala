@@ -20,7 +20,7 @@ class ConvertersTest extends AnyFunSuite with Matchers with EitherValues {
   test("list models request") {
     val listModelsRequest = ListModelsRequest(s"categories/$Uuid/models", 10, "")
     Converters.toDomain(listModelsRequest).toEither.value should equal(
-      FindModel(CategoryUUID(Uuid), PageToken.NotEmpty(10, 0))
+      FindModel(CategoryUUID(Uuid), PageToken.NonEmpty(10, 0))
     )
 
     val listModelsRequest2 = ListModelsRequest(
@@ -28,7 +28,7 @@ class ConvertersTest extends AnyFunSuite with Matchers with EitherValues {
       10,
       encode("""{"size": 10, "offset": 20}"""))
     Converters.toDomain(listModelsRequest2).toEither.value should equal(
-      FindModel(CategoryUUID(Uuid), PageToken.NotEmpty(10, 20))
+      FindModel(CategoryUUID(Uuid), PageToken.NonEmpty(10, 20))
     )
   }
 }

@@ -7,7 +7,10 @@ import doobie._
 import io.circe.{Decoder, Json, parser}
 import io.estatico.newtype.Coercible
 import io.estatico.newtype.ops.toCoercibleIdOps
+import monocle.AppliedLens
 import org.postgresql.util.PGobject
+import shapeless.Poly1
+import ua.pomo.catalog.domain.product.Product
 
 package object persistance {
   implicit def newTypePut[B, A](implicit ev: Coercible[B, A], evp: Put[A]): Put[B] = evp.contramap[B](ev(_))

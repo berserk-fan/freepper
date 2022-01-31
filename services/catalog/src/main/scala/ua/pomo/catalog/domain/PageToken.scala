@@ -10,5 +10,5 @@ object PageToken {
   @derive(eqv, show)
   case object Empty extends PageToken
   @derive(eqv, show, encoder, decoder)
-  case class NotEmpty(size: Long, offset: Long) extends PageToken
+  case class NonEmpty(size: Long, offset: Long) extends PageToken
 }

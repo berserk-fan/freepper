@@ -26,13 +26,13 @@ class CategoryRepositoryImplTest extends DbUnitTestSuite with AsyncTestSuite wit
         check(Queries.updateCategory(update))
       }
 
-      forAll(Generators.Category.self) { cat: Category =>
+      forAll(Generators.Category.gen) { cat: Category =>
         check(Queries.insertCategory(cat))
       }
     }
 
     test(s"api ${impl.getClass.getSimpleName}") {
-      forAll(Generators.Category.self) { cat =>
+      forAll(Generators.Category.gen) { cat =>
         val found = impl.create(cat)
           .flatMap(impl.get)
           .trRun()

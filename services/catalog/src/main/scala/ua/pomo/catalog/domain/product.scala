@@ -1,26 +1,22 @@
 package ua.pomo.catalog.domain
 
+import cats.data.NonEmptyList
 import derevo.cats.{eqv, show}
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import squants.market.Money
 import ua.pomo.catalog.domain.image.{Image, ImageList, ImageListId}
-import ua.pomo.catalog.domain.model.ModelUUID
+import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 
 import java.util.UUID
 
 object product {
   @derive(eqv, show)
   @newtype
-  case class ProductUUID(value: UUID)
+  case class ProductId(value: UUID)
 
   @derive(eqv, show)
   @newtype
   case class ProductDisplayName(value: String)
-
-  @derive(eqv, show)
-  @newtype
-  case class ProductDescription(value: String)
 
   @derive(eqv, show)
   @newtype
@@ -46,65 +42,74 @@ object product {
 
   @derive(eqv, show)
   @newtype
-  case class ProductStandardPrice(value: Money)
+  case class ProductStandardPrice(value: Double)
 
   @derive(eqv, show)
   @newtype
-  case class ProductPromoPrice(value: Money)
+  case class ProductPromoPrice(value: Double)
 
   @derive(eqv, show)
-  case class ProductPrice(standard: ProductStandardPrice, promo: ProductPromoPrice)
+  case class ProductPrice(standard: ProductStandardPrice, promo: Option[ProductPromoPrice])
 
   @derive(eqv, show)
-  case class Product(
-      uuid: ProductUUID,
-      modelId: ModelUUID,
-      displayName: ProductDisplayName,
-      fabric: Fabric,
-      size: Size,
-      imageList: ImageList,
-      price: ProductPrice
-  )
+  case class Product(id: ProductId,
+                     modelId: ModelId,
+                     displayName: ProductDisplayName,
+                     fabric: Fabric,
+                     size: Size,
+                     imageList: ImageList,
+                     price: ProductPrice)
+
+  object Product {
+    def createDisplayName(m: ModelDisplayName, f: FabricDisplayName, s: SizeDisplayName): ProductDisplayName = {
+      ProductDisplayName(m.value + f.value + s.value)
+    }
+  }
 
   @derive(eqv, show)
-  case class CreateProduct(
-      id: ProductUUID,
-      modelId: ModelUUID,
-      imageListId: ImageListId,
-      displayName: ProductDisplayName,
-      description: ProductDescription,
-      fabric: Fabric,
-      size: Size,
-      price: ProductPrice
-  )
+  case class CreateProduct(id: ProductId,
+                            modelId: ModelId,
+                           imageListId: ImageListId,
+                           fabricId: FabricUUID,
+                           sizeId: SizeUUID,
+                           priceUsd: ProductStandardPrice,
+                           promoPriceUsd: Option[ProductPromoPrice])
+
+  case class ProductQuery(pageToken: PageToken.NonEmpty, selector: ProductSelector)
+
+  sealed trait ProductSelector
+
+  object ProductSelector {
+    final case object All extends ProductSelector
+
+    final case class IdIs(id: ProductId) extends ProductSelector
+
+    final case class IdIn(ids: NonEmptyList[ProductId]) extends ProductSelector
+
+    final case class ModelIs(modelId: ModelId) extends ProductSelector
+  }
 
   @derive(eqv, show)
-  case class FindProduct(modelId: ModelUUID, pageToken: PageToken)
-  @derive(eqv, show)
-  case class UpdateProduct(
-      uuid: ProductUUID,
-      modelId: Option[ModelUUID],
-      displayName: Option[ProductDisplayName],
-      description: Option[ProductDescription],
-      fabric: Option[Fabric],
-      size: Option[Size],
-      imageList: Option[ImageListId],
-      price: Option[ProductStandardPrice],
-      promoPrice: Option[ProductPromoPrice]
-  )
+  case class UpdateProduct(id: ProductId,
+                           modelId: Option[ModelId],
+                           imageList: Option[ImageListId],
+                           fabric: Option[FabricUUID],
+                           size: Option[SizeUUID],
+                           price: Option[ProductStandardPrice],
+                           promoPrice: Option[Option[ProductPromoPrice]])
 
   trait ProductRepository[F[_]] {
-    def create(model: CreateProduct): F[ProductUUID]
+    def create(command: CreateProduct): F[ProductId]
 
-    def get(id: ProductUUID): F[Product]
+    def get(id: ProductId): F[Product]
 
-    def find(id: ProductUUID): F[Option[Product]]
+    def find(id: ProductId): F[Option[Product]]
 
-    def findAll(req: FindProduct): F[List[Product]]
+    def query(query: ProductQuery): F[List[Product]]
 
-    def update(req: UpdateProduct): F[Int]
+    def update(command: UpdateProduct): F[Int]
 
-    def delete(id: ProductUUID): F[Unit]
+    def delete(id: ProductId): F[Unit]
   }
 
 }

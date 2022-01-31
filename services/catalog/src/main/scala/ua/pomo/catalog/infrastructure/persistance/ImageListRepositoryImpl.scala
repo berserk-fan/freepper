@@ -6,8 +6,9 @@ import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId}
 import doobie._
 import doobie.implicits._
 import doobie.postgres.implicits._
+import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.error.NotFound
-import ua.pomo.catalog.domain.image.ImageListWhere.IdsIn
+import ua.pomo.catalog.domain.image.ImageListSelector.IdsIn
 import ua.pomo.catalog.domain.image._
 
 import java.util.UUID
@@ -30,11 +31,13 @@ object ImageListRepositoryImpl {
       } yield generatedId
 
     override def find(id: ImageListId): ConnectionIO[Option[ImageList]] = {
-      Queries.findImageList(IdsIn(NonEmptyList.of(id))).option
+      Queries
+        .findImageList(ImageListQuery(PageToken.NonEmpty(2, 0), ImageListSelector.IdsIn(NonEmptyList.of(id))))
+        .option
     }
 
-    def findAll(where: ImageListWhere): doobie.ConnectionIO[List[ImageList]] = {
-      Queries.findImageList(where).to[List]
+    override def query(query: ImageListQuery): doobie.ConnectionIO[List[ImageList]] = {
+      Queries.findImageList(query).to[List]
     }
 
     override def get(id: ImageListId): ConnectionIO[ImageList] = {
@@ -64,14 +67,14 @@ object ImageListRepositoryImpl {
   }
 
   private[persistance] object Queries {
-    private def compile(alias: String, where: ImageListWhere): Fragment = {
+    private def compile(alias: String, where: ImageListSelector): Fragment = {
       val im = Fragment.const0(alias)
       where match {
-        case ImageListWhere.IdsIn(ids) => Fragments.in(fr"$im.id", ids)
+        case ImageListSelector.IdsIn(ids) => Fragments.in(fr"$im.id", ids)
       }
     }
 
-    def findImageList(where: ImageListWhere): Query0[ImageList] = {
+    def findImageList(query: ImageListQuery): Query0[ImageList] = {
       implicit val readImages: Get[List[Image]] = jsonAggListJson[Image]
 
       sql"""
@@ -85,8 +88,11 @@ object ImageListRepositoryImpl {
             from image_lists il
                 left join image_list_member ilm on il.id = ilm.image_list_id
                 left join images i on ilm.image_id = i.id
-            where ${compile("il", where)}
+            where ${compile("il", query.selector)}
             group by il.id
+            order by il.create_time
+            limit ${query.pageToken.size}
+            offset ${query.pageToken.offset}
          """
         .query[ImageList]
     }

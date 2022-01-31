@@ -29,7 +29,7 @@ object Converters {
     Base64.getEncoder.encodeToString {
       val res = pageToken match {
         case PageToken.Empty              => ""
-        case x @ PageToken.NotEmpty(_, _) => Encoder[PageToken.NotEmpty].apply(x).show
+        case x @ PageToken.NonEmpty(_, _) => Encoder[PageToken.NonEmpty].apply(x).show
       }
       res.getBytes(utf8)
     }
@@ -39,9 +39,9 @@ object Converters {
     val categoryId = ApiName.models(listModels.parent).toOption.get.categoryId.get
     Try(new String(Base64.getDecoder.decode(listModels.pageToken), utf8))
       .flatMap {
-        case "" => Success(PageToken.NotEmpty(listModels.pageSize.toLong, 0L))
+        case "" => Success(PageToken.NonEmpty(listModels.pageSize.toLong, 0L))
         case s =>
-          parser.parse(s).toTry.flatMap(Decoder[PageToken.NotEmpty].decodeJson(_).toTry)
+          parser.parse(s).toTry.flatMap(Decoder[PageToken.NonEmpty].decodeJson(_).toTry)
       }
       .map(FindModel(categoryId, _))
   }

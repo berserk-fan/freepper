@@ -79,6 +79,7 @@ lazy val root = (project in file("."))
       Libraries.refinedCats,
       Libraries.squants,
       Libraries.monocleCore,
+      Libraries.monocleMacro,
       Libraries.postgresJdbcDriver,
       Libraries.parserCombinators,
       CompilerPlugin.kindProjector,
