@@ -19,10 +19,8 @@ Compile / managedSourceDirectories += baseDirectory.value / "target" / "scala-2.
 
 Compile / PB.targets := scalapbCodeGenerators.value
   .map(_.copy(outputPath = (Compile / sourceManaged).value / "scala"))
-  .:+(scalapb.validate.gen(GeneratorOption.FlatPackage) -> (Compile / sourceManaged).value / "scala": protocbridge.Target)
-
-// add main resources to Tests
-Test / unmanagedResourceDirectories += baseDirectory.value / "src/main/resources"
+  .:+(
+    scalapb.validate.gen(GeneratorOption.FlatPackage) -> (Compile / sourceManaged).value / "scala": protocbridge.Target)
 
 //docker
 enablePlugins(DockerPlugin)
@@ -56,6 +54,7 @@ lazy val root = (project in file("."))
       Libraries.scalaPbCommonProtosProtobuf,
       Libraries.scalaPbCommonProtosScala,
       Libraries.scalaPbValidation,
+      Libraries.gprcServerReflection,
       Libraries.doobieCore,
       Libraries.doobiePostgres,
       Libraries.doobieScalaTest,

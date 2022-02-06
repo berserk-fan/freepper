@@ -20,7 +20,7 @@ message Price {
 
 message Product {
   option (google.api.resource) = {
-    type: "api.pomo.in.ua/Product"
+    type: "api.pomo.ua/Product"
     pattern: "categories/{category}/models/{model}/products/{product}"
   };
   string name = 1;
@@ -36,7 +36,7 @@ message Product {
 message ListProductsRequest {
   // The parent resource name, for example, "categories/category1/model/modelId"
   string parent = 1 [(google.api.resource_reference) = {
-    type: "api.pomo.in.ua/Model"
+    type: "api.pomo.ua/Model"
   }];
 
   // The maximum number of items to return.
@@ -61,7 +61,7 @@ message GetProductRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-      type: "api.pomo.in.ua/Product"
+      type: "api.pomo.ua/Product"
     }];
 }
 

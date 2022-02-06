@@ -3,8 +3,8 @@ package ua.pomo.catalog.infrastructure.persistance
 import doobie.ConnectionIO
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.image.ImageListRepository
-import ua.pomo.catalog.domain.product.{ProductQuery, ProductSelector, ProductId}
-import ua.pomo.catalog.shared.DbUnitTestSuite
+import ua.pomo.catalog.domain.product.{ProductId, ProductQuery, ProductSelector}
+import ua.pomo.catalog.shared.{DbUnitTestSuite, Generators}
 
 import java.util.UUID
 
@@ -24,8 +24,13 @@ class ProductRepositoryImplTest extends DbUnitTestSuite {
   }
 
   Seq(productPostgres, productInMemory).foreach { impl =>
-    test("create get delete get") {
-
+    test("create get delete get " ++ impl.getClass.getSimpleName) {
+      forAll(Generators.Product.createCommand) { create =>
+        val id = impl.create(create).trRun()
+        impl.find(id).trRun() shouldBe defined
+        impl.delete(id).trRun()
+        impl.find(id).trRun() should equal(None)
+      }
     }
   }
 }

@@ -1,5 +1,11 @@
+version: '3.9'
+networks:
+  catalog:
+    external: true
 services:
   postgres:
+    networks:
+      - catalog
     restart: always
     image: postgres:14-alpine
     ports:
@@ -9,7 +15,7 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_PASSWORD=${DB_PASS}
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - ./volume/data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} --dbname=${DB_NAME}"]
       interval: 5s

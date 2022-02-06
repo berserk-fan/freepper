@@ -12,8 +12,8 @@ import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
 
-class ModelRepositoryImpl private(imageListRepository: ImageListRepository[ConnectionIO])
-  extends ModelRepository[ConnectionIO] {
+class ModelRepositoryImpl private (imageListRepository: ImageListRepository[ConnectionIO])
+    extends ModelRepository[ConnectionIO] {
 
   import ModelRepositoryImpl.Queries
 
@@ -52,7 +52,7 @@ class ModelRepositoryImpl private(imageListRepository: ImageListRepository[Conne
 object ModelRepositoryImpl {
   def apply(impl: ImageListRepository[ConnectionIO]): ModelRepository[ConnectionIO] = new ModelRepositoryImpl(impl)
 
-  def makeInMemory[F[_] : Sync]: F[ModelRepository[F]] = {
+  def makeInMemory[F[_]: Sync]: F[ModelRepository[F]] = {
     Ref[F]
       .of(Map[ModelId, Model]())
       .map(
@@ -111,8 +111,9 @@ object ModelRepositoryImpl {
         limit $limit
         offset $offset
       """
-        .query[ModelId :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice ::
-          ImageListId :: ImageListDisplayName :: List[Image] :: HNil]
+        .query[
+          ModelId :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice ::
+            ImageListId :: ImageListDisplayName :: List[Image] :: HNil]
         .map { res =>
           val modelPart_imageListPart = res.split(Nat._6)
           val imageList = Generic[ImageList].from(modelPart_imageListPart._2)

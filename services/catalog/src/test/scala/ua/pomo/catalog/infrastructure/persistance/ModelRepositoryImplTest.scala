@@ -30,7 +30,7 @@ class ModelRepositoryImplTest extends DbUnitTestSuite {
 
   Seq(modelInMemory, modelPostgres).foreach { modelRepo =>
     test(s"create get delete flow ${modelRepo.getClass.getSimpleName}") {
-      val category = Generators.Category.gen.sample.get
+      val category = Generators.Category.create.sample.get
       val categoryId = categoryRepo.create(category).trRun()
 
       val imageListId1 = imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
@@ -53,27 +53,28 @@ class ModelRepositoryImplTest extends DbUnitTestSuite {
     }
 
     test(s"update ${modelRepo.getClass.getSimpleName}") {
-      val category1 = Generators.Category.gen.sample.get
+      val category1 = Generators.Category.create.sample.get
       val categoryId1 = categoryRepo.create(category1).trRun()
-      val category2 = Generators.Category.gen.sample.get
+      val category2 = Generators.Category.create.sample.get
       val categoryId2 = categoryRepo.create(category2).trRun()
 
       val imageListId1 = imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
       val imageList1 = imageListRepo.get(imageListId1).trRun()
       val imageListId2 = imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
 
-      val createModel = Generators.Model.createGen(imageListId1).sample.get.copy(categoryId = categoryId1, imageListId = imageList1.id)
+      val createModel =
+        Generators.Model.createGen(imageListId1).sample.get.copy(categoryId = categoryId1, imageListId = imageList1.id)
       val modelId = modelRepo.create(createModel).trRun()
 
       forAll(Generators.Model.updateGen(imageListId2, categoryId2)) { update =>
         modelRepo.update(update.copy(id = modelId)).trRun()
         val model = modelRepo.get(modelId).trRun()
 
-        update.categoryId.foreach(_ should equal (model.categoryId))
-        update.description.foreach(_ should equal (model.description))
-        update.displayName.foreach(_ should equal (model.displayName))
-        update.readableId.foreach(_ should equal (model.readableId))
-        update.imageListId.foreach(_ should equal (model.imageList.id))
+        update.categoryId.foreach(_ should equal(model.categoryId))
+        update.description.foreach(_ should equal(model.description))
+        update.displayName.foreach(_ should equal(model.displayName))
+        update.readableId.foreach(_ should equal(model.readableId))
+        update.imageListId.foreach(_ should equal(model.imageList.id))
       }
     }
   }

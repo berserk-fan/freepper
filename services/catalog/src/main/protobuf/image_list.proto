@@ -12,7 +12,7 @@ message Image {
 
 message ImageList {
   option (google.api.resource) = {
-    type: "api.pomo.in.ua/ImageList"
+    type: "api.pomo.ua/ImageList"
     pattern: "image_lists/{image_list}"
   };
   string name = 1;
@@ -24,7 +24,7 @@ message GetImageListRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-      type: "api.pomo.in.ua/ImageList"
+      type: "api.pomo.ua/ImageList"
     }];
 }
 
@@ -32,7 +32,7 @@ message DeleteImageListRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-      type: "api.pomo.in.ua/ImageList"
+      type: "api.pomo.ua/ImageList"
     }];
 }
 

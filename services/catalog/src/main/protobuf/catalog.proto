@@ -13,6 +13,8 @@ import "product.proto";
 service Catalog {
   rpc CreateCategory (CreateCategoryRequest) returns (Category);
   rpc GetCategory (GetCategoryRequest) returns (Category);
+  rpc UpdateCategory (UpdateCategoryRequest) returns (Category);
+  rpc DeleteCategory (DeleteCategoryRequest) returns (google.protobuf.Empty);
 
   rpc CreateModel (CreateModelRequest) returns (Model);
   rpc GetModel (GetModelRequest) returns (Model);

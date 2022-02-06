@@ -4,15 +4,12 @@ package ua.pomo.catalog.api;
 
 import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
-
-message CreateCategoryRequest {
-  string parent = 1;
-  Category category = 2;
-}
+import "validate/validate.proto";
+import "google/protobuf/field_mask.proto";
 
 message Category {
   option (google.api.resource) = {
-    type: "api.pomo.in.ua/Category"
+    type: "api.pomo.ua/Category"
     pattern: "categories/{category}"
   };
   string name = 1;
@@ -20,13 +17,49 @@ message Category {
   string readableId = 3;
   string display_name = 4;
   string description = 5;
-//  Image image = 5;
+}
+
+message CreateCategoryRequest {
+  string parent = 1;
+  Category category = 2;
 }
 
 message GetCategoryRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-      type: "api.pomo.in.ua/Category"
+      type: "api.pomo.ua/Category"
     }];
+}
+
+message UpdateCategoryRequest {
+  Category category = 1;
+
+  // The list of fields to update.
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeleteCategoryRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.ua/Category"
+    }];
+}
+
+message ListCategoriesRequest {
+  // The parent resource name, for example, "categories/category1".
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      child_type: "api.pomo.ua/Category"
+    }];
+
+  // The maximum number of items to return.
+  int32 page_size = 2 [
+    (validate.rules).int32.gte = 0
+  ];
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
 }

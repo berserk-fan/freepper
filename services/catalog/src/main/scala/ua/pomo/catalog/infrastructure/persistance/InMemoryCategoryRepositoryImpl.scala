@@ -12,9 +12,15 @@ import shapeless._
 class InMemoryCategoryRepositoryImpl[F[_]: MonadCancelThrow] private[persistance] (
     ref: Ref[F, Map[CategoryUUID, Category]])
     extends CategoryRepository[F] {
-  override def create(category: Category): F[CategoryUUID] = ref.modify { map =>
+  override def create(category: CreateCategory): F[CategoryUUID] = ref.modify { map =>
     val catUUID = CategoryUUID(UUID.randomUUID())
-    (map + (catUUID -> category.copy(uuid = catUUID)), catUUID)
+    val category1 = Category(
+      catUUID,
+      category.readableId,
+      category.displayName,
+      category.description
+    )
+    (map + (catUUID -> category1), catUUID)
   }
 
   override def get(id: CategoryUUID): F[Category] = {

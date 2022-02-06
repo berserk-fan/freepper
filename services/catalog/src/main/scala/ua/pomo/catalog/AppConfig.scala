@@ -5,6 +5,7 @@ import cats.effect.Sync
 import pureconfig._
 import pureconfig.generic.auto._
 import cats.implicits._
+import com.typesafe.config.Config
 
 import java.io.File
 import java.nio.file.Files
@@ -27,22 +28,11 @@ final case class AppConfig(jdbc: JdbcDatabaseConfig, catalog: CatalogApiConfig, 
 object AppConfig {
   private val namespace = "pomo"
 
-  def loadDefault[F[_]: Sync]: F[AppConfig] =
+  def loadDefault[F[_]: Sync]: F[AppConfig] = {
     Sync[F]
-      .blocking(Source.fromResource("application.conf").mkString)
-      .flatMap(loadFromString[F](_))
-
-  private def loadFromString[F[_]: MonadThrow](configStr: String): F[AppConfig] = MonadThrow[F].fromEither {
-    ConfigSource
-      .string(configStr)
-      .at(namespace)
-      .load[AppConfig]
-      .leftMap(e => new Exception(e.prettyPrint()))
+      .blocking(ConfigSource.resources("application.conf"))
+      .map(_.at(namespace))
+      .map(_.load[AppConfig].leftMap(e => new Exception(e.prettyPrint())))
+      .flatMap(Sync[F].fromEither(_))
   }
-
-  //TODO: use blocking
-  def loadFromFile[F[_]: MonadThrow](file: File): F[AppConfig] =
-    MonadThrow[F]
-      .catchNonFatal(Files.readString(file.toPath))
-      .flatMap(loadFromString[F](_))
 }

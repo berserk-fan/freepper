@@ -3,17 +3,17 @@ package ua.pomo.catalog.app.programs
 import cats.arrow.FunctionK
 import cats.effect.{MonadCancelThrow, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
+import cats.~>
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.infrastructure.persistance.ModelRepositoryImpl
 
-private class ModelServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: FunctionK[G, F],
-                                                                            repository: ModelRepository[G])
+private class ModelServiceImpl[F[_]: Sync, G[_]: Sync] private (xa: G ~> F, repository: ModelRepository[G])
     extends ModelService[F] {
-  def create(model: CreateModel): F[Model] = repository.create(model).flatMap(repository.get).toF
-  def delete(id: ModelId): F[Unit] = repository.delete(id).toF
+  def create(model: CreateModel): F[Model] = repository.create(model).flatMap(repository.get).mapK(xa)
+  def delete(id: ModelId): F[Unit] = repository.delete(id).mapK(xa)
   def findAll(req: FindModel): F[FindModelResponse] =
     repository
       .findAll(req)
@@ -25,7 +25,7 @@ private class ModelServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: 
         }
         FindModelResponse(models, nextPage)
       }
-      .toF
+      .mapK(xa)
 
   def get(id: ModelId): F[Model] =
     repository
@@ -34,7 +34,7 @@ private class ModelServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: 
         case Some(value) => value.pure[G]
         case None        => NotFound("model", id).raiseError[G, Model]
       }
-      .toF
+      .mapK(xa)
 
   def update(req: UpdateModel): F[Model] =
     repository
@@ -46,11 +46,7 @@ private class ModelServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: 
           repository.get(req.id)
         }
       }
-      .toF
-
-  implicit class TransactOps[T](t: G[T]) {
-    def toF: F[T] = xa.apply(t)
-  }
+      .mapK(xa)
 }
 
 object ModelServiceImpl {

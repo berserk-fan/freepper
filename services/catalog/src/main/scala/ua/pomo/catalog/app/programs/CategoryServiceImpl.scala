@@ -3,22 +3,24 @@ package ua.pomo.catalog.app.programs
 import cats.arrow.FunctionK
 import cats.effect.{IO, MonadCancelThrow, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
+import cats.~>
 import doobie.{ConnectionIO, Transactor}
 import doobie.implicits._
 import ua.pomo.catalog.domain.category._
+import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.infrastructure.persistance.CategoryRepositoryImpl
 
-class CategoryServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: FunctionK[G, F],
-                                                                       repository: CategoryRepository[G])
+class CategoryServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: G ~> F, repository: CategoryRepository[G])
     extends CategoryService[F] {
   override def get(id: CategoryUUID): F[Category] = {
     repository
-      .get(id)
-      .toF
+      .find(id)
+      .flatMap(_.fold(NotFound("category", id).raiseError[G, Category])(_.pure[G]))
+      .mapK(xa)
   }
 
   override def findAll(): F[List[Category]] = {
-    repository.findAll().toF
+    repository.findAll().mapK(xa)
   }
 
   override def updateCategory(req: UpdateCategory): F[Category] = {
@@ -37,24 +39,20 @@ class CategoryServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: Funct
             .raiseError[G, Category]
         }
       }
-      .toF
+      .mapK(xa)
   }
 
   override def deleteCategory(id: CategoryUUID): F[Unit] = {
-    repository.delete(id).toF
+    repository.delete(id).mapK(xa)
   }
 
-  override def createCategory(category: Category): F[Category] = {
+  override def createCategory(category: CreateCategory): F[Category] = {
     repository
       .create(category)
       .flatMap { id =>
         repository.get(id)
       }
-      .toF
-  }
-
-  implicit class TransactOps[T](t: G[T]) {
-    def toF: F[T] = xa.apply(t)
+      .mapK(xa)
   }
 }
 

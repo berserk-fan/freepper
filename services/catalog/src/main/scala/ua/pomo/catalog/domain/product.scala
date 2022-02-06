@@ -68,7 +68,7 @@ object product {
 
   @derive(eqv, show)
   case class CreateProduct(id: ProductId,
-                            modelId: ModelId,
+                           modelId: ModelId,
                            imageListId: ImageListId,
                            fabricId: FabricUUID,
                            sizeId: SizeUUID,
@@ -112,4 +112,15 @@ object product {
     def delete(id: ProductId): F[Unit]
   }
 
+  trait ProductService[F[_]] {
+    def create(command: CreateProduct): F[Product]
+
+    def get(id: ProductId): F[Product]
+
+    def query(query: ProductQuery): F[List[Product]]
+
+    def update(command: UpdateProduct): F[Product]
+
+    def delete(id: ProductId): F[Unit]
+  }
 }

@@ -13,7 +13,8 @@ import shapeless._
 
 import java.util.UUID
 
-class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[ProductId, Product]]) extends ProductRepository[F] {
+class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[ProductId, Product]])
+    extends ProductRepository[F] {
   override def create(command: CreateProduct): F[ProductId] = ref.modify { map =>
     val id = ProductId(UUID.randomUUID())
     val res = Product(
@@ -37,9 +38,13 @@ class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[Product
 
   override def query(req: ProductQuery): F[List[Product]] = {
     val filter: Product => Boolean = req.selector match {
-      case ProductSelector.All => _ => true
+      case ProductSelector.All =>
+        _ =>
+          true
       case ProductSelector.IdIs(id) => _.id == id
-      case ProductSelector.IdIn(ids) => p => ids.exists(_ == p.id)
+      case ProductSelector.IdIn(ids) =>
+        p =>
+          ids.exists(_ == p.id)
       case ProductSelector.ModelIs(modelId) => _.modelId == modelId
     }
     ref.get.map(_.values.filter(filter).toList)
@@ -63,7 +68,7 @@ class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[Product
 
 object InMemoryProductRepositoryImpl {
   def apply[F[_]: Sync]: F[ProductRepository[F]] = {
-    Ref.of[F, Map[ProductId, Product]](Map()).map{ ref =>
+    Ref.of[F, Map[ProductId, Product]](Map()).map { ref =>
       new InMemoryProductRepositoryImpl[F](ref)
     }
   }

@@ -35,6 +35,7 @@ object Generators {
       Gen.option(description),
     ).mapN(UpdateCategory.apply)
 
+    val create: Gen[CreateCategory] = (readableId, displayName, description).mapN(CreateCategory.apply)
     val gen: Gen[Category] = (catId, readableId, displayName, description).mapN(category.Category.apply)
   }
 
@@ -107,7 +108,7 @@ object Generators {
         .mapN(product.Product.apply)
 
     private val imageListId = Gen.uuid.map(ImageListId.apply)
-    val create: Gen[CreateProduct] = (id, modelId, imageListId, fabricId, sizeId, standardPrice, promoPrice)
+    val createCommand: Gen[CreateProduct] = (id, modelId, imageListId, fabricId, sizeId, standardPrice, promoPrice)
       .mapN(CreateProduct.apply)
 
     val update: Gen[UpdateProduct] =

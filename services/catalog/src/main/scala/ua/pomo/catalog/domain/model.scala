@@ -61,7 +61,7 @@ object model {
   @derive(eqv, show)
   case class FindModel(categoryUUID: CategoryUUID, page: PageToken.NonEmpty)
 
-  @derive(eqv,show)
+  @derive(eqv, show)
   case class FindModelResponse(models: List[Model], nextPageToken: PageToken)
 
   trait ModelRepository[F[_]] {

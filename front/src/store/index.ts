@@ -1,6 +1,8 @@
 import { createStore } from "redux";
 import CatalogImpl from "apis/catalog_impl";
 import { Product } from "apis/catalog";
+import { CatalogClientImpl, GrpcWebImpl } from "apis/catalog.pb";
+import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
 import { categories, all_products } from "../configs/catalog/beds";
 
 const initialState: StoreState = {
@@ -183,8 +185,15 @@ store.subscribe(() => {
   saveState(store.getState());
 });
 
-export const shopClient = new CatalogImpl({
-  products: all_products,
-  categories,
-  settings: { timeout: 100, errorPercentage: 0 },
-});
+export const shopNode = new CatalogClientImpl(
+  new GrpcWebImpl("http://localhost:8080", {
+    transport: NodeHttpTransport(),
+    debug: false,
+  }),
+);
+
+export const shopWeb = new CatalogClientImpl(
+  new GrpcWebImpl("http://localhost:8080", {
+    debug: false,
+  }),
+);

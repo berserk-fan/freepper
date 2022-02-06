@@ -33,13 +33,20 @@ object category {
                       description: CategoryDescription)
 
   @derive(eqv, show)
+  case class CreateCategory(
+      readableId: CategoryReadableId,
+      displayName: CategoryDisplayName,
+      description: CategoryDescription
+  )
+
+  @derive(eqv, show)
   case class UpdateCategory(id: CategoryUUID,
                             readableId: Option[CategoryReadableId],
                             displayName: Option[CategoryDisplayName],
                             description: Option[CategoryDescription])
 
   trait CategoryRepository[F[_]] {
-    def create(category: Category): F[CategoryUUID]
+    def create(category: CreateCategory): F[CategoryUUID]
 
     def get(id: CategoryUUID): F[Category]
 
@@ -53,7 +60,7 @@ object category {
   }
 
   trait CategoryService[F[_]] {
-    def createCategory(category: Category): F[Category]
+    def createCategory(category: CreateCategory): F[Category]
 
     def get(id: CategoryUUID): F[Category]
 

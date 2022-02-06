@@ -33,7 +33,7 @@ class CategoryRepositoryImpl private () extends CategoryRepository[ConnectionIO]
       .updateCategory(cat)
       .run
 
-  override def create(category: Category): ConnectionIO[CategoryUUID] =
+  override def create(category: CreateCategory): ConnectionIO[CategoryUUID] =
     Queries
       .insertCategory(category)
       .withUniqueGeneratedKeys[CategoryUUID]("id")
@@ -67,9 +67,9 @@ object CategoryRepositoryImpl {
     }
 
     def updateCategory(cat: UpdateCategory): Update0 = {
-      val rId   = cat.readableId.map(x => fr"readable_id = $x")
+      val rId = cat.readableId.map(x => fr"readable_id = $x")
       val dName = cat.displayName.map(x => fr"display_name = $x")
-      val desc  = cat.description.map(x => fr"description = $x")
+      val desc = cat.description.map(x => fr"description = $x")
 
       val setFr = Fragments.setOpt(List(rId, dName, desc): _*)
       if (Fragment.empty == setFr) {
@@ -82,7 +82,7 @@ object CategoryRepositoryImpl {
          """.update
     }
 
-    def insertCategory(cat: Category): Update0 = {
+    def insertCategory(cat: CreateCategory): Update0 = {
       sql"""
            insert into categories (readable_id, display_name, description)
            VALUES (${cat.readableId}, ${cat.displayName}, ${cat.description})

@@ -7,7 +7,13 @@ import io.grpc.{Metadata, Status, StatusException}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import ua.pomo.catalog.api.{CatalogFs2Grpc, CreateModelRequest, GetModelRequest, ListModelsRequest}
+import ua.pomo.catalog.api.{
+  CatalogFs2Grpc,
+  CreateCategoryRequest,
+  CreateModelRequest,
+  GetModelRequest,
+  ListModelsRequest
+}
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ModelServiceImpl}
 import ua.pomo.catalog.app.{ApiName, CatalogImpl}
@@ -24,7 +30,7 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
   def makeImpls: (CategoryService[IO], ModelService[IO], CatalogFs2Grpc[IO, Metadata]) = {
     val categoryService = CategoryServiceImpl.makeInMemory[IO].unsafeRunSync()
     val modelService = ModelServiceImpl.makeInMemory[IO].unsafeRunSync()
-    val catalogImpl = CatalogImpl[IO](categoryService, modelService, config)
+    val catalogImpl = CatalogImpl[IO](null, categoryService, modelService, config)
     (categoryService, modelService, catalogImpl)
   }
 
@@ -69,7 +75,8 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
     }
     ex.getStatus.getCode should equal(Status.Code.NOT_FOUND)
 
-    val model = modelService.create(Generators.Model.createGen(ImageListId(UUID.randomUUID())).sample.get).unsafeRunSync()
+    val model =
+      modelService.create(Generators.Model.createGen(ImageListId(UUID.randomUUID())).sample.get).unsafeRunSync()
     noException should be thrownBy impl
       .getModel(GetModelRequest(ModelName(Some(model.categoryId), model.uuid).toNameString), null)
       .unsafeRunSync()
@@ -103,5 +110,16 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
     )
     val req2 = CreateModelRequest(ModelsName(Some(CategoryUUID(UUID.randomUUID()))).toNameString, Some(modelReq2))
     noException should be thrownBy impl.createModel(req2, null).unsafeRunSync()
+  }
+
+  test("create category description not empty") {
+    val (_, modelService, impl) = makeImpls
+    val response = impl
+      .createCategory(CreateCategoryRequest("categories",
+                                            Some(api.Category(displayName = "a", name = "b", description = "c"))),
+                      null)
+      .unsafeRunSync()
+
+    response.description should equal("c")
   }
 }

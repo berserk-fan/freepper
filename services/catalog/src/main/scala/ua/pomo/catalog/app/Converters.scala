@@ -2,8 +2,15 @@ package ua.pomo.catalog.app
 
 import cats.implicits.toShow
 import io.circe.{Decoder, Encoder, parser}
+import scalapb.FieldMaskUtil
 import ua.pomo.catalog.api
-import ua.pomo.catalog.api.{CreateCategoryRequest, CreateModelRequest, ListModelsRequest, ListModelsResponse}
+import ua.pomo.catalog.api.{
+  CreateCategoryRequest,
+  CreateModelRequest,
+  ListModelsRequest,
+  ListModelsResponse,
+  UpdateCategoryRequest
+}
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category._
@@ -19,6 +26,7 @@ object Converters {
     api.Category(
       CategoryName(cat.uuid).toNameString,
       cat.uuid.value.toString,
+      cat.readableId.value,
       cat.displayName.value,
       cat.description.value
     )
@@ -85,8 +93,14 @@ object Converters {
       CategoryDescription(category.description)
     )
   }
-  def toDomain(request: CreateCategoryRequest): Category = {
-    toDomain(request.category.get)
+
+  def toDomain(request: CreateCategoryRequest): CreateCategory = {
+    val category = request.category.get
+    CreateCategory(
+      CategoryReadableId(category.readableId),
+      CategoryDisplayName(category.displayName),
+      CategoryDescription(category.description)
+    )
   }
 
   def toDomain(request: CreateModelRequest): CreateModel = {
@@ -100,6 +114,21 @@ object Converters {
       ModelDisplayName(model.displayName),
       ModelDescription(model.description),
       imageListId
+    )
+  }
+
+  private def nonEmptyString(s: String): Option[String] = Option.when(s.isEmpty)(s)
+
+  def toDomain(request: UpdateCategoryRequest): UpdateCategory = {
+    val category1 = request.category.get
+    val categoryId = ApiName.category(category1.name).map(_.categoryId).toOption.get
+    val fieldMask = request.updateMask.get
+    val category = FieldMaskUtil.applyFieldMask(category1, fieldMask)
+    UpdateCategory(
+      categoryId,
+      nonEmptyString(category.readableId).map(CategoryReadableId.apply),
+      nonEmptyString(category.displayName).map(CategoryDisplayName.apply),
+      nonEmptyString(category.description).map(CategoryDescription.apply)
     )
   }
 }
