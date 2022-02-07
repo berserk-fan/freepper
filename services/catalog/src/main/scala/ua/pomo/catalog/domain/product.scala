@@ -4,7 +4,9 @@ import cats.data.NonEmptyList
 import derevo.cats.{eqv, show}
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import ua.pomo.catalog.domain.image.{Image, ImageList, ImageListId}
+import ua.pomo.catalog.domain.category.CategoryUUID
+import ua.pomo.catalog.domain.param._
+import ua.pomo.catalog.domain.image.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 
 import java.util.UUID
@@ -20,28 +22,6 @@ object product {
 
   @derive(eqv, show)
   @newtype
-  case class FabricUUID(value: UUID)
-
-  @derive(eqv, show)
-  @newtype
-  case class FabricDisplayName(value: String)
-
-  @derive(eqv, show)
-  case class Fabric(id: FabricUUID, displayName: FabricDisplayName, image: Image)
-
-  @derive(eqv, show)
-  @newtype
-  case class SizeUUID(value: UUID)
-
-  @derive(eqv, show)
-  @newtype
-  case class SizeDisplayName(value: String)
-
-  @derive(eqv, show)
-  case class Size(uuid: SizeUUID, displayName: SizeDisplayName)
-
-  @derive(eqv, show)
-  @newtype
   case class ProductStandardPrice(value: Double)
 
   @derive(eqv, show)
@@ -49,20 +29,29 @@ object product {
   case class ProductPromoPrice(value: Double)
 
   @derive(eqv, show)
+  sealed abstract class ProductParameterKind(val id: String)
+  object ProductParameterKind {
+    case object Size extends ProductParameterKind("size")
+    case object Fabric extends ProductParameterKind("fabric")
+  }
+
+  @derive(eqv, show)
   case class ProductPrice(standard: ProductStandardPrice, promo: Option[ProductPromoPrice])
+
+  type ProductParameters = Map[ProductParameterKind, Parameter]
 
   @derive(eqv, show)
   case class Product(id: ProductId,
                      modelId: ModelId,
+                     categoryId: CategoryUUID,
                      displayName: ProductDisplayName,
-                     fabric: Fabric,
-                     size: Size,
                      imageList: ImageList,
-                     price: ProductPrice)
+                     price: ProductPrice,
+                     parameters: Map[ProductParameterKind, Parameter])
 
   object Product {
-    def createDisplayName(m: ModelDisplayName, f: FabricDisplayName, s: SizeDisplayName): ProductDisplayName = {
-      ProductDisplayName(m.value + f.value + s.value)
+    def createDisplayName(m: ModelDisplayName, parameters: List[Parameter]): ProductDisplayName = {
+      ProductDisplayName(s"${m.value} ${parameters.map(_.displayName.value).mkString(" ")}")
     }
   }
 
@@ -70,10 +59,9 @@ object product {
   case class CreateProduct(id: ProductId,
                            modelId: ModelId,
                            imageListId: ImageListId,
-                           fabricId: FabricUUID,
-                           sizeId: SizeUUID,
                            priceUsd: ProductStandardPrice,
-                           promoPriceUsd: Option[ProductPromoPrice])
+                           promoPriceUsd: Option[ProductPromoPrice],
+                           parameters: Map[ProductParameterKind, ParameterId])
 
   case class ProductQuery(pageToken: PageToken.NonEmpty, selector: ProductSelector)
 
@@ -93,10 +81,9 @@ object product {
   case class UpdateProduct(id: ProductId,
                            modelId: Option[ModelId],
                            imageList: Option[ImageListId],
-                           fabric: Option[FabricUUID],
-                           size: Option[SizeUUID],
                            price: Option[ProductStandardPrice],
-                           promoPrice: Option[Option[ProductPromoPrice]])
+                           promoPrice: Option[Option[ProductPromoPrice]],
+                           parameters: Option[Map[ProductParameterKind, ParameterId]])
 
   trait ProductRepository[F[_]] {
     def create(command: CreateProduct): F[ProductId]

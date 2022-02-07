@@ -98,7 +98,7 @@ object ModelRepositoryImpl {
                case
                  when count(img.id) = 0
                  then '[]'
-                 json_agg((img.id, img.src, img.alt))
+                 else json_agg((img.id, img.src, img.alt))
                end
         from models m
             join image_lists il on il.id = m.image_list_id

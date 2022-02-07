@@ -4,7 +4,6 @@ import doobie.ConnectionIO
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
-import ua.pomo.catalog.domain.{PageToken}
 import ua.pomo.catalog.shared.{DbUnitTestSuite, Generators}
 
 import java.util.UUID

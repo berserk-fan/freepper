@@ -10,6 +10,8 @@ import ua.pomo.catalog.domain
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.product._
+import ua.pomo.catalog.domain.size._
+import ua.pomo.catalog.domain.param._
 
 object Generators {
   implicit class ToLazyListOps[T](g: Gen[T]) {
@@ -89,13 +91,14 @@ object Generators {
   object Product {
     private val id = Gen.uuid.map(ProductId.apply)
     private val modelId = Gen.uuid.map(ModelId.apply)
+    private val categoryId = Gen.uuid.map(CategoryUUID.apply)
     private val modelDisplayName = Gen.alphaNumStr.map(ModelDisplayName.apply)
     private val fabricId = Gen.uuid.map(FabricUUID.apply)
     private val fabricDisplayName = Gen.alphaNumStr.map(FabricDisplayName.apply)
-    private val fabric = (fabricId, fabricDisplayName, ImageList.imageGen).mapN(Fabric.apply)
+    private val fabric = (fabricId, fabricDisplayName, ImageList.imageGen).mapN(ProductFabric.apply)
     private val sizeId = Gen.uuid.map(SizeUUID.apply)
     private val sizeDisplayName = Gen.alphaNumStr.map(SizeDisplayName.apply)
-    private val size = (sizeId, sizeDisplayName).mapN(Size.apply)
+    private val size = (sizeId, sizeDisplayName).mapN(ProductSize.apply)
     private val displayName =
       (modelDisplayName, fabricDisplayName, sizeDisplayName).mapN(product.Product.createDisplayName)
     private val standardPrice: Gen[ProductStandardPrice] = Gen.posNum[Double].map(ProductStandardPrice.apply)
@@ -104,7 +107,7 @@ object Generators {
       (standardPrice, promoPrice)
         .mapN(ProductPrice.apply)
     val gen: Gen[product.Product] =
-      (id, modelId, displayName, fabric, size, ImageList.gen, price)
+      (id, modelId, categoryId, displayName, fabric, size, ImageList.gen, price)
         .mapN(product.Product.apply)
 
     private val imageListId = Gen.uuid.map(ImageListId.apply)

@@ -76,7 +76,12 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
   override def updateModel(request: UpdateModelRequest, ctx: Metadata): F[Model] = ???
 
   //products
-  override def getProduct(request: GetProductRequest, ctx: Metadata): F[Product] = ???
+  override def getProduct(request: GetProductRequest, ctx: Metadata): F[Product] = adaptError {
+    validate(request) >>
+      productService
+        .get(Converters.toDomain(request))
+        .map(Converters.toApi)
+  }
 
   override def listProducts(request: ListProductsRequest, ctx: Metadata): F[ListProductsResponse] = adaptError {
     validate(request) >> ???

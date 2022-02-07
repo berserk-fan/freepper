@@ -11,10 +11,14 @@ import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.error.{DbErr, NotFound}
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 import ua.pomo.catalog.domain.product._
-import ua.pomo.catalog.domain.image.{Image, ImageAlt, ImageId, ImageList, ImageListDisplayName, ImageListId, ImageListQuery, ImageListRepository, ImageListSelector, ImageSrc}
+import ua.pomo.catalog.domain.param._
+import ua.pomo.catalog.domain.image._
 import shapeless._
+import shapeless.record.Record
+import ua.pomo.catalog.domain.category.CategoryUUID
 
-class ProductRepositoryImpl private(imageListRepo: ImageListRepository[ConnectionIO]) extends ProductRepository[ConnectionIO] {
+class ProductRepositoryImpl private (imageListRepo: ImageListRepository[ConnectionIO])
+    extends ProductRepository[ConnectionIO] {
 
   import ProductRepositoryImpl._
 
@@ -72,9 +76,9 @@ object ProductRepositoryImpl {
     private def compile(productTable: String, idOpt: ProductSelector): Fragment = {
       val p: Fragment = Fragment.const0(productTable)
       idOpt match {
-        case ProductSelector.All => fr"1 = 1"
-        case ProductSelector.IdIs(id) => fr"$p.id = $id"
-        case ProductSelector.IdIn(ids) => Fragments.in(fr"$p.id", ids)
+        case ProductSelector.All              => fr"1 = 1"
+        case ProductSelector.IdIs(id)         => fr"$p.id = $id"
+        case ProductSelector.IdIn(ids)        => Fragments.in(fr"$p.id", ids)
         case ProductSelector.ModelIs(modelId) => fr"$p.model_id = $modelId"
       }
     }
@@ -88,15 +92,19 @@ object ProductRepositoryImpl {
       sql"""
         INSERT INTO products 
             (price_usd, promo_price_usd, image_list_id, model_id, fabric_id, size_id)
-        VALUES ($priceUsd, $promoPriceUsd, $imageListId, $modelId, $fabricId, $sizeId)
+        VALUES ($priceUsd, 
+                $promoPriceUsd, 
+                $imageListId, 
+                $modelId, 
+                ${parameters(ProductParameterKind.Fabric)}, 
+                ${parameters(ProductParameterKind.Size)}
          """.update
     }
 
     def update(command: UpdateProduct): Update0 = {
       object updaterPoly extends DbUpdaterPoly {
         implicit val modelUUID: Res[ModelId] = gen("model_id")
-        implicit val fabricUUID: Res[FabricUUID] = gen("fabric_id")
-        implicit val sizeUUID: Res[SizeUUID] = gen("size_id")
+        implicit val fabricUUID: Res[Map[ProductParameterKind, ParameterId]] = ???
         implicit val imageListId: Res[ImageListId] = gen("image_list_id")
         implicit val productStandardPrice: Res[ProductStandardPrice] = gen("price_usd")
         implicit val productPromoPrice: Res[Option[ProductPromoPrice]] = gen("promo_price_usd")
@@ -105,38 +113,53 @@ object ProductRepositoryImpl {
       sql"update products $setters where id=${command.id}".update
     }
 
-    def get(query: ProductQuery): Query0[Product] = {
+    private case class GetParam(id: ParameterId,
+                                name: ParameterDisplayName,
+                                imageId: ImageId,
+                                imageSrc: ImageSrc,
+                                imageAlt: ImageAlt)
+
+    private case class GetProduct(productId: ProductId,
+                                  modelId: ModelId,
+                                  categoryId: CategoryUUID,
+                                  displayName: ModelDisplayName,
+                                  imageListId: ImageListId,
+                                  productPrice: ProductStandardPrice,
+                                  productPromoPrice: Option[ProductPromoPrice])
+
+    type GetQuery = Record.`'product -> GetProduct, 'fabric -> Param, 'size -> Param`.T
+
+    def get(query: GetProduct): Query0[Product] = {
       sql"""
-            select p.id, p.model_id, m.display_name, f.id, f.display_name, i.id, i.src, i.alt, s.id, s.display_name, p.image_list_id, p.price_usd, p.promo_price_usd
+            select p.id, p.model_id, m.category_id, m.display_name,
+                   p.image_list_id, p.price_usd, p.promo_price_usd,
+                   f.id, f.display_name, ifa.id, ifa.src, ifa.alt,
+                   s.id, s.display_name, isi.id, isi.src, isi.alt
             from products p
-                left join fabrics f on p.fabric_id = f.id
-                left join sizes s on p.size_id = s.id
-                left join images i on f.image_id = i.id
+                left join parameters f on p.fabric_id = f.id
+                left join parameters s on p.size_id = s.id
+                left join images ifa on f.image_id = ifa.id
+                left join images isi on s.image_id = isi.id
                 left join models m on p.model_id = m.id
             where ${compile("p", query.selector)}
             order by p.create_time
             limit ${query.pageToken.size}
             offset ${query.pageToken.offset}
          """
-        .query[(ProductId,
-          ModelId,
-          ModelDisplayName,
-          FabricUUID,
-          FabricDisplayName,
-          ImageId,
-          ImageSrc,
-          ImageAlt,
-          SizeUUID,
-          SizeDisplayName,
-          ImageListId,
-          ProductStandardPrice,
-          Option[ProductPromoPrice])]
+        .query[GetQuery]
         .map { res =>
-          val fabric = Fabric(res._4, res._5, Image(res._6, res._7, res._8))
-          val size = Size(res._9, res._10)
-          val imageList = ImageList(res._11, ImageListDisplayName(""), Nil)
-          val displayName = Product.createDisplayName(res._3, fabric.displayName, size.displayName)
-          Product(res._1, res._2, displayName, fabric, size, imageList, ProductPrice(res._12, res._13))
+          val fabric = res('fabric)
+          val size = Parameter(res.sizeId, res.sizeName, Image(res.sizeImageId, res.sizeImageSrc, res.sizeImageAlt))
+          val parameters = Map(ProductParameterKind.Size -> size, ProductParameterKind.Fabric -> fabric)
+          val displayName = Product.createDisplayName(res._4, parameters.values.toList)
+          val imageList = ImageList(res.imageListId, ImageListDisplayName(""), Nil)
+          Product(res.productId,
+                  res.modelId,
+                  res.categoryId,
+                  displayName,
+                  imageList,
+                  parameters,
+                  ProductPrice(res._16, res._17))
         }
     }
   }

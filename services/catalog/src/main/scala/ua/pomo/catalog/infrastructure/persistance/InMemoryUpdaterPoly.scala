@@ -10,4 +10,5 @@ trait InMemoryUpdaterPoly[U] extends Poly1 {
   protected def gen[T](f: U => AppliedLens[U, T]): Res[T] = at(
     _.map(t => (p: U) => f(p).replace(t))
   )
+  
 }

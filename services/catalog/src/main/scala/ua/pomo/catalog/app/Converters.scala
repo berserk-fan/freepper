@@ -7,6 +7,7 @@ import ua.pomo.catalog.api
 import ua.pomo.catalog.api.{
   CreateCategoryRequest,
   CreateModelRequest,
+  GetProductRequest,
   ListModelsRequest,
   ListModelsResponse,
   UpdateCategoryRequest
@@ -16,6 +17,7 @@ import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
+import ua.pomo.catalog.domain.product._
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}
@@ -44,7 +46,7 @@ object Converters {
   }
 
   def toDomain(listModels: ListModelsRequest): Try[FindModel] = {
-    val categoryId = ApiName.models(listModels.parent).toOption.get.categoryId.get
+    val categoryId = ApiName.models(listModels.parent).toOption.get.categoryId
     Try(new String(Base64.getDecoder.decode(listModels.pageToken), utf8))
       .flatMap {
         case "" => Success(PageToken.NonEmpty(listModels.pageSize.toLong, 0L))
@@ -60,7 +62,7 @@ object Converters {
 
   def toApi(model: Model): api.Model = {
     api.Model(
-      ModelName(None, model.uuid).toNameString,
+      ModelName(model.categoryId, model.uuid).toNameString,
       model.uuid.show,
       model.readableId.show,
       model.displayName.show,
@@ -85,6 +87,10 @@ object Converters {
     )
   }
 
+  def toApi(p: Product): api.Product = {
+    ???
+  }
+
   def toDomain(category: api.Category): Category = {
     Category(
       CategoryUUID(UUID.randomUUID()),
@@ -103,8 +109,12 @@ object Converters {
     )
   }
 
+  def toDomain(request: GetProductRequest): ProductId = {
+    ApiName.product(request.name).toOption.get.productId
+  }
+
   def toDomain(request: CreateModelRequest): CreateModel = {
-    val models = ApiName.models(request.parent).toOption.flatMap(_.categoryId).get
+    val models = ApiName.models(request.parent).toOption.get.categoryId
     val model = request.model.get
     val imageListId = ApiName.imageList(model.imageList.get.name).toOption.get.id
 
