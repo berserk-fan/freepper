@@ -14,7 +14,7 @@ private class ModelServiceImpl[F[_]: Sync, G[_]: Sync] private (xa: G ~> F, repo
     extends ModelService[F] {
   def create(model: CreateModel): F[Model] = repository.create(model).flatMap(repository.get).mapK(xa)
   def delete(id: ModelId): F[Unit] = repository.delete(id).mapK(xa)
-  def findAll(req: FindModel): F[FindModelResponse] =
+  def findAll(req: ModelQuery): F[FindModelResponse] =
     repository
       .findAll(req)
       .map { models =>

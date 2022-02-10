@@ -7,12 +7,14 @@ import io.grpc.{Metadata, Status, StatusException}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
+import squants.market.USD
 import ua.pomo.catalog.api.{
   CatalogFs2Grpc,
   CreateCategoryRequest,
   CreateModelRequest,
   GetModelRequest,
-  ListModelsRequest
+  ListModelsRequest,
+  Money
 }
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ModelServiceImpl}
@@ -39,7 +41,7 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
     val categoryId = CategoryUUID(UUID.randomUUID())
     val totalModels = 10
     Generators.Model
-      .createGen(ImageListId(UUID.randomUUID()))
+      .createGen(ImageListId(UUID.randomUUID()), List.empty)
       .map(_.copy(categoryId = categoryId))
       .toLazyList
       .take(totalModels)
@@ -76,7 +78,9 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
     ex.getStatus.getCode should equal(Status.Code.NOT_FOUND)
 
     val model =
-      modelService.create(Generators.Model.createGen(ImageListId(UUID.randomUUID())).sample.get).unsafeRunSync()
+      modelService
+        .create(Generators.Model.createGen(ImageListId(UUID.randomUUID()), List.empty).sample.get)
+        .unsafeRunSync()
     noException should be thrownBy impl
       .getModel(GetModelRequest(ModelName(model.categoryId, model.uuid).toNameString), null)
       .unsafeRunSync()
@@ -90,8 +94,8 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
       "some-id",
       "some name",
       "some description",
-      0,
-      Some(api.ImageList(ImageListName(ImageListId(UUID.randomUUID())).toNameString))
+      Some(api.ImageList(ImageListName(ImageListId(UUID.randomUUID())).toNameString)),
+      Some(Money(USD.code, 0)),
     )
 
     val req = CreateModelRequest(ModelsName(CategoryUUID(UUID.randomUUID())).toNameString, Some(modelReq))
@@ -105,8 +109,8 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
       "some-id",
       "some name",
       "some description",
-      10,
-      Some(api.ImageList(ImageListName(ImageListId(UUID.randomUUID())).toNameString))
+      Some(api.ImageList(ImageListName(ImageListId(UUID.randomUUID())).toNameString)),
+      Some(Money(USD.code, 0))
     )
     val req2 = CreateModelRequest(ModelsName(CategoryUUID(UUID.randomUUID())).toNameString, Some(modelReq2))
     noException should be thrownBy impl.createModel(req2, null).unsafeRunSync()

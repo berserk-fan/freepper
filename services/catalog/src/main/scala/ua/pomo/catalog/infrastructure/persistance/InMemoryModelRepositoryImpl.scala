@@ -11,6 +11,7 @@ import java.util.UUID
 import shapeless._
 import monocle.syntax.all._
 import ua.pomo.catalog.domain.category.CategoryUUID
+import ua.pomo.catalog.domain.param.{ParamListDisplayName, ParameterList}
 
 class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, Map[ModelId, Model]])
     extends ModelRepository[F] {
@@ -23,6 +24,7 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
       req.displayName,
       req.description,
       ModelMinimalPrice(Money(0, USD)),
+      req.parameterListIds.map(id => ParameterList(id, ParamListDisplayName(""))),
       ImageList(req.imageListId, ImageListDisplayName(""), List())
     )
     (map + ((model.uuid, model)), model.uuid)
@@ -34,11 +36,18 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
 
   override def find(id: ModelId): F[Option[Model]] = ref.get.map(_.get(id))
 
-  override def findAll(req: FindModel): F[List[Model]] = {
+  override def findAll(req: ModelQuery): F[List[Model]] = {
+    val filter: Model => Boolean = req.selector match {
+      case ModelSelector.All =>
+        _ =>
+          true
+      case ModelSelector.IdIs(id)         => _.uuid == id
+      case ModelSelector.CategoryIdIs(id) => _.categoryId == id
+    }
     ref.get
       .map(
         _.values.toList
-          .filter(_.categoryId == req.categoryUUID)
+          .filter(filter)
           .slice(req.page.offset.toInt, req.page.offset.toInt + req.page.size.toInt))
   }
 
@@ -46,7 +55,6 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
     map.get(id).fold(map)(map - _.uuid)
   }
 
-  
   override def update(command: UpdateModel): F[Int] = ref.modify { map =>
     object updateObj extends InMemoryUpdaterPoly[Model] {
       implicit val readableId: Res[ModelReadableId] = gen(_.focus(_.readableId))

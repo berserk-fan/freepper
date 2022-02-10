@@ -1,12 +1,5 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA public;
 
-CREATE TABLE images
-(
-    id  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    src VARCHAR UNIQUE NOT NULL,
-    alt VARCHAR        NOT NULL
-);
-
 CREATE TABLE image_lists
 (
     id           UUID PRIMARY KEY                     DEFAULT uuid_generate_v4(),
@@ -14,11 +7,12 @@ CREATE TABLE image_lists
     create_time  TIMESTAMP WITHOUT TIME ZONE not null DEFAULT NOW()
 );
 
-CREATE TABLE image_list_member
+CREATE TABLE images
 (
-    image_list_id UUID NOT NULL REFERENCES image_lists (id) ON DELETE CASCADE,
-    image_id      UUID NOT NULL REFERENCES images (id),
-    UNIQUE (image_list_id, image_id)
+    id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    src           VARCHAR NOT NULL,
+    alt           VARCHAR NOT NULL,
+    image_list_id UUID    NOT NULL REFERENCES image_lists(id) ON DELETE CASCADE
 );
 
 CREATE TABLE categories
@@ -32,35 +26,30 @@ CREATE TABLE categories
 CREATE TABLE parameter_lists
 (
     id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    display_name VARCHAR         NOT NULL
+    display_name VARCHAR NOT NULL
 );
 
-CREATE TABLE parameter
+CREATE TABLE parameters
 (
-    id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    display_name  VARCHAR NOT NULL,
-    image_id      UUID REFERENCES images (id),
-    list_order    INT     NOT NULL,
-    param_list_id UUID    NOT NULL REFERENCES parameter_lists (id),
-    UNIQUE (param_list_id, list_order)
+    id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    display_name      VARCHAR NOT NULL,
+    image_id          UUID REFERENCES images (id),
+    list_order        INT     NOT NULL,
+    parameter_list_id UUID    NOT NULL REFERENCES parameter_lists (id),
+    UNIQUE (parameter_list_id, list_order)
 );
 
 CREATE TABLE models
 (
-    id               UUID PRIMARY KEY                     DEFAULT uuid_generate_v4(),
-    readable_id      VARCHAR UNIQUE              NOT NULL,
-    display_name     VARCHAR                     NOT NULL,
-    description      VARCHAR                     NOT NULL,
-    create_time      TIMESTAMP without time zone not null DEFAULT NOW(),
-    update_time      TIMESTAMP without time zone not null DEFAULT NOW(),
-    category_id      UUID                        NOT NULL REFERENCES categories (id),
-    image_list_id    UUID                        NOT NULL REFERENCES image_lists (id)
-);
-
-CREATE TABLE model_parameter_lists(
-  model_id UUID NOT NULL REFERENCES models(id),
-  parameter_list_id UUID NOT NULL REFERENCES parameter_lists(id),
-  UNIQUE (model_id, parameter_list_id)
+    id                 UUID PRIMARY KEY                     DEFAULT uuid_generate_v4(),
+    readable_id        VARCHAR UNIQUE              NOT NULL,
+    display_name       VARCHAR                     NOT NULL,
+    description        VARCHAR                     NOT NULL,
+    category_id        UUID                        NOT NULL REFERENCES categories (id),
+    image_list_id      UUID                        NOT NULL REFERENCES image_lists (id),
+    parameter_list_ids UUID[]                      NOT NULL,
+    create_time        TIMESTAMP without time zone not null DEFAULT NOW(),
+    update_time        TIMESTAMP without time zone not null DEFAULT NOW()
 );
 
 CREATE TABLE products
@@ -74,52 +63,3 @@ CREATE TABLE products
     create_time     TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
     update_time     TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
 );
-
-CREATE TABLE product_param_id(
-    product_id UUID NOT NULL REFERENCES products(id),
-
-);
-
-CREATE OR REPLACE FUNCTION update_time() RETURNS TRIGGER AS
-$$
-BEGIN
-    NEW.update_time = now();
-    RETURN NEW;
-END;
-$$ language 'plpgsql' IMMUTABLE
-                      STRICT;
-
-CREATE OR REPLACE FUNCTION product_param_contraint() RETURNS TRIGGER AS
-$$
-DECLARE
-    model_size_list_id   UUID;
-    product_size_list_id UUID;
-BEGIN
-    SELECT size_list_id INTO model_size_list_id FROM models WHERE id = NEW.model_id;
-    SELECT param_list_id INTO product_size_list_id FROM params WHERE id = NEW.size_id;
-    IF
-        model_size_list_id != product_size_list_id THEN
-        RAISE EXCEPTION 'product has size_list_id % not equal to % of model', product_size_list_id, model_size_list_id;
-    END IF;
-    RETURN NEW;
-END;
-$$ language 'plpgsql' IMMUTABLE
-                      STRICT;
-
-CREATE TRIGGER update_product_update_time
-    BEFORE UPDATE
-    ON products
-    FOR EACH ROW
-EXECUTE PROCEDURE update_time();
-
-CREATE TRIGGER update_model_update_time
-    BEFORE UPDATE
-    ON products
-    FOR EACH ROW
-EXECUTE PROCEDURE update_time();
-
-CREATE TRIGGER product_size_list_constraint_t
-    BEFORE UPDATE
-    ON products
-    FOR EACH ROW
-EXECUTE PROCEDURE product_size_list_constraint();

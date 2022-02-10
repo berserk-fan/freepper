@@ -3,6 +3,7 @@ package ua.pomo.catalog.app
 import cats.implicits.toShow
 import io.circe.{Decoder, Encoder, parser}
 import scalapb.FieldMaskUtil
+import squants.market.Money
 import ua.pomo.catalog.api
 import ua.pomo.catalog.api.{
   CreateCategoryRequest,
@@ -45,7 +46,7 @@ object Converters {
     }
   }
 
-  def toDomain(listModels: ListModelsRequest): Try[FindModel] = {
+  def toDomain(listModels: ListModelsRequest): Try[ModelQuery] = {
     val categoryId = ApiName.models(listModels.parent).toOption.get.categoryId
     Try(new String(Base64.getDecoder.decode(listModels.pageToken), utf8))
       .flatMap {
@@ -53,11 +54,15 @@ object Converters {
         case s =>
           parser.parse(s).toTry.flatMap(Decoder[PageToken.NonEmpty].decodeJson(_).toTry)
       }
-      .map(FindModel(categoryId, _))
+      .map(ModelQuery(ModelSelector.CategoryIdIs(categoryId), _))
   }
 
   def toApi(findModelResponse: FindModelResponse): ListModelsResponse = {
     ListModelsResponse(findModelResponse.models.map(toApi), toApi(findModelResponse.nextPageToken))
+  }
+
+  def toApi(money: Money): api.Money = {
+    api.Money(money.currency.code, money.amount.toFloat)
   }
 
   def toApi(model: Model): api.Model = {
@@ -67,8 +72,8 @@ object Converters {
       model.readableId.show,
       model.displayName.show,
       model.description.value,
-      model.minimalPrice.value.amount.toInt,
-      Some(toApi(model.imageList))
+      Some(toApi(model.imageList)),
+      Some(toApi(model.minimalPrice.value)),
     )
   }
 
@@ -123,7 +128,8 @@ object Converters {
       models,
       ModelDisplayName(model.displayName),
       ModelDescription(model.description),
-      imageListId
+      imageListId,
+      List.empty //TODO REPLCAE
     )
   }
 

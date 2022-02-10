@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package ua.pomo.catalog.api;
+
+import "image_list.proto";
+
+message Parameter {
+  string name = 1;
+  string id = 2;
+  string display_name = 3;
+  Image image = 4;
+}
+
+message ParameterList {
+  string name = 1;
+  string id = 2;
+  string display_name = 3;
+  repeated Parameter parameters = 4;
+}

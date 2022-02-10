@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package ua.pomo.catalog.api;
+
+message Money {
+  string code = 1;
+  float amount = 2;
+}

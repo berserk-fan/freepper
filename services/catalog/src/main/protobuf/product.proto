@@ -6,17 +6,8 @@ import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
 import "image_list.proto";
 import "google/protobuf/wrappers.proto";
-
-message Parameter {
-  string id = 2;
-  string display_name = 3;
-  Image image = 4;
-}
-
-message Price {
-  int32 price = 1;
-  google.protobuf.Int32Value promo = 2;
-}
+import "validate/validate.proto";
+import "money.proto";
 
 message Product {
   option (google.api.resource) = {
@@ -27,10 +18,22 @@ message Product {
   string uuid = 2;
   string model_id = 3;
   string display_name = 4;
-  Price price = 5;
-  ImageList image_list = 6;
-  map<string, Parameter> parameters = 7;
+  ImageList image_list = 5;
+  Money price = 6;
+  Money promo_price = 7;
+  repeated string parameter_ids = 8 [(google.api.field_behavior) = IMMUTABLE];
 }
+
+message CreateProductRequest {
+  string parent = 1;
+  Product product = 2;
+}
+
+message UpdateProductRequest {
+  string parent = 1;
+  Product product = 2;
+}
+
 
 message ListProductsRequest {
   // The parent resource name, for example, "categories/category1/model/modelId"
@@ -64,3 +67,6 @@ message GetProductRequest {
     }];
 }
 
+message DeleteProductRequest {
+  string name = 1;
+}

@@ -1,6 +1,7 @@
 package ua.pomo.catalog.infrastructure.persistance
 
 import doobie.ConnectionIO
+import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
@@ -20,10 +21,9 @@ class ModelRepositoryImplTest extends DbUnitTestSuite {
     val modelId = ModelId(UUID.randomUUID())
     val categoryId = CategoryUUID(UUID.randomUUID())
     val imageListId = ImageListId(UUID.randomUUID())
-    check(Queries.getModel(modelId))
-    check(Queries.find(categoryId, 10, 0))
+    check(Queries.find(ModelQuery(ModelSelector.CategoryIdIs(categoryId), PageToken.NonEmpty(10, 0))))
     check(Queries.delete(modelId))
-    check(Queries.create(Generators.Model.createGen(imageListId).sample.get))
+    check(Queries.create(Generators.Model.createGen(imageListId, List.empty).sample.get))
     check(Queries.update(Generators.Model.updateGen(imageListId, categoryId).sample.get))
   }
 
@@ -33,9 +33,9 @@ class ModelRepositoryImplTest extends DbUnitTestSuite {
       val categoryId = categoryRepo.create(category).trRun()
 
       val imageListId1 = imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
-      val imageList1 = imageListRepo.get(imageListId1).trRun()
+      imageListRepo.get(imageListId1).trRun()
 
-      forAll(Generators.Model.createGen(imageListId1)) { createModel1 =>
+      forAll(Generators.Model.createGen(imageListId1, List.empty)) { createModel1 =>
         val createModel = createModel1.copy(categoryId = categoryId)
 
         val id = modelRepo.create(createModel).trRun()
@@ -62,7 +62,11 @@ class ModelRepositoryImplTest extends DbUnitTestSuite {
       val imageListId2 = imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
 
       val createModel =
-        Generators.Model.createGen(imageListId1).sample.get.copy(categoryId = categoryId1, imageListId = imageList1.id)
+        Generators.Model
+          .createGen(imageListId1, List.empty)
+          .sample
+          .get
+          .copy(categoryId = categoryId1, imageListId = imageList1.id)
       val modelId = modelRepo.create(createModel).trRun()
 
       forAll(Generators.Model.updateGen(imageListId2, categoryId2)) { update =>

@@ -10,8 +10,9 @@ import ua.pomo.catalog.domain
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.product._
-import ua.pomo.catalog.domain.size._
 import ua.pomo.catalog.domain.param._
+
+import java.util.UUID
 
 object Generators {
   implicit class ToLazyListOps[T](g: Gen[T]) {
@@ -47,7 +48,8 @@ object Generators {
     private val imageSrc = Gen.alphaNumStr.map(ImageSrc.apply)
     private val imageAlt = Gen.alphaNumStr.map(ImageAlt.apply)
     private val displayName = Gen.alphaNumStr.map(ImageListDisplayName.apply)
-    private[shared] val imageGen = (imageId, imageSrc, imageAlt).mapN(Image.apply)
+    private[shared] val imageGen =
+      (imageId, imageSrc, imageAlt).mapN(Image.apply)
     private val imageListGen = Gen.listOf(imageGen).map(_.groupBy(_.src).values.map(_.head).toList)
 
     val update: Gen[image.ImageListUpdate] = (
@@ -65,13 +67,19 @@ object Generators {
     private val rId = Gen.alphaNumStr.map(ModelReadableId.apply)
     private val rDisplayName = Gen.alphaNumStr.map(ModelDisplayName.apply)
     private val rDescription = Gen.alphaNumStr.map(ModelDescription.apply)
+    private val paramListId = Gen.uuid.map(ParameterListId.apply)
+    private val paramListIds = Gen.listOfN(2, paramListId)
+    private val paramListDisplayName = Gen.alphaNumStr.map(ParamListDisplayName.apply)
+    private val paramList = (paramListId, paramListDisplayName).mapN(ParameterList.apply)
+    private val paramLists = Gen.listOfN(2, paramList)
     private val rMoney = Gen.posNum[Double].map(Money(_, USD)).map(ModelMinimalPrice.apply)
 
-    def createGen(imListId: ImageListId): Gen[CreateModel] =
-      (rId, catId, rDisplayName, rDescription, Gen.const(imListId)).mapN(model.CreateModel.apply)
+    def createGen(imListId: ImageListId, parameterListIds: List[ParameterListId]): Gen[CreateModel] =
+      (rId, catId, rDisplayName, rDescription, Gen.const(imListId), Gen.const(parameterListIds))
+        .mapN(model.CreateModel.apply)
 
     val gen: Gen[model.Model] =
-      (id, rId, catId, rDisplayName, rDescription, rMoney, ImageList.gen).mapN(model.Model.apply)
+      (id, rId, catId, rDisplayName, rDescription, rMoney, paramLists, ImageList.gen).mapN(model.Model.apply)
 
     def updateGen(imageListId: ImageListId, categoryId: CategoryUUID): Gen[model.UpdateModel] =
       (id,
@@ -93,34 +101,28 @@ object Generators {
     private val modelId = Gen.uuid.map(ModelId.apply)
     private val categoryId = Gen.uuid.map(CategoryUUID.apply)
     private val modelDisplayName = Gen.alphaNumStr.map(ModelDisplayName.apply)
-    private val fabricId = Gen.uuid.map(FabricUUID.apply)
-    private val fabricDisplayName = Gen.alphaNumStr.map(FabricDisplayName.apply)
-    private val fabric = (fabricId, fabricDisplayName, ImageList.imageGen).mapN(ProductFabric.apply)
-    private val sizeId = Gen.uuid.map(SizeUUID.apply)
-    private val sizeDisplayName = Gen.alphaNumStr.map(SizeDisplayName.apply)
-    private val size = (sizeId, sizeDisplayName).mapN(ProductSize.apply)
-    private val displayName =
-      (modelDisplayName, fabricDisplayName, sizeDisplayName).mapN(product.Product.createDisplayName)
+    private val parameterId = Gen.uuid.map(ParameterId.apply)
+    private val parameterListId = Gen.uuid.map(ParameterListId.apply)
+    private val parameterDisplayName = Gen.alphaNumStr.map(ParameterDisplayName.apply)
+    private val param =
+      (parameterId, parameterListId, parameterDisplayName, ImageList.imageGen).mapN(Parameter.apply)
+    private val params = Gen.listOfN(2, param)
+    private val paramIds = Gen.listOfN(2, parameterId)
     private val standardPrice: Gen[ProductStandardPrice] = Gen.posNum[Double].map(ProductStandardPrice.apply)
     private val promoPrice: Gen[Option[ProductPromoPrice]] = Gen.option(Gen.posNum[Double].map(ProductPromoPrice.apply))
     private val price =
       (standardPrice, promoPrice)
         .mapN(ProductPrice.apply)
     val gen: Gen[product.Product] =
-      (id, modelId, categoryId, displayName, fabric, size, ImageList.gen, price)
+      (id, modelId, categoryId, Gen.const(ProductDisplayName("")), ImageList.gen, price, params)
         .mapN(product.Product.apply)
 
     private val imageListId = Gen.uuid.map(ImageListId.apply)
-    val createCommand: Gen[CreateProduct] = (id, modelId, imageListId, fabricId, sizeId, standardPrice, promoPrice)
-      .mapN(CreateProduct.apply)
+    def createCommand(imageListId1: ImageListId, modelId1: ModelId): Gen[CreateProduct] =
+      (id, Gen.const(modelId1), Gen.const(imageListId1), standardPrice, promoPrice, paramIds)
+        .mapN(CreateProduct.apply)
 
     val update: Gen[UpdateProduct] =
-      (id,
-       Gen.option(modelId),
-       Gen.option(imageListId),
-       Gen.option(fabricId),
-       Gen.option(sizeId),
-       Gen.option(standardPrice),
-       Gen.option(promoPrice)).mapN(UpdateProduct.apply)
+      (id, Gen.option(imageListId), Gen.option(standardPrice), Gen.option(promoPrice)).mapN(UpdateProduct.apply)
   }
 }

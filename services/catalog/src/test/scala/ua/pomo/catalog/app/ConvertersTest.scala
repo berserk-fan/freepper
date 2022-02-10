@@ -7,7 +7,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import ua.pomo.catalog.api.ListModelsRequest
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryUUID
-import ua.pomo.catalog.domain.model.FindModel
+import ua.pomo.catalog.domain.model.{ModelQuery, ModelSelector}
 import ua.pomo.catalog.shared.Generators
 
 import java.nio.charset.StandardCharsets
@@ -20,12 +20,12 @@ class ConvertersTest extends AnyFunSuite with Matchers with EitherValues {
   test("list models request") {
     val listModelsRequest = ListModelsRequest(s"categories/$Uuid/models", 10, "")
     Converters.toDomain(listModelsRequest).toEither.value should equal(
-      FindModel(CategoryUUID(Uuid), PageToken.NonEmpty(10, 0))
+      ModelQuery(ModelSelector.CategoryIdIs(CategoryUUID(Uuid)), PageToken.NonEmpty(10, 0))
     )
 
     val listModelsRequest2 = ListModelsRequest(s"categories/$Uuid/models", 10, encode("""{"size": 10, "offset": 20}"""))
     Converters.toDomain(listModelsRequest2).toEither.value should equal(
-      FindModel(CategoryUUID(Uuid), PageToken.NonEmpty(10, 20))
+      ModelQuery(ModelSelector.CategoryIdIs(CategoryUUID(Uuid)), PageToken.NonEmpty(10, 20))
     )
   }
 }

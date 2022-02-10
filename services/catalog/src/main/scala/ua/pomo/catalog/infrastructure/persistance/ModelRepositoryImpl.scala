@@ -8,9 +8,11 @@ import doobie.implicits._
 import doobie.postgres.implicits._
 import shapeless._
 import squants.market.{Money, USD}
+import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
+import ua.pomo.catalog.domain.param.ParameterList
 
 class ModelRepositoryImpl private (imageListRepository: ImageListRepository[ConnectionIO])
     extends ModelRepository[ConnectionIO] {
@@ -27,17 +29,11 @@ class ModelRepositoryImpl private (imageListRepository: ImageListRepository[Conn
   }
 
   override def find(id: ModelId): ConnectionIO[Option[Model]] = {
-    val res = for {
-      imageListId :: modelPart <- OptionT(Queries.getModel(id).option)
-      imageList <- OptionT.liftF(imageListRepository.get(imageListId))
-    } yield Generic[Model].from(modelPart :+ imageList)
-    res.value
+    OptionT(Queries.find(ModelQuery(ModelSelector.IdIs(id), PageToken.NonEmpty(2, 0))).option).value
   }
 
-  override def findAll(req: FindModel): ConnectionIO[List[Model]] = {
-    Queries
-      .find(req.categoryUUID, req.page.size, req.page.offset)
-      .to[List]
+  override def findAll(req: ModelQuery): ConnectionIO[List[Model]] = {
+    Queries.find(req).to[List]
   }
 
   override def delete(id: ModelId): ConnectionIO[Unit] = {
@@ -66,22 +62,15 @@ object ModelRepositoryImpl {
 
     def create(req: CreateModel): Update0 = {
       sql"""
-           insert into models (readable_id, display_name, description, category_id, image_list_id)
-           VALUES (${req.readableId}, ${req.displayName}, ${req.description}, ${req.categoryId}, ${req.imageListId})
+           insert into models (readable_id, display_name, description, category_id, image_list_id, parameter_list_ids)
+           VALUES (${req.readableId}, ${req.displayName}, ${req.description}, ${req.categoryId}, ${req.imageListId}, ${req.parameterListIds
+        .map(_.value)})
          """.update
     }
 
     type GetModelQuery =
-      ImageListId :: ModelId :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice :: HNil
-
-    def getModel(modelId: ModelId): Query0[GetModelQuery] = {
-      sql"""
-           select m.image_list_id, m.id, m.readable_id, m.category_id, m.display_name, m.description, min(COALESCE(p.promo_price_usd, 0))
-           from models m left join products p on m.id = p.model_id
-           where m.id=$modelId
-           group by m.id
-         """.query[GetModelQuery]
-    }
+      ImageListId :: ModelId :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice :: List[
+        ParameterList] :: HNil
 
     def delete(modelId: ModelId): Update0 = {
       sql"""
@@ -90,46 +79,67 @@ object ModelRepositoryImpl {
          """.update
     }
 
-    def find(categoryUUID: CategoryUUID, limit: Long, offset: Long): Query0[Model] = {
+    private def compileWhere(alias: String, where: ModelSelector): Fragment = {
+      val p = Fragment.const0(alias)
+      where match {
+        case ModelSelector.All              => fr"1 = 1"
+        case ModelSelector.IdIs(id)         => fr"$p.id = $id"
+        case ModelSelector.CategoryIdIs(id) => fr"$p.category_id = $id"
+      }
+    }
+
+    def find(query: ModelQuery): Query0[Model] = {
       implicit val readImages: Get[List[Image]] = jsonAggListJson[Image]
+      implicit val readParameterList: Get[List[ParameterList]] = jsonAggListJson[ParameterList]
 
       sql"""
-        select m.id, m.readable_id, m.category_id, m.display_name, m.description, min(COALESCE(p.promo_price_usd, 0)), il.id, il.display_name,
-               case
-                 when count(img.id) = 0
-                 then '[]'
-                 else json_agg((img.id, img.src, img.alt))
-               end
-        from models m
-            join image_lists il on il.id = m.image_list_id
-            join products p on m.id = p.model_id
-            join image_list_member ilm on m.image_list_id = ilm.image_list_id
-            join images img on ilm.image_id = img.id
-        where m.category_id = $categoryUUID
+        select m.id, 
+               m.readable_id, 
+               m.category_id, 
+               m.display_name, 
+               m.description,
+               COALESCE((
+                  select min(COALESCE(p.promo_price_usd, p.price_usd, 0))
+                  from products p
+                  where p.model_id = m.id
+               ), 0), 
+               COALESCE( (
+                    select json_agg(json_build_object('id', pl.id, 'displayName', pl.display_name))
+                    from parameter_lists pl join unnest(m.parameter_list_ids) parameter_list_id on pl.id = parameter_list_id
+               ), '[]'),
+               il.id, il.display_name,
+               COALESCE((
+                   select json_agg(json_build_object('id', img.id, 'src', img.src, 'alt', img.alt))
+                   from images img
+                   where img.image_list_id = il.id
+               ), '[]')
+        from models m left join image_lists il on il.id = m.image_list_id
+        where ${compileWhere("m", query.selector)}
         group by m.id, il.id
-        order by m.id
-        limit $limit
-        offset $offset
+        order by m.create_time
+        limit ${query.page.size}
+        offset ${query.page.offset}
       """
         .query[
-          ModelId :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice ::
-            ImageListId :: ImageListDisplayName :: List[Image] :: HNil]
+          ModelId :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice :: List[
+            ParameterList]
+            :: ImageListId :: ImageListDisplayName :: List[Image] :: HNil]
         .map { res =>
-          val modelPart_imageListPart = res.split(Nat._6)
+          val modelPart_imageListPart = res.split(Nat._7)
           val imageList = Generic[ImageList].from(modelPart_imageListPart._2)
           Generic[Model].from(modelPart_imageListPart._1 :+ imageList)
         }
     }
 
     def update(req: UpdateModel): Update0 = {
-      object updaterOjb extends DbUpdaterPoly {
+      object updaterObj extends DbUpdaterPoly {
         implicit val a1: Res[ModelReadableId] = gen("readable_id")
         implicit val a2: Res[ModelDescription] = gen("description")
         implicit val a3: Res[CategoryUUID] = gen("category_id")
         implicit val a4: Res[ModelDisplayName] = gen("display_name")
         implicit val a5: Res[ImageListId] = gen("image_list_id")
       }
-      val setFr = Fragments.setOpt(Generic[UpdateModel].to(req).drop(1).map(updaterOjb).toList: _*)
+      val setFr = Fragments.setOpt(Generic[UpdateModel].to(req).drop(1).map(updaterObj).toList: _*)
       sql"""
            update models
            $setFr

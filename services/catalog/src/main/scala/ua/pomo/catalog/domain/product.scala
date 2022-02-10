@@ -29,16 +29,7 @@ object product {
   case class ProductPromoPrice(value: Double)
 
   @derive(eqv, show)
-  sealed abstract class ProductParameterKind(val id: String)
-  object ProductParameterKind {
-    case object Size extends ProductParameterKind("size")
-    case object Fabric extends ProductParameterKind("fabric")
-  }
-
-  @derive(eqv, show)
   case class ProductPrice(standard: ProductStandardPrice, promo: Option[ProductPromoPrice])
-
-  type ProductParameters = Map[ProductParameterKind, Parameter]
 
   @derive(eqv, show)
   case class Product(id: ProductId,
@@ -47,11 +38,11 @@ object product {
                      displayName: ProductDisplayName,
                      imageList: ImageList,
                      price: ProductPrice,
-                     parameters: Map[ProductParameterKind, Parameter])
+                     parameters: List[Parameter])
 
   object Product {
     def createDisplayName(m: ModelDisplayName, parameters: List[Parameter]): ProductDisplayName = {
-      ProductDisplayName(s"${m.value} ${parameters.map(_.displayName.value).mkString(" ")}")
+      ProductDisplayName(s"${m.value} ${parameters.sortBy(_.parameterListId.value.toString).map(_.displayName.value).mkString(" ")}")
     }
   }
 
@@ -61,7 +52,7 @@ object product {
                            imageListId: ImageListId,
                            priceUsd: ProductStandardPrice,
                            promoPriceUsd: Option[ProductPromoPrice],
-                           parameters: Map[ProductParameterKind, ParameterId])
+                           parameters: List[ParameterId])
 
   case class ProductQuery(pageToken: PageToken.NonEmpty, selector: ProductSelector)
 
@@ -79,11 +70,9 @@ object product {
 
   @derive(eqv, show)
   case class UpdateProduct(id: ProductId,
-                           modelId: Option[ModelId],
                            imageList: Option[ImageListId],
                            price: Option[ProductStandardPrice],
-                           promoPrice: Option[Option[ProductPromoPrice]],
-                           parameters: Option[Map[ProductParameterKind, ParameterId]])
+                           promoPrice: Option[Option[ProductPromoPrice]])
 
   trait ProductRepository[F[_]] {
     def create(command: CreateProduct): F[ProductId]

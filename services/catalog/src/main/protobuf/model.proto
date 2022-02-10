@@ -6,6 +6,8 @@ import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
 import "image_list.proto";
 import "validate/validate.proto";
+import "parameter.proto";
+import "money.proto";
 
 message Model {
   option (google.api.resource) = {
@@ -17,8 +19,10 @@ message Model {
   string readable_id = 3;
   string display_name = 4;
   string description = 5;
-  int32 minimal_price_usd = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
-  ImageList image_list = 7;
+  ImageList image_list = 6;
+  Money minimal_price = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+  repeated string parameter_list_ids = 8  [(google.api.field_behavior) = IMMUTABLE];
+  repeated ParameterList parameter_lists = 9  [(google.api.field_behavior) = OUTPUT_ONLY];
 }
 
 message CreateModelRequest {
@@ -83,4 +87,3 @@ message ListModelsResponse {
   // more results in the list.
   string next_page_token = 2;
 }
-

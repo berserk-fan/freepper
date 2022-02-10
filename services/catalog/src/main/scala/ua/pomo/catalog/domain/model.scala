@@ -6,6 +6,7 @@ import io.estatico.newtype.macros.newtype
 import squants.market.Money
 import ua.pomo.catalog.domain.category.{CategoryReadableId, CategoryUUID}
 import ua.pomo.catalog.domain.image.{ImageList, ImageListId}
+import ua.pomo.catalog.domain.param.{ParameterList, ParameterListId}
 import ua.pomo.catalog.optics.uuid
 
 import java.util.UUID
@@ -42,13 +43,16 @@ object model {
                    displayName: ModelDisplayName,
                    description: ModelDescription,
                    minimalPrice: ModelMinimalPrice,
+                   parameterLists: List[ParameterList],
                    imageList: ImageList)
+
   @derive(eqv, show)
   case class CreateModel(readableId: ModelReadableId,
                          categoryId: CategoryUUID,
                          displayName: ModelDisplayName,
                          description: ModelDescription,
-                         imageListId: ImageListId)
+                         imageListId: ImageListId,
+                         parameterListIds: List[ParameterListId])
 
   @derive(eqv, show)
   case class UpdateModel(id: ModelId,
@@ -59,10 +63,18 @@ object model {
                          imageListId: Option[ImageListId])
 
   @derive(eqv, show)
-  case class FindModel(categoryUUID: CategoryUUID, page: PageToken.NonEmpty)
+  case class ModelQuery(selector: ModelSelector, page: PageToken.NonEmpty)
 
   @derive(eqv, show)
   case class FindModelResponse(models: List[Model], nextPageToken: PageToken)
+
+  @derive(eqv, show)
+  sealed trait ModelSelector
+  object ModelSelector {
+    case object All extends ModelSelector
+    case class IdIs(id: ModelId) extends ModelSelector
+    case class CategoryIdIs(id: CategoryUUID) extends ModelSelector
+  }
 
   trait ModelRepository[F[_]] {
     def create(model: CreateModel): F[ModelId]
@@ -71,7 +83,7 @@ object model {
 
     def find(id: ModelId): F[Option[Model]]
 
-    def findAll(req: FindModel): F[List[Model]]
+    def findAll(req: ModelQuery): F[List[Model]]
 
     def update(req: UpdateModel): F[Int]
 
@@ -83,7 +95,7 @@ object model {
 
     def get(id: ModelId): F[Model]
 
-    def findAll(req: FindModel): F[FindModelResponse]
+    def findAll(req: ModelQuery): F[FindModelResponse]
 
     def update(req: UpdateModel): F[Model]
 

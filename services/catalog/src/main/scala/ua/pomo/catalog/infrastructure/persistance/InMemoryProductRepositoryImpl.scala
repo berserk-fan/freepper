@@ -12,7 +12,6 @@ import ua.pomo.catalog.domain.param._
 import monocle.syntax.all._
 import shapeless._
 import ua.pomo.catalog.domain.category.CategoryUUID
-import ua.pomo.catalog.domain.product.ProductParameterKind.{Fabric, Size}
 
 import java.util.UUID
 
@@ -27,14 +26,14 @@ class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[Product
       ProductDisplayName(""),
       ImageList(ImageListId(UUID.randomUUID()), ImageListDisplayName(""), Nil),
       ProductPrice(command.priceUsd, command.promoPriceUsd),
-      Map(
-        Size -> Parameter(command.parameters(Size),
-                          ParameterDisplayName(""),
-                          Image(ImageId(UUID.randomUUID()), ImageSrc(""), ImageAlt(""))),
-        Fabric -> Parameter(command.parameters(Fabric),
-                            ParameterDisplayName(""),
-                            Image(ImageId(UUID.randomUUID()), ImageSrc(""), ImageAlt("")))
-      ),
+      command.parameters.map(
+        Parameter(
+          _,
+          ParameterListId(UUID.randomUUID()),
+          ParameterDisplayName(""),
+          Image(ImageId(UUID.randomUUID()), ImageSrc(""), ImageAlt(""))
+        )
+      )
     )
     (map + (id -> res), id)
   }
@@ -63,21 +62,12 @@ class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[Product
   override def update(command: UpdateProduct): F[Int] = ref.modify { map =>
     object update extends InMemoryUpdaterPoly[Product] {
       implicit val modelUUID: Res[ModelId] = gen(_.focus(_.modelId))
-      implicit val params: Res[Map[ProductParameterKind, ParameterId]] = at(
-        _.map(updateValue => (p: Product) => p.copy(parameters = updateIdInEachKind(updateValue, p.parameters)))
-      )
       implicit val imageListId: Res[ImageListId] = gen(_.focus(_.imageList.id))
       implicit val productStandardPrice: Res[ProductStandardPrice] = gen(_.focus(_.price.standard))
       implicit val productPromoPrice: Res[Option[ProductPromoPrice]] = gen(_.focus(_.price.promo))
     }
     val updater = Generic[UpdateProduct].to(command).drop(Nat._1).map(update).toList.flatten.reduce(_ andThen _)
     map.get(command.id).fold((map, 0))(x => (map + (command.id -> updater(x)), 1))
-  }
-
-  private def updateIdInEachKind(t: Map[ProductParameterKind, ParameterId], p: ProductParameters): ProductParameters = {
-    t.foldLeft(p) { (curMap, kind_id) =>
-      curMap.updated(kind_id._1, curMap(kind_id._1).copy(id = kind_id._2))
-    }
   }
 
   override def delete(id: ProductId): F[Unit] = ref.update(_ - id)

@@ -10,7 +10,7 @@ import ua.pomo.catalog.CatalogApiConfig
 import ua.pomo.catalog.domain.{PageToken, category, model, product}
 import ua.pomo.catalog.api._
 import ua.pomo.catalog.domain.error._
-import ua.pomo.catalog.domain.model.FindModel
+import ua.pomo.catalog.domain.model.ModelQuery
 import ua.pomo.catalog.domain.product.ProductService
 
 class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F],
@@ -91,13 +91,24 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
 
   override def getImageList(request: GetImageListRequest, ctx: Metadata): F[ImageList] = ???
 
+  override def updateImageLists(request: UpdateImageListsRequest, ctx: Metadata): F[ImageList] = ???
+
   override def deleteImageList(request: DeleteImageListRequest, ctx: Metadata): F[Empty] = ???
 
-  private def applyDefaults(request: FindModel): FindModel = request.copy(page = applyDefaults(request.page))
+  override def listImageLists(request: ListImageListsRequest, ctx: Metadata): F[ListImageListsResponse] = ???
+
+  private def applyDefaults(request: ModelQuery): ModelQuery = request.copy(page = applyDefaults(request.page))
   private def applyDefaults(pageToken: PageToken.NonEmpty): PageToken.NonEmpty = {
     val newSize = if (pageToken.size == 0) config.defaultPageSize.toLong else pageToken.size
     pageToken.copy(size = newSize)
   }
+
+  def createProduct(request: ua.pomo.catalog.api.CreateProductRequest,
+                    ctx: io.grpc.Metadata): F[ua.pomo.catalog.api.Product] = ???
+  def deleteProduct(request: ua.pomo.catalog.api.DeleteProductRequest,
+                    ctx: io.grpc.Metadata): F[com.google.protobuf.empty.Empty] = ???
+  def updateProduct(request: ua.pomo.catalog.api.UpdateProductRequest,
+                    ctx: io.grpc.Metadata): F[ua.pomo.catalog.api.Product] = ???
 
   private def adaptError[T](f: => F[T]): F[T] = {
     Async[F]

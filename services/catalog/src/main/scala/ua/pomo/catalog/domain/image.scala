@@ -8,7 +8,6 @@ import io.estatico.newtype.macros.newtype
 
 import java.util.UUID
 
-
 object image {
   @derive(eqv, show, decoder)
   @newtype
@@ -25,7 +24,7 @@ object image {
   @derive(eqv, show, decoder)
   case class Image(id: ImageId, src: ImageSrc, alt: ImageAlt)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   @newtype
   case class ImageListId(uuid: UUID)
 

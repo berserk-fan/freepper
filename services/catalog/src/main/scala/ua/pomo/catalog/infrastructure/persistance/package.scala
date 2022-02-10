@@ -2,9 +2,11 @@ package ua.pomo.catalog.infrastructure
 
 import cats.Show
 import cats.data.NonEmptyList
+import cats.effect.MonadCancel
 import cats.implicits.{toBifunctorOps, toShow, toTraverseOps}
 import doobie._
-import io.circe.{Decoder, Json, parser}
+import io.circe.Decoder.Result
+import io.circe.{Decoder, HCursor, Json, parser}
 import io.estatico.newtype.Coercible
 import io.estatico.newtype.ops.toCoercibleIdOps
 import monocle.AppliedLens
@@ -33,4 +35,7 @@ package object persistance {
         }
     }
   }
+
+  def withoutTransaction[A](p: ConnectionIO[A]): ConnectionIO[A] =
+    MonadCancel[ConnectionIO].bracket(FC.setAutoCommit(true))(_ => p)(_ => FC.setAutoCommit(false))
 }
