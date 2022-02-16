@@ -12,6 +12,7 @@ import ua.pomo.catalog.api.{
   CatalogFs2Grpc,
   CreateCategoryRequest,
   CreateModelRequest,
+  DeleteModelRequest,
   GetModelRequest,
   ListModelsRequest,
   Money
@@ -20,6 +21,7 @@ import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ModelServiceImpl}
 import ua.pomo.catalog.app.{ApiName, CatalogImpl}
 import ua.pomo.catalog.domain.category._
+import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.image.ImageListId
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.shared.Generators
@@ -82,7 +84,7 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
         .create(Generators.Model.createGen(ImageListId(UUID.randomUUID()), List.empty).sample.get)
         .unsafeRunSync()
     noException should be thrownBy impl
-      .getModel(GetModelRequest(ModelName(model.categoryId, model.uuid).toNameString), null)
+      .getModel(GetModelRequest(ModelName(model.categoryId, model.id).toNameString), null)
       .unsafeRunSync()
   }
 
@@ -116,8 +118,27 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
     noException should be thrownBy impl.createModel(req2, null).unsafeRunSync()
   }
 
+  test("delete model") {
+    val (_, models, impl) = makeImpls
+    val request =
+      DeleteModelRequest(ModelName(CategoryUUID(UUID.randomUUID()), ModelId(UUID.randomUUID())).toNameString)
+    val ex = intercept[StatusException] {
+      impl.deleteModel(request, null).unsafeRunSync()
+    }
+    ex.getStatus.getCode should equal(Status.Code.NOT_FOUND)
+    val mod1 =
+      models.create(Generators.Model.createGen(ImageListId(UUID.randomUUID()), List()).sample.get).unsafeRunSync()
+    noException should be thrownBy impl
+      .deleteModel(DeleteModelRequest(ModelName(mod1.categoryId, mod1.id).toNameString), null)
+      .unsafeRunSync()
+
+    intercept[NotFound] {
+      models.get(mod1.id).unsafeRunSync()
+    }
+  }
+
   test("create category description not empty") {
-    val (_, modelService, impl) = makeImpls
+    val (_, _, impl) = makeImpls
     val response = impl
       .createCategory(CreateCategoryRequest("categories",
                                             Some(api.Category(displayName = "a", name = "b", description = "c"))),
@@ -126,4 +147,5 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
 
     response.description should equal("c")
   }
+
 }

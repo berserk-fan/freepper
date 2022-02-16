@@ -60,14 +60,14 @@ object category {
   }
 
   trait CategoryService[F[_]] {
-    def createCategory(category: CreateCategory): F[Category]
+    def create(category: CreateCategory): F[Category]
 
     def get(id: CategoryUUID): F[Category]
 
     def findAll(): F[List[Category]]
 
-    def updateCategory(req: UpdateCategory): F[Category]
+    def update(req: UpdateCategory): F[Category]
 
-    def deleteCategory(id: CategoryUUID): F[Unit]
+    def delete(id: CategoryUUID): F[Unit]
   }
 }

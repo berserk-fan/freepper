@@ -30,21 +30,21 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
 
   override def createCategory(request: CreateCategoryRequest, ctx: Metadata): F[Category] = adaptError {
     validate(request) >>
-      categoryService.createCategory(Converters.toDomain(request)).map(Converters.toApi)
+      categoryService.create(Converters.toDomain(request)).map(Converters.toApi)
   }
 
   def deleteCategory(request: DeleteCategoryRequest, ctx: Metadata): F[Empty] = adaptError {
     validate(request) >>
       Async[F]
         .fromEither(ApiName.category(request.name))
-        .flatMap(name => categoryService.deleteCategory(name.categoryId))
+        .flatMap(name => categoryService.delete(name.categoryId))
         .as(Empty())
   }
 
   def updateCategory(request: UpdateCategoryRequest, ctx: Metadata): F[Category] = adaptError {
     validate(request) >>
       categoryService
-        .updateCategory(Converters.toDomain(request))
+        .update(Converters.toDomain(request))
         .map(Converters.toApi)
   }
 
@@ -72,10 +72,13 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
     }
   }
 
-  override def deleteModel(request: DeleteModelRequest, ctx: Metadata): F[Empty] = ???
+  override def deleteModel(request: DeleteModelRequest, ctx: Metadata): F[Empty] = {
+    modelService.delete(Converters.toDomain(request)).as(Empty())
+  }
   override def updateModel(request: UpdateModelRequest, ctx: Metadata): F[Model] = ???
 
   //products
+
   override def getProduct(request: GetProductRequest, ctx: Metadata): F[Product] = adaptError {
     validate(request) >>
       productService
@@ -86,6 +89,14 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
   override def listProducts(request: ListProductsRequest, ctx: Metadata): F[ListProductsResponse] = adaptError {
     validate(request) >> ???
   }
+
+  override def createProduct(request: CreateProductRequest, ctx: Metadata): F[Product] = ???
+
+  override def deleteProduct(request: DeleteProductRequest, ctx: Metadata): F[Empty] = ???
+
+  override def updateProduct(request: UpdateProductRequest, ctx: Metadata): F[Product] = ???
+
+  //imagelists
 
   override def createImageList(request: CreateImageListRequest, ctx: Metadata): F[ImageList] = ???
 
@@ -102,13 +113,6 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
     val newSize = if (pageToken.size == 0) config.defaultPageSize.toLong else pageToken.size
     pageToken.copy(size = newSize)
   }
-
-  def createProduct(request: ua.pomo.catalog.api.CreateProductRequest,
-                    ctx: io.grpc.Metadata): F[ua.pomo.catalog.api.Product] = ???
-  def deleteProduct(request: ua.pomo.catalog.api.DeleteProductRequest,
-                    ctx: io.grpc.Metadata): F[com.google.protobuf.empty.Empty] = ???
-  def updateProduct(request: ua.pomo.catalog.api.UpdateProductRequest,
-                    ctx: io.grpc.Metadata): F[ua.pomo.catalog.api.Product] = ???
 
   private def adaptError[T](f: => F[T]): F[T] = {
     Async[F]

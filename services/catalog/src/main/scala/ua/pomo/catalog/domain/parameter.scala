@@ -8,7 +8,7 @@ import ua.pomo.catalog.domain.image.Image
 
 import java.util.UUID
 
-object param {
+object parameter {
   @derive(eqv, show, decoder)
   @newtype
   case class ParameterId(value: UUID)

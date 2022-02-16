@@ -11,8 +11,10 @@ import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
-import ua.pomo.catalog.domain.param._
+import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.product._
+
+import java.util.UUID
 
 class ProductRepositoryImpl private () extends ProductRepository[ConnectionIO] {
 
@@ -66,8 +68,8 @@ object ProductRepositoryImpl {
       import command._
       sql"""
         INSERT INTO products 
-            (price_usd, promo_price_usd, image_list_id, model_id, parameters)
-        VALUES ($priceUsd, 
+            (price_usd, promo_price_usd, image_list_id, model_id, parameter_ids)
+        VALUES ($priceUsd,
                 $promoPriceUsd, 
                 $imageListId, 
                 $modelId, 
@@ -94,7 +96,7 @@ object ProductRepositoryImpl {
                                      promoPrice: Option[ProductPromoPrice])
 
     def find(query: ProductQuery): Query0[Product] = {
-      implicit val readParamList: Get[List[Parameter]] = jsonAggListJson[Parameter]
+      implicit val readParamList: Get[List[ParameterId]] = Get[List[UUID]].map(_.map(ParameterId.apply))
       implicit val readListImage: Get[List[Image]] = jsonAggListJson[Image]
       sql"""
             select p.id, m.id, m.category_id, m.display_name, p.price_usd, p.promo_price_usd,
@@ -104,17 +106,7 @@ object ProductRepositoryImpl {
                      then '[]'
                      else json_agg(json_build_object('id', i.id, 'src', i.src, 'alt', i.alt))
                    end,
-                   COALESCE((
-                    select json_agg(('id', par.id, 
-                                     'parameterListId', par.parameter_list_id, 
-                                     'displayName', par.display_name, 
-                                     'image', json_build_object('id', i.id, 
-                                                                'src', i.src, 
-                                                                'alt', i.alt)))
-                    from parameters par 
-                        inner join unnest(p.parameters) param_id on par.id = param_id 
-                        left join images i on par.image_id = i.id
-                   ), '[]')
+                   p.parameter_ids
             from products p 
                 left join models m on p.model_id = m.id 
                 left join image_lists il on m.image_list_id = il.id
@@ -125,14 +117,12 @@ object ProductRepositoryImpl {
             limit ${query.pageToken.size}
             offset ${query.pageToken.offset}
          """
-        .query[(GetProductDto, ImageList, List[Parameter])]
+        .query[(GetProductDto, ImageList, List[ParameterId])]
         .map { res =>
           val (product, imageList, params) = res
-          val displayName = Product.createDisplayName(product.modelDisplayName, params)
           Product(product.productId,
                   product.modelId,
                   product.categoryId,
-                  displayName,
                   imageList,
                   ProductPrice(product.price, product.promoPrice),
                   params)

@@ -11,7 +11,7 @@ import java.util.UUID
 import shapeless._
 import monocle.syntax.all._
 import ua.pomo.catalog.domain.category.CategoryUUID
-import ua.pomo.catalog.domain.param.{ParamListDisplayName, ParameterList}
+import ua.pomo.catalog.domain.parameter.{ParamListDisplayName, ParameterList}
 
 class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, Map[ModelId, Model]])
     extends ModelRepository[F] {
@@ -27,7 +27,7 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
       req.parameterListIds.map(id => ParameterList(id, ParamListDisplayName(""))),
       ImageList(req.imageListId, ImageListDisplayName(""), List())
     )
-    (map + ((model.uuid, model)), model.uuid)
+    (map + ((model.id, model)), model.id)
   }
 
   override def get(id: ModelId): F[Model] = find(id).flatMap(
@@ -41,7 +41,7 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
       case ModelSelector.All =>
         _ =>
           true
-      case ModelSelector.IdIs(id)         => _.uuid == id
+      case ModelSelector.IdIs(id)         => _.id == id
       case ModelSelector.CategoryIdIs(id) => _.categoryId == id
     }
     ref.get
@@ -52,7 +52,7 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
   }
 
   override def delete(id: ModelId): F[Unit] = ref.update { map =>
-    map.get(id).fold(map)(map - _.uuid)
+    map.get(id).fold(map)(map - _.id)
   }
 
   override def update(command: UpdateModel): F[Int] = ref.modify { map =>

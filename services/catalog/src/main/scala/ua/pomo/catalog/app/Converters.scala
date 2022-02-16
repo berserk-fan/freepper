@@ -5,14 +5,7 @@ import io.circe.{Decoder, Encoder, parser}
 import scalapb.FieldMaskUtil
 import squants.market.Money
 import ua.pomo.catalog.api
-import ua.pomo.catalog.api.{
-  CreateCategoryRequest,
-  CreateModelRequest,
-  GetProductRequest,
-  ListModelsRequest,
-  ListModelsResponse,
-  UpdateCategoryRequest
-}
+import ua.pomo.catalog.api.{CreateCategoryRequest, CreateModelRequest, DeleteModelRequest, GetProductRequest, ListModelsRequest, ListModelsResponse, UpdateCategoryRequest}
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category._
@@ -67,8 +60,8 @@ object Converters {
 
   def toApi(model: Model): api.Model = {
     api.Model(
-      ModelName(model.categoryId, model.uuid).toNameString,
-      model.uuid.show,
+      ModelName(model.categoryId, model.id).toNameString,
+      model.id.show,
       model.readableId.show,
       model.displayName.show,
       model.description.value,
@@ -118,6 +111,9 @@ object Converters {
     ApiName.product(request.name).toOption.get.productId
   }
 
+  def toDomain(request: DeleteModelRequest): ModelId = {
+    ApiName.model(request.name).toOption.get.modelId
+  }
   def toDomain(request: CreateModelRequest): CreateModel = {
     val models = ApiName.models(request.parent).toOption.get.categoryId
     val model = request.model.get

@@ -12,7 +12,7 @@ import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
-import ua.pomo.catalog.domain.param.ParameterList
+import ua.pomo.catalog.domain.parameter.ParameterList
 
 class ModelRepositoryImpl private (imageListRepository: ImageListRepository[ConnectionIO])
     extends ModelRepository[ConnectionIO] {

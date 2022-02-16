@@ -5,7 +5,7 @@ import derevo.cats.{eqv, show}
 import derevo.derive
 import io.estatico.newtype.macros.newtype
 import ua.pomo.catalog.domain.category.CategoryUUID
-import ua.pomo.catalog.domain.param._
+import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.image.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 
@@ -15,10 +15,6 @@ object product {
   @derive(eqv, show)
   @newtype
   case class ProductId(value: UUID)
-
-  @derive(eqv, show)
-  @newtype
-  case class ProductDisplayName(value: String)
 
   @derive(eqv, show)
   @newtype
@@ -35,16 +31,9 @@ object product {
   case class Product(id: ProductId,
                      modelId: ModelId,
                      categoryId: CategoryUUID,
-                     displayName: ProductDisplayName,
                      imageList: ImageList,
                      price: ProductPrice,
-                     parameters: List[Parameter])
-
-  object Product {
-    def createDisplayName(m: ModelDisplayName, parameters: List[Parameter]): ProductDisplayName = {
-      ProductDisplayName(s"${m.value} ${parameters.sortBy(_.parameterListId.value.toString).map(_.displayName.value).mkString(" ")}")
-    }
-  }
+                     parameterIds: List[ParameterId])
 
   @derive(eqv, show)
   case class CreateProduct(id: ProductId,

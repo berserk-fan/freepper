@@ -26,11 +26,10 @@ object ImageListRepositoryImpl {
         imageListId <- Queries
           .createImageList(imageList.displayName)
           .withUniqueGeneratedKeys[ImageListId]("id")
-          .map(x => { println("xx"); x })
-        _ = println(s"created imageListId=$imageListId")
         imagesCount <- Queries.createImages.updateMany(imageList.images.map(x => (x.src, x.alt, imageListId)))
-        _ <- Sync[ConnectionIO].whenA(imagesCount != imageList.images.size)(
-          delete(imageListId) >> new Exception("returned ids...").raiseError[ConnectionIO, Unit])
+        _ <- Sync[ConnectionIO].whenA(imagesCount != imageList.images.size) {
+          delete(imageListId) >> new Exception("returned ids...").raiseError[ConnectionIO, Unit]
+        }
       } yield imageListId
 
     override def find(id: ImageListId): ConnectionIO[Option[ImageList]] = {

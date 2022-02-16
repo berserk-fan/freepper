@@ -23,7 +23,7 @@ class CategoryServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: G ~> 
     repository.findAll().mapK(xa)
   }
 
-  override def updateCategory(req: UpdateCategory): F[Category] = {
+  override def update(req: UpdateCategory): F[Category] = {
     repository
       .update(req)
       .flatMap { count =>
@@ -42,11 +42,11 @@ class CategoryServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: G ~> 
       .mapK(xa)
   }
 
-  override def deleteCategory(id: CategoryUUID): F[Unit] = {
+  override def delete(id: CategoryUUID): F[Unit] = {
     repository.delete(id).mapK(xa)
   }
 
-  override def createCategory(category: CreateCategory): F[Category] = {
+  override def create(category: CreateCategory): F[Category] = {
     repository
       .create(category)
       .flatMap { id =>

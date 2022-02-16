@@ -8,7 +8,7 @@ import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.image.{Image, ImageAlt, ImageId, ImageList, ImageListDisplayName, ImageListId, ImageSrc}
 import ua.pomo.catalog.domain.model.ModelId
 import ua.pomo.catalog.domain.product._
-import ua.pomo.catalog.domain.param._
+import ua.pomo.catalog.domain.parameter._
 import monocle.syntax.all._
 import shapeless._
 import ua.pomo.catalog.domain.category.CategoryUUID
@@ -23,17 +23,9 @@ class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[Product
       id,
       command.modelId,
       CategoryUUID(UUID.randomUUID()),
-      ProductDisplayName(""),
       ImageList(ImageListId(UUID.randomUUID()), ImageListDisplayName(""), Nil),
       ProductPrice(command.priceUsd, command.promoPriceUsd),
-      command.parameters.map(
-        Parameter(
-          _,
-          ParameterListId(UUID.randomUUID()),
-          ParameterDisplayName(""),
-          Image(ImageId(UUID.randomUUID()), ImageSrc(""), ImageAlt(""))
-        )
-      )
+      command.parameters
     )
     (map + (id -> res), id)
   }
