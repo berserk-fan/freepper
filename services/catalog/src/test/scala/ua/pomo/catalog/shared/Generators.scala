@@ -34,7 +34,7 @@ object Generators {
       Gen.option(readableId),
       Gen.option(displayName),
       Gen.option(description),
-    ).mapN(UpdateCategory.apply)
+    ).mapN(UpdateCategory.apply).filter(x => x.displayName.isDefined || x.description.isDefined || x.readableId.isDefined)
 
     val create: Gen[CreateCategory] = (readableId, displayName, description).mapN(CreateCategory.apply)
     val gen: Gen[Category] = (catId, readableId, displayName, description).mapN(category.Category.apply)

@@ -6,6 +6,10 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "ua.pomo.catalog"
 ThisBuild / organizationName := "Pomo"
 
+//ScalaTest
+
+Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-P16")
+
 //grpc plugins
 
 enablePlugins(Fs2Grpc)

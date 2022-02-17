@@ -5,6 +5,7 @@ import cats.Show
 import java.util.UUID
 import cats.implicits.{catsSyntaxOptionId, toShow}
 import ua.pomo.catalog.domain.category._
+import ua.pomo.catalog.domain.error.ValidationErr
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.product.ProductId
@@ -23,8 +24,7 @@ object ApiName {
   case class ProductName(categoryId: CategoryUUID, modelId: ModelId, productId: ProductId) extends ApiName
 
   import Parsers.parseAllToEither
-  case class ParseNameError(message: String) extends Exception(message)
-  type NameParseResult[T] = Either[ParseNameError, T]
+  type NameParseResult[T] = Either[ValidationErr, T]
 
   def category(s: String): NameParseResult[CategoryName] = parseAllToEither(Parsers.category, s)
   def models(s: String): NameParseResult[ModelsName] = parseAllToEither(Parsers.models, s)
@@ -45,8 +45,8 @@ object ApiName {
   private object Parsers extends RegexParsers {
     def parseAllToEither[T](p: Parser[T], s: String): NameParseResult[T] = parseAll(p, s) match {
       case Success(matched, _) => Right(matched)
-      case Failure(msg, _)     => Left(ParseNameError(msg))
-      case Error(msg, _)       => Left(ParseNameError(msg))
+      case Failure(msg, _)     => Left(ValidationErr(msg))
+      case Error(msg, _)       => Left(ValidationErr(msg))
     }
 
     def category: Parser[CategoryName] = Categories ~> "/" ~> categoryUUID ^^ CategoryName.apply

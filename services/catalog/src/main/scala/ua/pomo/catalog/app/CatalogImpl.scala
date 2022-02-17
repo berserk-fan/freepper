@@ -10,22 +10,26 @@ import ua.pomo.catalog.CatalogApiConfig
 import ua.pomo.catalog.domain.{PageToken, category, model, product}
 import ua.pomo.catalog.api._
 import ua.pomo.catalog.domain.error._
+import ua.pomo.catalog.domain.image.ImageListService
 import ua.pomo.catalog.domain.model.ModelQuery
 import ua.pomo.catalog.domain.product.ProductService
 
 class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F],
                                         categoryService: category.CategoryService[F],
                                         modelService: model.ModelService[F],
+                                        imageListService: ImageListService[F],
                                         config: CatalogApiConfig)
     extends CatalogFs2Grpc[F, Metadata] {
 
   //categories
 
-  override def getCategory(request: GetCategoryRequest, ctx: Metadata): F[Category] = {
-    Async[F]
-      .fromEither(ApiName.category(request.name))
-      .flatMap(name => categoryService.get(name.categoryId))
-      .map(Converters.toApi)
+  override def getCategory(request: GetCategoryRequest, ctx: Metadata): F[Category] = adaptError {
+    validate(request) >> {
+      Async[F]
+        .fromEither(ApiName.category(request.name))
+        .flatMap(name => categoryService.get(name.categoryId))
+        .map(Converters.toApi)
+    }
   }
 
   override def createCategory(request: CreateCategoryRequest, ctx: Metadata): F[Category] = adaptError {
@@ -98,9 +102,19 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
 
   //imagelists
 
-  override def createImageList(request: CreateImageListRequest, ctx: Metadata): F[ImageList] = ???
+  override def createImageList(request: CreateImageListRequest, ctx: Metadata): F[ImageList] = adaptError {
+    validate(request) >>
+      imageListService
+        .create(Converters.toDomain(request))
+        .map(Converters.toApi)
+  }
 
-  override def getImageList(request: GetImageListRequest, ctx: Metadata): F[ImageList] = ???
+  override def getImageList(request: GetImageListRequest, ctx: Metadata): F[ImageList] = adaptError {
+    validate(request) >>
+      imageListService
+        .get(Converters.toDomain(request))
+        .map(Converters.toApi)
+  }
 
   override def updateImageLists(request: UpdateImageListsRequest, ctx: Metadata): F[ImageList] = ???
 
@@ -140,17 +154,20 @@ object CatalogImpl {
       productService: ProductService[F],
       categoryService: category.CategoryService[F],
       modelService: model.ModelService[F],
+      imageListService: ImageListService[F],
       config: CatalogApiConfig
   ): CatalogFs2Grpc[F, Metadata] = {
-    new CatalogImpl[F](productService, categoryService, modelService, config)
+    new CatalogImpl[F](productService, categoryService, modelService, imageListService, config)
   }
 
   def makeGrpc[F[_]: Async](
       productService: ProductService[F],
       categoryService: category.CategoryService[F],
       modelService: model.ModelService[F],
+      imageListService: ImageListService[F],
       config: CatalogApiConfig
   ): Resource[F, ServerServiceDefinition] = {
-    CatalogFs2Grpc.bindServiceResource[F](CatalogImpl[F](productService, categoryService, modelService, config))
+    CatalogFs2Grpc.bindServiceResource[F](
+      CatalogImpl[F](productService, categoryService, modelService, imageListService, config))
   }
 }

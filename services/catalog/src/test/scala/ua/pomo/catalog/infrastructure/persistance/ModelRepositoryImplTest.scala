@@ -4,6 +4,7 @@ import cats.effect.{IO, Resource}
 import doobie.ConnectionIO
 import doobie.implicits._
 import doobie.postgres.implicits._
+import org.scalatest.ParallelTestExecution
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.{CategoryRepository, CategoryUUID}
 import ua.pomo.catalog.domain.image._
@@ -13,7 +14,7 @@ import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbRe
 
 import java.util.UUID
 
-class ModelRepositoryImplTest extends DbUnitTestSuite {
+class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution {
   import ModelRepositoryImpl.Queries
   case class TestResources(categoryRepo: CategoryRepository[ConnectionIO],
                            imageListRepo: ImageListRepository[ConnectionIO],
@@ -24,6 +25,7 @@ class ModelRepositoryImplTest extends DbUnitTestSuite {
       with HasImpls
 
   override type Res = TestResources
+  override val resourcePerTest: Boolean = true
   override type Impl = ModelRepository[ConnectionIO]
   override def names: Seq[String] = Seq("postgres", "inmemory")
   override protected def resource: Resource[IO, Res] =

@@ -1,10 +1,11 @@
 package ua.pomo.catalog.app
 
+import com.google.protobuf.field_mask.FieldMask
 import org.scalatest.EitherValues
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import ua.pomo.catalog.api.ListModelsRequest
+import ua.pomo.catalog.api.{ListModelsRequest, UpdateCategoryRequest}
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.model.{ModelQuery, ModelSelector}
@@ -12,6 +13,8 @@ import ua.pomo.catalog.shared.Generators
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}
+import ua.pomo.catalog.api
+import ua.pomo.catalog.app.ApiName.CategoryName
 
 class ConvertersTest extends AnyFunSuite with Matchers with EitherValues {
   private val Uuid = UUID.randomUUID()
@@ -27,5 +30,15 @@ class ConvertersTest extends AnyFunSuite with Matchers with EitherValues {
     Converters.toDomain(listModelsRequest2).toEither.value should equal(
       ModelQuery(ModelSelector.CategoryIdIs(CategoryUUID(Uuid)), PageToken.NonEmpty(10, 20))
     )
+  }
+
+  test("update category should get description") {
+    val catId = CategoryUUID(UUID.randomUUID())
+    val category = api.Category(CategoryName(catId).toNameString, catId.value.toString, "some-id", "somename", "descr")
+    val res =
+      Converters.toDomain(UpdateCategoryRequest(Some(category), Some(FieldMask.of(Seq("description", "readable_id")))))
+    res.description shouldBe defined
+    res.displayName should equal(None)
+    res.readableId shouldBe defined
   }
 }

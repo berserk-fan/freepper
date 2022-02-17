@@ -5,7 +5,17 @@ import io.circe.{Decoder, Encoder, parser}
 import scalapb.FieldMaskUtil
 import squants.market.Money
 import ua.pomo.catalog.api
-import ua.pomo.catalog.api.{CreateCategoryRequest, CreateModelRequest, DeleteModelRequest, GetProductRequest, ListModelsRequest, ListModelsResponse, UpdateCategoryRequest}
+import ua.pomo.catalog.api.{
+  CreateCategoryRequest,
+  CreateImageListRequest,
+  CreateModelRequest,
+  DeleteModelRequest,
+  GetImageListRequest,
+  GetProductRequest,
+  ListModelsRequest,
+  ListModelsResponse,
+  UpdateCategoryRequest
+}
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category._
@@ -18,6 +28,7 @@ import java.util.{Base64, UUID}
 import scala.util.{Success, Try}
 
 object Converters {
+  private val DefaultUUID = new UUID(0, 0)
   def toApi(cat: Category): api.Category = {
     api.Category(
       CategoryName(cat.uuid).toNameString,
@@ -37,6 +48,10 @@ object Converters {
       }
       res.getBytes(utf8)
     }
+  }
+
+  def toDomain(request: GetImageListRequest): ImageListId = {
+    ApiName.imageList(request.name).toOption.get.id
   }
 
   def toDomain(listModels: ListModelsRequest): Try[ModelQuery] = {
@@ -111,6 +126,14 @@ object Converters {
     ApiName.product(request.name).toOption.get.productId
   }
 
+  def toDomain(request: CreateImageListRequest): ImageList = {
+    val il = request.imageList.get
+    ImageList(
+      ImageListId(DefaultUUID),
+      ImageListDisplayName(il.displayName),
+      il.images.map(im => Image(ImageId(DefaultUUID), ImageSrc(im.src), ImageAlt(im.alt))).toList
+    )
+  }
   def toDomain(request: DeleteModelRequest): ModelId = {
     ApiName.model(request.name).toOption.get.modelId
   }
@@ -129,7 +152,7 @@ object Converters {
     )
   }
 
-  private def nonEmptyString(s: String): Option[String] = Option.when(s.isEmpty)(s)
+  private def nonEmptyString(s: String): Option[String] = Option.when(s.nonEmpty)(s)
 
   def toDomain(request: UpdateCategoryRequest): UpdateCategory = {
     val category1 = request.category.get

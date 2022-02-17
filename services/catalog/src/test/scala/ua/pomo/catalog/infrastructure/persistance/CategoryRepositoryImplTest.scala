@@ -2,15 +2,18 @@ package ua.pomo.catalog.infrastructure.persistance
 
 import cats.effect.{IO, Resource}
 import doobie.ConnectionIO
+import org.scalatest.ParallelTestExecution
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbResources, Resources}
 
 import java.util.UUID
 
-class CategoryRepositoryImplTest extends DbUnitTestSuite {
+class CategoryRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution{
   import CategoryRepositoryImpl._
   override type Impl = CategoryRepository[ConnectionIO]
   override type Res = TestResources
+  override val resourcePerTest: Boolean = true
+
   case class TestResources(db: DbResources, impls: Seq[Impl]) extends HasDbResources with HasImpls
   override val names = Seq("postgres", "inmemory")
   override def resource: Resource[IO, Res] =

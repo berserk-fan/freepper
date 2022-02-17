@@ -4,8 +4,9 @@ import cats.effect.unsafe.IORuntime
 import cats.effect.{IO, Resource, unsafe}
 import doobie.{Fragment, Transactor}
 import ua.pomo.catalog.infrastructure.DBMigrations
-import ua.pomo.catalog.{AppConfig, JdbcDatabaseConfig, TransactorHelpers}
+import ua.pomo.catalog.{AppConfig, JdbcDatabaseConfig, ServerConfig, TransactorHelpers}
 import doobie.implicits._
+import doobie.util.log.LogHandler
 import fs2.grpc.syntax.all.fs2GrpcSyntaxManagedChannelBuilder
 import io.grpc.{ManagedChannel, Metadata}
 import io.grpc.netty.NettyChannelBuilder
@@ -24,12 +25,14 @@ object Resources {
     TransactorHelpers.fromConfig[IO](config)
   }
 
+  /*allocate schemaf*/
   def schema(config: JdbcDatabaseConfig, transactor: Transactor[IO]): Resource[IO, Schema] = {
+    implicit val logHandler: LogHandler = LogHandler.jdkLogHandler
     Resource.make(
       DBMigrations
         .migrate[IO](config)
         .as(Schema())) { _ =>
-      sql"""DROP schema IF EXISTS "${Fragment.const0(config.schema)}" CASCADE;""".update.run
+      sql"""DROP SCHEMA IF EXISTS "${Fragment.const0(config.schema)}" CASCADE;""".update.run
         .transact(transactor)
         .as(())
     }
@@ -49,9 +52,10 @@ object Resources {
     }
   }
 
-  def catalogClient(port: Int): Resource[IO, CatalogFs2Grpc[IO, Metadata]] = {
+  def catalogClient(config: ServerConfig): Resource[IO, CatalogFs2Grpc[IO, Metadata]] = {
     NettyChannelBuilder
-      .forAddress("127.0.0.1", port)
+      .forAddress("127.0.0.1", config.serverPort)
+      .usePlaintext()
       .resource[IO]
       .flatMap {
         CatalogFs2Grpc.stubResource(_)

@@ -18,7 +18,7 @@ import ua.pomo.catalog.api.{
   Money
 }
 import ua.pomo.catalog.app.ApiName._
-import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ModelServiceImpl}
+import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ImageListServiceImpl, ModelServiceImpl}
 import ua.pomo.catalog.app.{ApiName, CatalogImpl}
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.error.NotFound
@@ -34,7 +34,8 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
   def makeImpls: (CategoryService[IO], ModelService[IO], CatalogFs2Grpc[IO, Metadata]) = {
     val categoryService = CategoryServiceImpl.makeInMemory[IO].unsafeRunSync()
     val modelService = ModelServiceImpl.makeInMemory[IO].unsafeRunSync()
-    val catalogImpl = CatalogImpl[IO](null, categoryService, modelService, config)
+    val imageListService = ImageListServiceImpl.makeInMemory[IO]
+    val catalogImpl = CatalogImpl[IO](null, categoryService, modelService, imageListService, config)
     (categoryService, modelService, catalogImpl)
   }
 
@@ -122,10 +123,6 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
     val (_, models, impl) = makeImpls
     val request =
       DeleteModelRequest(ModelName(CategoryUUID(UUID.randomUUID()), ModelId(UUID.randomUUID())).toNameString)
-    val ex = intercept[StatusException] {
-      impl.deleteModel(request, null).unsafeRunSync()
-    }
-    ex.getStatus.getCode should equal(Status.Code.NOT_FOUND)
     val mod1 =
       models.create(Generators.Model.createGen(ImageListId(UUID.randomUUID()), List()).sample.get).unsafeRunSync()
     noException should be thrownBy impl

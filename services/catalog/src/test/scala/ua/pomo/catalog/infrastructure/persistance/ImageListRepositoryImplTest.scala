@@ -6,6 +6,7 @@ import doobie.ConnectionIO
 import doobie.implicits.toSqlInterpolator
 import doobie.postgres.implicits.UuidType
 import doobie.util.log.LogHandler
+import org.scalatest.ParallelTestExecution
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.image.ImageListSelector.IdsIn
 import ua.pomo.catalog.domain.image._
@@ -14,8 +15,9 @@ import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbRe
 
 import java.util.UUID
 
-class ImageListRepositoryImplTest extends DbUnitTestSuite {
+class ImageListRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution {
   override type Impl = ImageListRepository[ConnectionIO]
+  override val resourcePerTest: Boolean = true
   case class TestResources(postgres: Impl, db: DbResources, impls: Seq[Impl]) extends HasDbResources with HasImpls
   override type Res = TestResources
   override val names = Seq("postgres", "inmemory")

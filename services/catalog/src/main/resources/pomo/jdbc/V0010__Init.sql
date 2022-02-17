@@ -71,7 +71,7 @@ CREATE TABLE products
 CREATE OR REPLACE FUNCTION sort_and_dedup_model_parameter_list_ids() RETURNS TRIGGER AS
 $$
 BEGIN
-    SELECT COALESCE(array_agg(x ORDER BY x), ARRAY []::UUID[])
+    SELECT COALESCE(array_agg(DISTINCT x ORDER BY x), ARRAY []::UUID[])
     into NEW.parameter_list_ids
     from unnest(NEW.parameter_list_ids) x;
     RETURN NEW;
@@ -107,7 +107,7 @@ DECLARE
     product_parameter_lists UUID[];
     model_parameter_lists   UUID[];
 BEGIN
-    select COALESCE(array_agg(p.parameter_list_id ORDER BY p.parameter_list_id),
+    select COALESCE(array_agg(p.parameter_list_id ORDER BY p.parameter_list_id), ARRAY[]::UUID[])
     into product_parameter_lists
     FROM unnest(NEW.parameter_ids) parameter_id
              LEFT JOIN parameters p on parameter_id = p.id;
@@ -117,7 +117,7 @@ BEGIN
     from models
     where id = NEW.model_id;
 
-    IF COALESCE(model_parameter_lists, ARRAY []::UUID[]) != COALESCE(product_parameter_lists, ARRAY []::UUID[]) THEN
+    IF model_parameter_lists != product_parameter_lists THEN
         RAISE 'bad parameter lists, mpl % ppl %', model_parameter_lists, product_parameter_lists;
     END IF;
     RETURN NEW;

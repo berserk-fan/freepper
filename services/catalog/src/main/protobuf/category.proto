@@ -14,7 +14,7 @@ message Category {
   };
   string name = 1;
   string id = 2;
-  string readableId = 3;
+  string readable_id = 3;
   string display_name = 4;
   string description = 5;
 }
@@ -36,7 +36,9 @@ message UpdateCategoryRequest {
   Category category = 1;
 
   // The list of fields to update.
-  google.protobuf.FieldMask update_mask = 2;
+  google.protobuf.FieldMask update_mask = 2 [
+    (validate.rules).message.required = true
+  ];
 }
 
 message DeleteCategoryRequest {
