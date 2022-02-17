@@ -116,8 +116,8 @@ object Generators {
         .mapN(product.Product.apply)
 
     private val imageListId = Gen.uuid.map(ImageListId.apply)
-    def сreate(imageListId1: ImageListId, modelId1: ModelId): Gen[CreateProduct] =
-      (id, Gen.const(modelId1), Gen.const(imageListId1), standardPrice, promoPrice, paramIds)
+    def create(imageListId1: ImageListId, modelId1: ModelId, paramIds: List[ParameterId]): Gen[CreateProduct] =
+      (id, Gen.const(modelId1), Gen.const(imageListId1), standardPrice, promoPrice, Gen.const(paramIds))
         .mapN(CreateProduct.apply)
 
     val update: Gen[UpdateProduct] =

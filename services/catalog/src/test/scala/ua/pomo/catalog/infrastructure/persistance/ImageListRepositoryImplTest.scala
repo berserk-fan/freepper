@@ -44,7 +44,7 @@ class ImageListRepositoryImplTest extends DbUnitTestSuite {
       .withUniqueGeneratedKeys[ImageListId]("id")
       .trRun()
     sql"select id from image_lists where id=$imageListId".query[ImageListId].option.trRun()
-    sql"insert into images (src, alt, image_list_id) values ('','', $imageListId)".update.run.trRun()
+    sql"insert into images (src, alt, image_list_id, list_order) values ('','', $imageListId, 1)".update.run.trRun()
   }
 
   testR(s"create should work") { resources =>
@@ -58,7 +58,7 @@ class ImageListRepositoryImplTest extends DbUnitTestSuite {
       val added = impl.get(dbId).trRun()
       added.copy(images = List()) should equal(imageList.copy(id = dbId, images = List()))
       val id = ImageId(UUID.randomUUID())
-      added.images.map(_.copy(id = id)).toSet should equal(imageList.images.map(_.copy(id = id)).toSet)
+      added.images.map(_.copy(id = id)) should equal(imageList.images.map(_.copy(id = id)))
       impl.delete(dbId).trRun()
     }
   }

@@ -109,7 +109,7 @@ object ModelRepositoryImpl {
                ), '[]'),
                il.id, il.display_name,
                COALESCE((
-                   select json_agg(json_build_object('id', img.id, 'src', img.src, 'alt', img.alt))
+                   select json_agg(json_build_object('id', img.id, 'src', img.src, 'alt', img.alt) ORDER BY img.list_order)
                    from images img
                    where img.image_list_id = il.id
                ), '[]')

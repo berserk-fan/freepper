@@ -104,7 +104,7 @@ object ProductRepositoryImpl {
                    case
                      when count(i.id) = 0
                      then '[]'
-                     else json_agg(json_build_object('id', i.id, 'src', i.src, 'alt', i.alt))
+                     else json_agg(json_build_object('id', i.id, 'src', i.src, 'alt', i.alt) ORDER BY i.list_order)
                    end,
                    p.parameter_ids
             from products p 

@@ -1,5 +1,6 @@
 package ua.pomo.catalog.shared
 
+import org.scalactic.source
 import org.scalatest.funsuite.AnyFunSuite
 
 trait ForEachImpl extends HasIOResource { self: AnyFunSuite =>
@@ -11,7 +12,7 @@ trait ForEachImpl extends HasIOResource { self: AnyFunSuite =>
   def names: Seq[String]
   override type Res <: HasImpls
 
-  protected def testEachImpl(testName: String)(t: Impl => Any): Unit = {
+  protected def testEachImpl(testName: String)(t: Impl => Any)(implicit pos: source.Position): Unit = {
     names.zipWithIndex.foreach {
       case (implName, idx) =>
         test(s"$testName for $implName impl") {
@@ -19,7 +20,7 @@ trait ForEachImpl extends HasIOResource { self: AnyFunSuite =>
         }
     }
   }
-  protected def testEachImplR(testName: String)(t: (Res, Impl) => Any): Unit = {
+  protected def testEachImplR(testName: String)(t: (Res, Impl) => Any)(implicit pos: source.Position): Unit = {
     names.zipWithIndex.foreach {
       case (implName, idx) =>
         testR(s"$testName for $implName impl") { res =>

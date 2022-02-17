@@ -26,7 +26,9 @@ object ImageListRepositoryImpl {
         imageListId <- Queries
           .createImageList(imageList.displayName)
           .withUniqueGeneratedKeys[ImageListId]("id")
-        imagesCount <- Queries.createImages.updateMany(imageList.images.map(x => (x.src, x.alt, imageListId)))
+        imagesCount <- Queries.createImages.updateMany(imageList.images.zipWithIndex.map {
+          case (x, i) => (x.src, x.alt, imageListId, i)
+        })
         _ <- Sync[ConnectionIO].whenA(imagesCount != imageList.images.size) {
           delete(imageListId) >> new Exception("returned ids...").raiseError[ConnectionIO, Unit]
         }
@@ -54,7 +56,9 @@ object ImageListRepositoryImpl {
             updated2 <- req.images.fold(0.pure[ConnectionIO]) { images =>
               for {
                 deleted <- Queries.deleteImages(req.id).run
-                created <- Queries.createImages.updateMany(images.map(x => (x.src, x.alt, req.id)))
+                created <- Queries.createImages.updateMany(images.zipWithIndex.map {
+                  case (x, i) => (x.src, x.alt, req.id, i)
+                })
               } yield deleted + created
             }
           } yield Math.max(0, Math.min(updated1 + updated2, 1))
@@ -81,7 +85,7 @@ object ImageListRepositoryImpl {
             select il.id, 
                    il.display_name,
                    COALESCE((
-                       select json_agg(json_build_object('id', i.id,'src', i.src,'alt', i.alt))
+                       select json_agg(json_build_object('id', i.id,'src', i.src,'alt', i.alt) ORDER BY i.list_order)
                        from images i
                        where il.id = i.image_list_id
                    ), '[]')
@@ -101,11 +105,11 @@ object ImageListRepositoryImpl {
          """.update
     }
 
-    def createImages: Update[(ImageSrc, ImageAlt, ImageListId)] = {
+    def createImages: Update[(ImageSrc, ImageAlt, ImageListId, Int)] = {
       val sql =
         """
-           insert into images (src, alt, image_list_id)
-           values (?,?,?)
+           insert into images (src, alt, image_list_id, list_order)
+           values (?,?,?,?)
          """
       Update(sql)
     }

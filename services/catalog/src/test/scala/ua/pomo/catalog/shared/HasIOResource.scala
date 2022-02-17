@@ -2,6 +2,7 @@ package ua.pomo.catalog.shared
 
 import cats.effect.unsafe.IORuntime.global
 import cats.effect.{IO, Resource}
+import org.scalactic.source
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.BeforeAndAfterAll
 
@@ -22,7 +23,7 @@ trait HasIOResource extends BeforeAndAfterAll { this: AnyFunSuite =>
     finalizers.unsafeRunSync()(global)
   }
 
-  def testR(name: String)(f: Res => Any): Unit = {
+  def testR(name: String)(f: Res => Any)(implicit pos: source.Position): Unit = {
     test(name)(f(resources))
   }
 }
