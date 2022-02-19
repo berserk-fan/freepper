@@ -1,21 +1,24 @@
 import React from "react";
 import { GetStaticProps } from "next";
-import ShopPage, { ShopPageProps } from "components/Shop/ShopPage";
+import ShopPage from "components/Shop/ShopPage";
 import "keen-slider/keen-slider.min.css";
-import { models } from "configs/catalog/beds";
-import { modelToCategory } from "../../../../configs/catalog/defs";
+import { Model } from "apis/model.pb";
+import { shopNode } from "../../../../store";
 
-export default function Shop(props: ShopPageProps) {
+export default function Shop(props: { models: Model[] }) {
   return <ShopPage {...props} />;
 }
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
   const { categoryId } = ctx.params;
-  const models1 = models.filter((m) => modelToCategory[m.id] === categoryId);
+  const models1 = await shopNode.listModels({
+    parent: `categories/${categoryId}/models`,
+    pageSize: 10,
+  });
   return {
     props: {
       products: models1,
-      categoryName: `categories/${categoryId}`,
+      categoryId: `categories/${categoryId}`,
     },
   };
 };

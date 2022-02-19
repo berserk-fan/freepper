@@ -5,6 +5,7 @@ package ua.pomo.catalog.api;
 import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
 import "validate/validate.proto";
+import "google/protobuf/field_mask.proto";
 
 message Image {
   string src = 1;
@@ -17,8 +18,8 @@ message ImageList {
     pattern: "image_lists/{image_list}"
   };
   string name = 1;
-  string display_name = 2;
-  repeated Image images = 3;
+  string display_name = 2 [(validate.rules).string.min_len = 1];
+  repeated Image images = 3 [(validate.rules).repeated.min_items = 1];
 }
 
 message GetImageListRequest {
@@ -69,12 +70,10 @@ message ListImageListsResponse {
   string next_page_token = 2;
 }
 
-message UpdateImageListsRequest {
-  string name = 1 [
-    (google.api.field_behavior) = REQUIRED,
-    (google.api.resource_reference) = {
-      type: "api.pomo.ua/ImageList"
-    }];
-
-  ImageList image_list = 2;
+message UpdateImageListRequest {
+  ImageList image_list = 1;
+  // The list of fields to update.
+  google.protobuf.FieldMask update_mask = 2 [
+    (validate.rules).message.required = true
+  ];
 }

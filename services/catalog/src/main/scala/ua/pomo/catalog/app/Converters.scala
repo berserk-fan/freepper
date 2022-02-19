@@ -9,18 +9,21 @@ import ua.pomo.catalog.api.{
   CreateCategoryRequest,
   CreateImageListRequest,
   CreateModelRequest,
+  DeleteImageListRequest,
   DeleteModelRequest,
   GetImageListRequest,
   GetProductRequest,
   ListModelsRequest,
   ListModelsResponse,
-  UpdateCategoryRequest
+  UpdateCategoryRequest,
+  UpdateImageListRequest
 }
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
+import ua.pomo.catalog.domain.parameter.{Parameter, ParameterList, ParameterListId}
 import ua.pomo.catalog.domain.product._
 
 import java.nio.charset.StandardCharsets
@@ -51,11 +54,15 @@ object Converters {
   }
 
   def toDomain(request: GetImageListRequest): ImageListId = {
-    ApiName.imageList(request.name).toOption.get.id
+    ApiName.imageList(request.name).toTry.get.id
+  }
+
+  def toDomain(deleteImageListRequest: DeleteImageListRequest): ImageListId = {
+    ApiName.imageList(deleteImageListRequest.name).toTry.get.id
   }
 
   def toDomain(listModels: ListModelsRequest): Try[ModelQuery] = {
-    val categoryId = ApiName.models(listModels.parent).toOption.get.categoryId
+    val categoryId = ApiName.models(listModels.parent).toTry.get.categoryId
     Try(new String(Base64.getDecoder.decode(listModels.pageToken), utf8))
       .flatMap {
         case "" => Success(PageToken.NonEmpty(listModels.pageSize.toLong, 0L))
@@ -70,7 +77,16 @@ object Converters {
   }
 
   def toApi(money: Money): api.Money = {
-    api.Money(money.currency.code, money.amount.toFloat)
+    api.Money(money.amount.toFloat)
+  }
+
+  def toApi(parameter: Parameter): api.Parameter = {
+    api.Parameter(parameter.id.show, parameter.displayName.show, Some(toApi(parameter.image)))
+  }
+
+  def toApi(parameterList: ParameterList): api.ParameterList = {
+    val parameters = parameterList.parameters.map(toApi)
+    api.ParameterList(parameterList.id.show, parameterList.displayName.show, parameters)
   }
 
   def toApi(model: Model): api.Model = {
@@ -80,8 +96,9 @@ object Converters {
       model.readableId.show,
       model.displayName.show,
       model.description.value,
-      Some(toApi(model.imageList)),
+      api.Model.ImageList.ImageListData(toApi(model.imageList)),
       Some(toApi(model.minimalPrice.value)),
+      api.Model.ParameterListsOneof.ParameterListsData(api.Model.ParameterLists(model.parameterLists.map(toApi)))
     )
   }
 
@@ -122,8 +139,20 @@ object Converters {
     )
   }
 
+  def toDomain(image: api.Image): Image = {
+    Image(ImageSrc(image.src), ImageAlt(image.alt))
+  }
+
+  def toDomain(request: UpdateImageListRequest): ImageListUpdate = {
+    val id = ApiName.imageList(request.imageList.get.name).toTry.get.id
+    val obj = FieldMaskUtil.applyFieldMask(request.imageList.get, request.updateMask.get)
+    ImageListUpdate(id,
+                    nonEmptyString(obj.displayName).map(ImageListDisplayName.apply),
+                    nonEmptyList(obj.images.toList.map(Converters.toDomain)))
+  }
+
   def toDomain(request: GetProductRequest): ProductId = {
-    ApiName.product(request.name).toOption.get.productId
+    ApiName.product(request.name).toTry.get.productId
   }
 
   def toDomain(request: CreateImageListRequest): ImageList = {
@@ -131,16 +160,16 @@ object Converters {
     ImageList(
       ImageListId(DefaultUUID),
       ImageListDisplayName(il.displayName),
-      il.images.map(im => Image(ImageId(DefaultUUID), ImageSrc(im.src), ImageAlt(im.alt))).toList
+      il.images.map(im => Image(ImageSrc(im.src), ImageAlt(im.alt))).toList
     )
   }
   def toDomain(request: DeleteModelRequest): ModelId = {
-    ApiName.model(request.name).toOption.get.modelId
+    ApiName.model(request.name).toTry.get.modelId
   }
   def toDomain(request: CreateModelRequest): CreateModel = {
-    val models = ApiName.models(request.parent).toOption.get.categoryId
+    val models = ApiName.models(request.parent).toTry.get.categoryId
     val model = request.model.get
-    val imageListId = ApiName.imageList(model.imageList.get.name).toOption.get.id
+    val imageListId = ApiName.imageList(model.imageList.imageListName.get).toTry.get.id
 
     CreateModel(
       ModelReadableId(model.readableId),
@@ -148,15 +177,16 @@ object Converters {
       ModelDisplayName(model.displayName),
       ModelDescription(model.description),
       imageListId,
-      List.empty //TODO REPLCAE
+      model.parameterLists.parameterListIds.get.value.map(UUID.fromString).map(ParameterListId.apply).toList
     )
   }
 
   private def nonEmptyString(s: String): Option[String] = Option.when(s.nonEmpty)(s)
+  private def nonEmptyList[T](l: List[T]): Option[List[T]] = Option.when(l.nonEmpty)(l)
 
   def toDomain(request: UpdateCategoryRequest): UpdateCategory = {
     val category1 = request.category.get
-    val categoryId = ApiName.category(category1.name).map(_.categoryId).toOption.get
+    val categoryId = ApiName.category(category1.name).map(_.categoryId).toTry.get
     val fieldMask = request.updateMask.get
     val category = FieldMaskUtil.applyFieldMask(category1, fieldMask)
     UpdateCategory(

@@ -34,7 +34,8 @@ object Generators {
       Gen.option(readableId),
       Gen.option(displayName),
       Gen.option(description),
-    ).mapN(UpdateCategory.apply).filter(x => x.displayName.isDefined || x.description.isDefined || x.readableId.isDefined)
+    ).mapN(UpdateCategory.apply)
+      .filter(x => x.displayName.isDefined || x.description.isDefined || x.readableId.isDefined)
 
     val create: Gen[CreateCategory] = (readableId, displayName, description).mapN(CreateCategory.apply)
     val gen: Gen[Category] = (catId, readableId, displayName, description).mapN(category.Category.apply)
@@ -42,12 +43,11 @@ object Generators {
 
   object ImageList {
     private val listId = Gen.uuid.map(ImageListId.apply)
-    private val imageId = Gen.uuid.map(ImageId.apply)
     private val imageSrc = Gen.alphaNumStr.map(ImageSrc.apply)
     private val imageAlt = Gen.alphaNumStr.map(ImageAlt.apply)
     private val displayName = Gen.alphaNumStr.map(ImageListDisplayName.apply)
     private[shared] val imageGen =
-      (imageId, imageSrc, imageAlt).mapN(Image.apply)
+      (imageSrc, imageAlt).mapN(Image.apply)
     private val imageListGen = Gen.listOf(imageGen).map(_.groupBy(_.src).values.map(_.head).toList)
 
     val update: Gen[image.ImageListUpdate] = (
@@ -66,15 +66,12 @@ object Generators {
     private val rDisplayName = Gen.alphaNumStr.map(ModelDisplayName.apply)
     private val rDescription = Gen.alphaNumStr.map(ModelDescription.apply)
     private val parameterId = Gen.uuid.map(ParameterId.apply)
-    private val paramListId = Gen.uuid.map(ParameterListId.apply)
-    private val paramListIds = Gen.listOfN(2, paramListId)
-    private val paramListDisplayName = Gen.alphaNumStr.map(ParamListDisplayName.apply)
-    private val paramList = (paramListId, paramListDisplayName).mapN(ParameterList.apply)
-    private val parameterListId = Gen.uuid.map(ParameterListId.apply)
     private val parameterDisplayName = Gen.alphaNumStr.map(ParameterDisplayName.apply)
-    private val param =
-      (parameterId, parameterListId, parameterDisplayName, ImageList.imageGen).mapN(Parameter.apply)
+    private val param = (parameterId, parameterDisplayName, ImageList.imageGen).mapN(Parameter.apply)
+    private val paramListId = Gen.uuid.map(ParameterListId.apply)
+    private val paramListDisplayName = Gen.alphaNumStr.map(ParamListDisplayName.apply)
     private val params = Gen.listOfN(2, param)
+    private val paramList = (paramListId, paramListDisplayName, params).mapN(ParameterList.apply)
     private val paramLists = Gen.listOfN(2, paramList)
     private val rMoney = Gen.posNum[Double].map(Money(_, USD)).map(ModelMinimalPrice.apply)
 

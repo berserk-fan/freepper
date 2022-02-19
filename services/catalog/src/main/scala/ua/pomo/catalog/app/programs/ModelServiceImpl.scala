@@ -1,13 +1,15 @@
 package ua.pomo.catalog.app.programs
 
 import cats.arrow.FunctionK
-import cats.effect.{MonadCancelThrow, Sync}
+import cats.effect.Sync
+import cats.effect.kernel.Async
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import cats.~>
-import ua.pomo.catalog.domain.model._
+import doobie.ConnectionIO
+import doobie.util.transactor.Transactor
 import ua.pomo.catalog.domain.PageToken
-import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.error.NotFound
+import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.infrastructure.persistance.ModelRepositoryImpl
 
 private class ModelServiceImpl[F[_]: Sync, G[_]: Sync] private (xa: G ~> F, repository: ModelRepository[G])
@@ -50,6 +52,9 @@ private class ModelServiceImpl[F[_]: Sync, G[_]: Sync] private (xa: G ~> F, repo
 }
 
 object ModelServiceImpl {
+  def apply[F[_]: Async](transactor: Transactor[F], repository: ModelRepository[ConnectionIO]): ModelService[F] = {
+    new ModelServiceImpl[F, ConnectionIO](transactor.trans, repository)
+  }
   def makeInMemory[F[_]: Sync]: F[ModelService[F]] =
     ModelRepositoryImpl
       .makeInMemory[F]

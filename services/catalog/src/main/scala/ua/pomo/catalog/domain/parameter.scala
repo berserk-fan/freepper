@@ -3,6 +3,7 @@ package ua.pomo.catalog.domain
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.decoder
 import derevo.derive
+import io.circe.Decoder
 import io.estatico.newtype.macros.newtype
 import ua.pomo.catalog.domain.image.Image
 
@@ -18,10 +19,7 @@ object parameter {
   case class ParameterDisplayName(value: String)
 
   @derive(eqv, show, decoder)
-  case class Parameter(id: ParameterId,
-                       parameterListId: ParameterListId,
-                       displayName: ParameterDisplayName,
-                       image: Image)
+  case class Parameter(id: ParameterId, displayName: ParameterDisplayName, image: Image)
 
   @derive(eqv, show, decoder)
   @newtype
@@ -32,5 +30,5 @@ object parameter {
   case class ParamListDisplayName(value: String)
 
   @derive(eqv, show, decoder)
-  case class ParameterList(id: ParameterListId, displayName: ParamListDisplayName)
+  case class ParameterList(id: ParameterListId, displayName: ParamListDisplayName, parameters: List[Parameter])
 }

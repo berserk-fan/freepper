@@ -16,6 +16,7 @@ wget -O "${OUTPUT_PATH}/validate/validate.proto" 'https://raw.githubusercontent.
     --proto_path="$PROTO_FOLDER" \
     --plugin="${PROTOC_GEN_TS_PATH}" \
     --js_out="import_style=commonjs,binary:$OUTPUT_PATH" \
+    --ts_proto_opt=esModuleInterop=true \
     --ts_proto_out=$OUTPUT_PATH \
     --ts_proto_opt=nestJs=false \
     --ts_proto_opt=addGrpcMetadata=false \

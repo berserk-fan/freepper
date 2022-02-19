@@ -33,7 +33,7 @@ class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution
       db <- Resources.dbTest
       imageListRepo <- Resource.pure(ImageListRepositoryImpl())
       categoryRepo = CategoryRepositoryImpl()
-      modelRepo = ModelRepositoryImpl(imageListRepo)
+      modelRepo = ModelRepositoryImpl()
       modelInMemory <- Resource.eval(ModelRepositoryImpl.makeInMemory[ConnectionIO]).mapK(db.xa.trans)
     } yield TestResources(categoryRepo, imageListRepo, modelRepo, db, Seq(modelRepo, modelInMemory))
 

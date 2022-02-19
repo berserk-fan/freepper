@@ -8,21 +8,33 @@ import "image_list.proto";
 import "validate/validate.proto";
 import "parameter.proto";
 import "money.proto";
+import "google/protobuf/field_mask.proto";
 
 message Model {
+  message ParameterListIds {
+    repeated string value = 8;
+  }
+  message ParameterLists {
+    repeated ParameterList value = 1;
+  }
   option (google.api.resource) = {
     type: "api.pomo.ua/Model"
     pattern: "categories/{category}/models/{model}"
   };
   string name = 1;
-  string uuid = 2;
-  string readable_id = 3;
-  string display_name = 4;
-  string description = 5;
-  ImageList image_list = 6;
-  Money minimal_price = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
-  repeated string parameter_list_ids = 8  [(google.api.field_behavior) = IMMUTABLE];
-  repeated ParameterList parameter_lists = 9  [(google.api.field_behavior) = OUTPUT_ONLY];
+  string uid = 2;
+  string readable_id = 3 [(validate.rules).string.min_len = 1];
+  string display_name = 4 [(validate.rules).string.min_len = 1];
+  string description = 5 [(validate.rules).string.min_len = 1];
+  oneof image_list {
+    string image_list_name = 6;
+    ImageList image_list_data = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+  }
+  Money minimal_price = 8 [(google.api.field_behavior) = OUTPUT_ONLY];
+  oneof parameter_lists {
+    ParameterListIds parameter_list_ids = 9 [(google.api.field_behavior) = IMMUTABLE];
+    ParameterLists parameter_lists_data = 10 [(google.api.field_behavior) = OUTPUT_ONLY];
+  }
 }
 
 message CreateModelRequest {
@@ -30,9 +42,12 @@ message CreateModelRequest {
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
       type: "api.pomo.ua/Category"
-    }];
+    }
+  ];
 
-  Model model = 2;
+  Model model = 2 [
+    (validate.rules).message.required = true
+  ];
 }
 
 message GetModelRequest {
@@ -40,7 +55,8 @@ message GetModelRequest {
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
       type: "api.pomo.ua/Model"
-    }];
+    }
+  ];
 }
 
 message DeleteModelRequest {
@@ -48,17 +64,16 @@ message DeleteModelRequest {
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
       type: "api.pomo.ua/Model"
-    }];
+    }
+  ];
 }
 
 message UpdateModelRequest {
-  string name = 1 [
+  Model model = 1;
+  google.protobuf.FieldMask update_mask = 2 [
     (google.api.field_behavior) = REQUIRED,
-    (google.api.resource_reference) = {
-      type: "api.pomo.ua/Model"
-    }];
-
-  Model model = 2;
+    (validate.rules).message.required = true
+  ];
 }
 
 message ListModelsRequest {

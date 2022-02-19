@@ -1,6 +1,6 @@
-import { Price as Price1 } from "apis/catalog";
 import React from "react";
+import { Money } from "apis/money.pb";
 
-export default function Price({ price }: { price: Price1 }) {
-  return <span>{`${price.price.toString()}₴`}</span>;
+export default function Price({ price }: { price: Money }) {
+  return <span>{`${price.amount} ₴`}</span>;
 }

@@ -34,7 +34,7 @@ service Catalog {
 
   rpc CreateImageList(CreateImageListRequest) returns (ImageList);
   rpc GetImageList(GetImageListRequest) returns (ImageList);
-  rpc UpdateImageLists(UpdateImageListsRequest) returns (ImageList);
+  rpc UpdateImageList(UpdateImageListRequest) returns (ImageList);
   rpc DeleteImageList(DeleteImageListRequest) returns (google.protobuf.Empty);
   rpc ListImageLists(ListImageListsRequest) returns (ListImageListsResponse) {
     option (google.api.method_signature) = "parent";

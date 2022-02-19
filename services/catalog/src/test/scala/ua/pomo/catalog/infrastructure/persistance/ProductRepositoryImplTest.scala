@@ -34,7 +34,7 @@ class ProductRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecuti
       db <- Resources.dbTest
       imageListRepo = ImageListRepositoryImpl()
       categoryRepo = CategoryRepositoryImpl()
-      modelRepo = ModelRepositoryImpl(imageListRepo)
+      modelRepo = ModelRepositoryImpl()
       productPostgres = ProductRepositoryImpl()
       productInMemory <- Resource.eval(InMemoryProductRepositoryImpl[ConnectionIO]).mapK(db.xa.trans)
     } yield
@@ -76,12 +76,14 @@ class ProductRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecuti
     val imageList: image.ImageList = Generators.ImageList.gen.filter(_.images.nonEmpty).sample.get
     val catId = res.categoryRepo.create(Generators.Category.create.sample.get).trRun()
     val imageListId = res.imageListRepo.create(imageList).trRun()
-    val imageId = res.imageListRepo.get(imageListId).trRun().images.head.id
 
     val parameterListId = sql"""insert into parameter_lists (display_name) values ('')""".update
       .withUniqueGeneratedKeys[ParameterListId]("id")
       .trRun()
     val parameterListIds = List(parameterListId)
+    val imageId = sql"""insert into images (src, alt, image_list_id) VALUES ('','', ${imageListId})""".update
+      .withUniqueGeneratedKeys[UUID]("id")
+      .trRun()
     val parameterId =
       sql"""insert into parameters (display_name, image_id, list_order, parameter_list_id) VALUES ('',$imageId, 1, $parameterListId)""".update
         .withUniqueGeneratedKeys[ParameterId]("id")
@@ -103,11 +105,13 @@ class ProductRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecuti
     val imageList: image.ImageList = Generators.ImageList.gen.filter(_.images.nonEmpty).sample.get
     val catId = res.categoryRepo.create(Generators.Category.create.sample.get).trRun()
     val imageListId = res.imageListRepo.create(imageList).trRun()
-    val imageId = res.imageListRepo.get(imageListId).trRun().images.head.id
     val parameterListId = sql"""insert into parameter_lists (display_name) values ('')""".update
       .withUniqueGeneratedKeys[ParameterListId]("id")
       .trRun()
     val parameterListIds = List(parameterListId)
+    val imageId = sql"""insert into images (src, alt, image_list_id) VALUES ('','', ${imageListId})""".update
+      .withUniqueGeneratedKeys[UUID]("id")
+      .trRun()
     val parameterId =
       sql"""insert into parameters (display_name, image_id, list_order, parameter_list_id) VALUES ('',$imageId, 1, $parameterListId)""".update
         .withUniqueGeneratedKeys[ParameterId]("id")

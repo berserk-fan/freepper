@@ -97,23 +97,22 @@ class CatalogImplTest extends AnyFunSuite with BeforeAndAfter with Matchers {
       "some-id",
       "some name",
       "some description",
-      Some(api.ImageList(ImageListName(ImageListId(UUID.randomUUID())).toNameString)),
-      Some(Money(USD.code, 0)),
+      api.Model.ImageList.ImageListName(ImageListName(ImageListId(UUID.randomUUID())).toNameString),
+      Some(Money(0)),
     )
 
     val req = CreateModelRequest(ModelsName(CategoryUUID(UUID.randomUUID())).toNameString, Some(modelReq))
     val model = impl.createModel(req, null).unsafeRunSync()
-    modelReq.copy(name = model.name, uuid = model.uuid) should equal(model)
+    modelReq.copy(name = model.name, uid = model.uid) should equal(model)
 
-    //ignore output_only field
     val modelReq2 = api.Model(
       "",
       "",
       "some-id",
       "some name",
       "some description",
-      Some(api.ImageList(ImageListName(ImageListId(UUID.randomUUID())).toNameString)),
-      Some(Money(USD.code, 0))
+      api.Model.ImageList.ImageListName(ImageListName(ImageListId(UUID.randomUUID())).toNameString),
+      Some(Money(0))
     )
     val req2 = CreateModelRequest(ModelsName(CategoryUUID(UUID.randomUUID())).toNameString, Some(modelReq2))
     noException should be thrownBy impl.createModel(req2, null).unsafeRunSync()

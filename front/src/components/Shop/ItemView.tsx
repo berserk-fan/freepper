@@ -6,7 +6,7 @@ import Image from "next/image";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
 import dynamic from "next/dynamic";
-import { Model } from "apis/catalog";
+import { Model } from "apis/model.pb";
 import Price from "./Price";
 import { SIZES } from "./definitions";
 
@@ -38,24 +38,22 @@ const useStyles = makeStyles({
 });
 
 export default function ItemView({
-  product,
+  model,
   className = "",
-  categoryName,
   priority,
 }: {
-  product: Model;
+  model: Model;
   className?: string;
-  categoryName: string;
   priority: boolean;
 }) {
   const classes = useStyles();
-  const { displayName, images, minimalPrice } = product;
+  const {
+    displayName,
+    imageList: { images },
+    minimalPrice,
+  } = model;
   const [slideId, useSlideId] = useState(0);
   const [isShowingArrows, setIsShowingArrows] = useState(false);
-
-  function productHref(productName: string) {
-    return `/${categoryName}/${productName}`;
-  }
 
   return (
     <Box className={`mx-auto ${className}`} maxWidth="500px">
@@ -66,7 +64,7 @@ export default function ItemView({
             isShowingArrows={isShowingArrows}
             slides={images.map((image, idx) => (
               <Box key={image.src} className={classes.media}>
-                <Link href={productHref(image.name)}>
+                <Link href={`/${model.name}`}>
                   <Box>
                     <Image
                       priority={(idx === 0 && priority) || idx > 1}
@@ -89,12 +87,12 @@ export default function ItemView({
           <Typography variant="subtitle1">{displayName}</Typography>
           <Box className="flex">
             <Typography display="inline" variant="body2">
-              от <Price price={{ price: minimalPrice }} />
+              от <Price price={minimalPrice} />
             </Typography>
           </Box>
         </Box>
         <Box style={{ marginLeft: "auto" }}>
-          <Link href={productHref(images[slideId].name)}>
+          <Link href={`/${model.name}`}>
             <Button color="secondary" variant="outlined">
               Подробнее
             </Button>

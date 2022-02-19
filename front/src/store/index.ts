@@ -1,9 +1,9 @@
 import { createStore } from "redux";
-import CatalogImpl from "apis/catalog_impl";
-import { Product } from "apis/catalog";
 import { CatalogClientImpl, GrpcWebImpl } from "apis/catalog.pb";
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
-import { categories, all_products } from "../configs/catalog/beds";
+import { Product } from "apis/product.pb";
+import { Model } from "apis/model.pb";
+import { getCurrentPrice } from "../commons/utils";
 
 const initialState: StoreState = {
   cartState: {
@@ -50,7 +50,7 @@ type SET_PRODUCT_COUNT = {
 
 type ADD_PRODUCT = {
   type: "ADD_PRODUCT";
-  product: Product;
+  cartProduct: CartProduct;
 };
 
 type DELETE_PRODUCT = {
@@ -64,12 +64,12 @@ type CLEAR_CART = {
 
 type CartUpdate = SET_PRODUCT_COUNT | ADD_PRODUCT | DELETE_PRODUCT | CLEAR_CART;
 
-export type CartProduct = Product & { count: number };
+export type CartProduct = { model: Model; product: Product; count: number };
 
 export function addProductAction(product: CartProduct): ADD_PRODUCT {
   return {
     type: "ADD_PRODUCT",
-    product,
+    cartProduct: product,
   };
 }
 
@@ -113,7 +113,7 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
       }
       const change = action.count - toSet.count;
       return {
-        total: total + toSet.price.price * change,
+        total: total + getCurrentPrice(toSet.product.price).amount * change,
         cartSize: cartSize + change,
         selectedProducts: {
           ...selectedProducts,
@@ -128,11 +128,16 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
     }
     case "ADD_PRODUCT": {
       return {
-        total: total + action.product.price.price,
+        total: total + getCurrentPrice(action.cartProduct.product.price).amount,
         cartSize: cartSize + 1,
         selectedProducts: {
           ...selectedProducts,
-          ...{ [action.product.id]: { ...action.product, ...{ count: 1 } } },
+          ...{
+            [action.cartProduct.product.uuid]: {
+              ...action.cartProduct,
+              ...{ count: 1 },
+            },
+          },
         },
       };
     }
@@ -142,12 +147,14 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
         return cartState;
       }
       return {
-        total: total - toDelete.price.price * toDelete.count,
+        total:
+          total -
+          getCurrentPrice(toDelete.product.price).amount * toDelete.count,
         cartSize: cartSize - toDelete.count,
         selectedProducts: Object.fromEntries(
           Object.values(selectedProducts)
-            .filter((p) => p.id !== action.productId)
-            .map((p) => [p.id, p]),
+            .filter((p) => p.product.uuid !== action.productId)
+            .map((p) => [p.product.uuid, p]),
         ),
       };
     }

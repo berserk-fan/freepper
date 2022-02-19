@@ -13,15 +13,22 @@ message Category {
     pattern: "categories/{category}"
   };
   string name = 1;
-  string id = 2;
-  string readable_id = 3;
-  string display_name = 4;
-  string description = 5;
+  string uid = 2;
+  string readable_id = 3 [(validate.rules).string.min_len = 1];
+  string display_name = 4 [(validate.rules).string.min_len = 1];
+  string description = 5 [(validate.rules).string.min_len = 1];
 }
 
 message CreateCategoryRequest {
-  string parent = 1;
-  Category category = 2;
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.ua/Category"
+    }
+  ];
+  Category category = 2 [
+    (validate.rules).message.required = true
+  ];
 }
 
 message GetCategoryRequest {
@@ -33,7 +40,9 @@ message GetCategoryRequest {
 }
 
 message UpdateCategoryRequest {
-  Category category = 1;
+  Category category = 1 [
+    (validate.rules).message.required = true
+  ];
 
   // The list of fields to update.
   google.protobuf.FieldMask update_mask = 2 [
@@ -46,7 +55,8 @@ message DeleteCategoryRequest {
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
       type: "api.pomo.ua/Category"
-    }];
+    }
+  ];
 }
 
 message ListCategoriesRequest {
@@ -55,7 +65,8 @@ message ListCategoriesRequest {
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
       child_type: "api.pomo.ua/Category"
-    }];
+    }
+  ];
 
   // The maximum number of items to return.
   int32 page_size = 2 [

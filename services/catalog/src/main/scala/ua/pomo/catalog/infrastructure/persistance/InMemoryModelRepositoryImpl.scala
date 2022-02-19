@@ -24,7 +24,7 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
       req.displayName,
       req.description,
       ModelMinimalPrice(Money(0, USD)),
-      req.parameterListIds.map(id => ParameterList(id, ParamListDisplayName(""))),
+      req.parameterListIds.map(id => ParameterList(id, ParamListDisplayName(""), List())),
       ImageList(req.imageListId, ImageListDisplayName(""), List())
     )
     (map + ((model.id, model)), model.id)

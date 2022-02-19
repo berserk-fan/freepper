@@ -59,8 +59,7 @@ class ImageListRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecu
       val dbId = impl.create(imageList).trRun()
       val added = impl.get(dbId).trRun()
       added.copy(images = List()) should equal(imageList.copy(id = dbId, images = List()))
-      val id = ImageId(UUID.randomUUID())
-      added.images.map(_.copy(id = id)) should equal(imageList.images.map(_.copy(id = id)))
+      added.images should equal(imageList.images)
       impl.delete(dbId).trRun()
     }
   }
@@ -94,5 +93,13 @@ class ImageListRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecu
 
       impl.delete(id).trRun()
     }
+  }
+
+  testR("empty the list") { res =>
+    val imageList =
+      ImageList(ImageListId(UUID.randomUUID()), ImageListDisplayName("qwe"), List(Image(ImageSrc(""), ImageAlt(""))))
+    val imageListId = res.postgres.create(imageList).trRun()
+    res.postgres.update(ImageListUpdate(imageListId, None, Some(List()))).trRun()
+    res.postgres.get(imageListId).trRun().images should equal(List())
   }
 }

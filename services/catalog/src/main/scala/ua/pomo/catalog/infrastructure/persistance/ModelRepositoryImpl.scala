@@ -6,16 +6,16 @@ import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
 import doobie._
 import doobie.implicits._
 import doobie.postgres.implicits._
+import io.circe.Decoder
 import shapeless._
 import squants.market.{Money, USD}
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
-import ua.pomo.catalog.domain.parameter.ParameterList
+import ua.pomo.catalog.domain.parameter._
 
-class ModelRepositoryImpl private (imageListRepository: ImageListRepository[ConnectionIO])
-    extends ModelRepository[ConnectionIO] {
+class ModelRepositoryImpl private () extends ModelRepository[ConnectionIO] {
 
   import ModelRepositoryImpl.Queries
 
@@ -46,7 +46,7 @@ class ModelRepositoryImpl private (imageListRepository: ImageListRepository[Conn
 }
 
 object ModelRepositoryImpl {
-  def apply(impl: ImageListRepository[ConnectionIO]): ModelRepository[ConnectionIO] = new ModelRepositoryImpl(impl)
+  def apply(): ModelRepository[ConnectionIO] = new ModelRepositoryImpl()
 
   def makeInMemory[F[_]: Sync]: F[ModelRepository[F]] = {
     Ref[F]
@@ -104,12 +104,23 @@ object ModelRepositoryImpl {
                   where p.model_id = m.id
                ), 0), 
                COALESCE( (
-                    select json_agg(json_build_object('id', pl.id, 'displayName', pl.display_name))
+                    select json_agg(json_build_object(
+                        'id', pl.id, 
+                        'displayName', pl.display_name, 
+                        'parameters', COALESCE( (
+                            select json_agg(json_build_object(
+                                'id', par.id, 
+                                'displayName', par.display_name ,
+                                'image', (select json_build_object('src', img.src, 'alt', img.alt)
+                                          from images img
+                                          where image_id = par.image_id)) ORDER BY par.list_order)
+                            from parameters par where par.parameter_list_id = parameter_list_id), '[]'))
+                        )
                     from parameter_lists pl join unnest(m.parameter_list_ids) parameter_list_id on pl.id = parameter_list_id
                ), '[]'),
                il.id, il.display_name,
                COALESCE((
-                   select json_agg(json_build_object('id', img.id, 'src', img.src, 'alt', img.alt) ORDER BY img.list_order)
+                   select json_agg(json_build_object('src', img.src, 'alt', img.alt) ORDER BY img.list_order)
                    from images img
                    where img.image_list_id = il.id
                ), '[]')
@@ -120,15 +131,7 @@ object ModelRepositoryImpl {
         limit ${query.page.size}
         offset ${query.page.offset}
       """
-        .query[
-          ModelId :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice :: List[
-            ParameterList]
-            :: ImageListId :: ImageListDisplayName :: List[Image] :: HNil]
-        .map { res =>
-          val modelPart_imageListPart = res.split(Nat._7)
-          val imageList = Generic[ImageList].from(modelPart_imageListPart._2)
-          Generic[Model].from(modelPart_imageListPart._1 :+ imageList)
-        }
+        .query[Model]
     }
 
     def update(req: UpdateModel): Update0 = {

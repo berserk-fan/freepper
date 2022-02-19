@@ -1,4 +1,3 @@
-import { Product } from "apis/catalog";
 import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlineOutlined";
 import React, { memo } from "react";
 import { connect } from "react-redux";
@@ -14,11 +13,13 @@ import Zoom from "@material-ui/core/Zoom";
 import { addProductAction, CartState, StoreState } from "store";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
+import { Model } from "apis/model.pb";
+import { Product } from "apis/product.pb";
 import SliderWithThumbs from "../SliderWithThumbs";
 import Spacing from "../Commons/Spacing";
-import DogBedDetails from "./DogBedDetails";
 import Price from "../Shop/Price";
 import { createSizes, SizesSpec } from "../../commons/sizes";
+import ParameterPicker from "./ParameterPicker";
 
 const Markdown = dynamic(() => import("../Markdown/Renderers"));
 
@@ -29,26 +30,6 @@ const sizesSpec: SizesSpec = {
 const SIZES = createSizes(sizesSpec);
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
-
-function Details({
-  categoryName,
-  product,
-}: {
-  categoryName: string;
-  product: Product;
-}) {
-  switch (product.details.$case) {
-    case "dogBed":
-      return (
-        <DogBedDetails
-          categoryName={categoryName}
-          details={product.details.dogBed}
-        />
-      );
-    default:
-      return <></>;
-  }
-}
 
 type MakeFabProps = {
   href?: string;
@@ -76,21 +57,25 @@ const MakeFab = React.memo(
 );
 
 function ProductPage({
-  product,
+  model,
+  products,
   cart,
   addProduct,
-  categoryName,
 }: {
-  categoryName: string;
-  product: Product;
+  model: Model;
+  products: Product[];
   cart: CartState;
-  addProduct: (product: Product) => void;
+  addProduct: (value: [Product, Model]) => void;
 }) {
   const theme = useTheme();
-  const { displayName, images, price } = product;
-  const inCart = !!cart.selectedProducts[product.id];
+  const {
+    displayName,
+    imageList: { images },
+  } = model;
+  const product = products[0];
+  const inCart = !!cart.selectedProducts[product.uuid];
   function addToCart() {
-    addProduct(product);
+    addProduct([product, model]);
   }
 
   const fabs = [
@@ -134,10 +119,20 @@ function ProductPage({
               {displayName}
             </Typography>
             <Typography variant="h5">
-              <Price price={price} />
+              <Price price={product.price.standard} />
             </Typography>
             <Divider />
-            <Details categoryName={categoryName} product={product} />
+            <div>
+              {model.parameterLists.map((parameterList) => (
+                <ParameterPicker
+                  key={parameterList.id}
+                  selectedParameterId={
+                    Object.values(parameterList.parameters)[0].id
+                  }
+                  parameterList={parameterList}
+                />
+              ))}
+            </div>
             <Divider />
             <Box width="100%" height="50px">
               {(inCart ? fabs : fabs.reverse()).map((fab) => (
@@ -169,7 +164,7 @@ function ProductPage({
             <Divider />
             <Typography variant="h4">Описание</Typography>
             <Box marginLeft={1} paddingTop={0}>
-              <Markdown>{product.description}</Markdown>
+              <Markdown>{model.description}</Markdown>
             </Box>
           </Spacing>
         </Grid>

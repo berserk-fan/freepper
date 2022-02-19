@@ -5,11 +5,11 @@ import Box from "@material-ui/core/Box";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIosOutlined from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlined from "@material-ui/icons/ArrowForwardIosOutlined";
-import { ImageData } from "apis/catalog";
 import Image from "next/image";
 import { SliderArrows } from "../Slider/helpers";
 import { useStyles } from "./styles";
 import { useSliderVirtualization } from "../Slider/utils";
+import {Image as ImageData} from "apis/image_list.pb";
 
 const THUMBS_SLIDES_PER_VIEW = 5;
 

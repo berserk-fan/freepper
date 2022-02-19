@@ -45,8 +45,8 @@ object ApiName {
   private object Parsers extends RegexParsers {
     def parseAllToEither[T](p: Parser[T], s: String): NameParseResult[T] = parseAll(p, s) match {
       case Success(matched, _) => Right(matched)
-      case Failure(msg, _)     => Left(ValidationErr(msg))
-      case Error(msg, _)       => Left(ValidationErr(msg))
+      case Failure(msg, _)     => Left(ValidationErr(s"Failed to parse resource name: $msg"))
+      case Error(msg, _)       => Left(ValidationErr(s"Failed to parse resource name: $msg"))
     }
 
     def category: Parser[CategoryName] = Categories ~> "/" ~> categoryUUID ^^ CategoryName.apply

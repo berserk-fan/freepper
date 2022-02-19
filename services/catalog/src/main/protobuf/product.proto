@@ -8,20 +8,24 @@ import "image_list.proto";
 import "google/protobuf/wrappers.proto";
 import "validate/validate.proto";
 import "money.proto";
+import "parameter.proto";
 
 message Product {
+  message Price {
+   Money standard = 1;
+  }
   option (google.api.resource) = {
     type: "api.pomo.ua/Product"
     pattern: "categories/{category}/models/{model}/products/{product}"
   };
   string name = 1;
-  string uuid = 2;
+  string uid = 2;
   string model_id = 3;
-  string display_name = 4;
+  string display_name = 4 [(validate.rules).string.min_len = 1];
   ImageList image_list = 5;
-  Money price = 6;
-  Money promo_price = 7;
-  repeated string parameter_ids = 8 [(google.api.field_behavior) = IMMUTABLE];
+  Price price = 6;
+  repeated string parameter_ids = 8 [(google.api.field_behavior) = INPUT_ONLY];
+  repeated Parameter parameters = 9 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
 
 message CreateProductRequest {

@@ -67,24 +67,19 @@ function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
 }
 
 function prepareCart(cart: Record<string, CartProduct>): any {
-  const val = Object.entries(cart).map(([id, product]) => {
-    const fabric = product.details.dogBed.fabrics.find(
-      (f) => f.id === product.details.dogBed.fabricId,
-    );
-    const prepFabric = fabric.displayName;
-    const prepSize = product.details.dogBed.size;
-    return [
-      id,
-      {
-        ...pick(product, "displayName", "count"),
-        ...{
-          price: product.price.price,
-          size: prepSize,
-          fabric: prepFabric,
-        },
+  const val = Object.entries(cart).map(([id, { count, product, model }]) => [
+    id,
+    {
+      ...{
+        displayName: model.displayName,
+        count,
       },
-    ];
-  });
+      ...{
+        price: product.price,
+        parameters: product.parameters,
+      },
+    },
+  ]);
   return Object.fromEntries(val);
 }
 

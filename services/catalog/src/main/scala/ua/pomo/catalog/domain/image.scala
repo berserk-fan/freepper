@@ -11,10 +11,6 @@ import java.util.UUID
 object image {
   @derive(eqv, show, decoder)
   @newtype
-  case class ImageId(uuid: UUID)
-
-  @derive(eqv, show, decoder)
-  @newtype
   case class ImageSrc(value: String)
 
   @derive(eqv, show, decoder)
@@ -22,7 +18,7 @@ object image {
   case class ImageAlt(value: String)
 
   @derive(eqv, show, decoder)
-  case class Image(id: ImageId, src: ImageSrc, alt: ImageAlt)
+  case class Image(src: ImageSrc, alt: ImageAlt)
 
   @derive(eqv, show, decoder)
   @newtype
@@ -57,7 +53,7 @@ object image {
   trait ImageListService[F[_]] {
     def create(imageList: ImageList): F[ImageList]
     def get(id: ImageListId): F[ImageList]
-    def update(imageList: ImageList): F[ImageList]
+    def update(imageList: ImageListUpdate): F[ImageList]
     def delete(imageListId: ImageListId): F[Unit]
   }
 }

@@ -10,7 +10,9 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import MainImage from "Public/main-image.jpg";
 import MainImageFullWidth from "Public/main-image-full-width.jpg";
-import { ImageData, Category, Product } from "apis/catalog";
+import { Model } from "apis/model.pb";
+import { Category } from "apis/category.pb";
+import { Image as ImageData } from "apis/image_list.pb";
 import LayoutWithHeaderAndFooter from "../Layout/LayoutWithHeaderAndFooter";
 
 const ColorButton = withStyles((theme) => ({
@@ -83,19 +85,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getImageOrFallback(deal: Product): ImageData {
+function getImageOrFallback(deal: Model): ImageData {
   try {
-    return deal.images[0];
+    return deal.imageList.images[0];
   } catch (e) {
     return {
       src: "/qwer",
       alt: "No image found",
-      name: "",
     };
   }
 }
 
-export type HotDealsWithCategory = [Category, Product[]];
+export type HotDealsWithCategory = [Category, Model[]];
 
 export function Home({
   hotDealsWithCategory: [hotDealsCategory, hotDeals],
@@ -192,11 +193,11 @@ export function Home({
               maxWidth="1600px"
             >
               <Grid container spacing={3}>
-                {hotDeals.map((product: Product) => {
-                  const image = getImageOrFallback(product);
-                  const href = `/${hotDealsCategory.name}/${product.name}`;
+                {hotDeals.map((model: Model) => {
+                  const image = getImageOrFallback(model);
+                  const href = `/${model.name}`;
                   return (
-                    <Grid item key={product.name} xs={12} sm={6} md={4}>
+                    <Grid item key={model.name} xs={12} sm={6} md={4}>
                       <Box className={classes.propositionImageContainer}>
                         <Link href={href}>
                           <Image
@@ -213,7 +214,7 @@ export function Home({
                         component="h3"
                         align="center"
                       >
-                        {product.displayName}
+                        {model.displayName}
                       </Typography>
                     </Grid>
                   );

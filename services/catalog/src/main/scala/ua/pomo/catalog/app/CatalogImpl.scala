@@ -37,7 +37,7 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
       categoryService.create(Converters.toDomain(request)).map(Converters.toApi)
   }
 
-  def deleteCategory(request: DeleteCategoryRequest, ctx: Metadata): F[Empty] = adaptError {
+  override def deleteCategory(request: DeleteCategoryRequest, ctx: Metadata): F[Empty] = adaptError {
     validate(request) >>
       Async[F]
         .fromEither(ApiName.category(request.name))
@@ -45,7 +45,7 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
         .as(Empty())
   }
 
-  def updateCategory(request: UpdateCategoryRequest, ctx: Metadata): F[Category] = adaptError {
+  override def updateCategory(request: UpdateCategoryRequest, ctx: Metadata): F[Category] = adaptError {
     validate(request) >>
       categoryService
         .update(Converters.toDomain(request))
@@ -62,8 +62,11 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
         .map(Converters.toApi)
   }
 
-  override def createModel(request: CreateModelRequest, ctx: Metadata): F[Model] = {
-    modelService.create(Converters.toDomain(request)).map(Converters.toApi)
+  override def createModel(request: CreateModelRequest, ctx: Metadata): F[Model] = adaptError {
+    validate(request) >>
+      modelService
+        .create(Converters.toDomain(request))
+        .map(Converters.toApi)
   }
 
   override def listModels(request: ListModelsRequest, ctx: Metadata): F[ListModelsResponse] = adaptError {
@@ -116,9 +119,19 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
         .map(Converters.toApi)
   }
 
-  override def updateImageLists(request: UpdateImageListsRequest, ctx: Metadata): F[ImageList] = ???
+  override def updateImageList(request: UpdateImageListRequest, ctx: Metadata): F[ImageList] = adaptError {
+    validate(request) >>
+      imageListService
+        .update(Converters.toDomain(request))
+        .map(Converters.toApi)
+  }
 
-  override def deleteImageList(request: DeleteImageListRequest, ctx: Metadata): F[Empty] = ???
+  override def deleteImageList(request: DeleteImageListRequest, ctx: Metadata): F[Empty] = adaptError {
+    validate(request) >>
+      imageListService
+        .delete(Converters.toDomain(request))
+        .as(Empty())
+  }
 
   override def listImageLists(request: ListImageListsRequest, ctx: Metadata): F[ListImageListsResponse] = ???
 

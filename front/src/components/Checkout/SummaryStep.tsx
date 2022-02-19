@@ -22,6 +22,7 @@ import {
   OrderForm,
 } from "./Definitions";
 import Spacing from "../Commons/Spacing";
+import {priceToString} from "../../commons/utils";
 
 type Column<T> = {
   name: string;
@@ -106,7 +107,7 @@ function Summary({
   const columns: Column<CartProduct>[] = [
     {
       name: "Цена",
-      extractor: (p: CartProduct) => `${p.price.price.toString()} ₴`,
+      extractor: (p: CartProduct) => priceToString(p.product.price),
     },
     {
       name: "Количество",
@@ -114,8 +115,7 @@ function Summary({
     },
     {
       name: "Сумма",
-      extractor: (p: CartProduct) =>
-        `${(p.count * p.price.price).toString()} ₴`,
+      extractor: (p: CartProduct) => priceToString(p.product.price, p.count),
     },
   ];
 
@@ -142,64 +142,68 @@ function Summary({
               </Typography>
             </Box>
             <Divider />
-            {cartProducts.map((product, i, arr) => (
-              <Box key={product.id} margin={1}>
-                <Grid
-                  container
-                  spacing={2}
-                  justify="space-between"
-                  alignItems="center"
-                  direction={fullWidth ? "row" : "column"}
-                >
+            {cartProducts.map((cartProduct, i, arr) => {
+              const { model, product } = cartProduct;
+              return (
+                <Box key={product.uuid} margin={1}>
                   <Grid
-                    item
-                    xs={12}
-                    sm={5}
-                    className="flex justify-start items-center self-start"
-                  >
-                    <Image
-                      className="rounded"
-                      width={72}
-                      height={72}
-                      src={product.images[0].src}
-                      alt={product.images[0].alt}
-                    />
-                    <Box paddingLeft={1}>
-                      <Typography variant="h6">
-                        {product.displayName}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  <Spacing
+                    container
                     spacing={2}
-                    xs={12}
-                    sm={7}
-                    wrap="nowrap"
-                    className="flex-no-wrap justify-center items-center"
-                    item
+                    justify="space-between"
+                    alignItems="center"
+                    direction={fullWidth ? "row" : "column"}
                   >
-                    {columns.map((col) => (
-                      <div
-                        key={col.name}
-                        className="flex flex-col justify-center"
-                      >
-                        <div>
-                          <Typography color="textSecondary" variant="caption">
-                            {col.name}
-                          </Typography>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={5}
+                      className="flex justify-start items-center self-start"
+                    >
+                      <Image
+                        className="rounded"
+                        width={72}
+                        height={72}
+                        src={product.imageList.images[0].src}
+                        alt={product.imageList.images[0].alt}
+                      />
+                      <Box paddingLeft={1}>
+                        <Typography variant="h6">
+                          {/* TODO: CONSIDER ADDING PRODUCT NAME */}
+                          {model.displayName}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                    <Spacing
+                      spacing={2}
+                      xs={12}
+                      sm={7}
+                      wrap="nowrap"
+                      className="flex-no-wrap justify-center items-center"
+                      item
+                    >
+                      {columns.map((col) => (
+                        <div
+                          key={col.name}
+                          className="flex flex-col justify-center"
+                        >
+                          <div>
+                            <Typography color="textSecondary" variant="caption">
+                              {col.name}
+                            </Typography>
+                          </div>
+                          <div>
+                            <Typography align="center">
+                              {col.extractor(cartProduct)}
+                            </Typography>
+                          </div>
                         </div>
-                        <div>
-                          <Typography align="center">
-                            {col.extractor(product)}
-                          </Typography>
-                        </div>
-                      </div>
-                    ))}
-                  </Spacing>
-                </Grid>
-                {i !== arr.length - 1 ? <Divider /> : false}
-              </Box>
-            ))}
+                      ))}
+                    </Spacing>
+                  </Grid>
+                  {i !== arr.length - 1 ? <Divider /> : false}
+                </Box>
+              );
+            })}
           </Box>
         </Box>
       </Paper>

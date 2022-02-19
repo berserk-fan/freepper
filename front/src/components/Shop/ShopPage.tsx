@@ -2,27 +2,21 @@ import React from "react";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
-import { Model } from "apis/catalog";
+import { Model } from "apis/model.pb";
 import ItemView from "./ItemView";
 import LayoutWithHeaderAndFooter from "../Layout/LayoutWithHeaderAndFooter";
 import { PAGE_SIZES } from "./definitions";
 
-export type ShopPageProps = {
-  products: Model[];
-  categoryName: string;
-};
-
-export default function ShopPage({ products, categoryName }: ShopPageProps) {
+export default function ShopPage({ models }: { models: Model[] }) {
   return (
     <LayoutWithHeaderAndFooter showValueProp>
       <Container>
         <Box paddingTop={1}>
           <Grid container spacing={3}>
-            {products.map((item, idx) => (
-              <Grid item key={item.id} {...PAGE_SIZES}>
+            {models.map((model, idx) => (
+              <Grid item key={model.id} {...PAGE_SIZES}>
                 <ItemView
-                  categoryName={categoryName}
-                  product={item}
+                  model={model}
                   className="mx-auto"
                   priority={idx === 0}
                 />
