@@ -27,7 +27,7 @@ object category {
   case class CategoryDescription(value: String)
 
   @derive(eqv, show)
-  case class Category(uuid: CategoryId,
+  case class Category(id: CategoryId,
                       readableId: CategoryReadableId,
                       displayName: CategoryDisplayName,
                       description: CategoryDescription)
@@ -45,6 +45,17 @@ object category {
                             displayName: Option[CategoryDisplayName],
                             description: Option[CategoryDescription])
 
+  @derive(eqv, show)
+  case class QueryCategoriesResponse(categories: List[Category], nextToken: PageToken)
+
+  sealed trait CategorySelector
+  object CategorySelector {
+    case class IdIs(categoryId: CategoryId) extends CategorySelector
+    case object All extends CategorySelector
+  }
+
+  case class CategoryQuery(selector: CategorySelector, token: PageToken.NonEmpty)
+
   trait CategoryRepository[F[_]] {
     def create(category: CreateCategory): F[CategoryId]
 
@@ -52,7 +63,7 @@ object category {
 
     def find(id: CategoryId): F[Option[Category]]
 
-    def findAll(): F[List[Category]]
+    def query(req: CategoryQuery): F[List[Category]]
 
     def update(req: UpdateCategory): F[Int]
 
@@ -64,7 +75,7 @@ object category {
 
     def get(id: CategoryId): F[Category]
 
-    def findAll(): F[List[Category]]
+    def query(req: CategoryQuery): F[QueryCategoriesResponse]
 
     def update(req: UpdateCategory): F[Category]
 

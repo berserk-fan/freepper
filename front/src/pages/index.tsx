@@ -5,9 +5,11 @@ import { shopNode } from "../store";
 export default Home;
 
 export const getStaticProps: GetStaticProps = async () => {
-  const category = await shopNode.getCategory({
-    name: `categories/5a4f57d7-aaeb-4586-9642-0d62becb0dbe`,
+  const listCategoriesResponse = await shopNode.listCategories({
+    parent: "categories",
+    pageSize: 25,
   });
+  const category = listCategoriesResponse.categories[0];
   const { models } = await shopNode.listModels({
     parent: `${category.name}/models`,
     pageSize: 3,

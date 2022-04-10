@@ -48,7 +48,6 @@ object ApiName {
       case Failure(msg, _)     => Left(ValidationErr(s"Failed to parse resource name: $msg"))
       case Error(msg, _)       => Left(ValidationErr(s"Failed to parse resource name: $msg"))
     }
-
     def category: Parser[CategoryName] = Categories ~> "/" ~> categoryUUID ^^ CategoryName.apply
     def models: Parser[ModelsName] = {
       category <~ s"/$Models" ^^ (_.categoryId) ^^ ModelsName.apply

@@ -30,8 +30,6 @@ class InMemoryCategoryRepositoryImpl[F[_]: MonadCancelThrow] private[persistance
 
   override def find(id: CategoryId): F[Option[Category]] = ref.get.map(_.get(id))
 
-  override def findAll(): F[List[Category]] = ref.get.map(_.values.toList)
-
   override def update(req: UpdateCategory): F[Int] = ref.modify { map =>
     object updateObj extends InMemoryUpdaterPoly[Category] {
       val a: Res[CategoryDisplayName] = gen(_.focus(_.displayName))
@@ -43,9 +41,23 @@ class InMemoryCategoryRepositoryImpl[F[_]: MonadCancelThrow] private[persistance
       }
       req.displayName.foreach(dName => updated = updated.copy(displayName = dName))
       req.description.foreach(descr => updated = updated.copy(description = descr))
-      (map + (updated.uuid -> updated), 1)
+      (map + (updated.id -> updated), 1)
     }
   }
 
-  override def delete(id: CategoryId): F[Unit] = ref.update(map => map.get(id).fold(map)(map - _.uuid))
+  override def delete(id: CategoryId): F[Unit] = ref.update(map => map.get(id).fold(map)(map - _.id))
+
+  override def query(req: CategoryQuery): F[List[Category]] = ref.get.map { map =>
+    val filter = req.selector match {
+      case CategorySelector.IdIs(categoryId) =>
+        (x: Category) =>
+          x.id == categoryId
+      case CategorySelector.All =>
+        (x: Category) =>
+          true
+    }
+    val offset = req.token.offset.toInt
+    val limit = req.token.size.toInt
+    map.values.filter(filter).slice(offset, offset + limit).toList
+  }
 }

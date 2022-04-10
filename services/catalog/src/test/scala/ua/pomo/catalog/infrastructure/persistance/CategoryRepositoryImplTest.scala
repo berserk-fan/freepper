@@ -3,12 +3,13 @@ package ua.pomo.catalog.infrastructure.persistance
 import cats.effect.{IO, Resource}
 import doobie.ConnectionIO
 import org.scalatest.ParallelTestExecution
+import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbResources, Resources}
 
 import java.util.UUID
 
-class CategoryRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution{
+class CategoryRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution {
   import CategoryRepositoryImpl._
   override type Impl = CategoryRepository[ConnectionIO]
   override type Res = TestResources
@@ -26,16 +27,18 @@ class CategoryRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecut
   test(s"queries") {
     val uuid = CategoryId(UUID.randomUUID())
 
-    check(Queries.findCategory(uuid))
-    check(Queries.findCategories)
-    check(Queries.deleteCategory(uuid))
+    check(Queries.single(uuid))
+    check(Queries.query(CategoryQuery(CategorySelector.All, PageToken.Two)))
+    check(Queries.query(CategoryQuery(CategorySelector.All, PageToken.NonEmpty(10, 10))))
+    check(Queries.query(CategoryQuery(CategorySelector.IdIs(uuid), PageToken.NonEmpty(10, 10))))
+    check(Queries.delete(uuid))
 
     forAll(Generators.Category.update) { update: UpdateCategory =>
-      check(Queries.updateCategory(update))
+      check(Queries.update(update))
     }
 
     forAll(Generators.Category.create) { cat: CreateCategory =>
-      check(Queries.insertCategory(cat))
+      check(Queries.insert(cat))
     }
   }
 
@@ -50,7 +53,7 @@ class CategoryRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecut
       found.description should equal(cat.description)
       found.readableId should equal(cat.readableId)
 
-      val dbId = found.uuid
+      val dbId = found.id
       val rId = CategoryReadableId("some-id 2")
       val newDisplayName = CategoryDisplayName("qq2")
       impl.update(UpdateCategory(dbId, Some(rId), Some(newDisplayName), None)).trRun()

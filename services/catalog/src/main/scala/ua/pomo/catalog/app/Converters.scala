@@ -15,6 +15,8 @@ import ua.pomo.catalog.api.{
   DeleteProductRequest,
   GetImageListRequest,
   GetProductRequest,
+  ListCategoriesRequest,
+  ListCategoriesResponse,
   ListModelsRequest,
   ListModelsResponse,
   ListProductsRequest,
@@ -40,8 +42,8 @@ object Converters {
   private val DefaultUUID = new UUID(0, 0)
   def toApi(cat: Category): api.Category = {
     api.Category(
-      CategoryName(cat.uuid).toNameString,
-      cat.uuid.value.toString,
+      CategoryName(cat.id).toNameString,
+      cat.id.value.toString,
       cat.readableId.value,
       cat.displayName.value,
       cat.description.value
@@ -102,6 +104,9 @@ object Converters {
     api.ParameterList(parameterList.id.show, parameterList.displayName.show, parameters)
   }
 
+  def toApi(resp: QueryCategoriesResponse): ListCategoriesResponse = {
+    ListCategoriesResponse(resp.categories.map(toApi), toApi(resp.nextToken))
+  }
   def toApi(model: Model): api.Model = {
     api.Model(
       ModelName(model.categoryId, model.id).toNameString,
@@ -162,6 +167,11 @@ object Converters {
 
   def toDomain(image: api.Image): Image = {
     Image(ImageSrc(image.src), ImageAlt(image.alt))
+  }
+
+  def toDomain(req: ListCategoriesRequest): CategoryQuery = {
+    val token = parseToken(req.pageToken, req.pageSize).get
+    CategoryQuery(CategorySelector.All, token)
   }
 
   def toDomain(request: UpdateImageListRequest): ImageListUpdate = {

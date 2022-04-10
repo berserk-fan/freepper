@@ -11,4 +11,6 @@ object PageToken {
   case object Empty extends PageToken
   @derive(eqv, show, encoder, decoder)
   case class NonEmpty(size: Long, offset: Long) extends PageToken
+  
+  val Two = NonEmpty(2, 0)
 }

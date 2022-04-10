@@ -54,6 +54,13 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
         .map(Converters.toApi)
   }
 
+  def listCategories(request: ListCategoriesRequest, ctx: Metadata): F[ListCategoriesResponse] = adaptError {
+    validate(request) >>
+      categoryService
+        .query(Converters.toDomain(request))
+        .map(Converters.toApi)
+  }
+
   //models
 
   override def getModel(request: GetModelRequest, ctx: Metadata): F[Model] = adaptError {

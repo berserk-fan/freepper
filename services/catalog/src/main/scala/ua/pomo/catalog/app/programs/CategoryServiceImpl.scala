@@ -19,8 +19,11 @@ class CategoryServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: G ~> 
       .mapK(xa)
   }
 
-  override def findAll(): F[List[Category]] = {
-    repository.findAll().mapK(xa)
+  override def query(req: CategoryQuery): F[QueryCategoriesResponse] = {
+    repository
+      .query(req)
+      .map(cats => QueryCategoriesResponse(cats, computeNextPageToken(req.token, cats)))
+      .mapK(xa)
   }
 
   override def update(req: UpdateCategory): F[Category] = {
