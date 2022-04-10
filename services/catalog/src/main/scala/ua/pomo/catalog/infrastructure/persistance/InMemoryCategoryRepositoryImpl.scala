@@ -10,10 +10,10 @@ import monocle.syntax.all._
 import shapeless._
 
 class InMemoryCategoryRepositoryImpl[F[_]: MonadCancelThrow] private[persistance] (
-    ref: Ref[F, Map[CategoryUUID, Category]])
+    ref: Ref[F, Map[CategoryId, Category]])
     extends CategoryRepository[F] {
-  override def create(category: CreateCategory): F[CategoryUUID] = ref.modify { map =>
-    val catUUID = CategoryUUID(UUID.randomUUID())
+  override def create(category: CreateCategory): F[CategoryId] = ref.modify { map =>
+    val catUUID = CategoryId(UUID.randomUUID())
     val category1 = Category(
       catUUID,
       category.readableId,
@@ -23,12 +23,12 @@ class InMemoryCategoryRepositoryImpl[F[_]: MonadCancelThrow] private[persistance
     (map + (catUUID -> category1), catUUID)
   }
 
-  override def get(id: CategoryUUID): F[Category] = {
+  override def get(id: CategoryId): F[Category] = {
     find(id)
       .flatMap(_.fold(new Exception(s"category id $id not found").raiseError[F, Category])(_.pure[F]))
   }
 
-  override def find(id: CategoryUUID): F[Option[Category]] = ref.get.map(_.get(id))
+  override def find(id: CategoryId): F[Option[Category]] = ref.get.map(_.get(id))
 
   override def findAll(): F[List[Category]] = ref.get.map(_.values.toList)
 
@@ -47,5 +47,5 @@ class InMemoryCategoryRepositoryImpl[F[_]: MonadCancelThrow] private[persistance
     }
   }
 
-  override def delete(id: CategoryUUID): F[Unit] = ref.update(map => map.get(id).fold(map)(map - _.uuid))
+  override def delete(id: CategoryId): F[Unit] = ref.update(map => map.get(id).fold(map)(map - _.uuid))
 }

@@ -5,13 +5,13 @@ import cats.effect.{Ref, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.error.NotFound
-import ua.pomo.catalog.domain.image.{ImageList, ImageListDisplayName, ImageListId}
+import ua.pomo.catalog.domain.image.{Image, ImageAlt, ImageList, ImageListDisplayName, ImageListId, ImageSrc}
 import ua.pomo.catalog.domain.model.ModelId
 import ua.pomo.catalog.domain.product._
 import ua.pomo.catalog.domain.parameter._
 import monocle.syntax.all._
 import shapeless._
-import ua.pomo.catalog.domain.category.CategoryUUID
+import ua.pomo.catalog.domain.category.CategoryId
 
 import java.util.UUID
 
@@ -22,10 +22,10 @@ class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[Product
     val res = Product(
       id,
       command.modelId,
-      CategoryUUID(UUID.randomUUID()),
+      CategoryId(UUID.randomUUID()),
       ImageList(ImageListId(UUID.randomUUID()), ImageListDisplayName(""), Nil),
       ProductPrice(command.priceUsd, command.promoPriceUsd),
-      command.parameters
+      command.parameterIds
     )
     (map + (id -> res), id)
   }
@@ -62,7 +62,9 @@ class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[Product
     map.get(command.id).fold((map, 0))(x => (map + (command.id -> updater(x)), 1))
   }
 
-  override def delete(id: ProductId): F[Unit] = ref.update(_ - id)
+  override def delete(id: ProductId): F[Int] = ref.modify { map =>
+    map.get(id).fold((map, 0))(x => (map - x.id, 1)) 
+  }
 }
 
 object InMemoryProductRepositoryImpl {

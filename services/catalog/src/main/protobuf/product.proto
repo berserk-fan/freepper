@@ -21,19 +21,12 @@ message Product {
   string name = 1;
   string uid = 2;
   string model_id = 3;
-  string display_name = 4 [(validate.rules).string.min_len = 1];
-  ImageList image_list = 5;
-  Price price = 6;
-  repeated string parameter_ids = 8 [(google.api.field_behavior) = INPUT_ONLY];
-  repeated Parameter parameters = 9 [(google.api.field_behavior) = OUTPUT_ONLY];
+  ImageList image_list = 4;
+  Price price = 5;
+  repeated string parameter_ids = 6;
 }
 
 message CreateProductRequest {
-  string parent = 1;
-  Product product = 2;
-}
-
-message UpdateProductRequest {
   string parent = 1;
   Product product = 2;
 }

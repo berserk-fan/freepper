@@ -16,12 +16,12 @@ sealed trait ApiName
 
 object ApiName {
   case object CategoriesName extends ApiName
-  case class CategoryName(categoryId: CategoryUUID) extends ApiName
-  case class ModelsName(categoryId: CategoryUUID) extends ApiName
-  case class ModelName(categoryId: CategoryUUID, modelId: ModelId) extends ApiName
+  case class CategoryName(categoryId: CategoryId) extends ApiName
+  case class ModelsName(categoryId: CategoryId) extends ApiName
+  case class ModelName(categoryId: CategoryId, modelId: ModelId) extends ApiName
   case class ImageListName(id: ImageListId) extends ApiName
-  case class ProductsName(categoryId: CategoryUUID, modelId: ModelId) extends ApiName
-  case class ProductName(categoryId: CategoryUUID, modelId: ModelId, productId: ProductId) extends ApiName
+  case class ProductsName(categoryId: CategoryId, modelId: ModelId) extends ApiName
+  case class ProductName(categoryId: CategoryId, modelId: ModelId, productId: ProductId) extends ApiName
 
   import Parsers.parseAllToEither
   type NameParseResult[T] = Either[ValidationErr, T]
@@ -68,7 +68,7 @@ object ApiName {
 
     private def uuidStr: Parser[String] = "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b".r
     private def uuid: Parser[UUID] = uuidStr ^^ UUID.fromString
-    private def categoryUUID = uuid ^^ CategoryUUID.apply
+    private def categoryUUID = uuid ^^ CategoryId.apply
     private def modelUUID = uuid ^^ ModelId.apply
     private def imageListId = uuid ^^ ImageListId.apply
     private def productId = uuid ^^ ProductId.apply

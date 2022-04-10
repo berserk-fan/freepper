@@ -7,7 +7,7 @@ import doobie.implicits._
 import doobie.postgres.implicits._
 import shapeless._
 import ua.pomo.catalog.domain.PageToken
-import ua.pomo.catalog.domain.category.CategoryUUID
+import ua.pomo.catalog.domain.category.CategoryId
 import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
@@ -40,8 +40,8 @@ class ProductRepositoryImpl private () extends ProductRepository[ConnectionIO] {
     Queries.update(command).run
   }
 
-  override def delete(id: ProductId): ConnectionIO[Unit] = {
-    Queries.delete(id).run.as(())
+  override def delete(id: ProductId): ConnectionIO[Int] = {
+    Queries.delete(id).run
   }
 }
 
@@ -73,7 +73,7 @@ object ProductRepositoryImpl {
                 $promoPriceUsd, 
                 $imageListId, 
                 $modelId, 
-                ${parameters.map(_.value)})
+                ${parameterIds.map(_.value)})
          """.update
     }
 
@@ -90,7 +90,7 @@ object ProductRepositoryImpl {
 
     private case class GetProductDto(productId: ProductId,
                                      modelId: ModelId,
-                                     categoryId: CategoryUUID,
+                                     categoryId: CategoryId,
                                      modelDisplayName: ModelDisplayName,
                                      price: ProductStandardPrice,
                                      promoPrice: Option[ProductPromoPrice])
@@ -120,6 +120,7 @@ object ProductRepositoryImpl {
         .query[(GetProductDto, ImageList, List[ParameterId])]
         .map { res =>
           val (product, imageList, params) = res
+
           Product(product.productId,
                   product.modelId,
                   product.categoryId,

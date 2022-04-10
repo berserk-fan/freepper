@@ -12,7 +12,7 @@ CREATE TABLE images
     id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     src           VARCHAR NOT NULL,
     alt           VARCHAR NOT NULL,
-    image_list_id UUID    NOT NULL REFERENCES image_lists ON DELETE CASCADE,
+    image_list_id UUID    REFERENCES image_lists ON DELETE CASCADE,
     list_order    INT     NOT NULL,
     UNIQUE (image_list_id, list_order)
 );

@@ -24,7 +24,7 @@ object Generators {
   }
 
   object Category {
-    private val catId: Gen[CategoryUUID] = Gen.uuid.map(CategoryUUID.apply)
+    private val catId: Gen[CategoryId] = Gen.uuid.map(CategoryId.apply)
     private val readableId: Gen[CategoryReadableId] = Gen.alphaNumStr.map(CategoryReadableId.apply)
     private val displayName: Gen[CategoryDisplayName] = Gen.alphaNumStr.map(CategoryDisplayName.apply)
     private val description: Gen[CategoryDescription] = Gen.alphaNumStr.map(CategoryDescription.apply)
@@ -61,7 +61,7 @@ object Generators {
 
   object Model {
     private val id = Gen.const(ModelId(Gen.uuid.sample.get))
-    private val catId = Gen.const(CategoryUUID(Gen.uuid.sample.get))
+    private val catId = Gen.const(CategoryId(Gen.uuid.sample.get))
     private val rId = Gen.alphaNumStr.map(ModelReadableId.apply)
     private val rDisplayName = Gen.alphaNumStr.map(ModelDisplayName.apply)
     private val rDescription = Gen.alphaNumStr.map(ModelDescription.apply)
@@ -82,7 +82,7 @@ object Generators {
     val gen: Gen[model.Model] =
       (id, rId, catId, rDisplayName, rDescription, rMoney, paramLists, ImageList.gen).mapN(model.Model.apply)
 
-    def updateGen(imageListId: ImageListId, categoryId: CategoryUUID): Gen[model.UpdateModel] =
+    def updateGen(imageListId: ImageListId, categoryId: CategoryId): Gen[model.UpdateModel] =
       (id,
        Gen.option(rId),
        Gen.option(Gen.const(categoryId)),
@@ -100,7 +100,7 @@ object Generators {
   object Product {
     private val id = Gen.uuid.map(ProductId.apply)
     private val modelId = Gen.uuid.map(ModelId.apply)
-    private val categoryId = Gen.uuid.map(CategoryUUID.apply)
+    private val categoryId = Gen.uuid.map(CategoryId.apply)
     private val parameterId = Gen.uuid.map(ParameterId.apply)
     private val paramIds = Gen.listOfN(2, parameterId)
     private val standardPrice: Gen[ProductStandardPrice] = Gen.posNum[Double].map(ProductStandardPrice.apply)
@@ -114,7 +114,7 @@ object Generators {
 
     private val imageListId = Gen.uuid.map(ImageListId.apply)
     def create(imageListId1: ImageListId, modelId1: ModelId, paramIds: List[ParameterId]): Gen[CreateProduct] =
-      (id, Gen.const(modelId1), Gen.const(imageListId1), standardPrice, promoPrice, Gen.const(paramIds))
+      (Gen.const(modelId1), Gen.const(imageListId1), standardPrice, promoPrice, Gen.const(paramIds))
         .mapN(CreateProduct.apply)
 
     val update: Gen[UpdateProduct] =

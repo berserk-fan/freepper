@@ -10,7 +10,7 @@ import ua.pomo.catalog.domain.model._
 import java.util.UUID
 import shapeless._
 import monocle.syntax.all._
-import ua.pomo.catalog.domain.category.CategoryUUID
+import ua.pomo.catalog.domain.category.CategoryId
 import ua.pomo.catalog.domain.parameter.{ParamListDisplayName, ParameterList}
 
 class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, Map[ModelId, Model]])
@@ -51,14 +51,14 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
           .slice(req.page.offset.toInt, req.page.offset.toInt + req.page.size.toInt))
   }
 
-  override def delete(id: ModelId): F[Unit] = ref.update { map =>
-    map.get(id).fold(map)(map - _.id)
+  override def delete(id: ModelId): F[Int] = ref.modify { map =>
+    map.get(id).fold((map, 0))(x => (map - x.id, 1))
   }
 
   override def update(command: UpdateModel): F[Int] = ref.modify { map =>
     object updateObj extends InMemoryUpdaterPoly[Model] {
       implicit val readableId: Res[ModelReadableId] = gen(_.focus(_.readableId))
-      implicit val categoryId: Res[CategoryUUID] = gen(_.focus(_.categoryId))
+      implicit val categoryId: Res[CategoryId] = gen(_.focus(_.categoryId))
       implicit val displayName: Res[ModelDisplayName] = gen(_.focus(_.displayName))
       implicit val description: Res[ModelDescription] = gen(_.focus(_.description))
       implicit val imageListId: Res[ImageListId] = gen(_.focus(_.imageList.id))

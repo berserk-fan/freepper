@@ -4,7 +4,7 @@ import derevo.cats._
 import derevo.derive
 import io.estatico.newtype.macros.newtype
 import squants.market.Money
-import ua.pomo.catalog.domain.category.{CategoryReadableId, CategoryUUID}
+import ua.pomo.catalog.domain.category.{CategoryReadableId, CategoryId}
 import ua.pomo.catalog.domain.image.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.parameter.{ParameterList, ParameterListId}
 import ua.pomo.catalog.optics.uuid
@@ -39,7 +39,7 @@ object model {
   @derive(eqv, show)
   case class Model(id: ModelId,
                    readableId: ModelReadableId,
-                   categoryId: CategoryUUID,
+                   categoryId: CategoryId,
                    displayName: ModelDisplayName,
                    description: ModelDescription,
                    minimalPrice: ModelMinimalPrice,
@@ -48,7 +48,7 @@ object model {
 
   @derive(eqv, show)
   case class CreateModel(readableId: ModelReadableId,
-                         categoryId: CategoryUUID,
+                         categoryId: CategoryId,
                          displayName: ModelDisplayName,
                          description: ModelDescription,
                          imageListId: ImageListId,
@@ -57,7 +57,7 @@ object model {
   @derive(eqv, show)
   case class UpdateModel(id: ModelId,
                          readableId: Option[ModelReadableId],
-                         categoryId: Option[CategoryUUID],
+                         categoryId: Option[CategoryId],
                          displayName: Option[ModelDisplayName],
                          description: Option[ModelDescription],
                          imageListId: Option[ImageListId])
@@ -73,7 +73,7 @@ object model {
   object ModelSelector {
     case object All extends ModelSelector
     case class IdIs(id: ModelId) extends ModelSelector
-    case class CategoryIdIs(id: CategoryUUID) extends ModelSelector
+    case class CategoryIdIs(id: CategoryId) extends ModelSelector
   }
 
   trait ModelRepository[F[_]] {
@@ -87,7 +87,7 @@ object model {
 
     def update(req: UpdateModel): F[Int]
 
-    def delete(id: ModelId): F[Unit]
+    def delete(id: ModelId): F[Int]
   }
 
   trait ModelService[F[_]] {

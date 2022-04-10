@@ -81,9 +81,7 @@ class ProductRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecuti
       .withUniqueGeneratedKeys[ParameterListId]("id")
       .trRun()
     val parameterListIds = List(parameterListId)
-    val imageId = sql"""insert into images (src, alt, image_list_id) VALUES ('','', ${imageListId})""".update
-      .withUniqueGeneratedKeys[UUID]("id")
-      .trRun()
+    val imageId = sql"select id from images limit 1".query[UUID].option.trRun().head
     val parameterId =
       sql"""insert into parameters (display_name, image_id, list_order, parameter_list_id) VALUES ('',$imageId, 1, $parameterListId)""".update
         .withUniqueGeneratedKeys[ParameterId]("id")
@@ -109,9 +107,7 @@ class ProductRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecuti
       .withUniqueGeneratedKeys[ParameterListId]("id")
       .trRun()
     val parameterListIds = List(parameterListId)
-    val imageId = sql"""insert into images (src, alt, image_list_id) VALUES ('','', ${imageListId})""".update
-      .withUniqueGeneratedKeys[UUID]("id")
-      .trRun()
+    val imageId = sql"select id from images limit 1".query[UUID].option.trRun().head
     val parameterId =
       sql"""insert into parameters (display_name, image_id, list_order, parameter_list_id) VALUES ('',$imageId, 1, $parameterListId)""".update
         .withUniqueGeneratedKeys[ParameterId]("id")

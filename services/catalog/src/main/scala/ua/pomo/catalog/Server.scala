@@ -6,8 +6,13 @@ import fs2.grpc.syntax.all.fs2GrpcSyntaxServerBuilder
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder
 import io.grpc.protobuf.services.ProtoReflectionService
 import ua.pomo.catalog.app.CatalogImpl
-import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ImageListServiceImpl, ModelServiceImpl}
-import ua.pomo.catalog.infrastructure.persistance.{CategoryRepositoryImpl, ImageListRepositoryImpl, ModelRepositoryImpl}
+import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ImageListServiceImpl, ModelServiceImpl, ProductServiceImpl}
+import ua.pomo.catalog.infrastructure.persistance.{
+  CategoryRepositoryImpl,
+  ImageListRepositoryImpl,
+  ModelRepositoryImpl,
+  ProductRepositoryImpl
+}
 
 object Server extends IOApp.Simple {
 
@@ -20,7 +25,9 @@ object Server extends IOApp.Simple {
     val categoryService = CategoryServiceImpl(transactor, CategoryRepositoryImpl())
     val imageListService = ImageListServiceImpl(transactor, ImageListRepositoryImpl())
     val modelService = ModelServiceImpl(transactor, ModelRepositoryImpl())
-    val catalogService = CatalogImpl.makeGrpc[IO](null, categoryService, modelService, imageListService, config.catalog)
+    val productService = ProductServiceImpl(transactor, ProductRepositoryImpl())
+    val catalogService =
+      CatalogImpl.makeGrpc[IO](productService, categoryService, modelService, imageListService, config.catalog)
     catalogService.flatMap { service =>
       NettyServerBuilder
         .forPort(config.server.serverPort)

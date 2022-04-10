@@ -12,7 +12,7 @@ import ua.pomo.catalog.infrastructure.persistance.CategoryRepositoryImpl
 
 class CategoryServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: G ~> F, repository: CategoryRepository[G])
     extends CategoryService[F] {
-  override def get(id: CategoryUUID): F[Category] = {
+  override def get(id: CategoryId): F[Category] = {
     repository
       .find(id)
       .flatMap(_.fold(NotFound("category", id).raiseError[G, Category])(_.pure[G]))
@@ -42,7 +42,7 @@ class CategoryServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: G ~> 
       .mapK(xa)
   }
 
-  override def delete(id: CategoryUUID): F[Unit] = {
+  override def delete(id: CategoryId): F[Unit] = {
     repository.delete(id).mapK(xa)
   }
 

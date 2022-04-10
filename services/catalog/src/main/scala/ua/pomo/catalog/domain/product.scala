@@ -4,7 +4,7 @@ import cats.data.NonEmptyList
 import derevo.cats.{eqv, show}
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import ua.pomo.catalog.domain.category.CategoryUUID
+import ua.pomo.catalog.domain.category.CategoryId
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.image.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
@@ -30,18 +30,20 @@ object product {
   @derive(eqv, show)
   case class Product(id: ProductId,
                      modelId: ModelId,
-                     categoryId: CategoryUUID,
+                     categoryId: CategoryId,
                      imageList: ImageList,
                      price: ProductPrice,
                      parameterIds: List[ParameterId])
 
   @derive(eqv, show)
-  case class CreateProduct(id: ProductId,
-                           modelId: ModelId,
+  case class CreateProduct(modelId: ModelId,
                            imageListId: ImageListId,
                            priceUsd: ProductStandardPrice,
                            promoPriceUsd: Option[ProductPromoPrice],
-                           parameters: List[ParameterId])
+                           parameterIds: List[ParameterId])
+
+  @derive(eqv, show)
+  case class FindProductResponse(products: List[Product], nextPageToken: PageToken)
 
   case class ProductQuery(pageToken: PageToken.NonEmpty, selector: ProductSelector)
 
@@ -74,7 +76,7 @@ object product {
 
     def update(command: UpdateProduct): F[Int]
 
-    def delete(id: ProductId): F[Unit]
+    def delete(id: ProductId): F[Int]
   }
 
   trait ProductService[F[_]] {
@@ -82,7 +84,7 @@ object product {
 
     def get(id: ProductId): F[Product]
 
-    def query(query: ProductQuery): F[List[Product]]
+    def query(query: ProductQuery): F[FindProductResponse]
 
     def update(command: UpdateProduct): F[Product]
 

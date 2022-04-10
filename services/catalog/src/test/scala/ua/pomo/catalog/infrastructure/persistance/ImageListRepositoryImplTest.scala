@@ -51,7 +51,6 @@ class ImageListRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecu
 
   testR(s"create should work") { resources =>
     resources.postgres.create(Generators.ImageList.gen.sample.get).trRun()
-    println("""""")
   }
 
   testEachImpl(s"create get contract") { impl =>

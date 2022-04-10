@@ -9,26 +9,32 @@ import ua.pomo.catalog.api.{
   CreateCategoryRequest,
   CreateImageListRequest,
   CreateModelRequest,
+  CreateProductRequest,
   DeleteImageListRequest,
   DeleteModelRequest,
+  DeleteProductRequest,
   GetImageListRequest,
   GetProductRequest,
   ListModelsRequest,
   ListModelsResponse,
+  ListProductsRequest,
+  ListProductsResponse,
   UpdateCategoryRequest,
-  UpdateImageListRequest
+  UpdateImageListRequest,
+  UpdateModelRequest
 }
-import ua.pomo.catalog.app.ApiName._
+import ua.pomo.catalog.app.ApiName.{ProductName, _}
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category._
+import ua.pomo.catalog.domain.error.ValidationErr
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
-import ua.pomo.catalog.domain.parameter.{Parameter, ParameterList, ParameterListId}
+import ua.pomo.catalog.domain.parameter.{Parameter, ParameterId, ParameterList, ParameterListId}
 import ua.pomo.catalog.domain.product._
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}
-import scala.util.{Success, Try}
+import scala.util.{Failure, Success, Try}
 
 object Converters {
   private val DefaultUUID = new UUID(0, 0)
@@ -61,19 +67,26 @@ object Converters {
     ApiName.imageList(deleteImageListRequest.name).toTry.get.id
   }
 
-  def toDomain(listModels: ListModelsRequest): Try[ModelQuery] = {
-    val categoryId = ApiName.models(listModels.parent).toTry.get.categoryId
-    Try(new String(Base64.getDecoder.decode(listModels.pageToken), utf8))
+  private def parseToken(pageToken: String, pageSize: Int) = {
+    Try(new String(Base64.getDecoder.decode(pageToken), utf8))
       .flatMap {
-        case "" => Success(PageToken.NonEmpty(listModels.pageSize.toLong, 0L))
+        case "" => Success(PageToken.NonEmpty(pageSize.toLong, 0L))
         case s =>
           parser.parse(s).toTry.flatMap(Decoder[PageToken.NonEmpty].decodeJson(_).toTry)
       }
+  }
+  def toDomain(listModels: ListModelsRequest): Try[ModelQuery] = {
+    val categoryId = ApiName.models(listModels.parent).toTry.get.categoryId
+    parseToken(listModels.pageToken, listModels.pageSize)
       .map(ModelQuery(ModelSelector.CategoryIdIs(categoryId), _))
   }
 
   def toApi(findModelResponse: FindModelResponse): ListModelsResponse = {
     ListModelsResponse(findModelResponse.models.map(toApi), toApi(findModelResponse.nextPageToken))
+  }
+
+  def toApi(products: FindProductResponse): ListProductsResponse = {
+    ListProductsResponse(products.products.map(toApi), toApi(products.nextPageToken))
   }
 
   def toApi(money: Money): api.Money = {
@@ -105,6 +118,7 @@ object Converters {
   def toApi(imageList: ImageList): api.ImageList = {
     api.ImageList(
       ImageListName(imageList.id).toNameString,
+      imageList.id.show,
       imageList.displayName.show,
       imageList.images.map(toApi)
     )
@@ -118,12 +132,19 @@ object Converters {
   }
 
   def toApi(p: Product): api.Product = {
-    ???
+    api.Product(
+      ProductName(p.categoryId, p.modelId, p.id).toNameString,
+      p.id.show,
+      p.modelId.show,
+      Some(toApi(p.imageList)),
+      Some(api.Product.Price(Some(api.Money(p.price.standard.value.toFloat)))),
+      p.parameterIds.map(_.show)
+    )
   }
 
   def toDomain(category: api.Category): Category = {
     Category(
-      CategoryUUID(UUID.randomUUID()),
+      CategoryId(UUID.randomUUID()),
       CategoryReadableId(category.readableId),
       CategoryDisplayName(category.displayName),
       CategoryDescription(category.description)
@@ -151,8 +172,48 @@ object Converters {
                     nonEmptyList(obj.images.toList.map(Converters.toDomain)))
   }
 
+  def toDomain(request: ListProductsRequest): Try[ProductQuery] = {
+    val modelId = ApiName.products(request.parent).toTry.get.modelId
+    parseToken(request.pageToken, request.pageSize)
+      .map(ProductQuery(_, ProductSelector.ModelIs(modelId)))
+  }
+
+  def toDomain(request: UpdateModelRequest): UpdateModel = {
+    val model = request.model.get
+    val modelName = ApiName.model(model.name).toTry.get
+    val model2 = FieldMaskUtil.applyFieldMask(model, request.updateMask.get)
+    val imageListId = model2.imageList.imageListName.map(ApiName.imageList).map(_.toTry.get.id)
+    UpdateModel(
+      modelName.modelId,
+      nonEmptyString(model2.readableId).map(ModelReadableId.apply),
+      None,
+      nonEmptyString(model2.displayName).map(ModelDisplayName.apply),
+      nonEmptyString(model2.description).map(ModelDescription.apply),
+      imageListId
+    )
+  }
+
   def toDomain(request: GetProductRequest): ProductId = {
     ApiName.product(request.name).toTry.get.productId
+  }
+
+  def toDomain(request: CreateProductRequest): CreateProduct = {
+    val productsName = ApiName.products(request.parent).toTry.get
+    val product = request.product.get
+    val imageListId = Try(UUID.fromString(product.imageList.get.uid))
+      .recoverWith { case e: Throwable => Failure(ValidationErr(s"bad imageList id $product.imageList", Some(e))) }
+      .map(ImageListId.apply)
+      .get
+
+    val res = CreateProduct(
+      productsName.modelId,
+      imageListId,
+      ProductStandardPrice(product.price.get.standard.get.amount.toDouble),
+      None,
+      product.parameterIds.map(UUID.fromString).map(ParameterId.apply).toList
+    )
+
+    res
   }
 
   def toDomain(request: CreateImageListRequest): ImageList = {
@@ -163,9 +224,15 @@ object Converters {
       il.images.map(im => Image(ImageSrc(im.src), ImageAlt(im.alt))).toList
     )
   }
+
+  def toDomain(request: DeleteProductRequest): ProductId = {
+    ApiName.product(request.name).toTry.get.productId
+  }
+
   def toDomain(request: DeleteModelRequest): ModelId = {
     ApiName.model(request.name).toTry.get.modelId
   }
+
   def toDomain(request: CreateModelRequest): CreateModel = {
     val models = ApiName.models(request.parent).toTry.get.categoryId
     val model = request.model.get

@@ -3,7 +3,13 @@ package ua.pomo.catalog.app.programs
 import cats.arrow.FunctionK
 import cats.effect.Sync
 import cats.effect.kernel.Async
-import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
+import cats.implicits.{
+  catsSyntaxApplicativeErrorId,
+  catsSyntaxApplicativeId,
+  catsSyntaxFlatMapOps,
+  toFlatMapOps,
+  toFunctorOps
+}
 import cats.~>
 import doobie.ConnectionIO
 import doobie.util.transactor.Transactor
@@ -15,18 +21,21 @@ import ua.pomo.catalog.infrastructure.persistance.ModelRepositoryImpl
 private class ModelServiceImpl[F[_]: Sync, G[_]: Sync] private (xa: G ~> F, repository: ModelRepository[G])
     extends ModelService[F] {
   def create(model: CreateModel): F[Model] = repository.create(model).flatMap(repository.get).mapK(xa)
-  def delete(id: ModelId): F[Unit] = repository.delete(id).mapK(xa)
+  def delete(id: ModelId): F[Unit] =
+    repository
+      .delete(id)
+      .flatMap { deleted =>
+        if (deleted == 0) {
+          NotFound("model", id).raiseError[G, Unit]
+        } else {
+          ().pure[G]
+        }
+      }
+      .mapK(xa)
   def findAll(req: ModelQuery): F[FindModelResponse] =
     repository
       .findAll(req)
-      .map { models =>
-        val nextPage = if (models.length != req.page.size) {
-          PageToken.Empty
-        } else {
-          PageToken.NonEmpty(req.page.size, req.page.size + req.page.offset)
-        }
-        FindModelResponse(models, nextPage)
-      }
+      .map(models => FindModelResponse(models, computeNextPageToken(req.page, models)))
       .mapK(xa)
 
   def get(id: ModelId): F[Model] =

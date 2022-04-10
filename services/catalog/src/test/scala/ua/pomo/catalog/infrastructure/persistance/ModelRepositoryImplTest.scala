@@ -6,7 +6,7 @@ import doobie.implicits._
 import doobie.postgres.implicits._
 import org.scalatest.ParallelTestExecution
 import ua.pomo.catalog.domain.PageToken
-import ua.pomo.catalog.domain.category.{CategoryRepository, CategoryUUID}
+import ua.pomo.catalog.domain.category.{CategoryRepository, CategoryId}
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter.ParameterListId
@@ -39,7 +39,7 @@ class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution
 
   test("queries") {
     val modelId = ModelId(UUID.randomUUID())
-    val categoryId = CategoryUUID(UUID.randomUUID())
+    val categoryId = CategoryId(UUID.randomUUID())
     val imageListId = ImageListId(UUID.randomUUID())
     check(Queries.find(ModelQuery(ModelSelector.CategoryIdIs(categoryId), PageToken.NonEmpty(10, 0))))
     check(Queries.delete(modelId))

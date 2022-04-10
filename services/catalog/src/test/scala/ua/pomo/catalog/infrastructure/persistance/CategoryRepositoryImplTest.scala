@@ -24,7 +24,7 @@ class CategoryRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecut
     } yield TestResources(db, Seq(a, b))
 
   test(s"queries") {
-    val uuid = CategoryUUID(UUID.randomUUID())
+    val uuid = CategoryId(UUID.randomUUID())
 
     check(Queries.findCategory(uuid))
     check(Queries.findCategories)

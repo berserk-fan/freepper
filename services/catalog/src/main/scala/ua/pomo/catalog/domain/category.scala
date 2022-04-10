@@ -16,7 +16,7 @@ object category {
 
   @derive(eqv, show, uuid)
   @newtype
-  case class CategoryUUID(value: UUID)
+  case class CategoryId(value: UUID)
 
   @derive(eqv, show)
   @newtype
@@ -27,7 +27,7 @@ object category {
   case class CategoryDescription(value: String)
 
   @derive(eqv, show)
-  case class Category(uuid: CategoryUUID,
+  case class Category(uuid: CategoryId,
                       readableId: CategoryReadableId,
                       displayName: CategoryDisplayName,
                       description: CategoryDescription)
@@ -40,34 +40,34 @@ object category {
   )
 
   @derive(eqv, show)
-  case class UpdateCategory(id: CategoryUUID,
+  case class UpdateCategory(id: CategoryId,
                             readableId: Option[CategoryReadableId],
                             displayName: Option[CategoryDisplayName],
                             description: Option[CategoryDescription])
 
   trait CategoryRepository[F[_]] {
-    def create(category: CreateCategory): F[CategoryUUID]
+    def create(category: CreateCategory): F[CategoryId]
 
-    def get(id: CategoryUUID): F[Category]
+    def get(id: CategoryId): F[Category]
 
-    def find(id: CategoryUUID): F[Option[Category]]
+    def find(id: CategoryId): F[Option[Category]]
 
     def findAll(): F[List[Category]]
 
     def update(req: UpdateCategory): F[Int]
 
-    def delete(id: CategoryUUID): F[Unit]
+    def delete(id: CategoryId): F[Unit]
   }
 
   trait CategoryService[F[_]] {
     def create(category: CreateCategory): F[Category]
 
-    def get(id: CategoryUUID): F[Category]
+    def get(id: CategoryId): F[Category]
 
     def findAll(): F[List[Category]]
 
     def update(req: UpdateCategory): F[Category]
 
-    def delete(id: CategoryUUID): F[Unit]
+    def delete(id: CategoryId): F[Unit]
   }
 }
