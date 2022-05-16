@@ -118,7 +118,7 @@ BEGIN
     where id = NEW.model_id;
 
     IF model_parameter_lists != product_parameter_lists THEN
-        RAISE 'bad parameter lists, mpl % ppl %', model_parameter_lists, product_parameter_lists;
+        RAISE 'bad parameter lists, mpl % ppl % pid', model_parameter_lists, product_parameter_lists;
     END IF;
     RETURN NEW;
 END;

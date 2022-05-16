@@ -25,7 +25,7 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers {
     appConfig = config.copy(jdbc = jdbcConfig)
     transactor <- Resources.transactor(jdbcConfig)
     _ <- Resources.schema(jdbcConfig, transactor)
-    _ <- Server.resource(appConfig)
+    _ <- Resource.suspend(Server.resource(appConfig))
     client <- Resources.catalogClient(appConfig.server)
   } yield (client, transactor)
 
@@ -72,7 +72,7 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers {
       val fieldMask = FieldMask.of(Seq("readable_id", "display_name", "description"))
       val update = UpdateCategoryRequest(Some(newEntity), Some(fieldMask))
       val updated = client.updateCategory(update, new Metadata()).unsafeRunSync()
-      updated should equal(newEntity)
+      updated.copy(name = "") should equal(newEntity.copy(name = ""))
       val getResp = client.getCategory(GetCategoryRequest(updated.name), new Metadata()).unsafeRunSync()
       getResp should equal(updated)
   }
@@ -176,16 +176,13 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers {
       createParameterList(parameterList1).transact(xa).unsafeRunSync()
       createParameterList(parameterList2).transact(xa).unsafeRunSync()
       val modelParentName = s"${category1.name}/models"
-      val model = Model(
-        "",
-        "",
-        "some-model",
-        "some-display-name",
-        "descr",
-        Model.ImageList.ImageListName(imageList1.name),
-        parameterLists = Model.ParameterListsOneof.ParameterListIds(
-          Model.ParameterListIds(List(parameterList1.uid, parameterList2.uid)))
-      )
+      val model = Model("",
+                        "",
+                        "some-model",
+                        "some-display-name",
+                        "descr",
+                        Some(imageList1),
+                        parameterLists = Seq(parameterList1, parameterList2))
     }
 
   testR("create model") {
@@ -199,14 +196,13 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers {
       val responseWithIgnoredFields =
         createResp.copy(name = "",
                         uid = "",
-                        imageList = f.model.imageList,
+                        imageListData = f.model.imageListData,
                         parameterLists = f.model.parameterLists,
                         minimalPrice = None)
       responseWithIgnoredFields should equal(f.model)
 
-      createResp.imageList.imageListData should equal(Some(f.imageList1))
-      createResp.parameterLists.parameterListsData.map(_.value.toList) should equal(
-        Some(List(f.parameterList1, f.parameterList2)))
+      createResp.imageListData.get.name should equal(f.imageList1.name)
+      createResp.parameterLists.toList.map(_.uid) should equal(List(f.parameterList1, f.parameterList2).map(_.uid))
   }
 
   testR("update model") {
@@ -366,16 +362,13 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers {
       createParameterList(parameterList1).transact(xa).unsafeRunSync()
       createParameterList(parameterList2).transact(xa).unsafeRunSync()
       val modelParentName = s"${category1.name}/models"
-      val model = Model(
-        "",
-        "",
-        "some-model",
-        "some-display-name",
-        "descr",
-        Model.ImageList.ImageListName(imageList1.name),
-        parameterLists = Model.ParameterListsOneof.ParameterListIds(
-          Model.ParameterListIds(List(parameterList1.uid, parameterList2.uid)))
-      )
+      val model = Model("",
+                        "",
+                        "some-model",
+                        "some-display-name",
+                        "descr",
+                        Some(imageList1),
+                        parameterLists = List(parameterList1, parameterList2))
       val createdModel =
         client.createModel(CreateModelRequest(modelParentName, Some(model)), new Metadata()).unsafeRunSync()
       val productParent = s"${createdModel.name}/products"

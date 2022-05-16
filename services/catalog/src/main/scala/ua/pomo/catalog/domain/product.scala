@@ -4,7 +4,7 @@ import cats.data.NonEmptyList
 import derevo.cats.{eqv, show}
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import ua.pomo.catalog.domain.category.CategoryId
+import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.image.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
@@ -30,7 +30,7 @@ object product {
   @derive(eqv, show)
   case class Product(id: ProductId,
                      modelId: ModelId,
-                     categoryId: CategoryId,
+                     categoryId: CategoryUUID,
                      imageList: ImageList,
                      price: ProductPrice,
                      parameterIds: List[ParameterId])

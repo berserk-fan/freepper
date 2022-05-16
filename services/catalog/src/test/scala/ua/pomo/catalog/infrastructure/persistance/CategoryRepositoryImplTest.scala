@@ -25,12 +25,12 @@ class CategoryRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecut
     } yield TestResources(db, Seq(a, b))
 
   test(s"queries") {
-    val uuid = CategoryId(UUID.randomUUID())
+    val uuid = CategoryUUID(UUID.randomUUID())
 
     check(Queries.single(uuid))
     check(Queries.query(CategoryQuery(CategorySelector.All, PageToken.Two)))
     check(Queries.query(CategoryQuery(CategorySelector.All, PageToken.NonEmpty(10, 10))))
-    check(Queries.query(CategoryQuery(CategorySelector.IdIs(uuid), PageToken.NonEmpty(10, 10))))
+    check(Queries.query(CategoryQuery(CategorySelector.UidIs(uuid), PageToken.NonEmpty(10, 10))))
     check(Queries.delete(uuid))
 
     forAll(Generators.Category.update) { update: UpdateCategory =>

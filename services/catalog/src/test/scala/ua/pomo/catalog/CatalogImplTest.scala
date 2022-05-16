@@ -8,19 +8,19 @@ import org.scalatest.BeforeAndAfter
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import squants.market.USD
-import ua.pomo.catalog.api.Model.{ParameterListIds, ParameterListsOneof}
 import ua.pomo.catalog.api.{
   CatalogFs2Grpc,
   CreateCategoryRequest,
   CreateModelRequest,
   DeleteModelRequest,
   GetModelRequest,
+  ImageList,
   ListModelsRequest,
-  Money
+  Money,
+  ParameterList
 }
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ImageListServiceImpl, ModelServiceImpl, ProductServiceImpl}
-import ua.pomo.catalog.app.{ApiName, CatalogImpl}
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.image.ImageListId
@@ -30,6 +30,7 @@ import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbRe
 import ua.pomo.catalog.shared.Generators.ToLazyListOps
 import doobie.implicits._
 import doobie.postgres.implicits._
+import ua.pomo.catalog.app.{CatalogImpl, ReadableIdInNamesResolver}
 import ua.pomo.catalog.infrastructure.persistance._
 
 import java.util.UUID
@@ -48,13 +49,14 @@ class CatalogImplTest extends DbUnitTestSuite {
     val modelService = ModelServiceImpl.makeInMemory[IO].unsafeRunSync()
     val imageListService = ImageListServiceImpl.makeInMemory[IO]
     val productService = ProductServiceImpl.makeInMemory[IO].unsafeRunSync()
-    val catalogImpl = CatalogImpl[IO](productService, categoryService, modelService, imageListService, config)
+    val resolver = ReadableIdInNamesResolver(CategoryRepositoryImpl.makeInMemory[IO].unsafeRunSync())
+    val catalogImpl = CatalogImpl[IO](productService, categoryService, modelService, imageListService, config, resolver)
     (categoryService, modelService, catalogImpl)
   }
 
   test("list models") {
     val (_, modelService, impl) = makeImpls
-    val categoryId = CategoryId(UUID.randomUUID())
+    val categoryId = CategoryUUID(UUID.randomUUID())
     val totalModels = 10
     Generators.Model
       .createGen(ImageListId(UUID.randomUUID()), List.empty)
@@ -65,7 +67,7 @@ class CatalogImplTest extends DbUnitTestSuite {
       .traverse(modelService.create)
       .unsafeRunSync()
 
-    val parent = ModelsName(categoryId)
+    val parent = ModelsName(CategoryRefId.Uid(categoryId))
 
     val modelsCol = parent.toNameString
     noException should be thrownBy impl.listModels(ListModelsRequest(modelsCol, 0, ""), null).unsafeRunSync()
@@ -88,7 +90,7 @@ class CatalogImplTest extends DbUnitTestSuite {
   test("get model") {
     val (_, modelService, impl) = makeImpls
     val ex = intercept[StatusException] {
-      val name = ModelName(CategoryId(UUID.randomUUID()), ModelId(UUID.randomUUID())).toNameString
+      val name = ModelName(CategoryRefId.Uid(CategoryUUID(UUID.randomUUID())), ModelId(UUID.randomUUID())).toNameString
       impl.getModel(GetModelRequest(name), null).unsafeRunSync()
     }
     ex.getStatus.getCode should equal(Status.Code.NOT_FOUND)
@@ -98,7 +100,7 @@ class CatalogImplTest extends DbUnitTestSuite {
         .create(Generators.Model.createGen(ImageListId(UUID.randomUUID()), List.empty).sample.get)
         .unsafeRunSync()
     noException should be thrownBy impl
-      .getModel(GetModelRequest(ModelName(model.categoryId, model.id).toNameString), null)
+      .getModel(GetModelRequest(ModelName(CategoryRefId.Uid(model.categoryUid), model.id).toNameString), null)
       .unsafeRunSync()
   }
 
@@ -109,8 +111,8 @@ class CatalogImplTest extends DbUnitTestSuite {
       .withUniqueGeneratedKeys[ParameterListId]("id")
       .trRun()
 
-    val paramList = ParameterListsOneof.ParameterListIds(ParameterListIds(Seq(id1.toString)))
-    val imageListName = api.Model.ImageList.ImageListName(ImageListName(ImageListId(UUID.randomUUID())).toNameString)
+    val paramList = Seq(ParameterList(uid = id1.toString))
+    val imageListName = Some(ImageList(name = ImageListName(ImageListId(UUID.randomUUID())).toNameString))
     val modelReq = api.Model(
       "",
       "",
@@ -122,9 +124,10 @@ class CatalogImplTest extends DbUnitTestSuite {
       paramList
     )
 
-    val req = CreateModelRequest(ModelsName(CategoryId(UUID.randomUUID())).toNameString, Some(modelReq))
+    val req =
+      CreateModelRequest(ModelsName(CategoryRefId.Uid(CategoryUUID(UUID.randomUUID()))).toNameString, Some(modelReq))
     val model = impl.createModel(req, null).unsafeRunSync()
-    model.copy(parameterLists = paramList, imageList = imageListName) should equal(
+    model.copy(parameterLists = paramList, imageListData = imageListName) should equal(
       modelReq.copy(name = model.name, uid = model.uid))
 
     val modelReq2 = api.Model(
@@ -137,18 +140,20 @@ class CatalogImplTest extends DbUnitTestSuite {
       Some(Money(0)),
       paramList
     )
-    val req2 = CreateModelRequest(ModelsName(CategoryId(UUID.randomUUID())).toNameString, Some(modelReq2))
+    val req2 =
+      CreateModelRequest(ModelsName(CategoryRefId.Uid(CategoryUUID(UUID.randomUUID()))).toNameString, Some(modelReq2))
     noException should be thrownBy impl.createModel(req2, null).unsafeRunSync()
   }
 
   test("delete model") {
     val (_, models, impl) = makeImpls
     val request =
-      DeleteModelRequest(ModelName(CategoryId(UUID.randomUUID()), ModelId(UUID.randomUUID())).toNameString)
+      DeleteModelRequest(
+        ModelName(CategoryRefId.Uid(CategoryUUID(UUID.randomUUID())), ModelId(UUID.randomUUID())).toNameString)
     val mod1 =
       models.create(Generators.Model.createGen(ImageListId(UUID.randomUUID()), List()).sample.get).unsafeRunSync()
     noException should be thrownBy impl
-      .deleteModel(DeleteModelRequest(ModelName(mod1.categoryId, mod1.id).toNameString), null)
+      .deleteModel(DeleteModelRequest(ModelName(CategoryRefId.Uid(mod1.categoryUid), mod1.id).toNameString), null)
       .unsafeRunSync()
 
     intercept[NotFound] {

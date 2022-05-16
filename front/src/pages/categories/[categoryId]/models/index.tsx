@@ -15,16 +15,21 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     parent: `categories/${categoryId}/models`,
     pageSize: 10,
   });
+
   return {
     props: {
-      products: models1,
-      categoryId: `categories/${categoryId}`,
+      models: models1.models,
     },
   };
 };
 
 export async function getStaticPaths() {
-  const categories = ["beds", "ammo"];
-  const paths = categories.map((c) => ({ params: { categoryId: c } }));
+  const categories = await shopNode.listCategories({
+    parent: "categories",
+    pageSize: 25,
+  });
+  const paths = categories.categories.map((c) => ({
+    params: { categoryId: c.readableId },
+  }));
   return { paths, fallback: false };
 }

@@ -6,11 +6,10 @@ import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
 import doobie._
 import doobie.implicits._
 import doobie.postgres.implicits._
-import io.circe.Decoder
 import shapeless._
 import squants.market.{Money, USD}
-import ua.pomo.catalog.domain.PageToken
-import ua.pomo.catalog.domain.category.CategoryId
+import ua.pomo.catalog.domain.{PageToken, category}
+import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
@@ -73,7 +72,7 @@ object ModelRepositoryImpl {
     }
 
     type GetModelQuery =
-      ImageListId :: ModelId :: ModelReadableId :: CategoryId :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice :: List[
+      ImageListId :: ModelId :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice :: List[
         ParameterList] :: HNil
 
     def delete(modelId: ModelId): Update0 = {
@@ -83,12 +82,13 @@ object ModelRepositoryImpl {
          """.update
     }
 
-    private def compileWhere(alias: String, where: ModelSelector): Fragment = {
-      val p = Fragment.const0(alias)
+    private def compileWhere(modelsTable: String, where: ModelSelector): Fragment = {
+      val models = Fragment.const0(modelsTable)
+      val categories = Fragment.const0(modelsTable)
       where match {
         case ModelSelector.All              => fr"1 = 1"
-        case ModelSelector.IdIs(id)         => fr"$p.id = $id"
-        case ModelSelector.CategoryIdIs(id) => fr"$p.category_id = $id"
+        case ModelSelector.IdIs(id)         => fr"$models.id = $id"
+        case ModelSelector.CategoryIdIs(id) => fr"$models.id = $id"
       }
     }
 
@@ -97,9 +97,10 @@ object ModelRepositoryImpl {
       implicit val readParameterList: Get[List[ParameterList]] = jsonAggListJson[ParameterList]
 
       sql"""
-        select m.id, 
-               m.readable_id, 
+        select m.id,
+               m.readable_id,
                m.category_id, 
+               c.readable_id, 
                m.display_name, 
                m.description,
                COALESCE((
@@ -128,9 +129,11 @@ object ModelRepositoryImpl {
                    from images img
                    where img.image_list_id = il.id
                ), '[]'::json)
-        from models m left join image_lists il on il.id = m.image_list_id
+        from models m 
+            left join categories c on c.id = m.category_id 
+            left join image_lists il on il.id = m.image_list_id
         where ${compileWhere("m", query.selector)}
-        group by m.id, il.id
+        group by m.id, c.readable_id, il.id
         order by m.create_time desc
         limit ${query.page.size}
         offset ${query.page.offset}
@@ -142,7 +145,7 @@ object ModelRepositoryImpl {
       object updaterObj extends DbUpdaterPoly {
         implicit val a1: Res[ModelReadableId] = gen("readable_id")
         implicit val a2: Res[ModelDescription] = gen("description")
-        implicit val a3: Res[CategoryId] = gen("category_id")
+        implicit val a3: Res[CategoryUUID] = gen("category_id")
         implicit val a4: Res[ModelDisplayName] = gen("display_name")
         implicit val a5: Res[ImageListId] = gen("image_list_id")
       }

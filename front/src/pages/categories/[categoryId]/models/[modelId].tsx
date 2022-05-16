@@ -6,6 +6,7 @@ import LayoutWithHeaderAndFooter from "components/Layout/LayoutWithHeaderAndFoot
 import Box from "@material-ui/core/Box/Box";
 import { Model } from "apis/model.pb";
 import { Product } from "apis/product.pb";
+import { Category } from "apis/category.pb";
 
 export default function ProductPage({
   model,
@@ -28,32 +29,31 @@ export default function ProductPage({
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const { categoryId, productId } = context.params;
-  const model = await shopNode.getModel({
-    name: `categories/${categoryId}/model/${productId}`,
+  const { categoryId, modelId } = context.params;
+  const model: Model = await shopNode.getModel({
+    name: `categories/${categoryId}/models/${modelId}`,
   });
+  delete model.toObject;
   return { props: { model: model || null, categoryName: categoryId } };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // TODO replace with listCategories or listProducts or listModels
-  const categoryWithModelsList = await Promise.all(
-    ["categories/beds", "categories/ammo"].map((categoryName) =>
+  const cats = await shopNode.listCategories({
+    parent: "categories",
+    pageSize: 100,
+  });
+  const models1 = await Promise.all(
+    cats.categories.map((cat) =>
       shopNode
-        .listModels({ parent: `${categoryName}/models` })
-        .then((resp) => ({
-          categoryId: categoryName.slice("categories/".length),
-          models: resp.models,
-        })),
+        .listModels({
+          parent: `${cat.name}/models`,
+          pageSize: 100,
+        })
+        .then((x): [Category, Model[]] => [cat, x.models]),
     ),
   );
-  const paths = categoryWithModelsList
-    .flatMap((categoryWithModels) =>
-      categoryWithModels.models.map((model) => ({
-        categoryId: categoryWithModels.categoryId,
-        modelId: model.id,
-      })),
-    )
-    .map((x) => ({ params: x }));
+  const paths = models1.flatMap(([cat, ms]) =>
+    ms.map((m) => ({ params: { categoryId: cat.uid, modelId: m.uid } })),
+  );
   return { paths, fallback: false };
 };

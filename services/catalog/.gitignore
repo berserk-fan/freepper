@@ -1,4 +1,5 @@
 .bsp/
 target/
+project/project
 /deployment/local/envoy/envoy.yaml
 /deployment/local/postgres/volume/

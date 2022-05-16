@@ -35,7 +35,4 @@ package object persistance {
         }
     }
   }
-
-  def withoutTransaction[A](p: ConnectionIO[A]): ConnectionIO[A] =
-    MonadCancel[ConnectionIO].bracket(FC.setAutoCommit(true))(_ => p)(_ => FC.setAutoCommit(false))
 }

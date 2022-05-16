@@ -4,7 +4,7 @@ import derevo.cats._
 import derevo.derive
 import io.estatico.newtype.macros.newtype
 import squants.market.Money
-import ua.pomo.catalog.domain.category.{CategoryReadableId, CategoryId}
+import ua.pomo.catalog.domain.category.{CategoryReadableId, CategoryUUID}
 import ua.pomo.catalog.domain.image.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.parameter.{ParameterList, ParameterListId}
 import ua.pomo.catalog.optics.uuid
@@ -39,7 +39,8 @@ object model {
   @derive(eqv, show)
   case class Model(id: ModelId,
                    readableId: ModelReadableId,
-                   categoryId: CategoryId,
+                   categoryUid: CategoryUUID,
+                   categoryRid: CategoryReadableId,
                    displayName: ModelDisplayName,
                    description: ModelDescription,
                    minimalPrice: ModelMinimalPrice,
@@ -48,7 +49,7 @@ object model {
 
   @derive(eqv, show)
   case class CreateModel(readableId: ModelReadableId,
-                         categoryId: CategoryId,
+                         categoryId: CategoryUUID,
                          displayName: ModelDisplayName,
                          description: ModelDescription,
                          imageListId: ImageListId,
@@ -57,7 +58,7 @@ object model {
   @derive(eqv, show)
   case class UpdateModel(id: ModelId,
                          readableId: Option[ModelReadableId],
-                         categoryId: Option[CategoryId],
+                         categoryId: Option[CategoryUUID],
                          displayName: Option[ModelDisplayName],
                          description: Option[ModelDescription],
                          imageListId: Option[ImageListId])
@@ -73,7 +74,7 @@ object model {
   object ModelSelector {
     case object All extends ModelSelector
     case class IdIs(id: ModelId) extends ModelSelector
-    case class CategoryIdIs(id: CategoryId) extends ModelSelector
+    case class CategoryIdIs(id: CategoryUUID) extends ModelSelector
   }
 
   trait ModelRepository[F[_]] {

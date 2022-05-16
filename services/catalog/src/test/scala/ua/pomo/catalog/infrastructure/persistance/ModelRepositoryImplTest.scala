@@ -6,7 +6,7 @@ import doobie.implicits._
 import doobie.postgres.implicits._
 import org.scalatest.ParallelTestExecution
 import ua.pomo.catalog.domain.PageToken
-import ua.pomo.catalog.domain.category.{CategoryRepository, CategoryId}
+import ua.pomo.catalog.domain.category.{CategoryRepository, CategoryUUID}
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter.ParameterListId
@@ -39,7 +39,7 @@ class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution
 
   test("queries") {
     val modelId = ModelId(UUID.randomUUID())
-    val categoryId = CategoryId(UUID.randomUUID())
+    val categoryId = CategoryUUID(UUID.randomUUID())
     val imageListId = ImageListId(UUID.randomUUID())
     check(Queries.find(ModelQuery(ModelSelector.CategoryIdIs(categoryId), PageToken.NonEmpty(10, 0))))
     check(Queries.delete(modelId))
@@ -60,7 +60,7 @@ class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution
       val id = impl.create(createModel).trRun()
       val found = impl.get(id).trRun()
 
-      createModel.categoryId should equal(found.categoryId)
+      createModel.categoryId should equal(found.categoryUid)
       createModel.description should equal(found.description)
       createModel.displayName should equal(found.displayName)
       createModel.readableId should equal(found.readableId)
@@ -126,7 +126,7 @@ class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution
       impl.update(update.copy(id = modelId)).trRun()
       val model = impl.get(modelId).trRun()
 
-      update.categoryId.foreach(_ should equal(model.categoryId))
+      update.categoryId.foreach(_ should equal(model.categoryUid))
       update.description.foreach(_ should equal(model.description))
       update.displayName.foreach(_ should equal(model.displayName))
       update.readableId.foreach(_ should equal(model.readableId))

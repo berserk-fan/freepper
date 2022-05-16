@@ -10,7 +10,7 @@ import ua.pomo.catalog.domain.model._
 import java.util.UUID
 import shapeless._
 import monocle.syntax.all._
-import ua.pomo.catalog.domain.category.CategoryId
+import ua.pomo.catalog.domain.category.{CategoryReadableId, CategoryUUID}
 import ua.pomo.catalog.domain.parameter.{ParamListDisplayName, ParameterList}
 
 class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, Map[ModelId, Model]])
@@ -21,6 +21,7 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
       ModelId(UUID.randomUUID()),
       req.readableId,
       req.categoryId,
+      CategoryReadableId(""),
       req.displayName,
       req.description,
       ModelMinimalPrice(Money(0, USD)),
@@ -42,7 +43,7 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
         _ =>
           true
       case ModelSelector.IdIs(id)         => _.id == id
-      case ModelSelector.CategoryIdIs(id) => _.categoryId == id
+      case ModelSelector.CategoryIdIs(id) => _.categoryUid == id
     }
     ref.get
       .map(
@@ -58,7 +59,7 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
   override def update(command: UpdateModel): F[Int] = ref.modify { map =>
     object updateObj extends InMemoryUpdaterPoly[Model] {
       implicit val readableId: Res[ModelReadableId] = gen(_.focus(_.readableId))
-      implicit val categoryId: Res[CategoryId] = gen(_.focus(_.categoryId))
+      implicit val categoryId: Res[CategoryUUID] = gen(_.focus(_.categoryUid))
       implicit val displayName: Res[ModelDisplayName] = gen(_.focus(_.displayName))
       implicit val description: Res[ModelDescription] = gen(_.focus(_.description))
       implicit val imageListId: Res[ImageListId] = gen(_.focus(_.imageList.id))

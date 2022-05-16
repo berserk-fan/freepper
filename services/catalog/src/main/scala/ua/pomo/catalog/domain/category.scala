@@ -1,11 +1,10 @@
 package ua.pomo.catalog.domain
 
-import cats.{Eq, Show}
-import cats.implicits._
+import cats.Show
+import cats.implicits.toShow
 import derevo.cats._
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import ua.pomo.catalog.optics.uuid
 
 import java.util.UUID
 
@@ -14,9 +13,9 @@ object category {
   @newtype
   case class CategoryReadableId(value: String)
 
-  @derive(eqv, show, uuid)
+  @derive(eqv, show)
   @newtype
-  case class CategoryId(value: UUID)
+  case class CategoryUUID(value: UUID)
 
   @derive(eqv, show)
   @newtype
@@ -27,7 +26,7 @@ object category {
   case class CategoryDescription(value: String)
 
   @derive(eqv, show)
-  case class Category(id: CategoryId,
+  case class Category(id: CategoryUUID,
                       readableId: CategoryReadableId,
                       displayName: CategoryDisplayName,
                       description: CategoryDescription)
@@ -40,7 +39,7 @@ object category {
   )
 
   @derive(eqv, show)
-  case class UpdateCategory(id: CategoryId,
+  case class UpdateCategory(id: CategoryUUID,
                             readableId: Option[CategoryReadableId],
                             displayName: Option[CategoryDisplayName],
                             description: Option[CategoryDescription])
@@ -50,35 +49,36 @@ object category {
 
   sealed trait CategorySelector
   object CategorySelector {
-    case class IdIs(categoryId: CategoryId) extends CategorySelector
+    case class RidIs(rid: CategoryReadableId) extends CategorySelector
+    case class UidIs(uid: CategoryUUID) extends CategorySelector
     case object All extends CategorySelector
   }
 
   case class CategoryQuery(selector: CategorySelector, token: PageToken.NonEmpty)
 
   trait CategoryRepository[F[_]] {
-    def create(category: CreateCategory): F[CategoryId]
+    def create(category: CreateCategory): F[CategoryUUID]
 
-    def get(id: CategoryId): F[Category]
+    def get(id: CategoryUUID): F[Category]
 
-    def find(id: CategoryId): F[Option[Category]]
+    def find(id: CategoryUUID): F[Option[Category]]
 
     def query(req: CategoryQuery): F[List[Category]]
 
     def update(req: UpdateCategory): F[Int]
 
-    def delete(id: CategoryId): F[Unit]
+    def delete(id: CategoryUUID): F[Unit]
   }
 
   trait CategoryService[F[_]] {
     def create(category: CreateCategory): F[Category]
 
-    def get(id: CategoryId): F[Category]
+    def get(id: CategoryUUID): F[Category]
 
     def query(req: CategoryQuery): F[QueryCategoriesResponse]
 
     def update(req: UpdateCategory): F[Category]
 
-    def delete(id: CategoryId): F[Unit]
+    def delete(id: CategoryUUID): F[Unit]
   }
 }

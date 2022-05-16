@@ -73,7 +73,7 @@ function ProductPage({
     imageList: { images },
   } = model;
   const product = products[0];
-  const inCart = !!cart.selectedProducts[product.uuid];
+  const inCart = !!cart.selectedProducts[product.uid];
   function addToCart() {
     addProduct([product, model]);
   }
@@ -127,7 +127,7 @@ function ProductPage({
                 <ParameterPicker
                   key={parameterList.id}
                   selectedParameterId={
-                    Object.values(parameterList.parameters)[0].id
+                    Object.values(parameterList.parameters)[0].uid
                   }
                   parameterList={parameterList}
                 />

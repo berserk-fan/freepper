@@ -43,13 +43,13 @@ export const pages: Record<Pages, Page> = {
   },
   beds: {
     id: "beds",
-    path: "/categories/beds/products",
+    path: "/categories/beds/models",
     name: "Лежанки",
     Icon: PetBedIcon,
   },
   ammo: {
     id: "ammo",
-    path: "/categories/ammo/products",
+    path: "/categories/ammo/models",
     name: "Аммуниция",
     Icon: Collar,
   },

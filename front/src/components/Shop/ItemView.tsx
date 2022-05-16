@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
-import Image from "next/image";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
 import dynamic from "next/dynamic";
 import { Model } from "apis/model.pb";
+import { Image as MyImage } from "apis/image_list.pb";
+import Image from "next/image";
 import Price from "./Price";
 import { SIZES } from "./definitions";
 
@@ -47,11 +48,16 @@ export default function ItemView({
   priority: boolean;
 }) {
   const classes = useStyles();
-  const {
-    displayName,
-    imageList: { images },
-    minimalPrice,
-  } = model;
+  const { displayName, imageList, minimalPrice } = model;
+  let images: MyImage[];
+  switch (imageList.$case) {
+    case "imageListData":
+      images = imageList.imageListData.images;
+      break;
+    default:
+      throw new Error("illegal state");
+  }
+
   const [slideId, useSlideId] = useState(0);
   const [isShowingArrows, setIsShowingArrows] = useState(false);
 

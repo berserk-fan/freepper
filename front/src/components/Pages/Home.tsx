@@ -12,7 +12,7 @@ import MainImage from "Public/main-image.jpg";
 import MainImageFullWidth from "Public/main-image-full-width.jpg";
 import { Model } from "apis/model.pb";
 import { Category } from "apis/category.pb";
-import { Image as ImageData } from "apis/image_list.pb";
+import { ImageList } from "apis/image_list.pb";
 import LayoutWithHeaderAndFooter from "../Layout/LayoutWithHeaderAndFooter";
 
 const ColorButton = withStyles((theme) => ({
@@ -85,17 +85,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getImageOrFallback(deal: Model): ImageData {
-  try {
-    return deal.imageList.images[0];
-  } catch (e) {
-    return {
-      src: "/qwer",
-      alt: "No image found",
-    };
-  }
-}
-
 export type HotDealsWithCategory = [Category, Model[]];
 
 export function Home({
@@ -104,7 +93,7 @@ export function Home({
   hotDealsWithCategory: HotDealsWithCategory;
 }) {
   const classes = useStyles();
-  const allBedsHref = "categories/beds/products";
+  const allBedsHref = `categories/beds/models`;
 
   return (
     <LayoutWithHeaderAndFooter disableBreadcrumbs showValueProp>
@@ -194,8 +183,12 @@ export function Home({
             >
               <Grid container spacing={3}>
                 {hotDeals.map((model: Model) => {
-                  const image = getImageOrFallback(model);
                   const href = `/${model.name}`;
+                  const image = (
+                    model.imageList as unknown as {
+                      imageListData: ImageList;
+                    }
+                  ).imageListData.images[0];
                   return (
                     <Grid item key={model.name} xs={12} sm={6} md={4}>
                       <Box className={classes.propositionImageContainer}>
@@ -222,32 +215,6 @@ export function Home({
               </Grid>
             </Box>
           </Box>
-          {/*
-          <Box aria-label="how do we make it?" component="section">
-            <Box>
-              <Typography variant="h2" gutterBottom>
-                ?
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={4}>
-                  <Box position="relative" height="500px">
-                    <Image
-                      layout="fill"
-                      objectFit="cover"
-                      src="/howWeMakeIt.jpg"
-                      alt="фото того как делается лежанка"
-                    />
-                  </Box>
-                </Grid>
-                <Grid item xs={12} md={8}>
-                  <Typography>
-                    Широкую на широкую, широкую на широкую широкую на широкую.
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
-          </Box>
-          */}
           <Box marginY={10} display="flex" justifyContent="center">
             <Link href={allBedsHref}>
               <ColorButton color="secondary" size="large" variant="contained">

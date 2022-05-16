@@ -11,7 +11,7 @@ import ua.pomo.catalog.domain.product._
 import ua.pomo.catalog.domain.parameter._
 import monocle.syntax.all._
 import shapeless._
-import ua.pomo.catalog.domain.category.CategoryId
+import ua.pomo.catalog.domain.category.{CategoryUUID}
 
 import java.util.UUID
 
@@ -22,7 +22,7 @@ class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[Product
     val res = Product(
       id,
       command.modelId,
-      CategoryId(UUID.randomUUID()),
+      CategoryUUID(UUID.randomUUID()),
       ImageList(ImageListId(UUID.randomUUID()), ImageListDisplayName(""), Nil),
       ProductPrice(command.priceUsd, command.promoPriceUsd),
       command.parameterIds
@@ -63,7 +63,7 @@ class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[Product
   }
 
   override def delete(id: ProductId): F[Int] = ref.modify { map =>
-    map.get(id).fold((map, 0))(x => (map - x.id, 1)) 
+    map.get(id).fold((map, 0))(x => (map - x.id, 1))
   }
 }
 

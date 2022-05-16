@@ -7,7 +7,7 @@ import doobie.implicits._
 import doobie.postgres.implicits._
 import shapeless._
 import ua.pomo.catalog.domain.PageToken
-import ua.pomo.catalog.domain.category.CategoryId
+import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
@@ -90,7 +90,7 @@ object ProductRepositoryImpl {
 
     private case class GetProductDto(productId: ProductId,
                                      modelId: ModelId,
-                                     categoryId: CategoryId,
+                                     categoryId: CategoryUUID,
                                      modelDisplayName: ModelDisplayName,
                                      price: ProductStandardPrice,
                                      promoPrice: Option[ProductPromoPrice])
