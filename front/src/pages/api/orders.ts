@@ -47,7 +47,6 @@ export function renderJSONPlusCss(obj: any) {
         }
         code {
             white-space: -moz-pre-wrap;
-            white-space: -pre-wrap;
             white-space: -o-pre-wrap;
             white-space: pre-wrap; 
             word-wrap: break-word; /* Internet Explorer 5.5+ */  
@@ -76,7 +75,7 @@ function prepareCart(cart: Record<string, CartProduct>): any {
       },
       ...{
         price: product.price,
-        parameters: product.parameters,
+        parameters: product.parameterIds,
       },
     },
   ]);

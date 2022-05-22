@@ -20,10 +20,11 @@ message Product {
   };
   string name = 1;
   string uid = 2;
-  string model_id = 3;
-  ImageList image_list = 4;
-  Price price = 5;
-  repeated string parameter_ids = 6;
+  string display_name = 3;
+  string model_id = 4;
+  ImageList image_list = 5;
+  Price price = 6;
+  repeated string parameter_ids = 7;
 }
 
 message CreateProductRequest {

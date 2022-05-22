@@ -321,6 +321,13 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers {
       resp2.products.size should equal(1)
 
       (resp1.products ++ resp2.products).toSet should equal(Set(product1, product2, product3))
+
+      //default should not be 0
+      val resp3 =
+        client
+          .listProducts(ListProductsRequest(f.productParent, 0, ""), new Metadata())
+          .unsafeRunSync()
+      resp2.products.size should not equal (0)
   }
 
   testR("delete product") {

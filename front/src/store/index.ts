@@ -133,7 +133,7 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
         selectedProducts: {
           ...selectedProducts,
           ...{
-            [action.cartProduct.product.uuid]: {
+            [action.cartProduct.product.uid]: {
               ...action.cartProduct,
               ...{ count: 1 },
             },
@@ -153,8 +153,8 @@ function cartReducer(cartState: CartState, action: StoreUpdate): CartState {
         cartSize: cartSize - toDelete.count,
         selectedProducts: Object.fromEntries(
           Object.values(selectedProducts)
-            .filter((p) => p.product.uuid !== action.productId)
-            .map((p) => [p.product.uuid, p]),
+            .filter((p) => p.product.uid !== action.productId)
+            .map((p) => [p.product.uid, p]),
         ),
       };
     }

@@ -10,7 +10,7 @@ import useTheme from "@material-ui/core/styles/useTheme";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import Zoom from "@material-ui/core/Zoom";
-import { addProductAction, CartState, StoreState } from "store";
+import { addProductAction, CartProduct, CartState, StoreState } from "store";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import { Model } from "apis/model.pb";
@@ -65,17 +65,37 @@ function ProductPage({
   model: Model;
   products: Product[];
   cart: CartState;
-  addProduct: (value: [Product, Model]) => void;
+  addProduct: (value: CartProduct) => void;
 }) {
   const theme = useTheme();
-  const {
-    displayName,
-    imageList: { images },
-  } = model;
-  const product = products[0];
+  const { displayName, parameterLists } = model;
+
+  // we need it to find product using parameterIds
+  const indexed: Record<string, Product> = React.useMemo(
+    () =>
+      Object.fromEntries(
+        products.map((p) => [
+          p.parameterIds.sort((a, b) => a.localeCompare(b)).join(),
+          p,
+        ]),
+      ),
+    [products],
+  );
+
+  const [curParamIds, setCurParamIds] = React.useState(
+    Object.fromEntries(parameterLists.map((x) => [x.uid, x.parameters[0].uid])),
+  );
+
+  const newProductId = Object.values(curParamIds)
+    .sort((a, b) => a.localeCompare(b))
+    .join();
+
+  const product = indexed[newProductId];
+  const { images } = product.imageList;
   const inCart = !!cart.selectedProducts[product.uid];
+
   function addToCart() {
-    addProduct([product, model]);
+    addProduct({ product, model, count: 1 });
   }
 
   const fabs = [
@@ -123,13 +143,17 @@ function ProductPage({
             </Typography>
             <Divider />
             <div>
-              {model.parameterLists.map((parameterList) => (
+              {parameterLists.map((parameterList) => (
                 <ParameterPicker
-                  key={parameterList.id}
-                  selectedParameterId={
-                    Object.values(parameterList.parameters)[0].uid
-                  }
+                  key={parameterList.uid}
                   parameterList={parameterList}
+                  selectedParameterId={curParamIds[parameterList.uid]}
+                  onChange={(newId) =>
+                    setCurParamIds((prev) => ({
+                      ...prev,
+                      [parameterList.uid]: newId,
+                    }))
+                  }
                 />
               ))}
             </div>

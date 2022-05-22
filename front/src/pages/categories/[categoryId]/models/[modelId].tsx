@@ -18,7 +18,7 @@ export default function ProductPage({
   return (
     <LayoutWithHeaderAndFooter
       showValueProp
-      breadcrumbsOverrides={{ [model.id]: model.displayName }}
+      breadcrumbsOverrides={{ [model.uid]: model.displayName }}
     >
       <Box>
         {!model && "Model not found"}
@@ -30,11 +30,18 @@ export default function ProductPage({
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { categoryId, modelId } = context.params;
+  const modelName = `categories/${categoryId}/models/${modelId}`;
   const model: Model = await shopNode.getModel({
-    name: `categories/${categoryId}/models/${modelId}`,
+    name: modelName,
   });
-  delete model.toObject;
-  return { props: { model: model || null, categoryName: categoryId } };
+  const products: Product[] = await shopNode
+    .listProducts({
+      parent: `${modelName}/products`,
+      pageSize: 200,
+    })
+    .then((x) => x.products);
+  delete (model as any).toObject;
+  return { props: { model: model || null, products } };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -53,7 +60,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     ),
   );
   const paths = models1.flatMap(([cat, ms]) =>
-    ms.map((m) => ({ params: { categoryId: cat.uid, modelId: m.uid } })),
+    ms.map((m) => ({ params: { categoryId: cat.readableId, modelId: m.uid } })),
   );
   return { paths, fallback: false };
 };

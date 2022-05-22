@@ -1,24 +1,13 @@
-package ua.pomo.catalog.app
+package ua.pomo.catalog.app.programs.modifiers
 
 import cats.effect.Sync
-import cats.implicits.{
-  catsSyntaxApplicativeErrorId,
-  catsSyntaxApplicativeId,
-  catsSyntaxTuple2Semigroupal,
-  toFlatMapOps,
-  toFunctorOps,
-  toTraverseOps
-}
-import scalapb.{GeneratedMessage, GeneratedMessageCompanion}
-import scalapb.descriptors.{FieldDescriptor, PMessage, PString, PValue}
+import cats.implicits.{catsSyntaxTuple2Semigroupal, toFlatMapOps, toFunctorOps}
+import scalapb.descriptors.{FieldDescriptor, PString, PValue}
+import ua.pomo.catalog.app.ApiName
 import ua.pomo.catalog.app.ApiName.CategoryRefId
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.{CategoryQuery, CategoryRepository, CategorySelector}
 import ua.pomo.catalog.domain.error.NotFound
-
-trait MessageModifier[F[_]] {
-  def modify[T <: GeneratedMessage: GeneratedMessageCompanion](m: T): F[T]
-}
 
 case class ReadableIdInNamesResolver[F[_]: Sync](categoryRepository: CategoryRepository[F]) extends MessageModifier[F] {
   private def resolve(categoryId: CategoryRefId): F[CategoryRefId] = categoryId match {
@@ -50,33 +39,17 @@ case class ReadableIdInNamesResolver[F[_]: Sync](categoryRepository: CategoryRep
       .map(_.toNameString)
   }
 
-  private def modifyHelper(v: PMessage): F[PMessage] = {
-    v.value
-      .map[F[(FieldDescriptor, PValue)]] {
-        case (descriptor, value) =>
-          value match {
-            case nested: PMessage => modifyHelper(nested).map((descriptor, _))
-            case _ if descriptor.name == "name" || descriptor.name == "parent" =>
-              Sync[F]
-                .delay(value.as[String])
-                .flatMap { x =>
-                  if (x.isEmpty) {
-                    Sync[F].pure(x)
-                  } else {
-                    resolveName(x)
-                  }
-                }
-                .map(x => (descriptor, PString(x)))
-            case x => Sync[F].pure((descriptor, x))
-          }
-      }
-      .toSeq
-      .sequence
-      .map(x => PMessage(x.toMap))
-  }
-
-  override def modify[T <: GeneratedMessage: GeneratedMessageCompanion](g: T): F[T] = {
-    val c = implicitly[GeneratedMessageCompanion[T]]
-    modifyHelper(g.toPMessage).map(c.messageReads.read)
+  override def names: List[String] = List("parent", "name")
+  override def transformation[T <: PValue](field: FieldDescriptor, v: T): F[T] = {
+    v match {
+      case e: PString =>
+        val newName = if (e.value.isEmpty) {
+          Sync[F].pure(e.value)
+        } else {
+          resolveName(e.value)
+        }
+        newName.map(PString(_).asInstanceOf[T])
+      case _ => Sync[F].raiseError(new IllegalArgumentException(s"$names fields are expected to be of type string"))
+    }
   }
 }

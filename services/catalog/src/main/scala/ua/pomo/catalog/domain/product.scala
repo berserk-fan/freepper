@@ -25,15 +25,31 @@ object product {
   case class ProductPromoPrice(value: Double)
 
   @derive(eqv, show)
+  @newtype
+  case class ProductDisplayName(value: String)
+
+  @derive(eqv, show)
   case class ProductPrice(standard: ProductStandardPrice, promo: Option[ProductPromoPrice])
+
+  @derive(eqv, show)
+  case class ProductParameter(standard: ProductStandardPrice, promo: Option[ProductPromoPrice])
 
   @derive(eqv, show)
   case class Product(id: ProductId,
                      modelId: ModelId,
+                     displayName: ProductDisplayName,
                      categoryId: CategoryUUID,
                      imageList: ImageList,
                      price: ProductPrice,
                      parameterIds: List[ParameterId])
+
+  object Product {
+    def modelDisplayName(modelDisplayName: ModelDisplayName,
+                         parameterDisplayNames: List[ParameterDisplayName]): ProductDisplayName = {
+      val paramNames = parameterDisplayNames.sortBy(_.value).mkString(" ")
+      ProductDisplayName(s"$modelDisplayName $paramNames")
+    }
+  }
 
   @derive(eqv, show)
   case class CreateProduct(modelId: ModelId,

@@ -51,7 +51,11 @@ const useStyles = makeStyles({
 });
 
 const cartItem = function CartItem({
-  cartProduct: { product, count },
+  cartProduct: {
+    product,
+    count,
+    model: { displayName },
+  },
   setProductCount,
   deleteProduct,
 }: {
@@ -60,9 +64,8 @@ const cartItem = function CartItem({
   deleteProduct: (id) => void;
 }) {
   const {
-    displayName,
     imageList: { images },
-    uuid,
+    uid,
   } = product;
   const image = images[0];
   const classes = useStyles();
@@ -73,7 +76,7 @@ const cartItem = function CartItem({
         <IconButton
           className={classes.quantityControlsIconButton}
           disabled={count <= 1}
-          onClick={() => setProductCount(uuid, count - 1)}
+          onClick={() => setProductCount(uid, count - 1)}
         >
           <RemoveIcon className={classes.quantityControlsIcon} />
         </IconButton>
@@ -82,7 +85,7 @@ const cartItem = function CartItem({
         </Box>
         <IconButton
           className={classes.quantityControlsIconButton}
-          onClick={() => setProductCount(uuid, count + 1)}
+          onClick={() => setProductCount(uid, count + 1)}
         >
           <AddIcon className={classes.quantityControlsIcon} />
         </IconButton>
@@ -118,7 +121,7 @@ const cartItem = function CartItem({
         >
           <Box marginLeft={1} className="flex place-items-center">
             <QuantityControls />
-            <ActionsPopover productId={uuid} deleteProduct={deleteProduct} />
+            <ActionsPopover productId={uid} deleteProduct={deleteProduct} />
           </Box>
         </Box>
       </div>

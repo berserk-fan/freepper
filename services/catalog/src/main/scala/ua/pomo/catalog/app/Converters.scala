@@ -29,7 +29,6 @@ import ua.pomo.catalog.api.{
   UpdateImageListRequest,
   UpdateModelRequest
 }
-import ua.pomo.catalog.app.ApiName
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category._
@@ -146,6 +145,7 @@ object Converters {
     api.Product(
       ProductName(CategoryRefId.Uid(p.categoryId), p.modelId, p.id).toNameString,
       p.id.show,
+      p.displayName.show,
       p.modelId.show,
       Some(toApi(p.imageList)),
       Some(api.Product.Price(Some(api.Money(p.price.standard.value.toFloat)))),
@@ -209,7 +209,7 @@ object Converters {
     val model = request.model.get
     val modelName = ApiName.model(model.name).toTry.get
     val model2 = FieldMaskUtil.applyFieldMask(model, request.updateMask.get)
-    val imageListId = model2.imageListData.map(_.name).map(ApiName.imageList).map(_.toTry.get.id)
+    val imageListId = model2.imageList.map(_.name).map(ApiName.imageList).map(_.toTry.get.id)
     UpdateModel(
       modelName.modelId,
       nonEmptyString(model2.readableId).map(ModelReadableId.apply),
@@ -263,7 +263,7 @@ object Converters {
   def toDomain(request: CreateModelRequest): CreateModel = {
     val models = ApiName.models(request.parent).toTry.get.categoryId.uid
     val model = request.model.get
-    val imageListId = ApiName.imageList(model.imageListData.get.name).toTry.get.id
+    val imageListId = ApiName.imageList(model.imageList.get.name).toTry.get.id
 
     CreateModel(
       ModelReadableId(model.readableId),

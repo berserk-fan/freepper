@@ -95,6 +95,7 @@ function Cart({
   cartState: CartState;
 }) {
   const productsList = Object.values(selectedProducts);
+  console.log(productsList);
   return (
     <div>
       <Box marginTop={2} minHeight="360px">

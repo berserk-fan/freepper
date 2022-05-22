@@ -12,7 +12,6 @@ import MainImage from "Public/main-image.jpg";
 import MainImageFullWidth from "Public/main-image-full-width.jpg";
 import { Model } from "apis/model.pb";
 import { Category } from "apis/category.pb";
-import { ImageList } from "apis/image_list.pb";
 import LayoutWithHeaderAndFooter from "../Layout/LayoutWithHeaderAndFooter";
 
 const ColorButton = withStyles((theme) => ({
@@ -184,11 +183,7 @@ export function Home({
               <Grid container spacing={3}>
                 {hotDeals.map((model: Model) => {
                   const href = `/${model.name}`;
-                  const image = (
-                    model.imageList as unknown as {
-                      imageListData: ImageList;
-                    }
-                  ).imageListData.images[0];
+                  const image = model.imageList.images[0];
                   return (
                     <Grid item key={model.name} xs={12} sm={6} md={4}>
                       <Box className={classes.propositionImageContainer}>

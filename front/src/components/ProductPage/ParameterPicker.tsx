@@ -1,5 +1,5 @@
 import Typography from "@material-ui/core/Typography/Typography";
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import { Parameter, ParameterList } from "apis/parameter.pb";
 import Box from "@material-ui/core/Box/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -21,9 +21,11 @@ const useStyles = makeStyles({
 function MyChipNoMemo({
   parameter,
   selected,
+  onClick,
 }: {
   parameter: Parameter;
   selected: boolean;
+  onClick: MouseEventHandler;
 }) {
   const classes = useStyles();
   return (
@@ -38,6 +40,7 @@ function MyChipNoMemo({
       color={selected ? "secondary" : "default"}
       variant="outlined"
       label={parameter.displayName}
+      onClick={onClick}
     />
   );
 }
@@ -45,28 +48,37 @@ function MyChipNoMemo({
 const MyChip = React.memo(
   MyChipNoMemo,
   (prev, cur) =>
-    prev.parameter.id === cur.parameter.id && prev.selected === cur.selected,
+    prev.parameter.uid === cur.parameter.uid && prev.selected === cur.selected,
 );
 
 export default function ParameterPicker({
-  selectedParameterId,
   parameterList,
+  selectedParameterId,
+  onChange,
 }: {
-  selectedParameterId: string;
   parameterList: ParameterList;
+  selectedParameterId: string;
+  onChange: (newParamId: string) => void;
 }) {
-  const selectedParameter = parameterList.parameters[selectedParameterId];
+  const indexed = React.useMemo(
+    () => Object.fromEntries(parameterList.parameters.map((p) => [p.uid, p])),
+    [parameterList],
+  );
+
+  const selectedParameter = indexed[selectedParameterId];
+
   return (
     <div>
       <Typography gutterBottom variant="subtitle2" component="h3">
-        ${parameterList.displayName} - {selectedParameter.displayName}
+        {parameterList.displayName} - {selectedParameter.displayName}
       </Typography>
       <Box className="flex overflow-x-auto">
-        {Object.values(parameterList.parameters).map((item) => (
+        {parameterList.parameters.map((item) => (
           <MyChip
-            key={item.id}
-            parameter={selectedParameter}
-            selected={selectedParameterId === item.id}
+            key={item.uid}
+            parameter={item}
+            selected={selectedParameterId === item.uid}
+            onClick={() => onChange(item.uid)}
           />
         ))}
       </Box>

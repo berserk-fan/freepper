@@ -30,7 +30,8 @@ import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbRe
 import ua.pomo.catalog.shared.Generators.ToLazyListOps
 import doobie.implicits._
 import doobie.postgres.implicits._
-import ua.pomo.catalog.app.{CatalogImpl, ReadableIdInNamesResolver}
+import ua.pomo.catalog.app.CatalogImpl
+import ua.pomo.catalog.app.programs.modifiers.{PageDefaultsApplier, ReadableIdInNamesResolver}
 import ua.pomo.catalog.infrastructure.persistance._
 
 import java.util.UUID
@@ -50,7 +51,9 @@ class CatalogImplTest extends DbUnitTestSuite {
     val imageListService = ImageListServiceImpl.makeInMemory[IO]
     val productService = ProductServiceImpl.makeInMemory[IO].unsafeRunSync()
     val resolver = ReadableIdInNamesResolver(CategoryRepositoryImpl.makeInMemory[IO].unsafeRunSync())
-    val catalogImpl = CatalogImpl[IO](productService, categoryService, modelService, imageListService, config, resolver)
+    val defaultsApplier = PageDefaultsApplier[IO](config.defaultPageSize)
+    val catalogImpl =
+      CatalogImpl[IO](productService, categoryService, modelService, imageListService, resolver, defaultsApplier)
     (categoryService, modelService, catalogImpl)
   }
 
@@ -164,10 +167,9 @@ class CatalogImplTest extends DbUnitTestSuite {
   test("create category description not empty") {
     val (_, _, impl) = makeImpls
     val response = impl
-      .createCategory(
-        CreateCategoryRequest("categories",
-                              Some(api.Category(displayName = "a", description = "c", readableId = "d"))),
-        null)
+      .createCategory(CreateCategoryRequest("categories",
+                                            Some(api.Category(displayName = "a", description = "c", readableId = "d"))),
+                      null)
       .unsafeRunSync()
 
     response.description should equal("c")

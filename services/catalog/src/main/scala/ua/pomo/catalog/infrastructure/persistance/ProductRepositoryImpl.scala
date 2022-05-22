@@ -49,6 +49,7 @@ object ProductRepositoryImpl {
   def apply(): ProductRepository[ConnectionIO] = {
     new ProductRepositoryImpl()
   }
+
   private[persistance] object Queries {
     private def compile(productTable: String, idOpt: ProductSelector): Fragment = {
       val p: Fragment = Fragment.const0(productTable)
@@ -98,7 +99,8 @@ object ProductRepositoryImpl {
     def find(query: ProductQuery): Query0[Product] = {
       implicit val readParamList: Get[List[ParameterId]] = Get[List[UUID]].map(_.map(ParameterId.apply))
       implicit val readListImage: Get[List[Image]] = jsonAggListJson[Image]
-      sql"""
+      val sql =
+        sql"""
             select p.id, m.id, m.category_id, m.display_name, p.price_usd, p.promo_price_usd,
                    il.id, il.display_name, 
                    case
@@ -117,6 +119,7 @@ object ProductRepositoryImpl {
             limit ${query.pageToken.size}
             offset ${query.pageToken.offset}
          """
+      sql
         .query[(GetProductDto, ImageList, List[ParameterId])]
         .map { res =>
           val (product, imageList, params) = res

@@ -49,14 +49,7 @@ export default function ItemView({
 }) {
   const classes = useStyles();
   const { displayName, imageList, minimalPrice } = model;
-  let images: MyImage[];
-  switch (imageList.$case) {
-    case "imageListData":
-      images = imageList.imageListData.images;
-      break;
-    default:
-      throw new Error("illegal state");
-  }
+  const { images } = imageList;
 
   const [slideId, useSlideId] = useState(0);
   const [isShowingArrows, setIsShowingArrows] = useState(false);
