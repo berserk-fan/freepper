@@ -15,6 +15,7 @@ class ApiNameTest extends AnyFunSuite with EitherValues with Matchers {
   private val Uuid = UUID.randomUUID()
   private val Uuid2 = UUID.randomUUID()
   private val Uuid3 = UUID.randomUUID()
+  private val rId = "some-readable-id"
 
   test("parser") {
     ApiName.category(s"categories/$Uuid").value should equal(
@@ -27,6 +28,14 @@ class ApiNameTest extends AnyFunSuite with EitherValues with Matchers {
 
     ApiName.models(s"categories/$Uuid/models").value should equal(
       ModelsName(CategoryRefId.Uid(CategoryUUID(Uuid)))
+    )
+
+    ApiName.models(s"categories/$rId/models").value should equal(
+      ModelsName(CategoryRefId.Readable(CategoryReadableId(rId)))
+    )
+
+    ApiName.parse(s"categories/$rId/models").value should equal(
+      ModelsName(CategoryRefId.Readable(CategoryReadableId(rId)))
     )
 
     ApiName.model(s"categories/$Uuid/models/$Uuid2").value should equal(

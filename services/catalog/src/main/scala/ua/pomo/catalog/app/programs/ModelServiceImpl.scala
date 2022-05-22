@@ -7,6 +7,7 @@ import cats.implicits.{
   catsSyntaxApplicativeErrorId,
   catsSyntaxApplicativeId,
   catsSyntaxFlatMapOps,
+  catsSyntaxMonadError,
   toFlatMapOps,
   toFunctorOps
 }
@@ -14,12 +15,13 @@ import cats.~>
 import doobie.ConnectionIO
 import doobie.util.transactor.Transactor
 import ua.pomo.catalog.domain.PageToken
-import ua.pomo.catalog.domain.error.NotFound
+import ua.pomo.catalog.domain.error.{DbErr, NotFound}
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.infrastructure.persistance.ModelRepositoryImpl
 
 private class ModelServiceImpl[F[_]: Sync, G[_]: Sync] private (xa: G ~> F, repository: ModelRepository[G])
     extends ModelService[F] {
+
   def create(model: CreateModel): F[Model] = repository.create(model).flatMap(repository.get).mapK(xa)
   def delete(id: ModelId): F[Unit] =
     repository

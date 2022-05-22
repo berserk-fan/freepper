@@ -1,26 +1,29 @@
 package ua.pomo.catalog.infrastructure.persistance
 
-import cats.data.OptionT
+import cats.data.{NonEmptyList, OptionT}
 import cats.effect.{Ref, Sync}
-import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
+import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxFlatMapOps, catsSyntaxMonadError, toFunctorOps}
 import doobie._
 import doobie.implicits._
 import doobie.postgres.implicits._
 import shapeless._
 import squants.market.{Money, USD}
-import ua.pomo.catalog.domain.{PageToken, category}
+import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryUUID
-import ua.pomo.catalog.domain.error.NotFound
+import ua.pomo.catalog.domain.error.{DbErr, NotFound}
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter._
+
+import java.util.UUID
 
 class ModelRepositoryImpl private () extends ModelRepository[ConnectionIO] {
 
   import ModelRepositoryImpl.Queries
 
   override def create(model: CreateModel): ConnectionIO[ModelId] = {
-    Queries.create(model).withUniqueGeneratedKeys[ModelId]("id")
+    val (query, modelId) = Queries.create(model)
+    query.run.as(modelId)
   }
 
   override def get(id: ModelId): ConnectionIO[Model] = {
@@ -58,17 +61,34 @@ object ModelRepositoryImpl {
   private[persistance] object Queries {
     private implicit val readModelMinimalPrice: Read[ModelMinimalPrice] =
       Read[Double].map(x => ModelMinimalPrice(Money(x, USD)))
+    private implicit val logHandler: LogHandler = LogHandler.jdkLogHandler
 
-    def create(req: CreateModel): Update0 = {
-      sql"""
-           insert into models (readable_id, display_name, description, category_id, image_list_id, parameter_list_ids)
-           VALUES (${req.readableId}, 
+    def create(req: CreateModel): (Update0, ModelId) = {
+      val modelId = UUID.randomUUID()
+      val modelsInsert =
+        sql"""
+          INSERT INTO models (id, readable_id, display_name, description, category_id, image_list_id)
+           VALUES ($modelId,
+                   ${req.readableId}, 
                    ${req.displayName}, 
                    ${req.description}, 
                    ${req.categoryId}, 
-                   ${req.imageListId}, 
-                   ${req.parameterListIds.map(_.value)})
-         """.update
+                   ${req.imageListId}
+                 )
+           """
+
+      val res = NonEmptyList.fromList(req.parameterListIds).fold(modelsInsert) { paramsNonEmpty =>
+        val mplValues = Fragments.values(paramsNonEmpty.map((modelId, _)))
+        sql"""
+           WITH modelsInsert as (
+             $modelsInsert
+           )
+           INSERT INTO model_parameter_lists (model_id, parameter_list_id) $mplValues
+          """
+      }
+
+      println(res.toString())
+      (res.update, ModelId(modelId))
     }
 
     type GetModelQuery =
@@ -84,11 +104,10 @@ object ModelRepositoryImpl {
 
     private def compileWhere(modelsTable: String, where: ModelSelector): Fragment = {
       val models = Fragment.const0(modelsTable)
-      val categories = Fragment.const0(modelsTable)
       where match {
         case ModelSelector.All              => fr"1 = 1"
         case ModelSelector.IdIs(id)         => fr"$models.id = $id"
-        case ModelSelector.CategoryIdIs(id) => fr"$models.id = $id"
+        case ModelSelector.CategoryIdIs(id) => fr"$models.category_id = $id"
       }
     }
 
@@ -121,7 +140,8 @@ object ModelRepositoryImpl {
                                           where img.id = par.image_id)) ORDER BY par.list_order)
                             from parameters par where par.parameter_list_id = pl.id), '[]'))
                         )
-                    from parameter_lists pl join unnest(m.parameter_list_ids) parameter_list_id on pl.id = parameter_list_id
+                    from parameter_lists pl join model_parameter_lists mpl on pl.id = mpl.parameter_list_id 
+                    WHERE mpl.model_id = m.id
                ), '[]'),
                il.id, il.display_name,
                COALESCE((

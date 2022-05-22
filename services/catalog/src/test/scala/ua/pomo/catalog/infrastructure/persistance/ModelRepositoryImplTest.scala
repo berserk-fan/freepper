@@ -43,7 +43,7 @@ class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution
     val imageListId = ImageListId(UUID.randomUUID())
     check(Queries.find(ModelQuery(ModelSelector.CategoryIdIs(categoryId), PageToken.NonEmpty(10, 0))))
     check(Queries.delete(modelId))
-    check(Queries.create(Generators.Model.createGen(imageListId, List.empty).sample.get))
+    check(Queries.create(Generators.Model.createGen(imageListId, List.empty).sample.get)._1)
     check(Queries.update(Generators.Model.updateGen(imageListId, categoryId).sample.get))
   }
 
@@ -67,40 +67,6 @@ class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution
       createModel.imageListId should equal(found.imageList.id)
 
       impl.delete(id).trRun()
-    }
-  }
-
-  testR("should sort and dedup parameter_list_ids") { res =>
-    val imageListId1 = res.imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
-    val categoryId = res.categoryRepo.create(Generators.Category.create.sample.get).trRun()
-
-    val id1 = sql"""insert into parameter_lists (display_name) values ('')""".update
-      .withUniqueGeneratedKeys[ParameterListId]("id")
-      .trRun()
-    val id2 = sql"""insert into parameter_lists (display_name) values ('')""".update
-      .withUniqueGeneratedKeys[ParameterListId]("id")
-      .trRun()
-    val parameterListIds = List(id1, id1, id2).sortBy(_.value.toString)(Ordering.String.reverse)
-    val id = res.postgres
-      .create(Generators.Model.createGen(imageListId1, parameterListIds).sample.get.copy(categoryId = categoryId))
-      .trRun()
-    val ids = sql"""select parameter_list_ids from models where id=$id""".query[List[UUID]].unique.trRun()
-
-    ids should equal(ids.distinctBy(_.toString).sortBy(_.toString))
-  }
-
-  testR("parameter_list_ids update forbidden") { res =>
-    val imageListId1 = res.imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
-    val categoryId = res.categoryRepo.create(Generators.Category.create.sample.get).trRun()
-    val id1 = sql"""insert into parameter_lists (display_name) values ('')""".update
-      .withUniqueGeneratedKeys[ParameterListId]("id")
-      .trRun()
-    val parameterListIds = List(id1)
-    val id = res.postgres
-      .create(Generators.Model.createGen(imageListId1, parameterListIds).sample.get.copy(categoryId = categoryId))
-      .trRun()
-    intercept[Exception] {
-      sql"""update models set parameter_list_ids=ARRAY[]::UUID[] WHERE id=$id""".update.run.trRun()
     }
   }
 

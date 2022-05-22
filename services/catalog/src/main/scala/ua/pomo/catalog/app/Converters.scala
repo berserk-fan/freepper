@@ -1,5 +1,6 @@
 package ua.pomo.catalog.app
 
+import cats.data.NonEmptyList
 import cats.implicits.toShow
 import io.circe.{Decoder, Encoder, parser}
 import scalapb.FieldMaskUtil
@@ -83,7 +84,7 @@ object Converters {
     }
   }
 
-  def toDomain(listModels: ListModelsRequest): Try[ModelQuery] = {
+  def toDomain(listModels: ListModelsRequest): ModelQuery = {
     val categoryId = ApiName.models(listModels.parent).toTry.get.categoryId.uid
     ModelQuery(ModelSelector.CategoryIdIs(categoryId), parseToken(listModels.pageToken, listModels.pageSize))
   }
@@ -121,7 +122,7 @@ object Converters {
       model.description.value,
       Some(toApi(model.imageList)),
       Some(toApi(model.minimalPrice.value)),
-      model.parameterLists.map(toApi)
+      model.parameterLists.map(toApi).toList
     )
   }
 
@@ -187,7 +188,7 @@ object Converters {
   }
 
   def toDomain(req: ListCategoriesRequest): CategoryQuery = {
-    val token = parseToken(req.pageToken, req.pageSize).get
+    val token = parseToken(req.pageToken, req.pageSize)
     CategoryQuery(CategorySelector.All, token)
   }
 

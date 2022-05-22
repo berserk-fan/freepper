@@ -66,6 +66,8 @@ object Dependencies {
     lazy val typesafeConfig = "com.typesafe" % "config" % V.typeSafeConfig
     lazy val pureConfig = "com.github.pureconfig" %% "pureconfig" % V.pureConfig
     lazy val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % V.scalaLogging
+    lazy val log4Cats = "org.typelevel" %% "log4cats-core" % V.log4cats
+    lazy val log4CatsSlf4j = "org.typelevel" %% "log4cats-slf4j" % V.log4cats
     lazy val logbackRuntime = "ch.qos.logback" % "logback-classic" % V.logback % Runtime
 
     val cats = "org.typelevel" %% "cats-core" % V.cats

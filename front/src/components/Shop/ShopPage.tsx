@@ -14,7 +14,7 @@ export default function ShopPage({ models }: { models: Model[] }) {
         <Box paddingTop={1}>
           <Grid container spacing={3}>
             {models.map((model, idx) => (
-              <Grid item key={model.id} {...PAGE_SIZES}>
+              <Grid item key={model.uid} {...PAGE_SIZES}>
                 <ItemView
                   model={model}
                   className="mx-auto"

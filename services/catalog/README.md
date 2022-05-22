@@ -1,3 +1,4 @@
-things that need redeploy
-1. name resolution
+things to remember
+
+1. name should be empty on creation
 2. 

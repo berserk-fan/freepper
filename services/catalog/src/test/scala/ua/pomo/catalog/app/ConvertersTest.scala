@@ -20,12 +20,12 @@ class ConvertersTest extends AnyFunSuite with Matchers with EitherValues {
 
   test("list models request") {
     val listModelsRequest = ListModelsRequest(s"categories/$Uuid/models", 10, "")
-    Converters.toDomain(listModelsRequest).toEither.value should equal(
+    Converters.toDomain(listModelsRequest) should equal(
       ModelQuery(ModelSelector.CategoryIdIs(CategoryUUID(Uuid)), PageToken.NonEmpty(10, 0))
     )
 
     val listModelsRequest2 = ListModelsRequest(s"categories/$Uuid/models", 10, encode("""{"size": 10, "offset": 20}"""))
-    Converters.toDomain(listModelsRequest2).toEither.value should equal(
+    Converters.toDomain(listModelsRequest2) should equal(
       ModelQuery(ModelSelector.CategoryIdIs(CategoryUUID(Uuid)), PageToken.NonEmpty(10, 20))
     )
   }

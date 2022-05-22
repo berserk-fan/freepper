@@ -166,7 +166,7 @@ class CatalogImplTest extends DbUnitTestSuite {
     val response = impl
       .createCategory(
         CreateCategoryRequest("categories",
-                              Some(api.Category(displayName = "a", name = "b", description = "c", readableId = "d"))),
+                              Some(api.Category(displayName = "a", description = "c", readableId = "d"))),
         null)
       .unsafeRunSync()
 

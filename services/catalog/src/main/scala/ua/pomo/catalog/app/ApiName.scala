@@ -26,7 +26,7 @@ object ApiName {
   }
   object CategoryRefId {
     case class Readable(rid: CategoryReadableId) extends CategoryRefId {
-      override def uid: CategoryUUID = throw new UnsupportedOperationException("CategoryRefId was ReadableId, not Uid")
+      override def uid: CategoryUUID = throw new UnsupportedOperationException(s"CategoryRefId was $this, not Uid.")
     }
     case class Uid(uid: CategoryUUID) extends CategoryRefId
 
@@ -40,6 +40,7 @@ object ApiName {
   case class CategoryName(categoryId: CategoryRefId) extends ApiName
   case class ModelsName(categoryId: CategoryRefId) extends ApiName
   case class ModelName(categoryId: CategoryRefId, modelId: ModelId) extends ApiName
+  case object ImageListsName extends ApiName
   case class ImageListName(id: ImageListId) extends ApiName
   case class ProductsName(categoryId: CategoryRefId, modelId: ModelId) extends ApiName
   case class ProductName(categoryId: CategoryRefId, modelId: ModelId, productId: ProductId) extends ApiName
@@ -55,15 +56,18 @@ object ApiName {
   def imageList(s: String): NameParseResult[ImageListName] = parseAllToEither(Parsers.imageList, s)
   def products(s: String): NameParseResult[ProductsName] = parseAllToEither(Parsers.products, s)
   def product(s: String): NameParseResult[ProductName] = parseAllToEither(Parsers.product, s)
+  def imageLists(s: String): NameParseResult[ImageListsName.type] = parseAllToEither(Parsers.imageLists, s)
 
   private object Parsers extends RegexParsers {
-    def any: Parser[ApiName] = category | models | model | imageList | products | product
+    def any: Parser[ApiName] =
+      categories ||| category ||| models ||| model ||| imageLists ||| imageList ||| products ||| product
 
     def parseAllToEither[T](p: Parser[T], s: String): NameParseResult[T] = parseAll(p, s) match {
       case Success(matched, _) => Right(matched)
-      case Failure(msg, next)  => createErr(msg, next)
-      case Error(msg, next)    => createErr(msg, next)
+      case Failure(msg, next)  => createErr(msg, next, fatal = false)
+      case Error(msg, next)    => createErr(msg, next, fatal = true)
     }
+    def categories: Parser[CategoriesName.type] = s"^$Categories$$".r ^^ (_ => CategoriesName)
     def category: Parser[CategoryName] = Categories ~> "/" ~> categoryId ^^ CategoryName.apply
     def models: Parser[ModelsName] = {
       category <~ s"/$Models" ^^ (_.categoryId) ^^ ModelsName.apply
@@ -71,6 +75,7 @@ object ApiName {
     def model: Parser[ModelName] = {
       (models <~ "/") ~ modelUUID ^^ { case col ~ id => ModelName(col.categoryId, id) }
     }
+    def imageLists: Parser[ImageListsName.type] = s"^$ImageLists$$".r ^^ (_ => ImageListsName)
     def imageList: Parser[ImageListName] = ImageLists ~> "/" ~> imageListId ^^ ImageListName.apply
     def products: Parser[ProductsName] = {
       model <~ "/" <~ Products ^^ (modelName => ProductsName(modelName.categoryId, modelName.modelId))
@@ -116,12 +121,15 @@ object ApiName {
         case x @ ProductsName(_, _)   => products.show(x)
         case x @ ProductName(_, _, _) => product.show(x)
         case CategoriesName           => Categories
+        case ImageListsName           => ImageLists
       }
     }
   }
 
-  private def createErr[T](msg: String, next: ApiName.Parsers.Input): Left[ValidationErr, Nothing] = {
-    Left(ValidationErr(
-      s"Failed to parse resource name: $msg, string: ${next.source}, rest: ${next.source.toString.drop(next.offset)}"))
+  private def createErr[T](msg: String, next: ApiName.Parsers.Input, fatal: Boolean): Left[ValidationErr, Nothing] = {
+    Left(
+      ValidationErr(
+        s"Failed to parse resource name: $msg, string: ${next.source}, fatal: $fatal, rest: ${next.source.toString
+          .drop(next.offset)}"))
   }
 }

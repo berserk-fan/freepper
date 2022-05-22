@@ -85,6 +85,8 @@ lazy val root = (project in file("."))
       Libraries.monocleMacro,
       Libraries.postgresJdbcDriver,
       Libraries.parserCombinators,
+      Libraries.log4CatsSlf4j,
+      Libraries.log4Cats,
       CompilerPlugin.kindProjector,
       CompilerPlugin.betterMonadicFor,
       CompilerPlugin.semanticDB

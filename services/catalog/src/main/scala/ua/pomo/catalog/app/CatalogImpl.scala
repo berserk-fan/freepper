@@ -15,6 +15,8 @@ import ua.pomo.catalog.domain.model.ModelQuery
 import ua.pomo.catalog.domain.product.ProductService
 
 import scala.util.Try
+import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F],
                                         categoryService: category.CategoryService[F],
@@ -23,6 +25,8 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
                                         config: CatalogApiConfig,
                                         readableIdResolver: ReadableIdInNamesResolver[F])
     extends CatalogFs2Grpc[F, Metadata] {
+
+  implicit def logger: Logger[F] = Slf4jLogger.getLogger[F]
 
   //categories
 
@@ -71,7 +75,7 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
   override def getModel(request: GetModelRequest, ctx: Metadata): F[Model] = adaptError {
     validate(request)
       .flatMap(_ => readableIdResolver.modify(request))
-      .flatMap(Converters.toDomain)
+      .map(Converters.toDomain)
       .flatMap(modelService.get)
       .map(Converters.toApi)
   }
@@ -80,7 +84,7 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
     validate(request)
       .flatMap(_ => readableIdResolver.modify(request))
       .map(Converters.toDomain)
-      .map(modelService.create)
+      .flatMap(modelService.create)
       .map(Converters.toApi)
   }
 
@@ -187,8 +191,11 @@ class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F
 
   private def adaptError[T](f: => F[T]): F[T] = {
     Async[F]
-      .fromTry(Try(f))
+      .fromEither(Try(f).toEither.leftMap(err => UnexpectedError("Api method has thrown an error: impure", Some(err))))
       .flatten
+      .onError { e =>
+        logger.error(e)("Api method resulted in an error")
+      }
       .adaptError { e =>
         val status = e match {
           case ValidationErr(_, _) => Status.INVALID_ARGUMENT
