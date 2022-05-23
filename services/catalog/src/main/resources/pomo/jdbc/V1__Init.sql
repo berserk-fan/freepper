@@ -1,5 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA public;
-
 CREATE TABLE image_lists
 (
     id           UUID PRIMARY KEY   DEFAULT public.uuid_generate_v4(),
