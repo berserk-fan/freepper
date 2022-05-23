@@ -13,5 +13,3 @@ export function priceToString(s: Product_Price, count: number = 1): string {
 export function getCurrentPrice(s: Product_Price): Money {
   return s.standard;
 }
-
-export function removeUndefinedWithNull();
