@@ -195,9 +195,11 @@ object Converters {
   def toDomain(request: UpdateImageListRequest): ImageListUpdate = {
     val id = ApiName.imageList(request.imageList.get.name).toTry.get.id
     val obj = FieldMaskUtil.applyFieldMask(request.imageList.get, request.updateMask.get)
-    ImageListUpdate(id,
-                    nonEmptyString(obj.displayName).map(ImageListDisplayName.apply),
-                    nonEmptyList(obj.images.toList.map(toDomain)))
+    ImageListUpdate(
+      id,
+      nonEmptyString(obj.displayName).map(ImageListDisplayName.apply),
+      nonEmptyList(obj.images.toList.map(toDomain))
+    )
   }
 
   def toDomain(request: ListProductsRequest): ProductQuery = {

@@ -20,6 +20,11 @@ jobs:
           cd services/catalog
           make local.postgres.start
 
+      - name: Tests
+        run: |
+          source .env.it
+          sbt -J-Xms4G -J-Xmx4G test it:test
+
       - name: "Shutting down Postgres & Redis 🐳"
         run: |
           docker-compose down

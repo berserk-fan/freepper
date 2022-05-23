@@ -33,15 +33,14 @@ object Server extends IOApp.Simple {
       catalogService = CatalogFs2Grpc.bindServiceResource[IO](
         CatalogImpl(productService, categoryService, modelService, imageListService, resolver, pageDefaultsApplier)
       )
-    } yield
-      catalogService.flatMap { service =>
-        NettyServerBuilder
-          .forPort(config.server.serverPort)
-          .addService(service)
-          .addService(ProtoReflectionService.newInstance())
-          .resource[IO]
-          .evalMap(server => IO(server.start()))
-      }
+    } yield catalogService.flatMap { service =>
+      NettyServerBuilder
+        .forPort(config.server.serverPort)
+        .addService(service)
+        .addService(ProtoReflectionService.newInstance())
+        .resource[IO]
+        .evalMap(server => IO(server.start()))
+    }
   }
 
   override def run: IO[Nothing] = AppConfig.loadDefault[IO].flatMap(resource).flatMap(_.useForever)

@@ -3,6 +3,7 @@ addSbtPlugin("io.spray" % "sbt-revolver" % "0.9.1")
 addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.9.7")
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.6")
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.33")
+addSbtPlugin("nl.gn0s1s" % "sbt-dotenv" % "3.0.0")
 
 addSbtPlugin("org.typelevel" % "sbt-fs2-grpc" % "2.4.2")
 libraryDependencies ++= Seq(

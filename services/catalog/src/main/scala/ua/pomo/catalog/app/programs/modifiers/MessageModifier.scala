@@ -7,7 +7,7 @@ import scalapb.descriptors.{FieldDescriptor, PMessage, PValue}
 import scalapb.{GeneratedMessage, GeneratedMessageCompanion}
 
 abstract class MessageModifier[F[_]: Sync]() {
-  //names to which we should apply transformation, applying defaults, resolving names
+  // names to which we should apply transformation, applying defaults, resolving names
   def names: List[String]
   def transformation[T <: PValue](field: FieldDescriptor, v: T): F[T]
 
@@ -18,14 +18,13 @@ abstract class MessageModifier[F[_]: Sync]() {
 
   private def modifyHelper(v: PMessage): F[PMessage] = {
     v.value
-      .map[F[(FieldDescriptor, PValue)]] {
-        case (descriptor, value) =>
-          value match {
-            case nested: PMessage => modifyHelper(nested).map((descriptor, _))
-            case _ if names.contains(descriptor.name) =>
-              transformation(descriptor, value).map((descriptor, _))
-            case x => Sync[F].pure((descriptor, x))
-          }
+      .map[F[(FieldDescriptor, PValue)]] { case (descriptor, value) =>
+        value match {
+          case nested: PMessage => modifyHelper(nested).map((descriptor, _))
+          case _ if names.contains(descriptor.name) =>
+            transformation(descriptor, value).map((descriptor, _))
+          case x => Sync[F].pure((descriptor, x))
+        }
       }
       .toSeq
       .sequence

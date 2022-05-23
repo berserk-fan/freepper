@@ -19,19 +19,20 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import ua.pomo.catalog.app.programs.modifiers.{MessageModifier, PageDefaultsApplier, ReadableIdInNamesResolver}
 
-case class CatalogImpl[F[_]: Async] private (productService: product.ProductService[F],
-                                        categoryService: category.CategoryService[F],
-                                        modelService: model.ModelService[F],
-                                        imageListService: ImageListService[F],
-                                        readableIdResolver1: ReadableIdInNamesResolver[F],
-                                        pageDefaultsApplier: PageDefaultsApplier[F])
-    extends CatalogFs2Grpc[F, Metadata] {
+case class CatalogImpl[F[_]: Async] private (
+    productService: product.ProductService[F],
+    categoryService: category.CategoryService[F],
+    modelService: model.ModelService[F],
+    imageListService: ImageListService[F],
+    readableIdResolver1: ReadableIdInNamesResolver[F],
+    pageDefaultsApplier: PageDefaultsApplier[F]
+) extends CatalogFs2Grpc[F, Metadata] {
 
   private val modifications = Monoid[MessageModifier[F]].combineAll(List(readableIdResolver1, pageDefaultsApplier))
 
   implicit def logger: Logger[F] = Slf4jLogger.getLogger[F]
 
-  //categories
+  // categories
 
   override def getCategory(request: GetCategoryRequest, ctx: Metadata): F[Category] = adaptError {
     validate(request)
@@ -73,7 +74,7 @@ case class CatalogImpl[F[_]: Async] private (productService: product.ProductServ
       .map(Converters.toApi)
   }
 
-  //models
+  // models
 
   override def getModel(request: GetModelRequest, ctx: Metadata): F[Model] = adaptError {
     validate(request)
@@ -115,7 +116,7 @@ case class CatalogImpl[F[_]: Async] private (productService: product.ProductServ
       .map(Converters.toApi)
   }
 
-  //products
+  // products
 
   override def getProduct(request: GetProductRequest, ctx: Metadata): F[Product] = adaptError {
     validate(request)
@@ -149,7 +150,7 @@ case class CatalogImpl[F[_]: Async] private (productService: product.ProductServ
       .as(Empty())
   }
 
-  //imagelists
+  // imagelists
 
   override def createImageList(request: CreateImageListRequest, ctx: Metadata): F[ImageList] = adaptError {
     validate(request)

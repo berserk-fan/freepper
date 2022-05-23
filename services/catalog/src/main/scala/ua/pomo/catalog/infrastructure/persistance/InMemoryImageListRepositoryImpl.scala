@@ -10,8 +10,7 @@ import scala.collection.mutable
 import shapeless._
 import monocle.syntax.all._
 
-class InMemoryImageListRepositoryImpl[F[_]: MonadThrow] private (
-    var mapRef: Ref[F, Map[ImageListId, ImageList]])
+class InMemoryImageListRepositoryImpl[F[_]: MonadThrow] private (var mapRef: Ref[F, Map[ImageListId, ImageList]])
     extends ImageListRepository[F] {
   override def create(imageList: ImageList): F[ImageListId] = mapRef.modify { map =>
     val id = ImageListId(UUID.randomUUID())
@@ -27,8 +26,7 @@ class InMemoryImageListRepositoryImpl[F[_]: MonadThrow] private (
   override def query(query: ImageListQuery): F[List[ImageList]] = mapRef.get.map { map =>
     val filter = query.selector match {
       case ImageListSelector.IdsIn(ids) =>
-        (i: ImageList) =>
-          ids.toList.toSet.contains(i.id)
+        (i: ImageList) => ids.toList.toSet.contains(i.id)
     }
     map.values
       .filter(filter)
@@ -42,11 +40,11 @@ class InMemoryImageListRepositoryImpl[F[_]: MonadThrow] private (
       implicit val b: Res[List[Image]] = gen(_.focus(_.images))
     }
     val updater = Generic[ImageListUpdate].to(command).drop(Nat._1).map(updateObj).toList.flatten.reduce(_ andThen _)
-    (map.updatedWith(command.id)(_.map(updater)), if(map.contains(command.id)) 1 else 0)
+    (map.updatedWith(command.id)(_.map(updater)), if (map.contains(command.id)) 1 else 0)
   }
 
   override def delete(id: ImageListId): F[Int] = mapRef.modify { map =>
-    (map - id, if(map.contains(id)) 1 else 0)
+    (map - id, if (map.contains(id)) 1 else 0)
   }
 }
 

@@ -61,7 +61,6 @@ object ModelRepositoryImpl {
   private[persistance] object Queries {
     private implicit val readModelMinimalPrice: Read[ModelMinimalPrice] =
       Read[Double].map(x => ModelMinimalPrice(Money(x, USD)))
-    private implicit val logHandler: LogHandler = LogHandler.jdkLogHandler
 
     def create(req: CreateModel): (Update0, ModelId) = {
       val modelId = UUID.randomUUID()
@@ -93,7 +92,8 @@ object ModelRepositoryImpl {
 
     type GetModelQuery =
       ImageListId :: ModelId :: ModelReadableId :: CategoryUUID :: ModelDisplayName :: ModelDescription :: ModelMinimalPrice :: List[
-        ParameterList] :: HNil
+        ParameterList
+      ] :: HNil
 
     def delete(modelId: ModelId): Update0 = {
       sql"""

@@ -37,31 +37,37 @@ object model {
   case class ModelMinimalPrice(value: Money)
 
   @derive(eqv, show)
-  case class Model(id: ModelId,
-                   readableId: ModelReadableId,
-                   categoryUid: CategoryUUID,
-                   categoryRid: CategoryReadableId,
-                   displayName: ModelDisplayName,
-                   description: ModelDescription,
-                   minimalPrice: ModelMinimalPrice,
-                   parameterLists: List[ParameterList],
-                   imageList: ImageList)
+  case class Model(
+      id: ModelId,
+      readableId: ModelReadableId,
+      categoryUid: CategoryUUID,
+      categoryRid: CategoryReadableId,
+      displayName: ModelDisplayName,
+      description: ModelDescription,
+      minimalPrice: ModelMinimalPrice,
+      parameterLists: List[ParameterList],
+      imageList: ImageList
+  )
 
   @derive(eqv, show)
-  case class CreateModel(readableId: ModelReadableId,
-                         categoryId: CategoryUUID,
-                         displayName: ModelDisplayName,
-                         description: ModelDescription,
-                         imageListId: ImageListId,
-                         parameterListIds: List[ParameterListId])
+  case class CreateModel(
+      readableId: ModelReadableId,
+      categoryId: CategoryUUID,
+      displayName: ModelDisplayName,
+      description: ModelDescription,
+      imageListId: ImageListId,
+      parameterListIds: List[ParameterListId]
+  )
 
   @derive(eqv, show)
-  case class UpdateModel(id: ModelId,
-                         readableId: Option[ModelReadableId],
-                         categoryId: Option[CategoryUUID],
-                         displayName: Option[ModelDisplayName],
-                         description: Option[ModelDescription],
-                         imageListId: Option[ImageListId])
+  case class UpdateModel(
+      id: ModelId,
+      readableId: Option[ModelReadableId],
+      categoryId: Option[CategoryUUID],
+      displayName: Option[ModelDisplayName],
+      description: Option[ModelDescription],
+      imageListId: Option[ImageListId]
+  )
 
   @derive(eqv, show)
   case class ModelQuery(selector: ModelSelector, page: PageToken.NonEmpty)

@@ -26,8 +26,8 @@ object ImageListRepositoryImpl {
         imageListId <- Queries
           .createImageList(imageList.displayName)
           .withUniqueGeneratedKeys[ImageListId]("id")
-        imagesCount <- Queries.createImages.updateMany(imageList.images.zipWithIndex.map {
-          case (x, i) => (x.src, x.alt, imageListId, i)
+        imagesCount <- Queries.createImages.updateMany(imageList.images.zipWithIndex.map { case (x, i) =>
+          (x.src, x.alt, imageListId, i)
         })
         _ <- Sync[ConnectionIO].whenA(imagesCount != imageList.images.size) {
           delete(imageListId) >> new Exception("returned ids...").raiseError[ConnectionIO, Unit]
@@ -56,8 +56,8 @@ object ImageListRepositoryImpl {
             updated2 <- req.images.fold(0.pure[ConnectionIO]) { images =>
               for {
                 deleted <- Queries.deleteImages(req.id).run
-                created <- Queries.createImages.updateMany(images.zipWithIndex.map {
-                  case (x, i) => (x.src, x.alt, req.id, i)
+                created <- Queries.createImages.updateMany(images.zipWithIndex.map { case (x, i) =>
+                  (x.src, x.alt, req.id, i)
                 })
               } yield deleted + created
             }
@@ -69,8 +69,6 @@ object ImageListRepositoryImpl {
   }
 
   private[persistance] object Queries {
-    implicit val logHandler: LogHandler = LogHandler.jdkLogHandler
-
     private def compile(alias: String, where: ImageListSelector): Fragment = {
       val im = Fragment.const0(alias)
       where match {

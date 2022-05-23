@@ -12,7 +12,7 @@ package object domain extends OrphanInstances
 trait OrphanInstances {
   implicit val moneyMonoid: Monoid[Money] =
     new Monoid[Money] {
-      def empty: Money                       = USD(0)
+      def empty: Money = USD(0)
       def combine(x: Money, y: Money): Money = x + y
     }
 

@@ -89,12 +89,14 @@ object ProductRepositoryImpl {
       sql"update products $setters where id=${command.id}".update
     }
 
-    private case class GetProductDto(productId: ProductId,
-                                     modelId: ModelId,
-                                     categoryId: CategoryUUID,
-                                     modelDisplayName: ModelDisplayName,
-                                     price: ProductStandardPrice,
-                                     promoPrice: Option[ProductPromoPrice])
+    private case class GetProductDto(
+        productId: ProductId,
+        modelId: ModelId,
+        categoryId: CategoryUUID,
+        modelDisplayName: ModelDisplayName,
+        price: ProductStandardPrice,
+        promoPrice: Option[ProductPromoPrice]
+    )
 
     def find(query: ProductQuery): Query0[Product] = {
       implicit val readParamList: Get[List[ParameterId]] = Get[List[UUID]].map(_.map(ParameterId.apply))

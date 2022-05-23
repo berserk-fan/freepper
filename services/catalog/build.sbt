@@ -6,6 +6,10 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "ua.pomo.catalog"
 ThisBuild / organizationName := "Pomo"
 
+ThisBuild / envFileName := ".env.it"
+Test / envFileName := ".env.it"
+Test / envVars := (Test / envFromFile).value
+
 //ScalaTest
 
 Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-P16")

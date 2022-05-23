@@ -27,7 +27,6 @@ object Resources {
 
   /*allocate schemaf*/
   def schema(config: JdbcDatabaseConfig, transactor: Transactor[IO]): Resource[IO, Schema] = {
-    implicit val logHandler: LogHandler = LogHandler.jdkLogHandler
     Resource.make(
       DBMigrations
         .migrate[IO](config)

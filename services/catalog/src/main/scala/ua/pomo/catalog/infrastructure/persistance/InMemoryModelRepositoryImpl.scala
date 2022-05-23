@@ -40,8 +40,7 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
   override def findAll(req: ModelQuery): F[List[Model]] = {
     val filter: Model => Boolean = req.selector match {
       case ModelSelector.All =>
-        _ =>
-          true
+        _ => true
       case ModelSelector.IdIs(id)         => _.id == id
       case ModelSelector.CategoryIdIs(id) => _.categoryUid == id
     }
@@ -49,7 +48,8 @@ class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, 
       .map(
         _.values.toList
           .filter(filter)
-          .slice(req.page.offset.toInt, req.page.offset.toInt + req.page.size.toInt))
+          .slice(req.page.offset.toInt, req.page.offset.toInt + req.page.size.toInt)
+      )
   }
 
   override def delete(id: ModelId): F[Int] = ref.modify { map =>

@@ -41,12 +41,10 @@ class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[Product
   override def query(req: ProductQuery): F[List[Product]] = {
     val filter: Product => Boolean = req.selector match {
       case ProductSelector.All =>
-        _ =>
-          true
+        _ => true
       case ProductSelector.IdIs(id) => _.id == id
       case ProductSelector.IdIn(ids) =>
-        p =>
-          ids.exists(_ == p.id)
+        p => ids.exists(_ == p.id)
       case ProductSelector.ModelIs(modelId) => _.modelId == modelId
     }
     ref.get.map(_.values.filter(filter).toList)

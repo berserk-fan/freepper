@@ -2,7 +2,7 @@ package ua.pomo.catalog.ext
 
 import scala.annotation.implicitNotFound
 
-import derevo.{ Derivation, NewTypeDerivation }
+import derevo.{Derivation, NewTypeDerivation}
 
 //wtf is this
 trait Derive[F[_]] extends Derivation[F] with NewTypeDerivation[F] {

@@ -60,8 +60,10 @@ class CategoryServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: G ~> 
 }
 
 object CategoryServiceImpl {
-  def apply[F[_]: MonadCancelThrow](xa: Transactor[F],
-                                    categoryRepository: CategoryRepository[ConnectionIO]): CategoryService[F] = {
+  def apply[F[_]: MonadCancelThrow](
+      xa: Transactor[F],
+      categoryRepository: CategoryRepository[ConnectionIO]
+  ): CategoryService[F] = {
     new CategoryServiceImpl[F, ConnectionIO](xa.trans, categoryRepository)
   }
 

@@ -81,8 +81,8 @@ object ApiName {
       model <~ "/" <~ Products ^^ (modelName => ProductsName(modelName.categoryId, modelName.modelId))
     }
     def product: Parser[ProductName] = {
-      (products <~ "/") ~ productId ^^ {
-        case productsName ~ productId => ProductName(productsName.categoryId, productsName.modelId, productId)
+      (products <~ "/") ~ productId ^^ { case productsName ~ productId =>
+        ProductName(productsName.categoryId, productsName.modelId, productId)
       }
     }
     private def uuidStr: Parser[String] = "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b".r
@@ -130,6 +130,8 @@ object ApiName {
     Left(
       ValidationErr(
         s"Failed to parse resource name: $msg, string: ${next.source}, fatal: $fatal, rest: ${next.source.toString
-          .drop(next.offset)}"))
+          .drop(next.offset)}"
+      )
+    )
   }
 }

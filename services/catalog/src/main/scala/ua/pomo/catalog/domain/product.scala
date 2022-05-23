@@ -35,28 +35,34 @@ object product {
   case class ProductParameter(standard: ProductStandardPrice, promo: Option[ProductPromoPrice])
 
   @derive(eqv, show)
-  case class Product(id: ProductId,
-                     modelId: ModelId,
-                     displayName: ProductDisplayName,
-                     categoryId: CategoryUUID,
-                     imageList: ImageList,
-                     price: ProductPrice,
-                     parameterIds: List[ParameterId])
+  case class Product(
+      id: ProductId,
+      modelId: ModelId,
+      displayName: ProductDisplayName,
+      categoryId: CategoryUUID,
+      imageList: ImageList,
+      price: ProductPrice,
+      parameterIds: List[ParameterId]
+  )
 
   object Product {
-    def makeDisplayName(modelDisplayName: ModelDisplayName,
-                        parameterDisplayNames: List[ParameterDisplayName]): ProductDisplayName = {
+    def makeDisplayName(
+        modelDisplayName: ModelDisplayName,
+        parameterDisplayNames: List[ParameterDisplayName]
+    ): ProductDisplayName = {
       val paramNames = parameterDisplayNames.sortBy(_.value).mkString(" ")
       ProductDisplayName(s"$modelDisplayName $paramNames")
     }
   }
 
   @derive(eqv, show)
-  case class CreateProduct(modelId: ModelId,
-                           imageListId: ImageListId,
-                           priceUsd: ProductStandardPrice,
-                           promoPriceUsd: Option[ProductPromoPrice],
-                           parameterIds: List[ParameterId])
+  case class CreateProduct(
+      modelId: ModelId,
+      imageListId: ImageListId,
+      priceUsd: ProductStandardPrice,
+      promoPriceUsd: Option[ProductPromoPrice],
+      parameterIds: List[ParameterId]
+  )
 
   @derive(eqv, show)
   case class FindProductResponse(products: List[Product], nextPageToken: PageToken)
@@ -76,10 +82,12 @@ object product {
   }
 
   @derive(eqv, show)
-  case class UpdateProduct(id: ProductId,
-                           imageList: Option[ImageListId],
-                           price: Option[ProductStandardPrice],
-                           promoPrice: Option[Option[ProductPromoPrice]])
+  case class UpdateProduct(
+      id: ProductId,
+      imageList: Option[ImageListId],
+      price: Option[ProductStandardPrice],
+      promoPrice: Option[Option[ProductPromoPrice]]
+  )
 
   trait ProductRepository[F[_]] {
     def create(command: CreateProduct): F[ProductId]

@@ -41,7 +41,6 @@ class ImageListRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecu
   }
 
   test("different transactions work") {
-    implicit val logHandler = LogHandler.jdkLogHandler
     val imageListId = sql"insert into image_lists (display_name) values ('')".update
       .withUniqueGeneratedKeys[ImageListId]("id")
       .trRun()

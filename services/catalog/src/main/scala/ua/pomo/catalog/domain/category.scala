@@ -26,10 +26,12 @@ object category {
   case class CategoryDescription(value: String)
 
   @derive(eqv, show)
-  case class Category(id: CategoryUUID,
-                      readableId: CategoryReadableId,
-                      displayName: CategoryDisplayName,
-                      description: CategoryDescription)
+  case class Category(
+      id: CategoryUUID,
+      readableId: CategoryReadableId,
+      displayName: CategoryDisplayName,
+      description: CategoryDescription
+  )
 
   @derive(eqv, show)
   case class CreateCategory(
@@ -39,10 +41,12 @@ object category {
   )
 
   @derive(eqv, show)
-  case class UpdateCategory(id: CategoryUUID,
-                            readableId: Option[CategoryReadableId],
-                            displayName: Option[CategoryDisplayName],
-                            description: Option[CategoryDescription])
+  case class UpdateCategory(
+      id: CategoryUUID,
+      readableId: Option[CategoryReadableId],
+      displayName: Option[CategoryDisplayName],
+      description: Option[CategoryDescription]
+  )
 
   @derive(eqv, show)
   case class QueryCategoriesResponse(categories: List[Category], nextToken: PageToken)
