@@ -2,18 +2,12 @@ name: Scala
 
 on:
   pull_request: {}
-  push:
-    branches:
-      - second-edition
+  push: {}
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-18.04
-    strategy:
-      matrix:
-        java:
-          - graalvm11-ce
     steps:
       - uses: actions/checkout@v2.3.2
       - uses: olafurpg/setup-scala@v5
