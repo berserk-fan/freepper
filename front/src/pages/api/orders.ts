@@ -119,10 +119,12 @@ export default async function postOrderHandler(
     html: emailContent,
   };
 
+  console.log(process.env.EMAIL_USER, " ", process.env.EMAIL_USER);
   try {
     await transporter.sendMail(mailOptions);
     res.status(201).end();
   } catch (err) {
+    console.error(err);
     res.status(500).end();
   }
 }

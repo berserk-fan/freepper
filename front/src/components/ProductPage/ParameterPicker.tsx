@@ -32,9 +32,11 @@ function MyChipNoMemo({
     <Chip
       className={classes.fabricNode}
       avatar={
-        <Avatar>
-          <Icon image={parameter.image} />
-        </Avatar>
+        parameter.image ? (
+          <Avatar>
+            <Icon image={parameter.image} />
+          </Avatar>
+        ) : undefined
       }
       clickable
       color={selected ? "secondary" : "default"}

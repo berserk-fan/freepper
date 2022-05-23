@@ -123,7 +123,7 @@ object ModelRepositoryImpl {
                m.display_name, 
                m.description,
                COALESCE((
-                  select min(COALESCE(p.promo_price_usd, p.price_usd, 0))
+                  select min(COALESCE(p.promo_price, p.price, 0))
                   from products p
                   where p.model_id = m.id
                ), 0),

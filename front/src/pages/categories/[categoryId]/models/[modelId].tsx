@@ -40,8 +40,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
       pageSize: 200,
     })
     .then((x) => x.products);
-  delete (model as any).toObject;
-  return { props: { model: model || null, products } };
+  return {
+    props: { model: model || null, products },
+  };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {

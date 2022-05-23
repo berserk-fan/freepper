@@ -101,7 +101,7 @@ object Converters {
   }
 
   def toApi(parameter: Parameter): api.Parameter = {
-    api.Parameter(parameter.id.show, parameter.displayName.show, Some(toApi(parameter.image)))
+    api.Parameter(parameter.id.show, parameter.displayName.show, parameter.image.map(toApi))
   }
 
   def toApi(parameterList: ParameterList): api.ParameterList = {

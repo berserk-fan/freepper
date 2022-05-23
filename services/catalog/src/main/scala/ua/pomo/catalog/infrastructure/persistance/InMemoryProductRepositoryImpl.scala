@@ -22,6 +22,7 @@ class InMemoryProductRepositoryImpl[F[_]: Sync] private (ref: Ref[F, Map[Product
     val res = Product(
       id,
       command.modelId,
+      ProductDisplayName(""),
       CategoryUUID(UUID.randomUUID()),
       ImageList(ImageListId(UUID.randomUUID()), ImageListDisplayName(""), Nil),
       ProductPrice(command.priceUsd, command.promoPriceUsd),

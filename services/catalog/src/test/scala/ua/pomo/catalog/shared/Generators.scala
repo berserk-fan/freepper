@@ -69,7 +69,7 @@ object Generators {
     private val rDescription = Gen.alphaNumStr.map(ModelDescription.apply)
     private val parameterId = Gen.uuid.map(ParameterId.apply)
     private val parameterDisplayName = Gen.alphaNumStr.map(ParameterDisplayName.apply)
-    private val param = (parameterId, parameterDisplayName, ImageList.imageGen).mapN(Parameter.apply)
+    private val param = (parameterId, parameterDisplayName, Gen.option(ImageList.imageGen)).mapN(Parameter.apply)
     private val paramListId = Gen.uuid.map(ParameterListId.apply)
     private val paramListDisplayName = Gen.alphaNumStr.map(ParamListDisplayName.apply)
     private val params = Gen.listOfN(2, param)
@@ -102,6 +102,7 @@ object Generators {
   object Product {
     private val id = Gen.uuid.map(ProductId.apply)
     private val modelId = Gen.uuid.map(ModelId.apply)
+    private val displayName = Gen.alphaNumStr.map(ProductDisplayName.apply)
     private val categoryId = Gen.uuid.map(CategoryUUID.apply)
     private val parameterId = Gen.uuid.map(ParameterId.apply)
     private val paramIds = Gen.listOfN(2, parameterId)
@@ -111,7 +112,7 @@ object Generators {
       (standardPrice, promoPrice)
         .mapN(ProductPrice.apply)
     val gen: Gen[product.Product] =
-      (id, modelId, categoryId, ImageList.gen, price, paramIds)
+      (id, modelId, displayName, categoryId, ImageList.gen, price, paramIds)
         .mapN(product.Product.apply)
 
     private val imageListId = Gen.uuid.map(ImageListId.apply)

@@ -20,7 +20,7 @@ message Product {
   };
   string name = 1;
   string uid = 2;
-  string display_name = 3;
+  string display_name = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
   string model_id = 4;
   ImageList image_list = 5;
   Price price = 6;

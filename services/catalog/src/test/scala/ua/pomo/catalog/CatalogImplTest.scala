@@ -115,14 +115,14 @@ class CatalogImplTest extends DbUnitTestSuite {
       .trRun()
 
     val paramList = Seq(ParameterList(uid = id1.toString))
-    val imageListName = Some(ImageList(name = ImageListName(ImageListId(UUID.randomUUID())).toNameString))
+    val imageList = Some(ImageList(name = ImageListName(ImageListId(UUID.randomUUID())).toNameString))
     val modelReq = api.Model(
       "",
       "",
       "some-id",
       "some name",
       "some description",
-      imageListName,
+      imageList,
       Some(Money(0)),
       paramList
     )
@@ -130,7 +130,7 @@ class CatalogImplTest extends DbUnitTestSuite {
     val req =
       CreateModelRequest(ModelsName(CategoryRefId.Uid(CategoryUUID(UUID.randomUUID()))).toNameString, Some(modelReq))
     val model = impl.createModel(req, null).unsafeRunSync()
-    model.copy(parameterLists = paramList, imageListData = imageListName) should equal(
+    model.copy(parameterLists = paramList, imageList = imageList) should equal(
       modelReq.copy(name = model.name, uid = model.uid))
 
     val modelReq2 = api.Model(
@@ -139,7 +139,7 @@ class CatalogImplTest extends DbUnitTestSuite {
       "some-id",
       "some name",
       "some description",
-      imageListName,
+      imageList,
       Some(Money(0)),
       paramList
     )

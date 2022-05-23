@@ -62,12 +62,11 @@ CREATE TABLE model_parameter_lists
     UNIQUE (model_id, parameter_list_id)
 );
 
-
 CREATE TABLE products
 (
     id              UUID PRIMARY KEY   DEFAULT public.uuid_generate_v4(),
-    price_usd       FLOAT     NOT NULL,
-    promo_price_usd FLOAT,
+    price       FLOAT     NOT NULL,
+    promo_price FLOAT,
     image_list_id   UUID      NOT NULL references image_lists ON DELETE RESTRICT,
     model_id        UUID      NOT NULL references models ON DELETE CASCADE,
     create_time     TIMESTAMP NOT NULL DEFAULT NOW(),

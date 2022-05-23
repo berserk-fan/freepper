@@ -68,7 +68,7 @@ function ProductPage({
   addProduct: (value: CartProduct) => void;
 }) {
   const theme = useTheme();
-  const { displayName, parameterLists } = model;
+  const { displayName } = model;
 
   // we need it to find product using parameterIds
   const indexed: Record<string, Product> = React.useMemo(
@@ -81,6 +81,16 @@ function ProductPage({
       ),
     [products],
   );
+
+  // we need to filter out paramters for which we doesn't have products
+  const parameterLists = model.parameterLists.map((paramList) => ({
+    ...paramList,
+    parameters: paramList.parameters.filter(
+      (param) =>
+        products.findIndex((p) => p.parameterIds.indexOf(param.uid) !== -1) !==
+        -1,
+    ),
+  }));
 
   const [curParamIds, setCurParamIds] = React.useState(
     Object.fromEntries(parameterLists.map((x) => [x.uid, x.parameters[0].uid])),

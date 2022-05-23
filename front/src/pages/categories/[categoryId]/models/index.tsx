@@ -18,7 +18,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
   return {
     props: {
-      models: models1.models,
+      models: JSON.parse(JSON.stringify(models1.models)),
     },
   };
 };

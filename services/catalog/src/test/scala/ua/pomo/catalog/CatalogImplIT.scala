@@ -196,12 +196,12 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers {
       val responseWithIgnoredFields =
         createResp.copy(name = "",
                         uid = "",
-                        imageListData = f.model.imageListData,
+                        imageList = f.model.imageList,
                         parameterLists = f.model.parameterLists,
                         minimalPrice = None)
       responseWithIgnoredFields should equal(f.model)
 
-      createResp.imageListData.get.name should equal(f.imageList1.name)
+      createResp.imageList.get.name should equal(f.imageList1.name)
       createResp.parameterLists.toList.map(_.uid) should equal(List(f.parameterList1, f.parameterList2).map(_.uid))
   }
 
@@ -270,7 +270,8 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers {
         .createProduct(CreateProductRequest(f.productParent, Some(f.product)), new Metadata())
         .unsafeRunSync()
 
-      res.copy(name = "", uid = "") should equal(f.product)
+      res.copy(name = "", uid = "", displayName = "") should equal(f.product)
+      res.displayName should not be empty
   }
 
   testR("get product") {
@@ -327,7 +328,7 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers {
         client
           .listProducts(ListProductsRequest(f.productParent, 0, ""), new Metadata())
           .unsafeRunSync()
-      resp2.products.size should not equal (0)
+      resp3.products.size should not equal (0)
   }
 
   testR("delete product") {
@@ -382,6 +383,7 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers {
       val product = Product(
         "",
         "",
+        "",
         createdModel.uid,
         Some(imageList1),
         Some(Product.Price(Some(Money(10)))),
@@ -391,6 +393,7 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers {
       val product2 = Product(
         "",
         "",
+        "",
         createdModel.uid,
         Some(imageList1),
         Some(Product.Price(Some(Money(10)))),
@@ -398,6 +401,7 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers {
       )
 
       val product3 = Product(
+        "",
         "",
         "",
         createdModel.uid,

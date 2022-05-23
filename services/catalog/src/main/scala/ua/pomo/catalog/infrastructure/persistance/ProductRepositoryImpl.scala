@@ -69,7 +69,7 @@ object ProductRepositoryImpl {
       import command._
       sql"""
         INSERT INTO products 
-            (price_usd, promo_price_usd, image_list_id, model_id, parameter_ids)
+            (price, promo_price, image_list_id, model_id, parameter_ids)
         VALUES ($priceUsd,
                 $promoPriceUsd, 
                 $imageListId, 
@@ -82,8 +82,8 @@ object ProductRepositoryImpl {
       object updaterPoly extends DbUpdaterPoly {
         implicit val modelUUID: Res[ModelId] = gen("model_id")
         implicit val imageListId: Res[ImageListId] = gen("image_list_id")
-        implicit val productStandardPrice: Res[ProductStandardPrice] = gen("price_usd")
-        implicit val productPromoPrice: Res[Option[ProductPromoPrice]] = gen("promo_price_usd")
+        implicit val productStandardPrice: Res[ProductStandardPrice] = gen("price")
+        implicit val productPromoPrice: Res[Option[ProductPromoPrice]] = gen("promo_price")
       }
       val setters = Fragments.setOpt(Generic[UpdateProduct].to(command).drop(1).map(updaterPoly).toList: _*)
       sql"update products $setters where id=${command.id}".update
@@ -98,20 +98,26 @@ object ProductRepositoryImpl {
 
     def find(query: ProductQuery): Query0[Product] = {
       implicit val readParamList: Get[List[ParameterId]] = Get[List[UUID]].map(_.map(ParameterId.apply))
+      implicit val readParamDisplayNames: Get[List[ParameterDisplayName]] =
+        Get[List[String]].map(_.map(ParameterDisplayName.apply))
       implicit val readListImage: Get[List[Image]] = jsonAggListJson[Image]
       val sql =
         sql"""
-            select p.id, m.id, m.category_id, m.display_name, p.price_usd, p.promo_price_usd,
+            select p.id, m.id, m.category_id, m.display_name, p.price, p.promo_price,
                    il.id, il.display_name, 
                    case
                      when count(i.id) = 0
                      then '[]'
                      else json_agg(json_build_object('id', i.id, 'src', i.src, 'alt', i.alt) ORDER BY i.list_order)
                    end,
-                   p.parameter_ids
+                   p.parameter_ids,
+                   (
+                       select COALESCE(array_agg(ps.display_name), ARRAY[]::VARCHAR[]) 
+                       from unnest(p.parameter_ids) pid left join parameters ps on ps.id = pid
+                   ) as parameter_display_names
             from products p 
                 left join models m on p.model_id = m.id 
-                left join image_lists il on m.image_list_id = il.id
+                left join image_lists il on p.image_list_id = il.id
                 join images i on il.id = i.image_list_id
             where ${compile("p", query.selector)}
             group by p.id, m.id, il.id
@@ -120,16 +126,19 @@ object ProductRepositoryImpl {
             offset ${query.pageToken.offset}
          """
       sql
-        .query[(GetProductDto, ImageList, List[ParameterId])]
+        .query[(GetProductDto, ImageList, List[ParameterId], List[ParameterDisplayName])]
         .map { res =>
-          val (product, imageList, params) = res
+          val (product, imageList, params, parameterDisplayNames) = res
 
-          Product(product.productId,
-                  product.modelId,
-                  product.categoryId,
-                  imageList,
-                  ProductPrice(product.price, product.promoPrice),
-                  params)
+          Product(
+            product.productId,
+            product.modelId,
+            Product.makeDisplayName(product.modelDisplayName, parameterDisplayNames),
+            product.categoryId,
+            imageList,
+            ProductPrice(product.price, product.promoPrice),
+            params
+          )
         }
     }
   }

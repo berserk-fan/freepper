@@ -51,11 +51,7 @@ const useStyles = makeStyles({
 });
 
 const cartItem = function CartItem({
-  cartProduct: {
-    product,
-    count,
-    model: { displayName },
-  },
+  cartProduct: { product, count },
   setProductCount,
   deleteProduct,
 }: {
@@ -66,7 +62,9 @@ const cartItem = function CartItem({
   const {
     imageList: { images },
     uid,
+    displayName,
   } = product;
+
   const image = images[0];
   const classes = useStyles();
 

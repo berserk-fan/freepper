@@ -19,7 +19,7 @@ object parameter {
   case class ParameterDisplayName(value: String)
 
   @derive(eqv, show, decoder)
-  case class Parameter(id: ParameterId, displayName: ParameterDisplayName, image: Image)
+  case class Parameter(id: ParameterId, displayName: ParameterDisplayName, image: Option[Image])
 
   @derive(eqv, show, decoder)
   @newtype

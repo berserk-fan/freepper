@@ -44,8 +44,8 @@ object product {
                      parameterIds: List[ParameterId])
 
   object Product {
-    def modelDisplayName(modelDisplayName: ModelDisplayName,
-                         parameterDisplayNames: List[ParameterDisplayName]): ProductDisplayName = {
+    def makeDisplayName(modelDisplayName: ModelDisplayName,
+                        parameterDisplayNames: List[ParameterDisplayName]): ProductDisplayName = {
       val paramNames = parameterDisplayNames.sortBy(_.value).mkString(" ")
       ProductDisplayName(s"$modelDisplayName $paramNames")
     }
