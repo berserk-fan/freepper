@@ -6,6 +6,11 @@ on:
     branches:
       - master
 
+defaults:
+  run:
+    shell: bash
+    working-directory: services/catalog
+
 jobs:
   build:
     name: Build
@@ -17,7 +22,6 @@ jobs:
         run: |
           echo "Running catalog"
           docker network create catalog
-          cd services/catalog
           make local.postgres.start
 
       - name: Tests
