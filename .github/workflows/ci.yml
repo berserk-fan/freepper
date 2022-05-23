@@ -33,4 +33,4 @@ jobs:
 
       - name: "Shutting down Postgres & Redis 🐳"
         run: |
-          docker-compose down
+          make local.postgres.stop
