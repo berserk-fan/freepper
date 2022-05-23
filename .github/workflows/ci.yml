@@ -20,13 +20,6 @@ jobs:
       - name: "Cache for sbt & coursier ♨️"
         uses: coursier/cache-action@v4.1
 
-      - name: "Starting up Postgres & Redis 🐳"
-        run: |
-          echo "Running catalog"
-          docker network create catalog
-          cd services/catalog
-          make local.postgres.start
-
       - name: "Install Nix ❄️"
         uses: cachix/install-nix-action@v13
 
@@ -35,6 +28,13 @@ jobs:
         with:
           name: practical-fp-in-scala
           signingKey: "${{ secrets.CACHIX_SIGNING_KEY }}"
+
+      - name: "Starting up Postgres & Redis 🐳"
+        run: |
+          echo "Running catalog"
+          docker network create catalog
+          cd services/catalog
+          make local.postgres.start
 
       - name: "Run with ${{ matrix.java }} 🚀"
         run: nix-shell --argstr jdk "${{ matrix.java }}" --run "sbt 'scalafmtCheckAll;test;it:test'"
