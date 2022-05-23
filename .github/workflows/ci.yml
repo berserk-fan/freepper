@@ -29,7 +29,7 @@ jobs:
       - name: Tests
         run: |
           source .env.it
-          sbt -J-Xms4G -J-Xmx4G test it:test
+          sbt -J-Xms4G -J-Xmx4G test
 
       - name: "Shutting down Postgres & Redis 🐳"
         run: |

@@ -86,7 +86,6 @@ object ModelRepositoryImpl {
           """
       }
 
-      println(res.toString())
       (res.update, ModelId(modelId))
     }
 
