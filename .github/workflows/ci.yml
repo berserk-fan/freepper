@@ -21,7 +21,7 @@ jobs:
         uses: coursier/cache-action@v4.1
 
       - name: "Starting up Postgres & Redis 🐳"
-        run:
+        run: |
           cd services/catalog
           make local.postgres.start
 
@@ -38,6 +38,6 @@ jobs:
         run: nix-shell --argstr jdk "${{ matrix.java }}" --run "sbt 'scalafmtCheckAll;test;it:test'"
 
       - name: "Shutting down Postgres & Redis 🐳"
-        run:
+        run: |
           cd services/catalog
           make local.postgres.stop
