@@ -3,7 +3,6 @@ package ua.pomo.catalog.shared
 import cats.effect.unsafe.IORuntime.global
 import cats.effect.{IO, Resource}
 import org.scalactic.source
-import org.scalactic.source.Position
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll}
 

@@ -3,7 +3,6 @@ package ua.pomo.catalog.domain
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.decoder
 import derevo.derive
-import io.circe.Decoder
 import io.estatico.newtype.macros.newtype
 import ua.pomo.catalog.domain.image.Image
 

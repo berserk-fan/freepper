@@ -3,13 +3,11 @@ package ua.pomo.catalog.infrastructure.persistance
 import cats.effect.{IO, Resource}
 import doobie.ConnectionIO
 import doobie.implicits._
-import doobie.postgres.implicits._
 import org.scalatest.ParallelTestExecution
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.{CategoryRepository, CategoryUUID}
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
-import ua.pomo.catalog.domain.parameter.ParameterListId
 import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbResources, Resources}
 
 import java.util.UUID

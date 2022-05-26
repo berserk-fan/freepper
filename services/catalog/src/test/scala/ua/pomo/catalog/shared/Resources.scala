@@ -6,9 +6,8 @@ import doobie.{Fragment, Transactor}
 import ua.pomo.catalog.infrastructure.DBMigrations
 import ua.pomo.catalog.{AppConfig, JdbcDatabaseConfig, ServerConfig, TransactorHelpers}
 import doobie.implicits._
-import doobie.util.log.LogHandler
 import fs2.grpc.syntax.all.fs2GrpcSyntaxManagedChannelBuilder
-import io.grpc.{ManagedChannel, Metadata}
+import io.grpc.Metadata
 import io.grpc.netty.NettyChannelBuilder
 import ua.pomo.catalog.api.CatalogFs2Grpc
 
@@ -25,28 +24,35 @@ object Resources {
     TransactorHelpers.fromConfig[IO](config)
   }
 
-  /*allocate schemaf*/
+  /*allocate schema*/
   def schema(config: JdbcDatabaseConfig, transactor: Transactor[IO]): Resource[IO, Schema] = {
     Resource.make(
       DBMigrations
         .migrate[IO](config)
-        .as(Schema())) { _ =>
+        .as(Schema())
+    ) { _ =>
       sql"""DROP SCHEMA IF EXISTS "${Fragment.const0(config.schema)}" CASCADE;""".update.run
         .transact(transactor)
         .as(())
     }
   }
 
-  //https://github.com/typelevel/cats-effect-testing/blob/series/1.x/core/jvm/src/main/scala/cats/effect/testing/RuntimePlatform.scala
+  // https://github.com/typelevel/cats-effect-testing/blob/series/1.x/core/jvm/src/main/scala/cats/effect/testing/RuntimePlatform.scala
   def ioRuntime(): Resource[IO, IORuntime] = {
     Resource.eval {
       IO.blocking {
         val ec: ExecutionContext = ExecutionContext.fromExecutor(Executors.newCachedThreadPool())
         val (blocking, blockingSD) = unsafe.IORuntime.createDefaultBlockingExecutionContext()
         val (scheduler, schedulerSD) = unsafe.IORuntime.createDefaultScheduler()
-        unsafe.IORuntime(ec, blocking, scheduler, { () =>
-          blockingSD(); schedulerSD();
-        }, unsafe.IORuntimeConfig())
+        unsafe.IORuntime(
+          ec,
+          blocking,
+          scheduler,
+          { () =>
+            blockingSD(); schedulerSD();
+          },
+          unsafe.IORuntimeConfig()
+        )
       }
     }
   }

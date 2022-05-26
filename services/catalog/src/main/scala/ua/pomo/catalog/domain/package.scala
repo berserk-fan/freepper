@@ -1,9 +1,6 @@
 package ua.pomo.catalog
 
 import cats.{Eq, Monoid, Show}
-import derevo.cats.{eqv, show}
-import derevo.circe.magnolia.{decoder, encoder}
-import derevo.derive
 import squants.market.{Currency, Money, USD}
 
 package object domain extends OrphanInstances

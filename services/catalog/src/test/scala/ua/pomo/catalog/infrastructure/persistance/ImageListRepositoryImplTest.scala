@@ -5,7 +5,6 @@ import cats.effect.{IO, Resource}
 import doobie.ConnectionIO
 import doobie.implicits.toSqlInterpolator
 import doobie.postgres.implicits.UuidType
-import doobie.util.log.LogHandler
 import org.scalatest.ParallelTestExecution
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.image.ImageListSelector.IdsIn

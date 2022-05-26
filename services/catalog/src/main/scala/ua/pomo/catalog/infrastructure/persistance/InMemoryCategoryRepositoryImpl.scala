@@ -5,9 +5,7 @@ import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, to
 import ua.pomo.catalog.domain.category._
 
 import java.util.UUID
-import scala.collection.mutable
 import monocle.syntax.all._
-import shapeless._
 
 class InMemoryCategoryRepositoryImpl[F[_]: MonadCancelThrow] private[persistance] (
     ref: Ref[F, Map[CategoryUUID, Category]]

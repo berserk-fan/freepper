@@ -1,7 +1,6 @@
 package ua.pomo.catalog.infrastructure.persistance
 
 import cats.data.{NonEmptyList, OptionT}
-import cats.implicits
 import cats.effect.Sync
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, catsSyntaxFlatMapOps}
 import doobie._
@@ -9,11 +8,9 @@ import doobie.implicits._
 import doobie.postgres.implicits._
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.error.NotFound
-import ua.pomo.catalog.domain.image.ImageListSelector.IdsIn
 import ua.pomo.catalog.domain.image._
 import shapeless._
 
-import java.util.UUID
 
 object ImageListRepositoryImpl {
   def apply(): ImageListRepository[ConnectionIO] = {

@@ -6,16 +6,13 @@ import cats.effect.kernel.Async
 import cats.implicits.{
   catsSyntaxApplicativeErrorId,
   catsSyntaxApplicativeId,
-  catsSyntaxFlatMapOps,
-  catsSyntaxMonadError,
   toFlatMapOps,
   toFunctorOps
 }
 import cats.~>
 import doobie.ConnectionIO
 import doobie.util.transactor.Transactor
-import ua.pomo.catalog.domain.PageToken
-import ua.pomo.catalog.domain.error.{DbErr, NotFound}
+import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.infrastructure.persistance.ModelRepositoryImpl
 

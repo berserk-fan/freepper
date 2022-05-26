@@ -2,17 +2,14 @@ package ua.pomo.catalog.app
 
 import cats.Monoid
 import cats.effect.kernel.Async
-import cats.effect.Resource
 import cats.implicits._
 import com.google.protobuf.empty.Empty
-import io.grpc.{Metadata, ServerServiceDefinition, Status}
+import io.grpc.{Metadata, Status}
 import scalapb.validate.{Failure, Success, Validator}
-import ua.pomo.catalog.CatalogApiConfig
 import ua.pomo.catalog.domain.{category, model, product}
 import ua.pomo.catalog.api._
 import ua.pomo.catalog.domain.error._
 import ua.pomo.catalog.domain.image.ImageListService
-import ua.pomo.catalog.domain.product.ProductService
 
 import scala.util.Try
 import org.typelevel.log4cats.Logger

@@ -4,10 +4,6 @@ import cats.effect.{IO, Resource}
 import cats.effect.unsafe.implicits.global
 import cats.implicits.toTraverseOps
 import io.grpc.{Metadata, Status, StatusException}
-import org.scalatest.BeforeAndAfter
-import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.should.Matchers
-import squants.market.USD
 import ua.pomo.catalog.api.{
   CatalogFs2Grpc,
   CreateCategoryRequest,
@@ -150,8 +146,7 @@ class CatalogImplTest extends DbUnitTestSuite {
 
   test("delete model") {
     val (_, models, impl) = makeImpls
-    val request =
-      DeleteModelRequest(
+    DeleteModelRequest(
         ModelName(CategoryRefId.Uid(CategoryUUID(UUID.randomUUID())), ModelId(UUID.randomUUID())).toNameString)
     val mod1 =
       models.create(Generators.Model.createGen(ImageListId(UUID.randomUUID()), List()).sample.get).unsafeRunSync()

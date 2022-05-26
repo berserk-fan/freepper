@@ -1,6 +1,5 @@
 package ua.pomo.catalog.app
 
-import cats.data.NonEmptyList
 import cats.implicits.toShow
 import io.circe.{Decoder, Encoder, parser}
 import scalapb.FieldMaskUtil
@@ -40,7 +39,7 @@ import ua.pomo.catalog.domain.product._
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Try}
 
 object Converters {
   private val DefaultUUID = new UUID(0, 0)

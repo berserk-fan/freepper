@@ -2,7 +2,7 @@ package ua.pomo.catalog.infrastructure.persistance
 
 import cats.data.{NonEmptyList, OptionT}
 import cats.effect.{Ref, Sync}
-import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxFlatMapOps, catsSyntaxMonadError, toFunctorOps}
+import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
 import doobie._
 import doobie.implicits._
 import doobie.postgres.implicits._
@@ -10,7 +10,7 @@ import shapeless._
 import squants.market.{Money, USD}
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryUUID
-import ua.pomo.catalog.domain.error.{DbErr, NotFound}
+import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter._

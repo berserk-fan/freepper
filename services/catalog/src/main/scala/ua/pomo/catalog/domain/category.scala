@@ -1,7 +1,5 @@
 package ua.pomo.catalog.domain
 
-import cats.Show
-import cats.implicits.toShow
 import derevo.cats._
 import derevo.derive
 import io.estatico.newtype.macros.newtype

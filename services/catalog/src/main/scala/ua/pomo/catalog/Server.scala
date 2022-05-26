@@ -2,13 +2,12 @@ package ua.pomo.catalog
 
 import cats.effect.kernel.Resource
 import cats.effect.{IO, IOApp}
-import doobie.ConnectionIO
 import fs2.grpc.syntax.all.fs2GrpcSyntaxServerBuilder
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder
 import io.grpc.protobuf.services.ProtoReflectionService
 import ua.pomo.catalog.api.CatalogFs2Grpc
 import ua.pomo.catalog.app.programs.modifiers.{PageDefaultsApplier, ReadableIdInNamesResolver}
-import ua.pomo.catalog.app.{CatalogImpl, Converters}
+import ua.pomo.catalog.app.CatalogImpl
 import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ImageListServiceImpl, ModelServiceImpl, ProductServiceImpl}
 import ua.pomo.catalog.infrastructure.persistance.{
   CategoryRepositoryImpl,

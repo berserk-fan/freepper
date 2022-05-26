@@ -6,7 +6,6 @@ import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, to
 import ua.pomo.catalog.domain.image._
 
 import java.util.UUID
-import scala.collection.mutable
 import shapeless._
 import monocle.syntax.all._
 

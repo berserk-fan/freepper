@@ -6,8 +6,9 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "ua.pomo.catalog"
 ThisBuild / organizationName := "Pomo"
 
-ThisBuild / envFileName := ".env.it"
-Test / envFileName := ".env.it"
+//Env File
+ThisBuild / envFileName := ".env"
+Test / envFileName := ".env"
 Test / envVars := (Test / envFromFile).value
 
 //ScalaTest
@@ -28,14 +29,21 @@ Compile / managedSourceDirectories += baseDirectory.value / "target" / "scala-2.
 Compile / PB.targets := scalapbCodeGenerators.value
   .map(_.copy(outputPath = (Compile / sourceManaged).value / "scala"))
   .:+(
-    scalapb.validate.gen(GeneratorOption.FlatPackage) -> (Compile / sourceManaged).value / "scala": protocbridge.Target)
+    scalapb.validate.gen(GeneratorOption.FlatPackage) -> (Compile / sourceManaged).value / "scala": protocbridge.Target
+  )
 
 //docker
 enablePlugins(DockerPlugin)
 
 //enable the Ash plugin, which tells our package manager to generate our binary using Ash instead of Bash
 enablePlugins(AshScriptPlugin)
+
+//packaging
 enablePlugins(JavaAppPackaging)
+Universal / mappings += {
+  val envoyFile = "envoy.tmpl.yaml"
+  (baseDirectory.value / "deployment/local/envoy" / envoyFile) -> s"out/$envoyFile"
+}
 
 //migration task
 lazy val runMigrate = taskKey[Unit]("Migrates the database schema.")
@@ -97,4 +105,4 @@ lazy val root = (project in file("."))
     )
   )
 
-addCommandAlias("runLinter", ";scalafixAll --rules OrganizeImports")
+addCommandAlias("runLinter", ";scalafixAll --rules RemoveUnused")

@@ -5,10 +5,9 @@ import cats.effect.{Ref, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.error.NotFound
-import ua.pomo.catalog.domain.image.{Image, ImageAlt, ImageList, ImageListDisplayName, ImageListId, ImageSrc}
+import ua.pomo.catalog.domain.image.{ImageList, ImageListDisplayName, ImageListId}
 import ua.pomo.catalog.domain.model.ModelId
 import ua.pomo.catalog.domain.product._
-import ua.pomo.catalog.domain.parameter._
 import monocle.syntax.all._
 import shapeless._
 import ua.pomo.catalog.domain.category.{CategoryUUID}

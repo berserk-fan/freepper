@@ -1,7 +1,6 @@
 package ua.pomo.catalog.shared
 
 import cats.Applicative
-import cats.data.NonEmptyList
 import cats.syntax.apply._
 import org.scalacheck.Gen
 import squants.market.{Money, USD}

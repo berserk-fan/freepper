@@ -1,7 +1,7 @@
 package ua.pomo.catalog.app.programs
 
 import cats.arrow.FunctionK
-import cats.effect.{IO, MonadCancelThrow, Sync}
+import cats.effect.{MonadCancelThrow, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import cats.~>
 import doobie.{ConnectionIO, Transactor}
@@ -10,7 +10,7 @@ import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.infrastructure.persistance.CategoryRepositoryImpl
 
-class CategoryServiceImpl[F[_]: MonadCancelThrow, G[_]: Sync] private (xa: G ~> F, repository: CategoryRepository[G])
+class CategoryServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, repository: CategoryRepository[G])
     extends CategoryService[F] {
   override def get(id: CategoryUUID): F[Category] = {
     repository

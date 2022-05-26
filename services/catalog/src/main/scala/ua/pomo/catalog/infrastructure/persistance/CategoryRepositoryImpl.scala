@@ -11,7 +11,6 @@ import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category._
 
 import java.util.UUID
-import scala.collection.mutable
 import scala.util.chaining.scalaUtilChainingOps
 
 class CategoryRepositoryImpl private () extends CategoryRepository[ConnectionIO] {
@@ -44,11 +43,11 @@ object CategoryRepositoryImpl {
   def makeInMemory[F[_]: Sync]: F[CategoryRepository[F]] = {
     Ref[F].of(Map[CategoryUUID, Category]()).map(new InMemoryCategoryRepositoryImpl(_))
   }
-  def withEffect[F[_]: Sync](transactor: ConnectionIO ~> F): CategoryRepository[F] = {
+  def withEffect[F[_]](transactor: ConnectionIO ~> F): CategoryRepository[F] = {
     new CategoryRepositoryImplF(new CategoryRepositoryImpl(), transactor)
   }
 
-  private class CategoryRepositoryImplF[F[_]: Sync](underlying: CategoryRepository[ConnectionIO], xa: ConnectionIO ~> F)
+  private class CategoryRepositoryImplF[F[_]](underlying: CategoryRepository[ConnectionIO], xa: ConnectionIO ~> F)
       extends CategoryRepository[F] {
     override def create(category: CreateCategory): F[CategoryUUID] = underlying.create(category).pipe(xa.apply)
 
