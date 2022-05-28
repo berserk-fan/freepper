@@ -7,8 +7,8 @@ ThisBuild / organization := "ua.pomo.catalog"
 ThisBuild / organizationName := "Pomo"
 
 //Env File
-ThisBuild / envFileName := ".env"
-Test / envFileName := ".env"
+ThisBuild / envFileName := ".env.local"
+Test / envFileName := ".env.local"
 Test / envVars := (Test / envFromFile).value
 
 //ScalaTest
@@ -40,9 +40,12 @@ enablePlugins(AshScriptPlugin)
 
 //packaging
 enablePlugins(JavaAppPackaging)
-Universal / mappings += {
-  val envoyFile = "envoy.tmpl.yaml"
-  (baseDirectory.value / "deployment/local/envoy" / envoyFile) -> s"out/$envoyFile"
+Universal / mappings ++= {
+  import NativePackagerHelper._
+  val deploymentMappings = directory("deployment/ec2") ++ directory("deployment/common")
+  val withPrefix = deploymentMappings.map { case (file, path) => (file, s"deployment/$path") }
+  val other = Seq(file(".env.template") -> ".env")
+  withPrefix ++ other
 }
 
 //migration task

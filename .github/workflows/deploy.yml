@@ -1,0 +1,25 @@
+name: Deploy service
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'ENV to deploy to'
+        required: true
+        options:
+          - Dev
+          - Prod
+        type: choice
+      commit-sha:
+        description: 'Commit Sha To Deploy'
+        required: false
+        default: $GITHUB_SHA
+        type: string
+
+jobs:
+  deploy:
+    name: Deploy dev-deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: ${{ github.event.inputs.job }} - step 1
+        run: echo "Hello world!"
