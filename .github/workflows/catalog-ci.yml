@@ -5,6 +5,20 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'ENV to deploy to'
+        required: true
+        options:
+          - Dev
+          - Prod
+        type: choice
+      commit-sha:
+        description: 'Commit Sha To Deploy'
+        required: false
+        default: $GITHUB_SHA
+        type: string
 
 defaults:
   run:
@@ -28,9 +42,13 @@ jobs:
 
       - name: Tests
         run: |
-          source .env
+          source .env.local
           sbt -J-Xms4G -J-Xmx4G test
 
-      - name: "Shutting down Postgres & Redis 🐳"
+      - name: "Shutting down Postgres"
         run: |
           make local.postgres.stop
+
+      - name: "Creating distribution"
+        run: |
+          echo "{{github.event_name}}"
