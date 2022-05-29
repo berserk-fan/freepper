@@ -28,31 +28,49 @@ defaults:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v2.3.2
       - uses: olafurpg/setup-scala@v11
         with:
           java-version: adopt@1.11
-      - name: "Starting up Postgres & Redis 🐳"
+      - name: "Starting up Postgres"
         run: |
+          set -x -e
           echo "Running catalog"
           docker network create catalog
           make local.postgres.start
 
       - name: Tests
         run: |
+          set -x -e
           source .env.local
           sbt -J-Xms4G -J-Xmx4G test
 
       - name: "Shutting down Postgres"
         run: |
+          set -x -e
           make local.postgres.stop
 
-      - name: "Creating distribution"
+      - name: "Creating distribution package"
         run: |
+          set -x -e
           sbt -J-Xms4G -J-Xmx4G dist
-          ls
-          cd target/universal
-          zip_file_name=$(ls | grep "zip")
-          echo $zip_file_name
+          package_file_name=$(ls target/universal | grep "zip")
+          package_file_path="target/universal/$package_file_name"
+          echo "::set-env name=PACKAGE_FILE_PATH::$package_file_path"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-session-name: BuildPipeline
+          role-to-assume: arn:aws:iam::614277821933:role/PomoGithubWorkflows
+          aws-region: eu-central-1
+
+      - name: "Copy distribution to s3"
+        run: |
+          set -x -e
+          aws s3 cp $PACKAGE_FILE_PATH s3://pomo-packages
