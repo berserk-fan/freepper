@@ -34,7 +34,7 @@ install_java() {
 
 populate_env_file() {
   file_name=$1
-  populate_to=$2
+  env_file=$2
   substituted=$(envsubst < $file_name)
   first_line=$(echo $substituted | head -n 1)
   rest_lines=$(echo $substituted | tail -n +2)
@@ -53,10 +53,25 @@ populate_env_file() {
      param_value=$(echo $param | jq -r '.Parameter.Value')
      res="$res$env_var_setter$param_value\n"
   done
-  (echo $res > "$populate_to")
+  (echo $res > "$env_file")
+}
+
+start_envoy() {
+  env_file=$1
+  dir_name="deployment/common/envoy"
+  export $(grep -v '^#' .env | xargs);
+  #populate env substitutions in yaml
+  cat "$dir_name/envoy.tmpl.yaml" | envsubst > "$dir_name/envoy.yaml"
+  envoy -c "$dir_name/envoy.yaml" --log-path "envoy.log" &
+}
+
+start_app() {
+  ./bin/server
 }
 
 install_envoy
 install_java
-populate_to=".env.populated"
-populate_env_file "$package_name/.env" "$populate_to"
+env_file=".env.populated"
+populate_env_file "$package_name/.env" "$env_file"
+start_envoy env_file
+start_app

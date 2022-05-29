@@ -47,6 +47,12 @@ Universal / mappings ++= {
   val other = Seq(file(".env.template") -> ".env")
   withPrefix ++ other
 }
+//jvm opts
+Universal / javaOptions ++= Seq(
+  // -J params will be added as jvm parameters
+  "-J-Xms512m",
+  "-J-Xmx1024m"
+)
 
 //migration task
 lazy val runMigrate = taskKey[Unit]("Migrates the database schema.")
