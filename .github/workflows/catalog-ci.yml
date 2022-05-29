@@ -53,3 +53,6 @@ jobs:
         run: |
           sbt -J-Xms4G -J-Xmx4G dist
           ls
+          cd target/universal
+          zip_file_name=$(ls | grep "zip")
+          echo $zip_file_name

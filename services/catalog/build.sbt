@@ -36,10 +36,19 @@ Compile / PB.targets := scalapbCodeGenerators.value
 enablePlugins(DockerPlugin)
 
 //enable the Ash plugin, which tells our package manager to generate our binary using Ash instead of Bash
+//???
 enablePlugins(AshScriptPlugin)
 
 //packaging
 enablePlugins(JavaAppPackaging)
+Universal / maintainer := "Dima"
+
+Universal / packageName := {
+  val buildId = java.util.UUID.randomUUID().toString
+  sLog.value.log(sbt.util.Level.Info, s"Packaging scala app. Id=$buildId")
+  buildId
+}
+
 Universal / mappings ++= {
   import NativePackagerHelper._
   val deploymentMappings = directory("deployment/ec2") ++ directory("deployment/common")
@@ -47,6 +56,7 @@ Universal / mappings ++= {
   val other = Seq(file(".env.template") -> ".env")
   withPrefix ++ other
 }
+
 //jvm opts
 Universal / javaOptions ++= Seq(
   // -J params will be added as jvm parameters
