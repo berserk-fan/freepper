@@ -61,7 +61,8 @@ jobs:
           sbt -J-Xms4G -J-Xmx4G dist
           package_file_name=$(ls target/universal | grep "zip")
           package_file_path="target/universal/$package_file_name"
-          echo "::set-env name=PACKAGE_FILE_PATH::$package_file_path"
+          export PACKAGE_FILE_PATH=$package_file_path
+          echo "::set-env name=PACKAGE_FILE_PATH::$PACKAGE_FILE_PATH"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -73,4 +74,9 @@ jobs:
       - name: "Copy distribution to s3"
         run: |
           set -x -e
-          aws s3 cp $PACKAGE_FILE_PATH s3://pomo-packages
+          if [ -z "$PACKAGE_FILE_PATH" ]
+          then
+            echo "PACKAGE_FILE_PATH var is not set."
+            exit 1
+          fi
+          aws s3 cp $PACKAGE_FILE_PATH "s3://pomo-packages/$(basename "$PACKAGE_FILE_PATH")"
