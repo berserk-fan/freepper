@@ -1,4 +1,4 @@
-name: Scala
+name: Build Scala app
 
 on:
   pull_request: {}
@@ -75,5 +75,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Uploaded build to s3. S3 Path = ${{steps.s3-upload.outputs.package_s3_path}}'
+              body: 'Uploaded build to s3. S3 Path = ${{steps.s3-upload.outputs.package_s3_path}} :white_check_mark:'
             })

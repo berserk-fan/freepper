@@ -1,6 +1,7 @@
-name: Scala
+name: Deploy Scala app
 
 on:
+  pull_request: {}
   workflow_dispatch:
     inputs:
       env:
@@ -18,6 +19,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: "Deploying"
-        run: echo "Hello world. ${{github.event.inputs.message}}"
-
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY_PAIR_CONTENTS }}
+          script: |
+            set -x -e
+            aws s3 copy s3://pomo-packages/4996a4f0-6f7e-4f9d-ae98-b0ec27b74fa7.zip 4996a4f0-6f7e-4f9d-ae98-b0ec27b74fa7.zip
+            ls
