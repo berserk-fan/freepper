@@ -57,9 +57,7 @@ populate_env_file() {
 }
 
 start_envoy() {
-  env_file=$1
   dir_name="deployment/common/envoy"
-  export $(grep -v '^#' .env | xargs);
   #populate env substitutions in yaml
   cat "$dir_name/envoy.tmpl.yaml" | envsubst > "$dir_name/envoy.yaml"
   envoy -c "$dir_name/envoy.yaml" --log-path "envoy.log" &
@@ -72,6 +70,7 @@ start_app() {
 install_envoy
 install_java
 env_file=".env.populated"
-populate_env_file ".env.template" "$env_file"
-start_envoy env_file
+populate_env_file ".env" "$env_file"
+export $(grep -v '^#' $env_file | xargs);
+start_envoy
 start_app
