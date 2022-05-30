@@ -57,23 +57,18 @@ jobs:
           aws-region: eu-central-1
 
       - name: "Copy distribution to s3"
+        id: s3-upload
         run: |
           set -x -e
           package_file_name=$(ls target/universal | grep "zip")
           package_file_path="target/universal/$package_file_name"
-#          aws s3 cp $package_file_path "s3://pomo-packages/$package_file_name"
+          package_s3_path="s3://pomo-packages/$package_file_name"
+          aws s3 cp $package_file_path $package_s3_path
+          echo "::set-output name=package_s3_path::$package_s3_path"
 
-      - name: "Check dev deploy"
-        uses: khan/pull-request-comment-trigger@v1.1.0
-        id: check_dev_deploy
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v1
         with:
-          trigger: '@deploy_dev'
-          reaction: rocket
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-
-      - name: "Deploy to Dev"
-        if: steps.check_dev_deploy.outputs.triggered == 'true'
-        run: |
-          echo "deploying to dev"
-
+          message: |
+            Uploaded build to s3. Path="${steps.s3-upload.outputs.package_s3_path}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

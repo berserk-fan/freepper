@@ -1,0 +1,23 @@
+name: Scala
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'ENV to deploy to'
+        required: true
+        options:
+          - Dev
+          - Prod
+        type: choice
+      package_s3_path:
+        description: 'Package s3 path. Corresponding archive should be present on pomo-packages s3 bucket'
+        required: true
+        type: string
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Deploying"
+        run: echo "Hello world. ${{github.event.inputs.message}}"
+
