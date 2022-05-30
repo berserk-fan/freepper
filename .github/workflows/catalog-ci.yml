@@ -2,6 +2,8 @@ name: Scala
 
 on:
   pull_request: {}
+  issue_comment:
+    types: [ created ]
   push:
     branches:
       - master
