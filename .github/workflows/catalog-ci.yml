@@ -5,20 +5,6 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch:
-    inputs:
-      env:
-        description: 'ENV to deploy to'
-        required: true
-        options:
-          - Dev
-          - Prod
-        type: choice
-      commit-sha:
-        description: 'Commit Sha To Deploy'
-        required: false
-        default: $GITHUB_SHA
-        type: string
 
 defaults:
   run:
@@ -73,4 +59,18 @@ jobs:
           set -x -e
           package_file_name=$(ls target/universal | grep "zip")
           package_file_path="target/universal/$package_file_name"
-          aws s3 cp $package_file_path "s3://pomo-packages/$package_file_name"
+#          aws s3 cp $package_file_path "s3://pomo-packages/$package_file_name"
+
+      - uses: khan/pull-request-comment-trigger@v1.1.0
+        id: check_dev_deploy
+        with:
+          trigger: '@deploy_dev'
+          reaction: rocket
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+
+      - name: "Deploy to Dev"
+        if: steps.check_dev_deploy.outputs.triggered == 'true'
+        run: |
+          echo "deploying to dev"
+
