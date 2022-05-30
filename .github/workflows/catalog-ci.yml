@@ -12,7 +12,7 @@ defaults:
 
 jobs:
   build:
-    name: Build
+    name: Build&Publish Scala
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -75,7 +75,8 @@ jobs:
               body: 'Uploaded build to s3. S3 Path = ${{steps.s3-upload.outputs.package_s3_path}} :white_check_mark:'
             })
 
-  deploy:
+  deploy-dev:
+    name: "Deploy dev"
     needs: build
     if: ${{ startsWith(github.event.commits[0].message, '#deploy_dev') }}
     uses: ./.github/workflows/catalog-deploy.yml
