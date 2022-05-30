@@ -66,9 +66,13 @@ jobs:
           aws s3 cp $package_file_path $package_s3_path
           echo "::set-output name=package_s3_path::$package_s3_path"
 
-      - name: Comment PR
-        uses: thollander/actions-comment-pull-request@v1
+      - name: "Create comment"
+        uses: actions/github-script@v6
         with:
-          message: |
-            Uploaded build to s3. Path="${steps.s3-upload.outputs.package_s3_path}"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Uploaded build to s3. Path="${steps.s3-upload.outputs.package_s3_path}"'
+            })
