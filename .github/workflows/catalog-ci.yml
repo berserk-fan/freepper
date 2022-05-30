@@ -20,6 +20,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      issues: write
     steps:
       - uses: actions/checkout@v2.3.2
       - uses: olafurpg/setup-scala@v11
