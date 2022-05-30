@@ -1,9 +1,9 @@
 name: Build Scala app
 
 on:
-  pull_request: {}
-  issue_comment:
-    types: [ created ]
+  pull_request:
+    paths:
+      - services/catalog/**
   push:
     branches:
       - master
