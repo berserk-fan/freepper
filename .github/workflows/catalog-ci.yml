@@ -79,5 +79,6 @@ jobs:
     needs: build
     if: ${{ startsWith(github.event.commits[0].message, '#deploy_dev') }}
     uses: ./.github/workflows/catalog-deploy.yml
+    secrets: inherit
     with:
       package_s3_path: ${{needs.build.outputs.package_s3_path}}
