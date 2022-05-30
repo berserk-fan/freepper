@@ -1,7 +1,9 @@
 name: Build Scala app
 
 on:
-  pull_request: {}
+  pull_request:
+    paths:
+      - 'services/catalog/**'
 
 defaults:
   run:

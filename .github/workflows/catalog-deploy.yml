@@ -1,6 +1,19 @@
 name: Deploy Scala app
 
 on:
+  workflow_call:
+    inputs:
+      package_s3_path:
+        description: 'Package s3 path. Corresponding archive should be present on pomo-packages s3 bucket'
+        required: true
+        type: string
+    secrets:
+      EC2_KEY_PAIR_CONTENTS:
+        required: true
+      EC2_USERNAME:
+        required: true
+      EC2_HOST:
+        required: true
   workflow_dispatch:
     inputs:
       package_s3_path:
