@@ -1,7 +1,7 @@
 name: Build Scala app
 
 on:
-  pull_request:
+  pull_request: {}
 
 defaults:
   run:
