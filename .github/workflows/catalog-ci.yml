@@ -63,7 +63,8 @@ jobs:
           package_file_path="target/universal/$package_file_name"
 #          aws s3 cp $package_file_path "s3://pomo-packages/$package_file_name"
 
-      - uses: khan/pull-request-comment-trigger@v1.1.0
+      - name: "Check dev deploy"
+        uses: khan/pull-request-comment-trigger@v1.1.0
         id: check_dev_deploy
         with:
           trigger: '@deploy_dev'
