@@ -28,5 +28,5 @@ jobs:
             aws s3 copy s3://pomo-packages/4996a4f0-6f7e-4f9d-ae98-b0ec27b74fa7.zip 4996a4f0-6f7e-4f9d-ae98-b0ec27b74fa7.zip
             ls -a
           ' > deploy.sh
-          ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_HOST }}@${{ secrets.EC2_USERNAME }} 'bash -s' < deploy.sh
+          ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} 'bash -s' < deploy.sh
 
