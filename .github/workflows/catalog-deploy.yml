@@ -24,9 +24,13 @@ jobs:
           set -x -e
           TEMP=$(mktemp)
           echo "${{ secrets.EC2_KEY_PAIR_CONTENTS }}" > $TEMP
+          s3path=s3://pomo-packages/4996a4f0-6f7e-4f9d-ae98-b0ec27b74fa7.zip
+          file_name=$(basename s3path)
           echo '
-            aws s3 cp s3://pomo-packages/4996a4f0-6f7e-4f9d-ae98-b0ec27b74fa7.zip 4996a4f0-6f7e-4f9d-ae98-b0ec27b74fa7.zip
-            ls -a
+            aws s3 cp $s3path $file_name
+            unzip $file_name
+            cd "${file_name%.zip}"
+            ./start.sh
           ' > deploy.sh
           ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} 'bash -s' < deploy.sh
 
