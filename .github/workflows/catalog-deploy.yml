@@ -1,16 +1,8 @@
 name: Deploy Scala app
 
 on:
-  pull_request: {}
   workflow_dispatch:
     inputs:
-      env:
-        description: 'ENV to deploy to'
-        required: true
-        options:
-          - Dev
-          - Prod
-        type: choice
       package_s3_path:
         description: 'Package s3 path. Corresponding archive should be present on pomo-packages s3 bucket'
         required: true
@@ -24,7 +16,7 @@ jobs:
           set -x -e
           TEMP=$(mktemp)
           echo "${{ secrets.EC2_KEY_PAIR_CONTENTS }}" > $TEMP
-          s3path=s3://pomo-packages/d0b34320-8f2b-474b-b53e-7e28314829db.zip
+          s3path=$package_s3_path
           file_name=$(basename s3path)
           echo '
             aws s3 cp $s3path $file_name
