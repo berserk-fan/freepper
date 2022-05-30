@@ -63,6 +63,8 @@ jobs:
           package_s3_path="s3://pomo-packages/$package_file_name"
           aws s3 cp $package_file_path $package_s3_path
           echo "::set-output name=package_s3_path::$package_s3_path"
+          echo "COMMIT MESSAGE = ${{ github.event.commits[0].message }}"
+          echo "START DEPLOY = ${{ startsWith(github.event.commits[0].message, '#deploy_dev') }}"
 
       - name: "Create comment"
         uses: actions/github-script@v6
