@@ -12,4 +12,3 @@ DB_HOST=
 ```
 on ec2 instance we will assign parameters with value from parameter store. e.g. `SERVER_PORT=get_from_param_store("$prefix$SERVER_PORT")`
 in env file you will have ENV var which means env. It's either `Prod` or `Dev`
-
