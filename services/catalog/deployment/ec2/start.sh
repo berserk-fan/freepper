@@ -72,6 +72,6 @@ start_app() {
 install_envoy
 install_java
 env_file=".env.populated"
-populate_env_file "$package_name/.env" "$env_file"
+populate_env_file ".env.template" "$env_file"
 start_envoy env_file
 start_app
