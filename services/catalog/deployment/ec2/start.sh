@@ -8,7 +8,7 @@ set -e -x
 echo "Starting up server"
 
 populate_env_file() {
-  set -e -x
+  set +x
   file_name=$1
   env_file=$2
   substituted=$(cat $file_name | envsubst)
@@ -20,22 +20,20 @@ populate_env_file() {
     exit 1
   fi
   prefix=${first_line#"PREFIX="}
-  res=''
   echo "$rest_lines" | while read env_var_setter
   do
      param_name="$prefix${env_var_setter%"="}"
      echo "Searching for param_name=$param_name"
      param=$(aws ssm get-parameter --with-decryption --name $param_name)
-     param_value=$(echo $param | jq -r '.Parameter.Value')
-     res="$res$env_var_setter$param_value\n"
+     param_value=$(echo "$param" | jq -r '.Parameter.Value')
+     (printf "$env_var_setter$param_value\n") >> "$env_file"
   done
-  (echo "$res" > "$env_file")
+  set -x
 }
 
 start_envoy() {
-  set -e -x
+  if pgrep envoy; then killall envoy; fi
   process_name="envoy"
-  pkill -f $process_name
   dir_name="deployment/common/envoy"
   #populate env substitutions in yaml
   cat "$dir_name/envoy.tmpl.yaml" | envsubst > "$dir_name/envoy.yaml"
@@ -44,12 +42,17 @@ start_envoy() {
 }
 
 start_app() {
-  set -e -x
-  ./bin/server
+  if pgrep java; then killall java; fi
+  process_name="java_app"
+  cmd="./bin/server"
+  bash -c "exec -a $process_name $cmd &"
 }
 
 env_file=".env.populated"
-populate_env_file ".env" "$env_file"
-export $(grep -v '^#' $env_file | xargs);
+echo '' > $env_file
+populate_env_file ".env" "$env_file"]
+set +x
+export $(cat $env_file | xargs)
+set -x
 start_envoy
 start_app
