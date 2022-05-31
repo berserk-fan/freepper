@@ -28,6 +28,7 @@ jobs:
           file_name=$(basename $s3path)
           echo "
             set -e -x
+            rm -rf ./**
             export ENV=Dev
             aws s3 cp $s3path $file_name
             unzip $file_name
