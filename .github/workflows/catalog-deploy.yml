@@ -32,6 +32,6 @@ jobs:
             aws s3 cp $s3path $file_name
             unzip $file_name
             cd "${file_name%.zip}"
-            bash ./deployment/ec2/start.sh
+            bash ./deployment/ec2/start.sh &
           " > deploy.sh
           ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} 'bash -s' < deploy.sh
