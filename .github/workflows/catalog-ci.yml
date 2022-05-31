@@ -1,4 +1,4 @@
-name: Build Scala app
+name: Buildff Catalog
 
 on:
   pull_request:
@@ -12,7 +12,7 @@ defaults:
 
 jobs:
   build:
-    name: Build&Publish Scala
+    name: Build&Publish Catalog
     runs-on: ubuntu-latest
     permissions:
       id-token: write

@@ -1,4 +1,4 @@
-name: Deploy Scala app
+name: Deploy Catalog
 
 on:
   workflow_call:

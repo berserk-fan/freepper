@@ -6,7 +6,7 @@ on:
 jobs:
   deploy-dev:
     name: "Deploy dev"
-    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, 's3://') }}
+    #if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, 's3://') }}
     uses: ./.github/workflows/catalog-deploy.yml
     secrets: inherit
     with:
