@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 set -e -x
 
 # This is executed inside a package directory
@@ -7,37 +7,13 @@ set -e -x
 
 echo "Starting up server"
 
-install_envoy() {
-# check envoy is installed
-  if ! command -v envoy &> /dev/null
-  then
-      sudo apt update
-      sudo apt install apt-transport-https gnupg2 curl lsb-release
-      curl -sL 'https://deb.dl.getenvoy.io/public/gpg.8115BA8E629CC074.key' | sudo gpg --dearmor -o /usr/share/keyrings/getenvoy-keyring.gpg
-      echo a077cb587a1b622e03aa4bf2f3689de14658a9497a9af2c427bba5f4cc3c4723 /usr/share/keyrings/getenvoy-keyring.gpg | sha256sum --check
-      echo "deb [arch=amd64 signed-by=/usr/share/keyrings/getenvoy-keyring.gpg] https://deb.dl.getenvoy.io/public/deb/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/getenvoy.list
-      sudo apt update
-      sudo apt install -y getenvoy-envoy
-  else
-      echo "Envoy already installed"
-  fi
-}
-
-install_java() {
-  if ! command -v java &> /dev/null
-  then
-      sudo apt install default-jre
-  else
-      echo "JRE already installed"
-  fi
-}
-
 populate_env_file() {
+  set -e -x
   file_name=$1
   env_file=$2
-  substituted=$(envsubst < $file_name)
-  first_line=$(echo $substituted | head -n 1)
-  rest_lines=$(echo $substituted | tail -n +2)
+  substituted=$(cat $file_name | envsubst)
+  first_line=$(echo "$substituted" | head -n 1)
+  rest_lines=$(echo "$substituted" | tail -n +2)
   if ! [[ $first_line == "PREFIX="* ]]
   then
     echo "No prefix found"
@@ -45,7 +21,7 @@ populate_env_file() {
   fi
   prefix=${first_line#"PREFIX="}
   res=''
-  echo $rest_lines | while read env_var_setter
+  echo "$rest_lines" | while read env_var_setter
   do
      param_name="$prefix${env_var_setter%"="}"
      echo "Searching for param_name=$param_name"
@@ -57,18 +33,21 @@ populate_env_file() {
 }
 
 start_envoy() {
+  set -e -x
+  process_name="envoy"
+  pkill -f $process_name
   dir_name="deployment/common/envoy"
   #populate env substitutions in yaml
   cat "$dir_name/envoy.tmpl.yaml" | envsubst > "$dir_name/envoy.yaml"
-  envoy -c "$dir_name/envoy.yaml" --log-path "envoy.log" &
+  cmd="envoy -c $dir_name/envoy.yaml --log-path envoy.log"
+  bash -c "exec -a $process_name $cmd &"
 }
 
 start_app() {
+  set -e -x
   ./bin/server
 }
 
-install_envoy
-install_java
 env_file=".env.populated"
 populate_env_file ".env" "$env_file"
 export $(grep -v '^#' $env_file | xargs);
