@@ -26,12 +26,12 @@ jobs:
           echo "${{ secrets.EC2_KEY_PAIR_CONTENTS }}" > $TEMP
           s3path=${{ inputs.package_s3_path }}
           file_name=$(basename $s3path)
-          echo '
+          echo "
             set -e -x
             export ENV=Dev
             aws s3 cp $s3path $file_name
             unzip $file_name
             cd "${file_name%.zip}"
             ./start.sh
-          ' > deploy.sh
+          " > deploy.sh
           ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} 'bash -s' < deploy.sh
