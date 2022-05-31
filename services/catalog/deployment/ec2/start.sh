@@ -29,7 +29,7 @@ populate_env_file() {
      param_value=$(echo $param | jq -r '.Parameter.Value')
      res="$res$env_var_setter$param_value\n"
   done
-  (echo $res > "$env_file")
+  (echo "$res" > "$env_file")
 }
 
 start_envoy() {
