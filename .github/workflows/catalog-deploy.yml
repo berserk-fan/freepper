@@ -1,0 +1,36 @@
+name: Deploy Catalog
+
+on:
+  workflow_call:
+    inputs:
+      package_s3_path:
+        description: 'Package s3 path. Corresponding archive should be present on pomo-packages s3 bucket'
+        required: true
+        type: string
+    secrets:
+      EC2_KEY_PAIR_CONTENTS:
+        required: true
+      EC2_USERNAME:
+        required: true
+      EC2_HOST:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Deploy s3"
+        run: |
+          set -x -e
+          TEMP=$(mktemp)
+          echo "${{ secrets.EC2_KEY_PAIR_CONTENTS }}" > $TEMP
+          s3path=$package_s3_path
+          file_name=$(basename s3path)
+          echo '
+            export ENV=Dev
+            aws s3 cp $s3path $file_name
+            unzip $file_name
+            cd "${file_name%.zip}"
+            ./start.sh
+          ' > deploy.sh
+          ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} 'bash -s' < deploy.sh
