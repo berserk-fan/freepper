@@ -24,7 +24,7 @@ jobs:
           set -x -e
           TEMP=$(mktemp)
           echo "${{ secrets.EC2_KEY_PAIR_CONTENTS }}" > $TEMP
-          s3path=$package_s3_path
+          s3path=${{ github.event.inputs.package_s3_path }}
           file_name=$(basename s3path)
           echo '
             export ENV=Dev
