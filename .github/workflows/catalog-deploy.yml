@@ -34,5 +34,6 @@ jobs:
             unzip $file_name
             cd "${file_name%.zip}"
             bash ./deployment/ec2/start.sh &
+            exit
           " > deploy.sh
           ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} 'bash -s' < deploy.sh
