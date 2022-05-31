@@ -25,7 +25,7 @@ jobs:
           TEMP=$(mktemp)
           echo "${{ secrets.EC2_KEY_PAIR_CONTENTS }}" > $TEMP
           s3path=${{ inputs.package_s3_path }}
-          file_name=$(basename s3path)
+          file_name=$(basename $s3path)
           echo '
             export ENV=Dev
             aws s3 cp $s3path $file_name
