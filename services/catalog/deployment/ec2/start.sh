@@ -33,19 +33,15 @@ populate_env_file() {
 
 start_envoy() {
   if pgrep envoy; then killall envoy; fi
-  process_name="envoy"
   dir_name="deployment/common/envoy"
   #populate env substitutions in yaml
   cat "$dir_name/envoy.tmpl.yaml" | envsubst > "$dir_name/envoy.yaml"
-  cmd="envoy -c $dir_name/envoy.yaml --log-path envoy.log"
-  bash -c "exec -a $process_name $cmd &"
+  envoy -c $dir_name/envoy.yaml --log-path envoy.log &
 }
 
 start_app() {
   if pgrep java; then killall java; fi
-  process_name="java_app"
-  cmd="./bin/server"
-  bash -c "exec -a $process_name $cmd &"
+  ./bin/server &
 }
 
 env_file=".env.populated"
