@@ -76,12 +76,3 @@ jobs:
               repo: context.repo.repo,
               body: 'Uploaded build to s3. S3 Path = ${{steps.s3-upload.outputs.package_s3_path}} :white_check_mark:'
             })
-
-  deploy-dev:
-    name: "Deploy dev"
-    needs: build
-    if: ${{ startsWith(github.event.commits[0].message, '#deploy_dev') }}
-    uses: ./.github/workflows/catalog-deploy.yml
-    secrets: inherit
-    with:
-      package_s3_path: ${{needs.build.outputs.package_s3_path}}
