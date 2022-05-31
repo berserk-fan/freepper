@@ -46,9 +46,11 @@ start_app() {
 
 env_file=".env.populated"
 echo '' > $env_file
-populate_env_file ".env" "$env_file"]
+populate_env_file ".env" "$env_file"
+
 set +x
 export $(cat $env_file | xargs)
 set -x
+
 start_envoy
 start_app
