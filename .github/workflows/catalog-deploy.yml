@@ -23,6 +23,7 @@ jobs:
         run: |
           set -x -e
           TEMP=$(mktemp)
+          cat ~/.ssh/config
           echo "${{ secrets.EC2_KEY_PAIR_CONTENTS }}" > $TEMP
           s3path=${{ inputs.package_s3_path }}
           file_name=$(basename $s3path)
