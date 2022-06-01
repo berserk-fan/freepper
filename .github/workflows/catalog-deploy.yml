@@ -19,13 +19,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: "Deploy s3 22"
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_KEY_PAIR_CONTENTS }}
-          script: whoami
       - name: "Deploy s3"
         run: |
           set -x -e
