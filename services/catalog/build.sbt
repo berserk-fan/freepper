@@ -61,7 +61,7 @@ Universal / mappings ++= {
 Universal / javaOptions ++= Seq(
   // -J params will be added as jvm parameters
   "-J-Xms512m",
-  "-J-Xmx1024m"
+  "-J-Xmx900m"
 )
 
 //migration task

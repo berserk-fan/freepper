@@ -41,7 +41,8 @@ start_envoy() {
 
 start_app() {
   if pgrep java; then killall java; fi
-  ./bin/server &
+  sh ./bin/server &
+  echo "started java app"
 }
 
 env_file=".env.populated"
@@ -54,3 +55,5 @@ set -x
 
 start_envoy
 start_app
+
+echo "that's all folks"
