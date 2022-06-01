@@ -35,5 +35,9 @@ jobs:
             cd "${file_name%.zip}"
             bash ./deployment/ec2/start.sh
             echo "finished from start.sh"
+            exit
+            echo "exited"
+            logout
+            echo "logged out"
           "
           echo "ssh successful"
