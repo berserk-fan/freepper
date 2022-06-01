@@ -34,6 +34,9 @@ jobs:
             unzip $file_name
             cd "${file_name%.zip}"
             bash ./deployment/ec2/start.sh
+            echo "finished from start.sh"
+            echo "exiting"
             exit
           " > deploy.sh
           ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} 'bash -s' < deploy.sh
+          echo "ssh successful"
