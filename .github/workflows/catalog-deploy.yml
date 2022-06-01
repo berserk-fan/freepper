@@ -24,7 +24,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_KEY_PAIR_CONTENT
+          key: ${{ secrets.EC2_KEY_PAIR_CONTENT }}
           script: whoami
       - name: "Deploy s3"
         run: |
