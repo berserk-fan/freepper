@@ -9,6 +9,7 @@ services:
       - catalog
     image: envoyproxy/envoy-dev:b136310d14ceb5ce66c96ac6b3b2f445aac943e7
     ports:
-      - "${API_PORT}:${API_PORT}"
+      - "${GRPC_WEB_PORT}:${GRPC_WEB_PORT}"
+      - "${GRPC_PORT}:${GRPC_PORT}"
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
