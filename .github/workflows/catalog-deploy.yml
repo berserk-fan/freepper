@@ -35,7 +35,7 @@ jobs:
           folder_name="${file_name%.zip}"
           cd $folder_name
           log_file="../$folder_name.log" 
-          nohup sh ./bin/server < /dev/null > "$log_file" 2&>1 &
+          bash deployment/ec2/start.sh
           echo "finished from start.sh"
           echo "exiting" && exit"
           echo "ssh successful"
