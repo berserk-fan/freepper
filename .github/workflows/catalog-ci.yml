@@ -4,7 +4,6 @@ on:
   pull_request:
     paths:
       - 'services/catalog/**'
-      - '!services/catalog/deployment/**'
 
 defaults:
   run:
