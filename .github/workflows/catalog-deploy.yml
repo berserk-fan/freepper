@@ -23,4 +23,4 @@ jobs:
           s3path=${{ inputs.package_s3_path }}
           env="Dev"
           ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} \
-            "bash -s" < "pogladit-mozhno/services/catalog/deployment/ec2/deploy.sh" "$s3path $env"
+            "bash -s" < "services/catalog/deployment/ec2/deploy.sh" "$s3path $env"
