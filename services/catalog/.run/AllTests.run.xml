@@ -20,9 +20,9 @@
     <option name="testKind" value="All in package" />
     <option name="classBuf">
       <list>
-        <option value="ua.pomo.catalog.CatalogImplIT" />
         <option value="ua.pomo.catalog.CatalogImplTest" />
         <option value="ua.pomo.catalog.AppConfigTest" />
+        <option value="ua.pomo.catalog.CatalogImplIT" />
         <option value="ua.pomo.catalog.domain.CommonsTest" />
         <option value="ua.pomo.catalog.infrastructure.persistance.ModelRepositoryImplTest" />
         <option value="ua.pomo.catalog.infrastructure.persistance.ProductRepositoryImplTest" />

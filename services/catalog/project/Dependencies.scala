@@ -53,9 +53,12 @@ object Dependencies {
     // (optional) If you need scalapb/scalapb.proto or anything from
     // google/protobuf/*.proto
     lazy val gprcServerReflection = "io.grpc" % "grpc-services" % scalapb.compiler.Version.grpcJavaVersion
-    lazy val scalaPbCommonProtosProtobuf = "com.thesamet.scalapb.common-protos" %% "proto-google-common-protos-scalapb_0.11" % V.scalaPb % "protobuf"
-    lazy val scalaPbCommonProtosScala = "com.thesamet.scalapb.common-protos" %% "proto-google-common-protos-scalapb_0.11" % V.scalaPb
-    lazy val scalaPbValidation = "com.thesamet.scalapb" %% "scalapb-validate-core" % scalapb.validate.compiler.BuildInfo.version % "protobuf"
+    lazy val scalaPbCommonProtosProtobuf =
+      "com.thesamet.scalapb.common-protos" %% "proto-google-common-protos-scalapb_0.11" % V.scalaPb % "protobuf"
+    lazy val scalaPbCommonProtosScala =
+      "com.thesamet.scalapb.common-protos" %% "proto-google-common-protos-scalapb_0.11" % V.scalaPb
+    lazy val scalaPbValidation =
+      "com.thesamet.scalapb" %% "scalapb-validate-core" % scalapb.validate.compiler.BuildInfo.version % "protobuf"
 
     lazy val doobieCore = "org.tpolecat" %% "doobie-core" % V.doobie
     lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % V.doobie
@@ -68,7 +71,7 @@ object Dependencies {
     lazy val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % V.scalaLogging
     lazy val log4Cats = "org.typelevel" %% "log4cats-core" % V.log4cats
     lazy val log4CatsSlf4j = "org.typelevel" %% "log4cats-slf4j" % V.log4cats
-    lazy val logbackRuntime = "ch.qos.logback" % "logback-classic" % V.logback % Runtime
+    lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % V.logback
 
     val cats = "org.typelevel" %% "cats-core" % V.cats
     val catsEffect = "org.typelevel" %% "cats-effect" % V.catsEffect

@@ -97,7 +97,7 @@ lazy val root = (project in file("."))
       Libraries.pureConfig,
       Libraries.scalaLogging,
       Libraries.flyway,
-      Libraries.logbackRuntime,
+      Libraries.logbackClassic,
       Libraries.cats,
       Libraries.catsEffect,
       Libraries.catsRetry,

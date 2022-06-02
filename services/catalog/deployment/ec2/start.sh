@@ -36,12 +36,12 @@ start_envoy() {
   dir_name="deployment/common/envoy"
   #populate env substitutions in yaml
   cat "$dir_name/envoy.tmpl.yaml" | envsubst > "$dir_name/envoy.yaml"
-  envoy -c $dir_name/envoy.yaml --log-path envoy.log &
+  nohup envoy -c $dir_name/envoy.yaml --log-path envoy.log < /dev/null &
 }
 
 start_app() {
   if pgrep java; then killall java; fi
-  sh ./bin/server &
+  nohup sh ./bin/server < /dev/null > "$log_file" 2&>1 &
   echo "started java app"
 }
 
