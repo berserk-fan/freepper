@@ -26,17 +26,16 @@ jobs:
           echo "${{ secrets.EC2_KEY_PAIR_CONTENTS }}" > $TEMP
           s3path=${{ inputs.package_s3_path }}
           file_name=$(basename $s3path)
-          ssh -vvv -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "
-            set -e -x
-            rm -rf ./**
-            export ENV=Dev
-            aws s3 cp $s3path $file_name
-            unzip $file_name
-            folder_name="${file_name%.zip}"
-            log_file="../$folder_name.log"
-            cd $folder_name
-            nohup sh ./bin/server < /dev/null &>> $log_file &
-            echo "finished from start.sh"
-            echo "exiting" && exit
-          "
+          ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}"
+          set -e -x
+          rm -rf ./**
+          export ENV=Dev
+          aws s3 cp $s3path $file_name
+          unzip $file_name
+          folder_name="${file_name%.zip}"
+          cd $folder_name
+          log_file="../$folder_name.log" 
+          nohup sh ./bin/server < /dev/null &>> $log_file 2>&1 &
+          echo "finished from start.sh"
+          echo "exiting" && exit"
           echo "ssh successful"
