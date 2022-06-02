@@ -26,4 +26,4 @@ jobs:
           echo "${{ secrets.EC2_KEY_PAIR_CONTENTS }}" > $TEMP
           s3path=${{ inputs.package_s3_path }}
           file_name=$(basename $s3path)
-          ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}" < pogladit-mozhno/deploy.sh
+          ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} < pogladit-mozhno/deploy.sh
