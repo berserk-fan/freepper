@@ -17,6 +17,7 @@ get_param() {
 }
 
 resolve_param_reference() {
+  >&2 echo "Resolving param reference $1"
   param_ref=$1
   if [[ $param_ref == "{{ssm:"* ]]
   then
@@ -33,6 +34,7 @@ resolve_param_reference() {
 }
 
 function populate_env_file() {
+  >&2 echo "Population env file $1"
   while read -r line
   do
     export ENV="$Env"
