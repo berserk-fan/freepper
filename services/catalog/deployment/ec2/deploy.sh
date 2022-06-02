@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 set -e -x
 
-export ENV=$1
+Env=$1
 S3_PATH=$2
 #should be in the default folder
 ENVOY_FILE=$3
 
 get_param() {
   >&2 echo "Searching param value of $1"
-  param=$(aws ssm get-parameter --with-decryption --name "$1")
+  if ! param=$(aws ssm get-parameter --with-decryption --name "$1"); then
+    >&2 echo "Param not found $1"
+    exit 1
+  fi
   res=$(echo "$param" | jq -r '.Parameter.Value')
   echo "$res"
 }
@@ -19,7 +22,10 @@ resolve_param_reference() {
   then
     param_name_no_prefix=${param_ref#"{{ssm:"}
     param_name=${param_name_no_prefix%"}}"}
-    res=$(get_param "$param_name")
+    if ! res=$(get_param "$param_name"); then
+      >&2 echo "Failure during param store resolution for $1"
+      exit 1
+    fi
     echo "$res"
   else
     echo "$param_ref"
@@ -29,9 +35,13 @@ resolve_param_reference() {
 function populate_env_file() {
   while read -r line
   do
+    export ENV="$Env"
     line_sub=$(echo "$line" | envsubst)
     IFS='=' read -r param_name param_reference <<< "$line_sub"
-    param_value=$(resolve_param_reference "$param_reference")
+    if ! param_value=$(resolve_param_reference "$param_reference"); then
+      >&2 echo "Param_ref resolution error for $1"
+      exit 1
+    fi
     echo "$param_name=$param_value"
   done < "$1"
 }
