@@ -20,7 +20,7 @@ jobs:
           set -x -e
           TEMP=$(mktemp)
           echo "${{ secrets.EC2_KEY_PAIR_CONTENTS }}" > $TEMP
-          s3path=${{ inputs.package_s3_path }}
+          s3path=${{ github.event.inputs.package_s3_path }}
           env="Dev"
           ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} \
             "bash -s" < "services/catalog/deployment/ec2/deploy.sh" "$s3path $env"
