@@ -49,14 +49,6 @@ Universal / packageName := {
   buildId
 }
 
-Universal / mappings ++= {
-  import NativePackagerHelper._
-  val deploymentMappings = directory("deployment/ec2") ++ directory("deployment/common")
-  val withPrefix = deploymentMappings.map { case (file, path) => (file, s"deployment/$path") }
-  val other = Seq(file(".env.template") -> ".env")
-  withPrefix ++ other
-}
-
 //jvm opts
 Universal / javaOptions ++= Seq(
   // -J params will be added as jvm parameters
