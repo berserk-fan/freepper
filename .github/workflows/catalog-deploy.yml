@@ -34,7 +34,7 @@ jobs:
             aws s3 cp $s3path $file_name
             unzip $file_name
             cd "${file_name%.zip}"
-            ./deployment/ec2/start.sh
+            nohup sh ./bin/server &
             echo "finished from start.sh"
             echo "exiting" && exit
           "
