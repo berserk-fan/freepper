@@ -33,7 +33,8 @@ jobs:
             aws s3 cp $s3path $file_name
             unzip $file_name
             cd "${file_name%.zip}"
-            nohup sh ./bin/server < /dev/null > /dev/null 2>&1 &
+            touch 
+            nohup sh ./bin/server < /dev/null &>> ../app_logs.log 2>&1 &
             echo "finished from start.sh"
             echo "exiting" && exit
           "
