@@ -1,4 +1,4 @@
-name: Buildff Catalog
+name: Build Catalog
 
 on:
   pull_request:

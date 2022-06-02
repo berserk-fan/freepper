@@ -49,6 +49,11 @@ Universal / packageName := {
   buildId
 }
 
+Universal / mappings ++= {
+  val envFile = ".env.prod"
+  List(file(envFile) -> envFile)
+}
+
 //jvm opts
 Universal / javaOptions ++= Seq(
   // -J params will be added as jvm parameters

@@ -70,8 +70,8 @@ folder_name="${file_name%.zip}"
 cd "$folder_name"
 
 echo "Populating files"
-env_file=".env.populated"
-populate_env_file ".env" > $env_file
+env_file=".env.prod.populated"
+populate_env_file ".env.prod" > $env_file
 
 set +x
 export $(cat $env_file | xargs)
