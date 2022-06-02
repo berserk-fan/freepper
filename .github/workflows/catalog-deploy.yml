@@ -30,7 +30,7 @@ jobs:
           set -e -x
           rm -rf ./**
           export ENV=Dev
-          echo "buzz"
+          echo "buzz qqqq"
           aws s3 cp $s3path $file_name
           unzip $file_name
           folder_name="${file_name%.zip}"
