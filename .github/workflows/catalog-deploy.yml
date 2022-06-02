@@ -23,4 +23,5 @@ jobs:
           s3path=${{ github.event.inputs.package_s3_path }}
           env="Dev"
           ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} \
-            "bash -s" < "services/catalog/deployment/ec2/deploy.sh" "$s3path $env"
+            "bash -s" < "services/catalog/deployment/ec2/deploy.sh" "$env $s3path"
+          rm TEMP
