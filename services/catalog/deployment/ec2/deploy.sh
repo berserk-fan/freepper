@@ -9,7 +9,7 @@ ENVOY_FILE=$3
 create_file() {
   file=$1
   if ! test -f "$file"; then
-    mkdir -p "$(dirname "$file")"
+    sudo mkdir -p "$(dirname "$file")"
     sudo touch "$file"
   fi
 }
