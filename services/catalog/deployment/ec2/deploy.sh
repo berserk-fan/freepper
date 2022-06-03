@@ -6,6 +6,14 @@ S3_PATH=$2
 #should be in the default folder
 ENVOY_FILE=$3
 
+create_file() {
+  file=$1
+  if ! test -f "$file"; then
+    mkdir -p "$(dirname "$file")"
+    sudo touch "$file"
+  fi
+}
+
 get_param() {
   >&2 echo "Searching param value of $1"
   if ! param=$(aws ssm get-parameter --with-decryption --name "$1"); then
@@ -52,17 +60,16 @@ start_envoy() {
   if pgrep envoy; then killall envoy; fi
   #populate env substitutions in yaml
   envsubst < "../$ENVOY_FILE" > "envoy.yaml"
-  nohup envoy -c envoy.yaml --log-path ~/logs/envoy.log < /dev/null > ~/logs/envoy.stdouterr.log 2>&1 &
+  envoy_log_file="/var/log/pomo/envoy.log"
+  create_file $envoy_log_file
+  nohup envoy -c envoy.yaml --log-path "$envoy_log_file" < /dev/null > /dev/null 2>&1 &
 }
 
 start_app() {
   java_log_file=$(get_param "JAVA_LOG_FILE")
-  if ! test -f "$java_log_file"; then
-    mkdir -p "$(dirname "$java_log_file")"
-    touch "$(basename "$java_log_file")"
-  fi
+  create_file "$java_log_file"
   if pgrep java; then killall java; fi
-  nohup sh ./bin/server < /dev/null > ~/logs/java.stdouterr.log 2>&1 &
+  nohup sh ./bin/server < /dev/null > /dev/null 2>&1 &
   echo "started java app"
 }
 
