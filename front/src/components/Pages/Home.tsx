@@ -8,8 +8,6 @@ import Image from "next/image";
 import Typography from "@material-ui/core/Typography/Typography";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
-import MainImage from "Public/main-image.jpg";
-import MainImageFullWidth from "Public/main-image-full-width.jpg";
 import { Model } from "apis/model.pb";
 import { Category } from "apis/category.pb";
 import LayoutWithHeaderAndFooter from "../Layout/LayoutWithHeaderAndFooter";
@@ -110,13 +108,12 @@ export function Home({
           >
             <Image
               priority
-              src={MainImage}
+              src="/main-image.jpg"
               alt="Заставка лежанки"
               layout="fill"
               objectFit="cover"
               sizes="100vw"
               quality={85}
-              placeholder="blur"
             />
           </Box>
           <Box
@@ -125,13 +122,12 @@ export function Home({
           >
             <Image
               priority
-              src={MainImageFullWidth}
+              src="/main-image-full-width.jpg"
               alt="Заставка лежанки"
               layout="fill"
               objectFit="cover"
               sizes="100vw"
               quality={85}
-              placeholder="blur"
             />
           </Box>
           <Box className={classes.textContainer} fontWeight={900}>

@@ -6,6 +6,7 @@ import ch.qos.logback.core.{ConsoleAppender, FileAppender}
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder
 import ch.qos.logback.core.spi.ContextAwareBase
 import ch.qos.logback.classic.spi.ILoggingEvent
+import scala.jdk.CollectionConverters._
 
 class LoggingConfigurator extends ContextAwareBase with Configurator {
   override def configure(lc: LoggerContext): Unit = {
@@ -27,7 +28,7 @@ class LoggingConfigurator extends ContextAwareBase with Configurator {
     ca.setEncoder(encoder)
     ca.start()
 
-    val logFile = Option(System.getProperty("JAVA_LOG_FILE"))
+    val logFile = Option(System.getenv("JAVA_LOG_FILE"))
       .filter(_.nonEmpty)
       .getOrElse(throw new IllegalArgumentException("java log file not found"))
 
