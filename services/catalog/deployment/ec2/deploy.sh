@@ -9,8 +9,8 @@ ENVOY_FILE=$3
 create_file() {
   file=$1
   if ! test -f "$file"; then
-    sudo mkdir -p "$(dirname "$file")"
-    sudo touch "$file"
+    mkdir -p "$(dirname "$file")"
+    touch "$file"
   fi
 }
 
@@ -60,7 +60,7 @@ start_envoy() {
   if pgrep envoy; then killall envoy; fi
   #populate env substitutions in yaml
   envsubst < "../$ENVOY_FILE" > "envoy.yaml"
-  envoy_log_file="/var/log/pomo/envoy.log"
+  envoy_log_file="/home/ubuntu/log/envoy.log"
   create_file $envoy_log_file
   nohup envoy -c envoy.yaml --log-path "$envoy_log_file" < /dev/null > /dev/null 2>&1 &
 }
