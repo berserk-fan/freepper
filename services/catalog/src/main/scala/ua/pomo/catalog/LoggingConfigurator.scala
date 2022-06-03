@@ -1,5 +1,4 @@
 package ua.pomo.catalog
-import cats.effect.IO
 import ch.qos.logback.classic.{Level, LoggerContext}
 import ch.qos.logback.classic.layout.TTLLLayout
 import ch.qos.logback.classic.spi.Configurator
@@ -28,7 +27,10 @@ class LoggingConfigurator extends ContextAwareBase with Configurator {
     ca.setEncoder(encoder)
     ca.start()
 
-    val logFile = System.getProperty("LOG_FILE")
+    val logFile = Option(System.getProperty("JAVA_LOG_FILE"))
+      .filter(_.nonEmpty)
+      .getOrElse(throw new IllegalArgumentException("java log file not found"))
+
     val fa = new FileAppender[ILoggingEvent]
     fa.setContext(lc)
     fa.setName("fileAppender")

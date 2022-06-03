@@ -35,7 +35,7 @@ resolve_param_reference() {
 
 function populate_env_file() {
   >&2 echo "Population env file $1"
-  while read -r line
+  while read -r line || [ -n "$line" ]
   do
     export ENV="$Env"
     line_sub=$(echo "$line" | envsubst)
@@ -52,13 +52,17 @@ start_envoy() {
   if pgrep envoy; then killall envoy; fi
   #populate env substitutions in yaml
   envsubst < "../$ENVOY_FILE" > "envoy.yaml"
-  mkdir -p ~/logs
-  nohup envoy -c envoy.yaml --log-path ~/logs/envoy.log < /dev/null &
+  nohup envoy -c envoy.yaml --log-path ~/logs/envoy.log < /dev/null > ~/logs/envoy.stdouterr.log 2>&1 &
 }
 
 start_app() {
+  java_log_file=$(get_param "JAVA_LOG_FILE")
+  if ! test -f "$java_log_file"; then
+    mkdir -p "$(dirname "$java_log_file")"
+    touch "$(basename "$java_log_file")"
+  fi
   if pgrep java; then killall java; fi
-  nohup sh ./bin/server < /dev/null > /dev/null 2>&1 &
+  nohup sh ./bin/server < /dev/null > ~/logs/java.stdouterr.log 2>&1 &
   echo "started java app"
 }
 
@@ -89,8 +93,12 @@ export $(cat "$env_file" | xargs)
 set -x
 
 echo "Strating everything"
+
+#create log folder
+mkdir -p ~/logs
+
 start_envoy
 start_app
 
-echo "finised executing script"
+echo "finished executing script"
 exit
