@@ -1,9 +1,7 @@
 name: Build Catalog
 
 on:
-  pull_request:
-    paths:
-      - 'services/catalog/**/*'
+  pull_request: {}
 
 defaults:
   run:
