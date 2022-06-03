@@ -94,7 +94,7 @@ set -x
 
 echo "Strating everything"
 
-#create log folder
+#create logs folder
 mkdir -p ~/logs
 
 start_envoy
