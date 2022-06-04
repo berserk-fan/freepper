@@ -19,6 +19,7 @@ export default function ActionsPopover({
   deleteProduct: (id: string) => void;
 }) {
   return (
+    // @ts-ignore
     <PopupStateComponent variant="popover" popupId="cart-action-popover">
       {(popupState) => (
         <div>
