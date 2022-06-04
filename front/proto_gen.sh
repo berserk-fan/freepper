@@ -9,7 +9,7 @@ OUTPUT_PATH=apis
 mkdir -p ${OUTPUT_PATH}
 mkdir -p ${OUTPUT_PATH}/validate
 
-wget -O "${OUTPUT_PATH}/validate/validate.proto" 'https://raw.githubusercontent.com/envoyproxy/protoc-gen-validate/main/validate/validate.proto'
+mv "./validate.proto" "${OUTPUT_PATH}/validate/validate.proto"
 
 ./node_modules/.bin/grpc_tools_node_protoc \
     --proto_path="${OUTPUT_PATH}" \
@@ -26,7 +26,6 @@ wget -O "${OUTPUT_PATH}/validate/validate.proto" 'https://raw.githubusercontent.
     --ts_proto_opt=lowerCaseServiceMethods=true \
     --ts_proto_opt=outputClientImpl=grpc-web \
     --ts_proto_opt=outputJsonMethods=false \
-    --ts_proto_opt=useOptionals='messages' \
     --ts_proto_opt=stringEnums=true \
     --ts_proto_opt=unrecognizedEnum=false \
     $(find $PROTO_FOLDER -iname "*.proto")

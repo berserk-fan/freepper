@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+file=$1
+if ! test -f "$file"; then
+  mkdir -p "$(dirname "$file")"
+  touch "$file"
+fi

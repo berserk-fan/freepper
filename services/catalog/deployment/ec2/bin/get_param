@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+>&2 echo "Searching param value of $1"
+if ! res=$(aws ssm get-parameter --with-decryption --name "$1" | jq -r '.Parameter.Value'); then
+>&2 echo "Param not found $1"
+  exit 1
+fi
+echo "$res"

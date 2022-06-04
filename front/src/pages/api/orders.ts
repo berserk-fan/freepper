@@ -57,14 +57,6 @@ export function renderJSONPlusCss(obj: any) {
     `;
 }
 
-function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
-  const ret: any = {};
-  keys.forEach((key) => {
-    ret[key] = obj[key];
-  });
-  return ret;
-}
-
 function prepareCart(cart: Record<string, CartProduct>): any {
   const val = Object.entries(cart).map(([id, { count, product, model }]) => [
     id,
@@ -113,13 +105,12 @@ export default async function postOrderHandler(
   const order: Order = JSON.parse(req.body);
   const emailContent = getEmailContent(order);
   const mailOptions = {
-    from: "lika@pogladit-mozhno.com",
+    from: "noreply@pomo.in.ua",
     to: "lika.gefest@gmail.com",
     subject: `Новый заказ от ${order.deliveryDetails.fullName}.`,
     html: emailContent,
   };
 
-  console.log(process.env.EMAIL_USER, " ", process.env.EMAIL_USER);
   try {
     await transporter.sendMail(mailOptions);
     res.status(201).end();

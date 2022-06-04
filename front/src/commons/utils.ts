@@ -13,3 +13,8 @@ export function priceToString(s: Product_Price, count: number = 1): string {
 export function getCurrentPrice(s: Product_Price): Money {
   return s.standard;
 }
+
+// https://github.com/vercel/next.js/discussions/11209
+export function removeUndefined<T>(t: T): T {
+  return JSON.parse(JSON.stringify(t));
+}

@@ -10,19 +10,20 @@ import ua.pomo.catalog.domain.category.CategoryRepository
 import ua.pomo.catalog.domain.image.{ImageListId, ImageListRepository}
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.model.{ModelId, ModelRepository}
-import ua.pomo.catalog.domain.product.{ProductId, ProductQuery, ProductRepository, ProductSelector}
+import ua.pomo.catalog.domain.product.{ProductId, ProductQuery, ProductRepository, ProductSelector, UpdateProduct}
 import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbResources, Resources}
 
 import java.util.UUID
 
 class ProductRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution {
-  case class TestResources(imageListRepo: ImageListRepository[ConnectionIO],
-                           categoryRepo: CategoryRepository[ConnectionIO],
-                           modelRepo: ModelRepository[ConnectionIO],
-                           postgres: ProductRepository[ConnectionIO],
-                           impls: Seq[Impl],
-                           db: DbResources)
-      extends HasDbResources
+  case class TestResources(
+      imageListRepo: ImageListRepository[ConnectionIO],
+      categoryRepo: CategoryRepository[ConnectionIO],
+      modelRepo: ModelRepository[ConnectionIO],
+      postgres: ProductRepository[ConnectionIO],
+      impls: Seq[Impl],
+      db: DbResources
+  ) extends HasDbResources
       with HasImpls
 
   override type Res = TestResources
@@ -37,8 +38,14 @@ class ProductRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecuti
       modelRepo = ModelRepositoryImpl()
       productPostgres = ProductRepositoryImpl()
       productInMemory <- Resource.eval(InMemoryProductRepositoryImpl[ConnectionIO]).mapK(db.xa.trans)
-    } yield
-      TestResources(imageListRepo, categoryRepo, modelRepo, productPostgres, Seq(productPostgres, productInMemory), db)
+    } yield TestResources(
+      imageListRepo,
+      categoryRepo,
+      modelRepo,
+      productPostgres,
+      Seq(productPostgres, productInMemory),
+      db
+    )
 
   test("queries") {
     import ProductRepositoryImpl.Queries

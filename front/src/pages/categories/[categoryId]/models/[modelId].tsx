@@ -1,12 +1,13 @@
 import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { shopNode } from "store";
+import shopNode from "commons/shop-node";
 import FoundProductPage from "components/ProductPage/FoundProductPage";
 import LayoutWithHeaderAndFooter from "components/Layout/LayoutWithHeaderAndFooter";
 import Box from "@material-ui/core/Box/Box";
 import { Model } from "apis/model.pb";
 import { Product } from "apis/product.pb";
 import { Category } from "apis/category.pb";
+import { removeUndefined } from "../../../../commons/utils";
 
 export default function ProductPage({
   model,
@@ -40,9 +41,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
       pageSize: 200,
     })
     .then((x) => x.products);
-  return {
+  return removeUndefined({
     props: { model: model || null, products },
-  };
+  });
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "generate:apis": "sh proto_gen.sh ../services/catalog/src/main/protobuf",
-    "build": "npm run generate:apis && next build",
+    "build": "wget -O ./validate.proto 'https://raw.githubusercontent.com/envoyproxy/protoc-gen-validate/main/validate/validate.proto'; npm run generate:apis && next build",
     "start": "next start",
     "lint": "eslint --fix -c .eslintrc --ext .jsx,.ts,.tsx src/",
     "find:unused": "next-unused"

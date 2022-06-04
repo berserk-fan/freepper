@@ -33,7 +33,7 @@ object Generators {
       catId,
       Gen.option(readableId),
       Gen.option(displayName),
-      Gen.option(description),
+      Gen.option(description)
     ).mapN(UpdateCategory.apply)
       .filter(x => x.displayName.isDefined || x.description.isDefined || x.readableId.isDefined)
 
@@ -84,12 +84,14 @@ object Generators {
       (id, rId, catId, catRid, rDisplayName, rDescription, rMoney, paramLists, ImageList.gen).mapN(model.Model.apply)
 
     def updateGen(imageListId: ImageListId, categoryId: CategoryUUID): Gen[model.UpdateModel] =
-      (id,
-       Gen.option(rId),
-       Gen.option(Gen.const(categoryId)),
-       Gen.option(rDisplayName),
-       Gen.option(rDescription),
-       Gen.option(Gen.const(imageListId)))
+      (
+        id,
+        Gen.option(rId),
+        Gen.option(Gen.const(categoryId)),
+        Gen.option(rDisplayName),
+        Gen.option(rDescription),
+        Gen.option(Gen.const(imageListId))
+      )
         .mapN(model.UpdateModel.apply)
   }
 
@@ -120,6 +122,14 @@ object Generators {
         .mapN(CreateProduct.apply)
 
     val update: Gen[UpdateProduct] =
-      (id, Gen.option(imageListId), Gen.option(standardPrice), Gen.option(promoPrice)).mapN(UpdateProduct.apply)
+      (id, Gen.option(imageListId), Gen.option(standardPrice), Gen.option(promoPrice))
+        .mapN(UpdateProduct.apply)
+        .filter(
+          _.productIterator
+            .collect { case x: Option[_] =>
+              x
+            }
+            .exists(_.isDefined)
+        )
   }
 }

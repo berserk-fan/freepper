@@ -1,6 +1,4 @@
 import { createStore } from "redux";
-import { CatalogClientImpl, GrpcWebImpl } from "apis/catalog.pb";
-import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
 import { Product } from "apis/product.pb";
 import { Model } from "apis/model.pb";
 import { getCurrentPrice } from "../commons/utils";
@@ -191,16 +189,3 @@ export const store = createStore(storeReducer);
 store.subscribe(() => {
   saveState(store.getState());
 });
-
-export const shopNode = new CatalogClientImpl(
-  new GrpcWebImpl("http://localhost:8080", {
-    transport: NodeHttpTransport(),
-    debug: false,
-  }),
-);
-
-export const shopWeb = new CatalogClientImpl(
-  new GrpcWebImpl("http://localhost:8080", {
-    debug: false,
-  }),
-);

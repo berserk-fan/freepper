@@ -3,7 +3,8 @@ import { GetStaticProps } from "next";
 import ShopPage from "components/Shop/ShopPage";
 import "keen-slider/keen-slider.min.css";
 import { Model } from "apis/model.pb";
-import { shopNode } from "../../../../store";
+import shopNode from "commons/shop-node";
+import { removeUndefined } from "../../../../commons/utils";
 
 export default function Shop(props: { models: Model[] }) {
   return <ShopPage {...props} />;
@@ -16,11 +17,11 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     pageSize: 10,
   });
 
-  return {
+  return removeUndefined({
     props: {
       models: JSON.parse(JSON.stringify(models1.models)),
     },
-  };
+  });
 };
 
 export async function getStaticPaths() {

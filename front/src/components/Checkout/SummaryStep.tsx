@@ -22,7 +22,7 @@ import {
   OrderForm,
 } from "./Definitions";
 import Spacing from "../Commons/Spacing";
-import {priceToString} from "../../commons/utils";
+import { priceToString } from "../../commons/utils";
 
 type Column<T> = {
   name: string;
@@ -145,7 +145,7 @@ function Summary({
             {cartProducts.map((cartProduct, i, arr) => {
               const { model, product } = cartProduct;
               return (
-                <Box key={product.uuid} margin={1}>
+                <Box key={product.uid} margin={1}>
                   <Grid
                     container
                     spacing={2}

@@ -7,6 +7,11 @@ on:
         description: 'Package s3 path. Corresponding archive should be present on pomo-packages s3 bucket'
         required: true
         type: string
+      run_migrations:
+        description: 'Either to run migrations'
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   deploy:
@@ -15,6 +20,7 @@ jobs:
       EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
       EC2_HOST: ${{ secrets.EC2_HOST }}
       S3_PATH: ${{ github.event.inputs.package_s3_path }}
+      RUN_MIGRATIONS: ${{ github.event.inputs.run_migrations }}
       ENV: Dev
     runs-on: ubuntu-latest
     steps:

@@ -6,7 +6,6 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
 import dynamic from "next/dynamic";
 import { Model } from "apis/model.pb";
-import { Image as MyImage } from "apis/image_list.pb";
 import Image from "next/image";
 import Price from "./Price";
 import { SIZES } from "./definitions";
@@ -51,7 +50,7 @@ export default function ItemView({
   const { displayName, imageList, minimalPrice } = model;
   const { images } = imageList;
 
-  const [slideId, useSlideId] = useState(0);
+  const [, useSlideId] = useState(0);
   const [isShowingArrows, setIsShowingArrows] = useState(false);
 
   return (
