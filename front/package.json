@@ -10,6 +10,9 @@
     "lint": "eslint --fix -c .eslintrc --ext .jsx,.ts,.tsx src/",
     "find:unused": "next-unused"
   },
+  "overrides": {
+    "@types/react": "17.0.0"
+  },
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.14.0",
     "@improbable-eng/grpc-web-node-http-transport": "^0.14.0",
