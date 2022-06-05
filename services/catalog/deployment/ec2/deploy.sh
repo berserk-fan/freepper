@@ -19,11 +19,11 @@ cd server
 rm -rf "./**"
 file_name=$(basename "$S3_PATH")
 aws s3 cp "$S3_PATH" "$file_name"
-unzip "$file_name"
+unzip -o "$file_name"
+rm "$file_name"
 folder_name="${file_name%.zip}"
-mv "$folder_name" .
-
-
+cp -a "$folder_name/." .
+rm -r "$folder_name"
 
 echo "Populating files and exporting variables"
 set +x
@@ -46,15 +46,16 @@ envoy_service=/etc/systemd/system/envoy.service
 WORKING_DIR=$WORKING_DIR ENVOY_CONFIG_FILE=$envoy_config ENVOY_LOG_FILE=$envoy_log  envsubst < $envoy_service_template  | sudo tee $envoy_service
 
 
-if [ "$RUN_MIGRATIONS" ]; then
+if [ "$RUN_MIGRATIONS" = true ]; then
   echo "Running migrations"
   sh ./bin/db-migrations-command
 else
   echo "Starting java"
   server_bin=$(realpath ./bin/server)
+  env_file_absolute=$(realpath $env_file)
   catalog_service_template=$WORKING_DIR/deployment/ec2/catalog-scala.tmpl.service
   catalog_service=/etc/systemd/system/catalog-scala.service
-  SCALA_SERVER_BIN=$server_bin ENV_FILE=$env_file envsubst <  $catalog_service_template | sudo tee $catalog_service
+  WORKING_DIR=$WORKING_DIR SCALA_SERVER_BIN=$server_bin ENV_FILE=$env_file_absolute envsubst <  $catalog_service_template | sudo tee $catalog_service
 fi
 
 echo "Reloading systemd daemon"

@@ -3,8 +3,7 @@ Description=Scala Catalog Server
 
 [Service]
 Type=simple
-ExecStart="sh $WORKING_DIR/bin/start-scala-server.sh $SCALA_SERVER_BIN $ENV_FILE"
-SuccessExitStatus=143
+ExecStart=$WORKING_DIR/bin/start-scala-server.sh $SCALA_SERVER_BIN $ENV_FILE
 Restart=on-failure
 RestartSec=10s
 
