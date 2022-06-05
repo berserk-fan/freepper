@@ -1,0 +1,11 @@
+[Unit]
+Description=Scala Catalog Server
+
+[Service]
+Type=simple
+ExecStart=$WORKING_DIR/bin/start-scala-server.sh $SCALA_SERVER_BIN $ENV_FILE
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

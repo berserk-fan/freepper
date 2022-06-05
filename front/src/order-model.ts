@@ -2,7 +2,6 @@ import { CartProduct } from "./store";
 
 export enum PaymentOption {
   COD = "COD",
-  PREPAYMENT = "PREPAYMENT",
 }
 
 export enum DeliveryOption {

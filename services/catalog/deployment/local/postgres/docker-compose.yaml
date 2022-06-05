@@ -1,0 +1,24 @@
+version: '3.9'
+networks:
+  catalog:
+    external: true
+services:
+  postgres:
+    networks:
+      - catalog
+    restart: always
+    image: postgres:14-alpine
+    ports:
+      - "${DB_PORT}:5432"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASS}
+    volumes:
+      - ./volume/data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} --dbname=${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

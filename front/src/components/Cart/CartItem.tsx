@@ -11,8 +11,8 @@ import IconButton from "@material-ui/core/IconButton/IconButton";
 import Card from "@material-ui/core/Card/Card";
 import CardContent from "@material-ui/core/CardContent/CardContent";
 import Typography from "@material-ui/core/Typography/Typography";
-import AdditionalInfo from "./AdditionalInfo";
 import ActionsPopover from "./ActionsPopover";
+import { priceToString } from "../../commons/utils";
 
 const useStyles = makeStyles({
   root: {
@@ -51,15 +51,20 @@ const useStyles = makeStyles({
 });
 
 const cartItem = function CartItem({
-  product,
+  cartProduct: { product, count },
   setProductCount,
   deleteProduct,
 }: {
-  product: CartProduct;
+  cartProduct: CartProduct;
   setProductCount: (id: string, x: number) => void;
   deleteProduct: (id) => void;
 }) {
-  const { displayName, price, images, id, count } = product;
+  const {
+    imageList: { images },
+    uid,
+    displayName,
+  } = product;
+
   const image = images[0];
   const classes = useStyles();
 
@@ -69,7 +74,7 @@ const cartItem = function CartItem({
         <IconButton
           className={classes.quantityControlsIconButton}
           disabled={count <= 1}
-          onClick={() => setProductCount(id, count - 1)}
+          onClick={() => setProductCount(uid, count - 1)}
         >
           <RemoveIcon className={classes.quantityControlsIcon} />
         </IconButton>
@@ -78,7 +83,7 @@ const cartItem = function CartItem({
         </Box>
         <IconButton
           className={classes.quantityControlsIconButton}
-          onClick={() => setProductCount(id, count + 1)}
+          onClick={() => setProductCount(uid, count + 1)}
         >
           <AddIcon className={classes.quantityControlsIcon} />
         </IconButton>
@@ -102,7 +107,7 @@ const cartItem = function CartItem({
               {displayName}
             </Typography>
             <Typography noWrap color="textSecondary" align="right" variant="h6">
-              {price.price} ₴
+              ${priceToString(product.price)}
             </Typography>
           </div>
         </CardContent>
@@ -112,12 +117,9 @@ const cartItem = function CartItem({
           paddingRight={2}
           className="flex justify-between items-center"
         >
-          <Box marginLeft={1}>
-            <AdditionalInfo {...product} />
-          </Box>
           <Box marginLeft={1} className="flex place-items-center">
             <QuantityControls />
-            <ActionsPopover productId={id} deleteProduct={deleteProduct} />
+            <ActionsPopover productId={uid} deleteProduct={deleteProduct} />
           </Box>
         </Box>
       </div>

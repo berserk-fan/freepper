@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+resolve_param_reference() {
+  >&2 echo "Resolving param reference $1"
+  param_ref=$1
+  if [[ $param_ref == "{{ssm:"* ]]
+  then
+    param_name_no_prefix=${param_ref#"{{ssm:"}
+    param_name=${param_name_no_prefix%"}}"}
+    if ! res=$(get_param "$param_name"); then
+      >&2 echo "Failure during param store resolution for $1"
+      exit 1
+    fi
+    echo "$res"
+  else
+    echo "$param_ref"
+  fi
+}
+
+>&2 echo "Population env file $1"
+while read -r line || [ -n "$line" ]
+do
+  line_sub=$(echo "$line" | envsubst)
+  IFS='=' read -r param_name param_reference <<< "$line_sub"
+  if ! param_value=$(resolve_param_reference "$param_reference"); then
+    >&2 echo "Param_ref resolution error for $1"
+    exit 1
+  fi
+  echo "$param_name=$param_value"
+done < "$1"

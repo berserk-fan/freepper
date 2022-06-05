@@ -8,9 +8,8 @@ import Image from "next/image";
 import Typography from "@material-ui/core/Typography/Typography";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
-import MainImage from "Public/main-image.jpg";
-import MainImageFullWidth from "Public/main-image-full-width.jpg";
-import { ImageData, Category, Product } from "apis/catalog";
+import { Model } from "apis/model.pb";
+import { Category } from "apis/category.pb";
 import LayoutWithHeaderAndFooter from "../Layout/LayoutWithHeaderAndFooter";
 
 const ColorButton = withStyles((theme) => ({
@@ -83,19 +82,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getImageOrFallback(deal: Product): ImageData {
-  try {
-    return deal.images[0];
-  } catch (e) {
-    return {
-      src: "/qwer",
-      alt: "No image found",
-      name: "",
-    };
-  }
-}
-
-export type HotDealsWithCategory = [Category, Product[]];
+export type HotDealsWithCategory = [Category, Model[]];
 
 export function Home({
   hotDealsWithCategory: [hotDealsCategory, hotDeals],
@@ -103,7 +90,7 @@ export function Home({
   hotDealsWithCategory: HotDealsWithCategory;
 }) {
   const classes = useStyles();
-  const allBedsHref = "categories/beds/products";
+  const allBedsHref = `categories/beds/models`;
 
   return (
     <LayoutWithHeaderAndFooter disableBreadcrumbs showValueProp>
@@ -121,13 +108,12 @@ export function Home({
           >
             <Image
               priority
-              src={MainImage}
+              src="/main-image.jpg"
               alt="Заставка лежанки"
               layout="fill"
               objectFit="cover"
               sizes="100vw"
               quality={85}
-              placeholder="blur"
             />
           </Box>
           <Box
@@ -136,13 +122,12 @@ export function Home({
           >
             <Image
               priority
-              src={MainImageFullWidth}
+              src="/main-image-full-width.jpg"
               alt="Заставка лежанки"
               layout="fill"
               objectFit="cover"
               sizes="100vw"
               quality={85}
-              placeholder="blur"
             />
           </Box>
           <Box className={classes.textContainer} fontWeight={900}>
@@ -192,11 +177,11 @@ export function Home({
               maxWidth="1600px"
             >
               <Grid container spacing={3}>
-                {hotDeals.map((product: Product) => {
-                  const image = getImageOrFallback(product);
-                  const href = `/${hotDealsCategory.name}/${product.name}`;
+                {hotDeals.map((model: Model) => {
+                  const href = `/${model.name}`;
+                  const image = model.imageList.images[0];
                   return (
-                    <Grid item key={product.name} xs={12} sm={6} md={4}>
+                    <Grid item key={model.name} xs={12} sm={6} md={4}>
                       <Box className={classes.propositionImageContainer}>
                         <Link href={href}>
                           <Image
@@ -213,7 +198,7 @@ export function Home({
                         component="h3"
                         align="center"
                       >
-                        {product.displayName}
+                        {model.displayName}
                       </Typography>
                     </Grid>
                   );
@@ -221,32 +206,6 @@ export function Home({
               </Grid>
             </Box>
           </Box>
-          {/*
-          <Box aria-label="how do we make it?" component="section">
-            <Box>
-              <Typography variant="h2" gutterBottom>
-                ?
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={4}>
-                  <Box position="relative" height="500px">
-                    <Image
-                      layout="fill"
-                      objectFit="cover"
-                      src="/howWeMakeIt.jpg"
-                      alt="фото того как делается лежанка"
-                    />
-                  </Box>
-                </Grid>
-                <Grid item xs={12} md={8}>
-                  <Typography>
-                    Широкую на широкую, широкую на широкую широкую на широкую.
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
-          </Box>
-          */}
           <Box marginY={10} display="flex" justifyContent="center">
             <Link href={allBedsHref}>
               <ColorButton color="secondary" size="large" variant="contained">

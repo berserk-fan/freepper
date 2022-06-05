@@ -1,24 +1,23 @@
 import { GetStaticProps } from "next";
-import { Product } from "apis/catalog";
 import { Home, HotDealsWithCategory } from "../components/Pages/Home";
-import { all_products } from "../configs/catalog/beds";
-import { shopClient } from "../store";
+import shopNode from "../commons/shop-node";
+import { removeUndefined } from "../commons/utils";
 
 export default Home;
 
 export const getStaticProps: GetStaticProps = async () => {
-  const category = await shopClient.getCategory({ name: "categories/beds" });
-  const products: Product[] = Object.values(
-    all_products.reduce<{ [key: string]: Product }>(
-      (prev, cur) => ({ ...prev, ...{ [cur.modelId]: cur } }),
-      {},
-    ),
-  ).slice(0, 3);
-
-  const hotDealsWithCategory: HotDealsWithCategory = [category, products];
-  return {
+  const category = await shopNode.getCategory({
+    name: "categories/beds",
+  });
+  const { models } = await shopNode.listModels({
+    parent: `categories/beds/models`,
+    pageSize: 3,
+  });
+  delete (category as any).toObject;
+  const hotDealsWithCategory: HotDealsWithCategory = [category, models];
+  return removeUndefined({
     props: {
       hotDealsWithCategory,
     },
-  };
+  });
 };

@@ -33,9 +33,7 @@ const Footer = React.memo(() => {
                 <Logo />
               </Box>
               <Typography className={classes.info}>ZooHugge, Dnipro</Typography>
-              <Typography className={classes.info}>
-                lika@pogladit-mozhno.com
-              </Typography>
+              <Typography className={classes.info}>lika@pomo.in.ua</Typography>
             </Grid>
             <Grid item xs={12} md={8} lg={6}>
               <Grid container spacing={2}>

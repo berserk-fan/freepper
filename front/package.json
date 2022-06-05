@@ -4,14 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "generate:apis": "sh ../commons/proto_gen.sh server catalog.proto apis",
-    "generate:images": "ts-node -O '{\"module\": \"commonjs\"}' src/scripts/generateImagesJson.ts",
-    "build": "npm run generate:apis && npm run generate:images && next build",
+    "generate:apis": "sh proto_gen.sh ../services/catalog/src/main/protobuf",
+    "build": "wget -O ./validate.proto 'https://raw.githubusercontent.com/envoyproxy/protoc-gen-validate/main/validate/validate.proto'; npm run generate:apis && next build",
     "start": "next start",
     "lint": "eslint --fix -c .eslintrc --ext .jsx,.ts,.tsx src/",
     "find:unused": "next-unused"
   },
+  "overrides": {
+    "@types/react": "17.0.0"
+  },
   "dependencies": {
+    "@improbable-eng/grpc-web": "^0.14.0",
+    "@improbable-eng/grpc-web-node-http-transport": "^0.14.0",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
@@ -41,6 +45,7 @@
     "redux": "^4.0.5",
     "sharp": "^0.29.3",
     "showdown": "^1.9.1",
+    "swr": "^1.2.1",
     "ts-node": "^10.0.0",
     "xml-js": "^1.6.11",
     "yup": "^0.32.9"
@@ -51,7 +56,7 @@
     "@tailwindcss/postcss7-compat": "^2.0.3",
     "@types/node": "^14.14.31",
     "@types/nodemailer": "^6.4.0",
-    "@types/react": "^17.0.2",
+    "@types/react": "17.0.0",
     "@types/react-redux": "^7.1.16",
     "@types/yup": "^0.29.11",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
@@ -72,6 +77,7 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4",
     "google-proto-files": "latest",
+    "google-protobuf": "^3.14.0",
     "grpc-tools": "latest",
     "html-react-parser": "^1.2.4",
     "next-unused": "^0.0.3",

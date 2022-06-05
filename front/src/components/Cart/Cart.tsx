@@ -62,7 +62,7 @@ function NonEmptyCart({ productsList, total }) {
     <>
       {productsList.map((product) => (
         <Box key={product.id} marginY={1}>
-          <CartItem product={product} />
+          <CartItem cartProduct={product} />
         </Box>
       ))}
       <Box marginTop={2} className="flex justify-end items-center">

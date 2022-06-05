@@ -47,7 +47,6 @@ export function renderJSONPlusCss(obj: any) {
         }
         code {
             white-space: -moz-pre-wrap;
-            white-space: -pre-wrap;
             white-space: -o-pre-wrap;
             white-space: pre-wrap; 
             word-wrap: break-word; /* Internet Explorer 5.5+ */  
@@ -58,33 +57,20 @@ export function renderJSONPlusCss(obj: any) {
     `;
 }
 
-function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
-  const ret: any = {};
-  keys.forEach((key) => {
-    ret[key] = obj[key];
-  });
-  return ret;
-}
-
 function prepareCart(cart: Record<string, CartProduct>): any {
-  const val = Object.entries(cart).map(([id, product]) => {
-    const fabric = product.details.dogBed.fabrics.find(
-      (f) => f.id === product.details.dogBed.fabricId,
-    );
-    const prepFabric = fabric.displayName;
-    const prepSize = product.details.dogBed.size;
-    return [
-      id,
-      {
-        ...pick(product, "displayName", "count"),
-        ...{
-          price: product.price.price,
-          size: prepSize,
-          fabric: prepFabric,
-        },
+  const val = Object.entries(cart).map(([id, { count, product, model }]) => [
+    id,
+    {
+      ...{
+        displayName: model.displayName,
+        count,
       },
-    ];
-  });
+      ...{
+        price: product.price,
+        parameters: product.parameterIds,
+      },
+    },
+  ]);
   return Object.fromEntries(val);
 }
 
@@ -119,7 +105,7 @@ export default async function postOrderHandler(
   const order: Order = JSON.parse(req.body);
   const emailContent = getEmailContent(order);
   const mailOptions = {
-    from: "lika@pogladit-mozhno.com",
+    from: "noreply@pomo.in.ua",
     to: "lika.gefest@gmail.com",
     subject: `Новый заказ от ${order.deliveryDetails.fullName}.`,
     html: emailContent,
@@ -129,6 +115,7 @@ export default async function postOrderHandler(
     await transporter.sendMail(mailOptions);
     res.status(201).end();
   } catch (err) {
+    console.error(err);
     res.status(500).end();
   }
 }

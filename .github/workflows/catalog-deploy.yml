@@ -7,20 +7,25 @@ on:
         description: 'Package s3 path. Corresponding archive should be present on pomo-packages s3 bucket'
         required: true
         type: string
+      run_migrations:
+        description: 'Either to run migrations'
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   deploy:
+    env:
+      EC2_KEY_PAIR_CONTENTS: ${{ secrets.EC2_KEY_PAIR_CONTENTS }}
+      EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      S3_PATH: ${{ github.event.inputs.package_s3_path }}
+      RUN_MIGRATIONS: ${{ github.event.inputs.run_migrations }}
+      ENV: Dev
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout action"
         uses: actions/checkout@v3
 
       - name: "Deploy s3"
-        run: |
-          set -x -e
-          TEMP=$(mktemp)
-          echo "${{ secrets.EC2_KEY_PAIR_CONTENTS }}" > $TEMP
-          s3path=${{ inputs.package_s3_path }}
-          env="Dev"
-          ssh -o 'StrictHostKeyChecking no' -i $TEMP ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} \
-            "bash -s" < "pogladit-mozhno/services/catalog/deployment/ec2/deploy.sh" "$s3path $env"
+        run: .github/scripts/catalog-deploy-connect.sh

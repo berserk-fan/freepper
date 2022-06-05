@@ -3,7 +3,6 @@ import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography/Typography";
 import Box from "@material-ui/core/Box/Box";
 import Image from "next/image";
-import FounderImage from "Public/about-us-founder.jpg";
 import Grid from "@material-ui/core/Grid";
 import LayoutWithHeaderAndFooter from "../../components/Layout/LayoutWithHeaderAndFooter";
 
@@ -17,7 +16,7 @@ export default function AboutUs() {
           </Typography>
           <Grid container spacing={2} alignItems="flex-start">
             <Grid item xs={12} sm={6}>
-              <Image src={FounderImage} placeholder="blur" />
+              <Image src="/about-us-founder.jpg" width={500} height={500} />
             </Grid>
             <Grid item xs={12} sm={6}>
               <Box>

@@ -10,7 +10,7 @@ import { getDeliveryOptionName, OrderForm } from "./Definitions";
 import NovayaPochtaIcon from "../Icons/NovayaPochtaIcon";
 
 function pathName<T>(key1: keyof T) {
-  return `${key1}`;
+  return `${String(key1)}`;
 }
 
 export default function DeliveryDetailsForm() {

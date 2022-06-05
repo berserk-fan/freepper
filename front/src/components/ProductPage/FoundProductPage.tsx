@@ -1,4 +1,3 @@
-import { Product } from "apis/catalog";
 import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlineOutlined";
 import React, { memo } from "react";
 import { connect } from "react-redux";
@@ -11,14 +10,16 @@ import useTheme from "@material-ui/core/styles/useTheme";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import Zoom from "@material-ui/core/Zoom";
-import { addProductAction, CartState, StoreState } from "store";
+import { addProductAction, CartProduct, CartState, StoreState } from "store";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
+import { Model } from "apis/model.pb";
+import { Product } from "apis/product.pb";
 import SliderWithThumbs from "../SliderWithThumbs";
 import Spacing from "../Commons/Spacing";
-import DogBedDetails from "./DogBedDetails";
 import Price from "../Shop/Price";
 import { createSizes, SizesSpec } from "../../commons/sizes";
+import ParameterPicker from "./ParameterPicker";
 
 const Markdown = dynamic(() => import("../Markdown/Renderers"));
 
@@ -29,26 +30,6 @@ const sizesSpec: SizesSpec = {
 const SIZES = createSizes(sizesSpec);
 
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
-
-function Details({
-  categoryName,
-  product,
-}: {
-  categoryName: string;
-  product: Product;
-}) {
-  switch (product.details.$case) {
-    case "dogBed":
-      return (
-        <DogBedDetails
-          categoryName={categoryName}
-          details={product.details.dogBed}
-        />
-      );
-    default:
-      return <></>;
-  }
-}
 
 type MakeFabProps = {
   href?: string;
@@ -76,21 +57,55 @@ const MakeFab = React.memo(
 );
 
 function ProductPage({
-  product,
+  model,
+  products,
   cart,
   addProduct,
-  categoryName,
 }: {
-  categoryName: string;
-  product: Product;
+  model: Model;
+  products: Product[];
   cart: CartState;
-  addProduct: (product: Product) => void;
+  addProduct: (value: CartProduct) => void;
 }) {
   const theme = useTheme();
-  const { displayName, images, price } = product;
-  const inCart = !!cart.selectedProducts[product.id];
+  const { displayName } = model;
+
+  // we need it to find product using parameterIds
+  const indexed: Record<string, Product> = React.useMemo(
+    () =>
+      Object.fromEntries(
+        products.map((p) => [
+          p.parameterIds.sort((a, b) => a.localeCompare(b)).join(),
+          p,
+        ]),
+      ),
+    [products],
+  );
+
+  // we need to filter out paramters for which we doesn't have products
+  const parameterLists = model.parameterLists.map((paramList) => ({
+    ...paramList,
+    parameters: paramList.parameters.filter(
+      (param) =>
+        products.findIndex((p) => p.parameterIds.indexOf(param.uid) !== -1) !==
+        -1,
+    ),
+  }));
+
+  const [curParamIds, setCurParamIds] = React.useState(
+    Object.fromEntries(parameterLists.map((x) => [x.uid, x.parameters[0].uid])),
+  );
+
+  const newProductId = Object.values(curParamIds)
+    .sort((a, b) => a.localeCompare(b))
+    .join();
+
+  const product = indexed[newProductId];
+  const { images } = product.imageList;
+  const inCart = !!cart.selectedProducts[product.uid];
+
   function addToCart() {
-    addProduct(product);
+    addProduct({ product, model, count: 1 });
   }
 
   const fabs = [
@@ -134,10 +149,24 @@ function ProductPage({
               {displayName}
             </Typography>
             <Typography variant="h5">
-              <Price price={price} />
+              <Price price={product.price.standard} />
             </Typography>
             <Divider />
-            <Details categoryName={categoryName} product={product} />
+            <div>
+              {parameterLists.map((parameterList) => (
+                <ParameterPicker
+                  key={parameterList.uid}
+                  parameterList={parameterList}
+                  selectedParameterId={curParamIds[parameterList.uid]}
+                  onChange={(newId) =>
+                    setCurParamIds((prev) => ({
+                      ...prev,
+                      [parameterList.uid]: newId,
+                    }))
+                  }
+                />
+              ))}
+            </div>
             <Divider />
             <Box width="100%" height="50px">
               {(inCart ? fabs : fabs.reverse()).map((fab) => (
@@ -169,7 +198,7 @@ function ProductPage({
             <Divider />
             <Typography variant="h4">Описание</Typography>
             <Box marginLeft={1} paddingTop={0}>
-              <Markdown>{product.description}</Markdown>
+              <Markdown>{model.description}</Markdown>
             </Box>
           </Spacing>
         </Grid>

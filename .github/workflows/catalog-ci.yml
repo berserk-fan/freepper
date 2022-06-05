@@ -1,0 +1,75 @@
+name: Build Catalog
+
+
+on:
+  pull_request: {}
+
+defaults:
+  run:
+    shell: bash
+    working-directory: services/catalog
+
+jobs:
+  build:
+    name: Build&Publish Catalog
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v2.3.2
+      - uses: olafurpg/setup-scala@v11
+        with:
+          java-version: adopt@1.11
+      - name: "Starting up Postgres"
+        run: |
+          set -x -e
+          echo "Running catalog"
+          docker network create catalog
+          make local.postgres.start
+
+      - name: Tests
+        run: |
+          set -x -e
+          source .env.local
+          sbt -J-Xms4G -J-Xmx4G test
+
+      - name: "Shutting down Postgres"
+        run: |
+          set -x -e
+          make local.postgres.stop
+
+      - name: "Creating distribution package"
+        id: create-distribution
+        run: |
+          set -x -e
+          sbt -J-Xms4G -J-Xmx4G dist
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-session-name: BuildPipeline
+          role-to-assume: arn:aws:iam::614277821933:role/PomoGithubWorkflows
+          aws-region: eu-central-1
+
+      - name: "Copy distribution to s3"
+        id: s3-upload
+        run: |
+          set -x -e
+          package_file_name=$(ls target/universal | grep "zip")
+          package_file_path="target/universal/$package_file_name"
+          package_s3_path="s3://pomo-packages/$package_file_name"
+          aws s3 cp $package_file_path $package_s3_path
+          echo "::set-output name=package_s3_path::$package_s3_path"
+
+      - name: "Create comment"
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Uploaded build to s3. S3 Path = ${{steps.s3-upload.outputs.package_s3_path}} :white_check_mark:'
+            })
