@@ -2,62 +2,64 @@
 set -e -x
 
 WORKING_DIR="/home/ubuntu"
-export ENV=$1
+ENV=$1
 S3_PATH=$2
 RUN_MIGRATIONS=$3
 
 echo "Deploying app"
 
-
 echo "configuring bin files"
 export PATH="$PATH:$WORKING_DIR/bin"
 sudo cp -r $WORKING_DIR/deployment/ec2/bin/. $WORKING_DIR/bin
 
-mkdir -p server
-cd server
-echo "Removing old files"
-sudo rm -rf ./**
 
 echo "Copying from s3"
+mkdir -p server
+cd server
+rm -rf "./**"
 file_name=$(basename "$S3_PATH")
 aws s3 cp "$S3_PATH" "$file_name"
 unzip "$file_name"
 folder_name="${file_name%.zip}"
-cd "$folder_name"
+mv "$folder_name" .
+
+
 
 echo "Populating files and exporting variables"
 set +x
 env_file=".env.prod.populated"
-populate_env_file ".env.prod" > $env_file
+ENV=$ENV JAVA_LOG_FILE="$WORKING_DIR/log/catalog_server.log" populate_env_file ".env.prod" > $env_file
 export $(cat "$env_file" | xargs)
 set -x
 
-echo "Starting envoy"
+
+
 echo "Creating envoy.yaml"
-ENVOY_CONFIG_FILE="$WORKING_DIR/envoy.yaml"
-envsubst < "$WORKING_DIR/deployment/common/envoy/envoy.tmpl.yaml" | sudo tee $ENVOY_CONFIG_FILE
+envoy_config="$WORKING_DIR/envoy.yaml"
+envsubst < "$WORKING_DIR/deployment/common/envoy/envoy.tmpl.yaml" | sudo tee $envoy_config
 
 echo "Creating envoy.service file"
-export WORKING_DIR
-export ENVOY_CONFIG_FILE
-export ENVOY_LOG_FILE="$WORKING_DIR/envoy.log"
-create_file $ENVOY_LOG_FILE
-envsubst < $WORKING_DIR/deployment/ec2/envoy.tmpl.service  | sudo tee /etc/systemd/system/envoy.service
-echo "Starting envoy service with systemd"
-sudo systemctl daemon-reload
+envoy_log="$WORKING_DIR/envoy.log"
+create_file $envoy_log
+envoy_service_template=$WORKING_DIR/deployment/ec2/envoy.tmpl.service
+envoy_service=/etc/systemd/system/envoy.service
+WORKING_DIR=$WORKING_DIR ENVOY_CONFIG_FILE=$envoy_config ENVOY_LOG_FILE=$envoy_log  envsubst < $envoy_service_template  | sudo tee $envoy_service
 
-echo "Envoy started"
 
-java_log_file=$(get_param "JAVA_LOG_FILE")
-create_file "$java_log_file"
 if [ "$RUN_MIGRATIONS" ]; then
+  echo "Running migrations"
   sh ./bin/db-migrations-command
 else
   echo "Starting java"
-  if pgrep java; then killall java; fi
-  nohup sh ./bin/server < /dev/null > /dev/null 2>&1 &
-  echo "started java app"
+  server_bin=$(realpath ./bin/server)
+  catalog_service_template=$WORKING_DIR/deployment/ec2/catalog-scala.tmpl.service
+  catalog_service=/etc/systemd/system/catalog-scala.service
+  SCALA_SERVER_BIN=$server_bin ENV_FILE=$env_file envsubst <  $catalog_service_template | sudo tee $catalog_service
 fi
 
-echo "finished executing script"
+echo "Reloading systemd daemon"
+sudo systemctl daemon-reload
+echo "Envoy started"
+
+echo "finished deploy script"
 exit
