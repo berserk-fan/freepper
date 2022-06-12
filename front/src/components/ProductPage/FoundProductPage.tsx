@@ -103,10 +103,6 @@ function ProductPage({
     addProduct({ product, model, count: 1 });
   }
 
-  const showParameterPicker = !(
-    parameterLists.length === 1 && parameterLists[0].parameters.length === 1
-  );
-
   const fabs = [
     {
       key: "fabAddToCart",
@@ -151,26 +147,21 @@ function ProductPage({
               <Price price={product.price.standard} />
             </Typography>
             <Divider />
-
-            {showParameterPicker ? (
-              <span />
-            ) : (
-              <div>
-                {parameterLists.map((parameterList) => (
-                  <ParameterPicker
-                    key={parameterList.uid}
-                    parameterList={parameterList}
-                    selectedParameterId={curParamIds[parameterList.uid]}
-                    onChange={(newId) =>
-                      setCurParamIds((prev) => ({
-                        ...prev,
-                        [parameterList.uid]: newId,
-                      }))
-                    }
-                  />
-                ))}
-              </div>
-            )}
+            <div>
+              {parameterLists.map((parameterList) => (
+                <ParameterPicker
+                  key={parameterList.uid}
+                  parameterList={parameterList}
+                  selectedParameterId={curParamIds[parameterList.uid]}
+                  onChange={(newId) =>
+                    setCurParamIds((prev) => ({
+                      ...prev,
+                      [parameterList.uid]: newId,
+                    }))
+                  }
+                />
+              ))}
+            </div>
             <Divider />
             <Box width="100%" height="50px">
               {(inCart ? fabs : fabs.reverse()).map((fab) => (
