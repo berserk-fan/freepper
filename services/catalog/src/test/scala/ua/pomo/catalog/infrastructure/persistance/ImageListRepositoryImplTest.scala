@@ -31,7 +31,7 @@ class ImageListRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecu
     val id = ImageListId(UUID.randomUUID())
     val id2 = ImageListId(UUID.randomUUID())
     val displayName = ImageListDisplayName("qq1")
-    check(Queries.findImageList(ImageListQuery(PageToken.NonEmpty(10, 5), IdsIn(NonEmptyList.of(id, id2)))))
+    check(Queries.findImageList(ImageListQuery(IdsIn(NonEmptyList.of(id, id2)), PageToken.NonEmpty(10, 5))))
     check(Queries.createImageList(displayName))
     check(Queries.createImages)
     forAll(Generators.ImageList.update) { update =>

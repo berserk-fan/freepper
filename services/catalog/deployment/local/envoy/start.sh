@@ -9,4 +9,4 @@ DIR_NAME="$(dirname "$0")"
   envsubst < "$common_folder/envoy.tmpl.yaml" > "$DIR_NAME/envoy.yaml"
 )
 docker-compose -f "$DIR_NAME/docker-compose.yaml" -p catalog --env-file .env.local down || echo "already down"
-docker-compose -f "$DIR_NAME/docker-compose.yaml" -p catalog --env-file .env.local up -d > "$DIR_NAME/envoy.log"
+docker-compose -f "$DIR_NAME/docker-compose.yaml" -p catalog --env-file .env.local up

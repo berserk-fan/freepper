@@ -32,15 +32,32 @@ class ConvertersTest extends AnyFunSuite with Matchers with EitherValues {
 
   test("update category should get description") {
     val catId = CategoryUUID(UUID.randomUUID())
-    val category = api.Category(CategoryName(CategoryRefId.Uid(catId)).toNameString,
-                                catId.value.toString,
-                                "some-id",
-                                "somename",
-                                "descr")
+    val category = api.Category(
+      CategoryName(CategoryRefId.Uid(catId)).toNameString,
+      catId.value.toString,
+      "some-id",
+      "somename",
+      "descr"
+    )
     val res =
       Converters.toDomain(UpdateCategoryRequest(Some(category), Some(FieldMask.of(Seq("description", "readable_id")))))
     res.description shouldBe defined
     res.displayName should equal(None)
+    res.readableId shouldBe defined
+  }
+
+  test("field mask should support *") {
+    val catId = CategoryUUID(UUID.randomUUID())
+    val category = api.Category(
+      CategoryName(CategoryRefId.Uid(catId)).toNameString,
+      catId.value.toString,
+      "some-id",
+      "somename",
+      "descr"
+    )
+    val res =
+      Converters.toDomain(UpdateCategoryRequest(Some(category), Some(FieldMask.of(Seq("*")))))
+    res.description shouldBe defined
     res.readableId shouldBe defined
   }
 }

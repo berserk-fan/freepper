@@ -1,8 +1,9 @@
 package ua.pomo.catalog.app
 
 import cats.implicits.toShow
+import com.google.protobuf.field_mask.FieldMask
 import io.circe.{Decoder, Encoder, parser}
-import scalapb.FieldMaskUtil
+import scalapb.{FieldMaskUtil, GeneratedMessage, GeneratedMessageCompanion}
 import squants.market.Money
 import ua.pomo.catalog.api
 import ua.pomo.catalog.api.{
@@ -20,6 +21,8 @@ import ua.pomo.catalog.api.{
   GetProductRequest,
   ListCategoriesRequest,
   ListCategoriesResponse,
+  ListImageListsRequest,
+  ListImageListsResponse,
   ListModelsRequest,
   ListModelsResponse,
   ListProductsRequest,
@@ -85,6 +88,15 @@ object Converters {
   def toDomain(listModels: ListModelsRequest): ModelQuery = {
     val categoryId = ApiName.models(listModels.parent).toTry.get.categoryId.uid
     ModelQuery(ModelSelector.CategoryIdIs(categoryId), parseToken(listModels.pageToken, listModels.pageSize))
+  }
+
+  def toDomain(listImages: ListImageListsRequest): ImageListQuery = {
+    ApiName.imageLists(listImages.parent).toTry.get
+    ImageListQuery(ImageListSelector.All, parseToken(listImages.pageToken, listImages.pageSize))
+  }
+
+  def toApi(listImages: FindImageListResponse): ListImageListsResponse = {
+    ListImageListsResponse(listImages.imageLists.map(toApi), toApi(listImages.nextPageToken))
   }
 
   def toApi(findModelResponse: FindModelResponse): ListModelsResponse = {
@@ -193,7 +205,7 @@ object Converters {
 
   def toDomain(request: UpdateImageListRequest): ImageListUpdate = {
     val id = ApiName.imageList(request.imageList.get.name).toTry.get.id
-    val obj = FieldMaskUtil.applyFieldMask(request.imageList.get, request.updateMask.get)
+    val obj = applyFieldMask(request.imageList.get, request.updateMask.get)
     ImageListUpdate(
       id,
       nonEmptyString(obj.displayName).map(ImageListDisplayName.apply),
@@ -209,7 +221,7 @@ object Converters {
   def toDomain(request: UpdateModelRequest): UpdateModel = {
     val model = request.model.get
     val modelName = ApiName.model(model.name).toTry.get
-    val model2 = FieldMaskUtil.applyFieldMask(model, request.updateMask.get)
+    val model2 = applyFieldMask(model, request.updateMask.get)
     val imageListId = model2.imageList.map(_.name).map(ApiName.imageList).map(_.toTry.get.id)
     UpdateModel(
       modelName.modelId,
@@ -279,11 +291,19 @@ object Converters {
   private def nonEmptyString(s: String): Option[String] = Option.when(s.nonEmpty)(s)
   private def nonEmptyList[T](l: List[T]): Option[List[T]] = Option.when(l.nonEmpty)(l)
 
+  def applyFieldMask[M <: GeneratedMessage: GeneratedMessageCompanion](m: M, fieldMask: FieldMask): M = {
+    if (fieldMask.paths == Seq("*")) {
+      m
+    } else {
+      FieldMaskUtil.applyFieldMask(m, fieldMask)
+    }
+  }
+
   def toDomain(request: UpdateCategoryRequest): UpdateCategory = {
     val category1 = request.category.get
     val categoryId = ApiName.category(category1.name).map(_.categoryId).toTry.get.uid
     val fieldMask = request.updateMask.get
-    val category = FieldMaskUtil.applyFieldMask(category1, fieldMask)
+    val category = applyFieldMask(category1, fieldMask)
     UpdateCategory(
       categoryId,
       nonEmptyString(category.readableId).map(CategoryReadableId.apply),

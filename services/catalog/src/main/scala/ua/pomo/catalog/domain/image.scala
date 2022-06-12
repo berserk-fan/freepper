@@ -34,10 +34,14 @@ object image {
   @derive(eqv, show)
   case class ImageListUpdate(id: ImageListId, displayName: Option[ImageListDisplayName], images: Option[List[Image]])
 
-  case class ImageListQuery(pageToken: PageToken.NonEmpty, selector: ImageListSelector)
+  case class ImageListQuery(selector: ImageListSelector, page: PageToken.NonEmpty)
+
+  @derive(eqv, show)
+  case class FindImageListResponse(imageLists: List[ImageList], nextPageToken: PageToken)
 
   sealed trait ImageListSelector
   object ImageListSelector {
+    final case object All extends ImageListSelector
     final case class IdsIn(ids: NonEmptyList[ImageListId]) extends ImageListSelector
   }
 
@@ -55,5 +59,6 @@ object image {
     def get(id: ImageListId): F[ImageList]
     def update(imageList: ImageListUpdate): F[ImageList]
     def delete(imageListId: ImageListId): F[Unit]
+    def find(query: ImageListQuery): F[FindImageListResponse]
   }
 }

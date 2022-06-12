@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "proxy": "lcp --proxyUrl http://localhost:8080 --port 8079",
     "generate:apis": "sh proto_gen.sh ../services/catalog/src/main/protobuf",
     "build": "wget -O ./validate.proto 'https://raw.githubusercontent.com/envoyproxy/protoc-gen-validate/main/validate/validate.proto'; npm run generate:apis && next build",
     "start": "next start",
@@ -80,6 +81,7 @@
     "google-protobuf": "^3.14.0",
     "grpc-tools": "latest",
     "html-react-parser": "^1.2.4",
+    "local-cors-proxy": "^1.1.0",
     "next-unused": "^0.0.3",
     "postcss": "^8.2.13",
     "postcss-flexbugs-fixes": "^5.0.2",

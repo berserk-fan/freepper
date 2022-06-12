@@ -20,6 +20,7 @@ import Spacing from "../Commons/Spacing";
 import Price from "../Shop/Price";
 import { createSizes, SizesSpec } from "../../commons/sizes";
 import ParameterPicker from "./ParameterPicker";
+import { indexProducts } from "../../commons/utils";
 
 const Markdown = dynamic(() => import("../Markdown/Renderers"));
 
@@ -72,13 +73,7 @@ function ProductPage({
 
   // we need it to find product using parameterIds
   const indexed: Record<string, Product> = React.useMemo(
-    () =>
-      Object.fromEntries(
-        products.map((p) => [
-          p.parameterIds.sort((a, b) => a.localeCompare(b)).join(),
-          p,
-        ]),
-      ),
+    () => indexProducts(products),
     [products],
   );
 
@@ -107,6 +102,10 @@ function ProductPage({
   function addToCart() {
     addProduct({ product, model, count: 1 });
   }
+
+  const showParameterPicker = !(
+    parameterLists.length === 1 && parameterLists[0].parameters.length === 1
+  );
 
   const fabs = [
     {
@@ -152,21 +151,26 @@ function ProductPage({
               <Price price={product.price.standard} />
             </Typography>
             <Divider />
-            <div>
-              {parameterLists.map((parameterList) => (
-                <ParameterPicker
-                  key={parameterList.uid}
-                  parameterList={parameterList}
-                  selectedParameterId={curParamIds[parameterList.uid]}
-                  onChange={(newId) =>
-                    setCurParamIds((prev) => ({
-                      ...prev,
-                      [parameterList.uid]: newId,
-                    }))
-                  }
-                />
-              ))}
-            </div>
+
+            {showParameterPicker ? (
+              <span />
+            ) : (
+              <div>
+                {parameterLists.map((parameterList) => (
+                  <ParameterPicker
+                    key={parameterList.uid}
+                    parameterList={parameterList}
+                    selectedParameterId={curParamIds[parameterList.uid]}
+                    onChange={(newId) =>
+                      setCurParamIds((prev) => ({
+                        ...prev,
+                        [parameterList.uid]: newId,
+                      }))
+                    }
+                  />
+                ))}
+              </div>
+            )}
             <Divider />
             <Box width="100%" height="50px">
               {(inCart ? fabs : fabs.reverse()).map((fab) => (

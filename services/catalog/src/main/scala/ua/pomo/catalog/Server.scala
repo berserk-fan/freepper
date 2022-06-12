@@ -2,11 +2,12 @@ package ua.pomo.catalog
 
 import cats.effect.kernel.Resource
 import cats.effect.{IO, IOApp}
+import cats.kernel.Monoid
 import fs2.grpc.syntax.all.fs2GrpcSyntaxServerBuilder
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder
 import io.grpc.protobuf.services.ProtoReflectionService
 import ua.pomo.catalog.api.CatalogFs2Grpc
-import ua.pomo.catalog.app.programs.modifiers.{PageDefaultsApplier, ReadableIdInNamesResolver}
+import ua.pomo.catalog.app.programs.modifiers.{MessageModifier, PageDefaultsApplier, ReadableIdInNamesResolver}
 import ua.pomo.catalog.app.CatalogImpl
 import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ImageListServiceImpl, ModelServiceImpl, ProductServiceImpl}
 import ua.pomo.catalog.infrastructure.persistance.{
@@ -29,8 +30,9 @@ object Server extends IOApp.Simple {
       productService = ProductServiceImpl(transactor, ProductRepositoryImpl())
       resolver = ReadableIdInNamesResolver[IO](CategoryRepositoryImpl.withEffect[IO](transactor.trans))
       pageDefaultsApplier = PageDefaultsApplier[IO](config.catalog.defaultPageSize)
+      modifier = Monoid[MessageModifier[IO]].combineAll(List(resolver, pageDefaultsApplier))
       catalogService = CatalogFs2Grpc.bindServiceResource[IO](
-        CatalogImpl(productService, categoryService, modelService, imageListService, resolver, pageDefaultsApplier)
+        CatalogImpl(productService, categoryService, modelService, imageListService, modifier)
       )
     } yield catalogService.flatMap { service =>
       NettyServerBuilder
