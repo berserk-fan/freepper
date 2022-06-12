@@ -21,11 +21,8 @@ case class CatalogImpl[F[_]: Async] private (
     categoryService: category.CategoryService[F],
     modelService: model.ModelService[F],
     imageListService: ImageListService[F],
-    readableIdResolver1: ReadableIdInNamesResolver[F],
-    pageDefaultsApplier: PageDefaultsApplier[F]
+    modifications: MessageModifier[F]
 ) extends CatalogFs2Grpc[F, Metadata] {
-
-  private val modifications = Monoid[MessageModifier[F]].combineAll(List(readableIdResolver1, pageDefaultsApplier))
 
   implicit def logger: Logger[F] = Slf4jLogger.getLogger[F]
 
@@ -181,7 +178,13 @@ case class CatalogImpl[F[_]: Async] private (
       .as(Empty())
   }
 
-  override def listImageLists(request: ListImageListsRequest, ctx: Metadata): F[ListImageListsResponse] = ???
+  override def listImageLists(request: ListImageListsRequest, ctx: Metadata): F[ListImageListsResponse] = adaptError {
+    validate(request)
+      .flatMap(_ => modifications.modify(request))
+      .map(Converters.toDomain)
+      .flatMap(imageListService.find)
+      .map(Converters.toApi)
+  }
 
   private def adaptError[T](f: => F[T]): F[T] = {
     Async[F]

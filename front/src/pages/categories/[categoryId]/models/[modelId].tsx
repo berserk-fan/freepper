@@ -1,6 +1,6 @@
 import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
-import shopNode from "commons/shop-node";
+import grpcClient from "commons/shop-node";
 import FoundProductPage from "components/ProductPage/FoundProductPage";
 import LayoutWithHeaderAndFooter from "components/Layout/LayoutWithHeaderAndFooter";
 import Box from "@material-ui/core/Box/Box";
@@ -32,10 +32,10 @@ export default function ProductPage({
 export const getStaticProps: GetStaticProps = async (context) => {
   const { categoryId, modelId } = context.params;
   const modelName = `categories/${categoryId}/models/${modelId}`;
-  const model: Model = await shopNode.getModel({
+  const model: Model = await grpcClient().getModel({
     name: modelName,
   });
-  const products: Product[] = await shopNode
+  const products: Product[] = await grpcClient()
     .listProducts({
       parent: `${modelName}/products`,
       pageSize: 200,
@@ -47,13 +47,13 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const cats = await shopNode.listCategories({
+  const cats = await grpcClient().listCategories({
     parent: "categories",
     pageSize: 100,
   });
   const models1 = await Promise.all(
     cats.categories.map((cat) =>
-      shopNode
+      grpcClient()
         .listModels({
           parent: `${cat.name}/models`,
           pageSize: 100,

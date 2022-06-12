@@ -20,6 +20,7 @@ import Spacing from "../Commons/Spacing";
 import Price from "../Shop/Price";
 import { createSizes, SizesSpec } from "../../commons/sizes";
 import ParameterPicker from "./ParameterPicker";
+import { indexProducts } from "../../commons/utils";
 
 const Markdown = dynamic(() => import("../Markdown/Renderers"));
 
@@ -72,13 +73,7 @@ function ProductPage({
 
   // we need it to find product using parameterIds
   const indexed: Record<string, Product> = React.useMemo(
-    () =>
-      Object.fromEntries(
-        products.map((p) => [
-          p.parameterIds.sort((a, b) => a.localeCompare(b)).join(),
-          p,
-        ]),
-      ),
+    () => indexProducts(products),
     [products],
   );
 

@@ -26,11 +26,13 @@ class InMemoryImageListRepositoryImpl[F[_]: MonadThrow] private (var mapRef: Ref
     val filter = query.selector match {
       case ImageListSelector.IdsIn(ids) =>
         (i: ImageList) => ids.toList.toSet.contains(i.id)
+      case ImageListSelector.All =>
+        (i: ImageList) => true
     }
     map.values
       .filter(filter)
       .toList
-      .slice(query.pageToken.offset.toInt, query.pageToken.offset.toInt + query.pageToken.size.toInt)
+      .slice(query.page.offset.toInt, query.page.offset.toInt + query.page.size.toInt)
   }
 
   override def update(command: ImageListUpdate): F[Int] = mapRef.modify { map =>

@@ -3,6 +3,8 @@ package ua.pomo.catalog
 import cats.effect.{IO, Resource}
 import cats.effect.unsafe.implicits.global
 import cats.implicits.toTraverseOps
+import cats.kernel.Monoid
+import com.google.protobuf.field_mask.FieldMask
 import io.grpc.{Metadata, Status, StatusException}
 import ua.pomo.catalog.api.{
   CatalogFs2Grpc,
@@ -13,7 +15,8 @@ import ua.pomo.catalog.api.{
   ImageList,
   ListModelsRequest,
   Money,
-  ParameterList
+  ParameterList,
+  UpdateModelRequest
 }
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ImageListServiceImpl, ModelServiceImpl, ProductServiceImpl}
@@ -26,8 +29,8 @@ import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbRe
 import ua.pomo.catalog.shared.Generators.ToLazyListOps
 import doobie.implicits._
 import doobie.postgres.implicits._
-import ua.pomo.catalog.app.CatalogImpl
-import ua.pomo.catalog.app.programs.modifiers.{PageDefaultsApplier, ReadableIdInNamesResolver}
+import ua.pomo.catalog.app.{CatalogImpl, Converters}
+import ua.pomo.catalog.app.programs.modifiers.{MessageModifier, PageDefaultsApplier, ReadableIdInNamesResolver}
 import ua.pomo.catalog.infrastructure.persistance._
 
 import java.util.UUID
@@ -46,10 +49,9 @@ class CatalogImplTest extends DbUnitTestSuite {
     val modelService = ModelServiceImpl.makeInMemory[IO].unsafeRunSync()
     val imageListService = ImageListServiceImpl.makeInMemory[IO]
     val productService = ProductServiceImpl.makeInMemory[IO].unsafeRunSync()
-    val resolver = ReadableIdInNamesResolver(CategoryRepositoryImpl.makeInMemory[IO].unsafeRunSync())
     val defaultsApplier = PageDefaultsApplier[IO](config.defaultPageSize)
     val catalogImpl =
-      CatalogImpl[IO](productService, categoryService, modelService, imageListService, resolver, defaultsApplier)
+      CatalogImpl[IO](productService, categoryService, modelService, imageListService, defaultsApplier)
     (categoryService, modelService, catalogImpl)
   }
 
@@ -78,7 +80,8 @@ class CatalogImplTest extends DbUnitTestSuite {
     val page3 = impl.listModels(ListModelsRequest(modelsCol, pageLength, page2.nextPageToken), null).unsafeRunSync()
     page3.models.length should equal(2)
     impl.listModels(ListModelsRequest(modelsCol, 0, ""), null).unsafeRunSync().models.length should equal(
-      config.defaultPageSize)
+      config.defaultPageSize
+    )
 
     val ex = intercept[StatusException] {
       impl.listModels(ListModelsRequest(modelsCol, -1), null).unsafeRunSync()
@@ -127,7 +130,8 @@ class CatalogImplTest extends DbUnitTestSuite {
       CreateModelRequest(ModelsName(CategoryRefId.Uid(CategoryUUID(UUID.randomUUID()))).toNameString, Some(modelReq))
     val model = impl.createModel(req, null).unsafeRunSync()
     model.copy(parameterLists = paramList, imageList = imageList) should equal(
-      modelReq.copy(name = model.name, uid = model.uid))
+      modelReq.copy(name = model.name, uid = model.uid)
+    )
 
     val modelReq2 = api.Model(
       "",
@@ -147,7 +151,8 @@ class CatalogImplTest extends DbUnitTestSuite {
   test("delete model") {
     val (_, models, impl) = makeImpls
     DeleteModelRequest(
-        ModelName(CategoryRefId.Uid(CategoryUUID(UUID.randomUUID())), ModelId(UUID.randomUUID())).toNameString)
+      ModelName(CategoryRefId.Uid(CategoryUUID(UUID.randomUUID())), ModelId(UUID.randomUUID())).toNameString
+    )
     val mod1 =
       models.create(Generators.Model.createGen(ImageListId(UUID.randomUUID()), List()).sample.get).unsafeRunSync()
     noException should be thrownBy impl
@@ -162,12 +167,25 @@ class CatalogImplTest extends DbUnitTestSuite {
   test("create category description not empty") {
     val (_, _, impl) = makeImpls
     val response = impl
-      .createCategory(CreateCategoryRequest("categories",
-                                            Some(api.Category(displayName = "a", description = "c", readableId = "d"))),
-                      null)
+      .createCategory(
+        CreateCategoryRequest("categories", Some(api.Category(displayName = "a", description = "c", readableId = "d"))),
+        null
+      )
       .unsafeRunSync()
 
     response.description should equal("c")
+  }
+
+  test("update model must support *") {
+    val (_, modelService, impl) = makeImpls
+    val model = Generators.Model.createGen(ImageListId(UUID.randomUUID()), List()).sample.get
+    val res = modelService.create(model).unsafeRunSync()
+    val newDescr = ModelDescription("hello world")
+    val updated = res.copy(description = newDescr)
+    noException should be thrownBy impl
+      .updateModel(UpdateModelRequest(Some(Converters.toApi(updated)), Some(FieldMask.of(Seq("*")))), null)
+      .unsafeRunSync()
+    modelService.get(updated.id).unsafeRunSync().description should equal(newDescr)
   }
 
 }

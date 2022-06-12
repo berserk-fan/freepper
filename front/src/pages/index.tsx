@@ -1,15 +1,15 @@
 import { GetStaticProps } from "next";
 import { Home, HotDealsWithCategory } from "../components/Pages/Home";
-import shopNode from "../commons/shop-node";
+import grpcClient from "../commons/shop-node";
 import { removeUndefined } from "../commons/utils";
 
 export default Home;
 
 export const getStaticProps: GetStaticProps = async () => {
-  const category = await shopNode.getCategory({
+  const category = await grpcClient().getCategory({
     name: "categories/beds",
   });
-  const { models } = await shopNode.listModels({
+  const { models } = await grpcClient().listModels({
     parent: `categories/beds/models`,
     pageSize: 3,
   });

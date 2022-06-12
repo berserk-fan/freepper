@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Product_Price } from "apis/product.pb";
+import { Product, Product_Price } from "apis/product.pb";
 import { Money } from "apis/money.pb";
 
 export function checkExhaustive(_: never): never {
@@ -17,4 +17,13 @@ export function getCurrentPrice(s: Product_Price): Money {
 // https://github.com/vercel/next.js/discussions/11209
 export function removeUndefined<T>(t: T): T {
   return JSON.parse(JSON.stringify(t));
+}
+
+export function indexProducts(products: Product[]) {
+  return Object.fromEntries(
+    products.map((p) => [
+      p.parameterIds.sort((a, b) => a.localeCompare(b)).join(),
+      p,
+    ]),
+  );
 }

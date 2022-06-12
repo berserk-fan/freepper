@@ -1,0 +1,426 @@
+[
+  {
+    "uid": "055175cf-61e8-445a-ab5b-0dbf69e48380",
+    "displayName": "Размер Колорадо",
+    "parameters": [
+      {
+        "uid": "60973861-3f6c-4472-b173-6773e732644e",
+        "displayName": "S",
+        "image": null
+      },
+      {
+        "uid": "94c6b090-4dca-4116-8a68-20742d3613ab",
+        "displayName": "M",
+        "image": null
+      },
+      {
+        "uid": "4425ead3-016e-470a-8f7d-02207be7a7c7",
+        "displayName": "L",
+        "image": null
+      },
+      {
+        "uid": "5d7eb450-16e8-4219-a59a-80a99019b1da",
+        "displayName": "XL",
+        "image": null
+      }
+    ]
+  },
+  {
+    "uid": "1052ff77-c450-4174-a7d8-eb4c0a78d649",
+    "displayName": "Размер Норки",
+    "parameters": [
+      {
+        "uid": "d92435ff-3165-47a5-8c53-aba7489b144d",
+        "displayName": "XS",
+        "image": null
+      },
+      {
+        "uid": "a06be21a-13e0-496b-8f1a-320dc84dee1b",
+        "displayName": "S",
+        "image": null
+      },
+      {
+        "uid": "1516e27d-b606-4a1c-99a4-44502560f0b0",
+        "displayName": "M",
+        "image": null
+      },
+      {
+        "uid": "67989176-2edb-42f0-829e-200c97c20459",
+        "displayName": "L",
+        "image": null
+      }
+    ]
+  },
+  {
+    "uid": "2c2bd0b6-40d1-4432-aafd-7b6a02195ca6",
+    "displayName": "Размер Подушки",
+    "parameters": [
+      {
+        "uid": "4af1fcc0-8a3b-444a-ba8b-1d2e18a56502",
+        "displayName": "S",
+        "image": null
+      },
+      {
+        "uid": "26e68c54-943a-40df-8359-db8500b4747f",
+        "displayName": "M",
+        "image": null
+      },
+      {
+        "uid": "b7e7a84e-c54a-40b5-9a41-90ad64af7886",
+        "displayName": "L",
+        "image": null
+      }
+    ]
+  },
+  {
+    "uid": "06df31da-7984-4a44-824a-36f266b1bedf",
+    "displayName": "Размер Чемодана",
+    "parameters": [
+      {
+        "uid": "1252e8f0-532c-4572-a059-18863f0457cd",
+        "displayName": "S",
+        "image": null
+      },
+      {
+        "uid": "475e0454-24c1-44c0-bf2d-0c5299639b77",
+        "displayName": "M",
+        "image": null
+      },
+      {
+        "uid": "5173b18c-4319-4c73-b57f-a44d7d058223",
+        "displayName": "L",
+        "image": null
+      },
+      {
+        "uid": "4b9dfd19-2df8-4bc6-8524-158957858970",
+        "displayName": "XL",
+        "image": null
+      },
+      {
+        "uid": "051d7a24-ed65-4550-a352-e8c1ea879dd2",
+        "displayName": "XXL",
+        "image": null
+      }
+    ]
+  },
+  {
+    "uid": "22cb1f6a-fd0b-466f-aeb8-1b2a0d1ab589",
+    "displayName": "Размер Квадро",
+    "parameters": [
+      {
+        "uid": "e78e729c-00f6-42b5-873b-e59261a503c9",
+        "displayName": "XS",
+        "image": null
+      },
+      {
+        "uid": "85ae3f22-808d-4136-a7e6-9345791919bd",
+        "displayName": "S",
+        "image": null
+      },
+      {
+        "uid": "c189a362-bc35-4e21-8d13-1c44e11e3fe0",
+        "displayName": "M",
+        "image": null
+      },
+      {
+        "uid": "48e7a430-72d7-4e06-9e0b-c0363b09dccf",
+        "displayName": "L",
+        "image": null
+      },
+      {
+        "uid": "2290c21a-58e4-4035-847a-00646657503c",
+        "displayName": "XL",
+        "image": null
+      },
+      {
+        "uid": "9fb7defe-0961-4e11-85d5-1572bb92da36",
+        "displayName": "XXL",
+        "image": null
+      }
+    ]
+  },
+  {
+    "uid": "ff50ea93-4616-4827-828f-13bbf2af73b3",
+    "displayName": "Размер Лукошко",
+    "parameters": [
+      {
+        "uid": "00e7e17d-2c55-4217-816a-b79fbedb6cfc",
+        "displayName": "XS",
+        "image": null
+      },
+      {
+        "uid": "00662e87-c18d-4582-bdf1-368a41b75b56",
+        "displayName": "S",
+        "image": null
+      },
+      {
+        "uid": "0cad62e9-fa5f-423c-84f0-ced8725be9a0",
+        "displayName": "M",
+        "image": null
+      },
+      {
+        "uid": "7aa8ded3-e474-4586-b9a6-83929cd0729e",
+        "displayName": "L",
+        "image": null
+      }
+    ]
+  },
+  {
+    "uid": "cff27f33-669f-453b-96fe-80fa7ca64f2f",
+    "displayName": "Размер Кресла",
+    "parameters": [
+      {
+        "uid": "b3d882c0-6aac-4a99-ac8c-e70ed79ea351",
+        "displayName": "S",
+        "image": null
+      },
+      {
+        "uid": "ebcea303-5a1c-433a-be34-4305858e8b83",
+        "displayName": "M",
+        "image": null
+      }
+    ]
+  },
+  {
+    "uid": "9f2c1294-7326-4654-a0c7-cc8e5bb367a9",
+    "displayName": "Тканина AV",
+    "parameters": [
+      {
+        "uid": "80d76fdc-9a1a-4d82-8469-4a6c4df4241c",
+        "displayName": "Алюминий",
+        "image": {
+          "src": "/fabrics/av/av-01.png",
+          "alt": "Ткань цвета алюминий"
+        }
+      },
+      {
+        "uid": "551d256f-746f-4d38-bce9-7a6e8b989b3d",
+        "displayName": "Серый туман",
+        "image": {
+          "src": "/fabrics/av/av-02.png",
+          "alt": "Ткань цвета серый туман"
+        }
+      },
+      {
+        "uid": "c2046102-da82-41f1-8cd5-cf77426e08eb",
+        "displayName": "Сантал",
+        "image": {
+          "src": "/fabrics/av/av-04.png",
+          "alt": "Ткань цвета сантал"
+        }
+      },
+      {
+        "uid": "0b2c637a-ec9d-446b-9c5b-1d4bd5ab4a1a",
+        "displayName": "Какао",
+        "image": {
+          "src": "/fabrics/av/av-06.png",
+          "alt": "Ткань цвета какао"
+        }
+      },
+      {
+        "uid": "6e1cdab2-5849-4410-a21f-6623ec34784f",
+        "displayName": "Желтый",
+        "image": {
+          "src": "/fabrics/av/av-07.png",
+          "alt": "Ткань желтого цвета"
+        }
+      },
+      {
+        "uid": "8294fb54-d31a-4f9a-a689-7850038f8985",
+        "displayName": "Пыльная роза",
+        "image": {
+          "src": "/fabrics/av/av-10.png",
+          "alt": "Ткань цвета пыльная роза"
+        }
+      },
+      {
+        "uid": "15fcb877-0030-47c4-ab3d-89eea546d85c",
+        "displayName": "Бирюза",
+        "image": {
+          "src": "/fabrics/av/av-11.png",
+          "alt": "Ткань цвета Бирюза"
+        }
+      },
+      {
+        "uid": "d820c7e3-5a45-48f3-b199-128df22793b2",
+        "displayName": "Изумруд",
+        "image": {
+          "src": "/fabrics/av/av-12.png",
+          "alt": "Ткань цвета изумруд"
+        }
+      },
+      {
+        "uid": "0603c41e-859a-48c8-b3ec-a9d28ea4b021",
+        "displayName": "Гольфстрим",
+        "image": {
+          "src": "/fabrics/av/av-13.png",
+          "alt": "Ткань цвета васаби"
+        }
+      },
+      {
+        "uid": "383b7b3d-1cb6-4179-af8c-4fceb09bd7b2",
+        "displayName": "Астронавт",
+        "image": {
+          "src": "/fabrics/av/av-14.png",
+          "alt": "Ткань цвета астронавт"
+        }
+      },
+      {
+        "uid": "7c9e49b8-a46b-437d-b841-02b3204a40d7",
+        "displayName": "Серебро",
+        "image": {
+          "src": "/fabrics/av/av-15.png",
+          "alt": "Ткань цвета серебро"
+        }
+      },
+      {
+        "uid": "3397deb4-5258-46c7-83f1-a64d78e53b87",
+        "displayName": "Серый",
+        "image": {
+          "src": "/fabrics/av/av-17.png",
+          "alt": "Ткань серого цвета"
+        }
+      },
+      {
+        "uid": "e30545ea-f80a-4496-b3be-698e0f2053cc",
+        "displayName": "Черный",
+        "image": {
+          "src": "/fabrics/av/av-18.png",
+          "alt": "Черная ткань"
+        }
+      },
+      {
+        "uid": "b8384a60-92c0-4264-9318-fa94e3392ff8",
+        "displayName": "Какао и Роза",
+        "image": {
+          "src": "/fabrics/av/av-06-10.png",
+          "alt": "Ткань цвета какао и розы"
+        }
+      },
+      {
+        "uid": "fac988f6-5cde-4f06-af14-c8578567dc68",
+        "displayName": "Желтый и Черный",
+        "image": {
+          "src": "/fabrics/av/av-07-18.png",
+          "alt": "Ткань черного и розового цвета"
+        }
+      }
+    ]
+  },
+  {
+    "uid": "b2623838-eb77-4079-ad1f-3d2a4a13e7b3",
+    "displayName": "Тканина Сумка",
+    "parameters": [
+      {
+        "uid": "2b4a137b-2a92-4383-88b9-f6b94ea86862",
+        "displayName": "Черный",
+        "image": {
+          "src": "/fabrics/av/av-18.png",
+          "alt": "Черная ткань"
+        }
+      }
+    ]
+  },
+  {
+    "uid": "03fa17fe-1e9e-46be-8dbc-5612af75dbcb",
+    "displayName": "Тканина VIC",
+    "parameters": [
+      {
+        "uid": "5453d36f-a3bd-4636-9802-1727827de0ff",
+        "displayName": "Молочный",
+        "image": {
+          "src": "/fabrics/vic/vic-20.JPG",
+          "alt": "Молочная ткань"
+        }
+      },
+      {
+        "uid": "7723d2aa-f13f-4e1e-a577-3faf53cd36c0",
+        "displayName": "Капучино",
+        "image": {
+          "src": "/fabrics/vic/vic-21.JPG",
+          "alt": "Ткань цвета капучино"
+        }
+      },
+      {
+        "uid": "e4640520-08ba-4c48-98d1-765c6a522390",
+        "displayName": "Olive Grey",
+        "image": {
+          "src": "/fabrics/vic/vic-22.JPG",
+          "alt": "Ткань оливково серого цвета"
+        }
+      },
+      {
+        "uid": "0ccb1226-630c-4d9c-bf56-192354951a22",
+        "displayName": "Хиллари",
+        "image": {
+          "src": "/fabrics/vic/vic-32.JPG",
+          "alt": "Ткань цвета хиллари"
+        }
+      },
+      {
+        "uid": "fea6dc8e-9e47-4163-a5e5-d3d38a228399",
+        "displayName": "Кофе",
+        "image": {
+          "src": "/fabrics/vic/vic-34.JPG",
+          "alt": "Ткань цвета кофе"
+        }
+      },
+      {
+        "uid": "cd025a6e-d5b2-4a67-a10c-37dbec742431",
+        "displayName": "Шоколад",
+        "image": {
+          "src": "/fabrics/vic/vic-36.JPG",
+          "alt": "Ткань цвета шоколад"
+        }
+      },
+      {
+        "uid": "f1b21e8f-403a-47c9-a7e9-2387bf779e8c",
+        "displayName": "Орхидея",
+        "image": {
+          "src": "/fabrics/vic/vic-66.JPG",
+          "alt": "Ткань цвета орхидея"
+        }
+      },
+      {
+        "uid": "2daa2f76-f42e-4bcf-9a43-4075f2017d0a",
+        "displayName": "Васаби",
+        "image": {
+          "src": "/fabrics/vic/vic-70.JPG",
+          "alt": "Ткань цвета васаби"
+        }
+      },
+      {
+        "uid": "7e9e69dc-e18d-4eda-bb3a-d27a5aa8f15e",
+        "displayName": "Аквамарин",
+        "image": {
+          "src": "/fabrics/vic/vic-80.JPG",
+          "alt": "Ткань цвета аквамарин"
+        }
+      },
+      {
+        "uid": "74f40837-8215-4ec5-9b8c-23a961fa36a8",
+        "displayName": "Синий зодиак",
+        "image": {
+          "src": "/fabrics/vic/vic-88.JPG",
+          "alt": "Ткань цвета синий зодиак"
+        }
+      },
+      {
+        "uid": "ff90a149-e2fa-461f-b8d0-57cd003f7a89",
+        "displayName": "Серебро",
+        "image": {
+          "src": "/fabrics/vic/vic-93.JPG",
+          "alt": "Ткань цвета серебро"
+        }
+      },
+      {
+        "uid": "ffa18591-c872-4781-b9a3-10986da8547f",
+        "displayName": "Черный",
+        "image": {
+          "src": "/fabrics/vic/vic-100.JPG",
+          "alt": "Ткань цвета черный"
+        }
+      }
+    ]
+  }
+]

@@ -11,7 +11,6 @@ import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.image._
 import shapeless._
 
-
 object ImageListRepositoryImpl {
   def apply(): ImageListRepository[ConnectionIO] = {
     new ImageListRepositoryImpl()
@@ -33,7 +32,7 @@ object ImageListRepositoryImpl {
 
     override def find(id: ImageListId): ConnectionIO[Option[ImageList]] = {
       Queries
-        .findImageList(ImageListQuery(PageToken.NonEmpty(2, 0), ImageListSelector.IdsIn(NonEmptyList.of(id))))
+        .findImageList(ImageListQuery(ImageListSelector.IdsIn(NonEmptyList.of(id)), PageToken.NonEmpty(2, 0)))
         .option
     }
 
@@ -70,6 +69,7 @@ object ImageListRepositoryImpl {
       val im = Fragment.const0(alias)
       where match {
         case ImageListSelector.IdsIn(ids) => Fragments.in(fr"$im.id", ids)
+        case ImageListSelector.All        => fr"1 = 1"
       }
     }
 
@@ -88,8 +88,8 @@ object ImageListRepositoryImpl {
             where ${compile("il", query.selector)}
             group by il.id, il.create_time
             order by il.create_time
-            limit ${query.pageToken.size}
-            offset ${query.pageToken.offset}
+            limit ${query.page.size}
+            offset ${query.page.offset}
          """
         .query[ImageList]
     }

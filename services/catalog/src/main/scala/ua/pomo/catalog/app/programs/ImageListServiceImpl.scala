@@ -2,7 +2,7 @@ package ua.pomo.catalog.app.programs
 
 import cats.arrow.FunctionK
 import cats.effect.{Async, Sync}
-import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps}
+import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import cats.~>
 import doobie.{ConnectionIO, Transactor}
 import ua.pomo.catalog.domain.error.NotFound
@@ -38,6 +38,13 @@ class ImageListServiceImpl[F[_]: Async, G[_]: Sync] private (xa: G ~> F, reposit
           ().pure[G]
         }
       }
+      .mapK(xa)
+  }
+
+  override def find(query: ImageListQuery): F[FindImageListResponse] = {
+    repository
+      .query(query)
+      .map(imageLists => FindImageListResponse(imageLists, computeNextPageToken(query.page, imageLists)))
       .mapK(xa)
   }
 }
