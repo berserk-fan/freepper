@@ -1,7 +1,7 @@
 import { CatalogClientImpl, GrpcWebImpl } from "apis/catalog.pb";
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
 
-const address = "http://localhost:8079/proxy";
+const address = process.env.API_HOST;
 const debug = false;
 
 const shopNode1 = new CatalogClientImpl(
