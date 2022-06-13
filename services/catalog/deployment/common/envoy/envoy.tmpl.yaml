@@ -23,14 +23,14 @@ static_resources:
                         allow_methods: POST
                         allow_headers: keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout
                         expose_headers: grpc-status,grpc-message,x-envoy-upstream-service-time
-                        max-age: "7200"
+                        max_age: "7200"
                       routes:
                         - match: { prefix: "/" }
                           route: { cluster: catalog_service }
                 http_filters:
                   - name: envoy.filters.http.cors
-                  - name: envoy.filters.http.router
                   - name: envoy.filters.http.grpc_web
+                  - name: envoy.filters.http.router
 
     - name: grpc-listener
       address:
