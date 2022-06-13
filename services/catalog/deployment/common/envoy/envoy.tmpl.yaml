@@ -24,12 +24,13 @@ static_resources:
                           - suffix: mamat2.vercel.app
                           - suffix: pogladit-mozhno.vercel.app
                         allow_methods: POST
-                        allow_headers: content-type,x-grpc-web
+                        allow_headers: keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout
+                        expose_headers: grpc-status,grpc-message
                         max-age: "7200"
                 http_filters:
-                  - name: envoy.filters.http.grpc_web
-                  - name: envoy.filters.http.router
                   - name: envoy.filters.http.cors
+                  - name: envoy.filters.http.router
+                  - name: envoy.filters.http.grpc_web
 
     - name: grpc-listener
       address:
