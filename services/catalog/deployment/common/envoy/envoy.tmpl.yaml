@@ -26,6 +26,10 @@ static_resources:
                       - suffix: pomo.in.ua
                       - suffix: mamat2.vercel.app
                       - suffix: pogladit-mozhno.vercel.app
+                    allow_methods: POST
+                    allow_headers: content-type,x-grpc-web
+                    access-control-max-age: 7200
+
     - name: grpc-listener
       address:
         socket_address: { address: 0.0.0.0, port_value: ${ENVOY_GRPC_PORT} }
