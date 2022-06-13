@@ -15,12 +15,23 @@ static_resources:
                   virtual_hosts:
                     - name: local_service
                       domains: ["*"]
+                      cors:
+                        allow_origin_string_match:
+                          - suffix: pomo.in.ua
+                          - suffix: mamat2.vercel.app
+                          - suffix: pogladit-mozhno.vercel.app
+                        allow_methods: POST
+                        allow_headers: keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout
+                        expose_headers: grpc-status,grpc-message,x-envoy-upstream-service-time
+                        max_age: "7200"
                       routes:
                         - match: { prefix: "/" }
                           route: { cluster: catalog_service }
                 http_filters:
+                  - name: envoy.filters.http.cors
                   - name: envoy.filters.http.grpc_web
                   - name: envoy.filters.http.router
+
     - name: grpc-listener
       address:
         socket_address: { address: 0.0.0.0, port_value: ${ENVOY_GRPC_PORT} }

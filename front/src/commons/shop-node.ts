@@ -17,7 +17,6 @@ const shopWeb1 = (address) =>
   new CatalogClientImpl(new GrpcWebImpl(address, { debug }));
 
 export default function getClient() {
-  console.log("PROCESS ENV", process.env.NEXT_PUBLIC_API_HOST);
   if (typeof window === "undefined") {
     return shopNode1(process.env.NEXT_PUBLIC_API_HOST);
   }
