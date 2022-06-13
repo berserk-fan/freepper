@@ -18,17 +18,18 @@ static_resources:
                       routes:
                         - match: { prefix: "/" }
                           route: { cluster: catalog_service }
+                      cors:
+                        allow_origin_string_match:
+                          - suffix: pomo.in.ua
+                          - suffix: mamat2.vercel.app
+                          - suffix: pogladit-mozhno.vercel.app
+                          allow_methods: POST
+                          allow_headers: content-type,x-grpc-web
+                          access-control-max-age: 7200
                 http_filters:
                   - name: envoy.filters.http.grpc_web
                   - name: envoy.filters.http.router
                   - name: envoy.filters.http.cors
-                    allow_origin_string_match:
-                      - suffix: pomo.in.ua
-                      - suffix: mamat2.vercel.app
-                      - suffix: pogladit-mozhno.vercel.app
-                    allow_methods: POST
-                    allow_headers: content-type,x-grpc-web
-                    access-control-max-age: 7200
 
     - name: grpc-listener
       address:
