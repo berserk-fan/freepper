@@ -3,23 +3,25 @@ package ua.pomo.catalog.infrastructure.persistance
 import cats.effect.{IO, Resource}
 import doobie.ConnectionIO
 import doobie.implicits._
+import org.scalacheck.Gen
 import org.scalatest.ParallelTestExecution
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.{CategoryRepository, CategoryUUID}
-import ua.pomo.catalog.domain.image._
+import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
-import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbResources, Resources}
+import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Fixtures, Generators, HasDbResources, Resources}
 
 import java.util.UUID
 
-class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution {
+class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution with Fixtures {
   import ModelRepositoryImpl.Queries
-  case class TestResources(categoryRepo: CategoryRepository[ConnectionIO],
-                           imageListRepo: ImageListRepository[ConnectionIO],
-                           postgres: ModelRepository[ConnectionIO],
-                           db: DbResources,
-                           impls: Seq[Impl])
-      extends HasDbResources
+  case class TestResources(
+      categoryRepo: CategoryRepository[ConnectionIO],
+      imageListRepo: ImageListRepository[ConnectionIO],
+      postgres: ModelRepository[ConnectionIO],
+      db: DbResources,
+      impls: Seq[Impl]
+  ) extends HasDbResources
       with HasImpls
 
   override type Res = TestResources
@@ -46,14 +48,15 @@ class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution
   }
 
   testEachImplR(s"create get delete flow") { (res, impl) =>
-    val category = Generators.Category.create.sample.get
-    val categoryId = res.categoryRepo.create(category).trRun()
+    abstract class fa(
+        val categoryRepo: CategoryRepository[ConnectionIO],
+        val imageListRepo: ImageListRepository[ConnectionIO]
+    ) extends ImageListFixture
+        with CategoryFixture
+    object f extends fa(res.categoryRepo, res.imageListRepo)
 
-    val imageListId1 = res.imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
-    res.imageListRepo.get(imageListId1).trRun()
-
-    forAll(Generators.Model.createGen(imageListId1, List.empty)) { createModel1 =>
-      val createModel = createModel1.copy(categoryId = categoryId)
+    forAll(Generators.Model.createGen(f.imageListId1, List.empty)) { createModel1 =>
+      val createModel = createModel1.copy(categoryId = f.categoryId1)
 
       val id = impl.create(createModel).trRun()
       val found = impl.get(id).trRun()
@@ -69,26 +72,16 @@ class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution
   }
 
   testEachImplR(s"update") { (res, impl) =>
-    val category1 = Generators.Category.create.sample.get
-    val categoryId1 = res.categoryRepo.create(category1).trRun()
-    val category2 = Generators.Category.create.sample.get
-    val categoryId2 = res.categoryRepo.create(category2).trRun()
+    abstract class fa(
+        val imageListRepo: ImageListRepository[ConnectionIO],
+        val categoryRepo: CategoryRepository[ConnectionIO],
+        val modelRepo: ModelRepository[ConnectionIO]
+    ) extends ModelFixture
+    object f extends fa(res.imageListRepo, res.categoryRepo, impl)
 
-    val imageListId1 = res.imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
-    val imageList1 = res.imageListRepo.get(imageListId1).trRun()
-    val imageListId2 = res.imageListRepo.create(Generators.ImageList.gen.sample.get).trRun()
-
-    val createModel =
-      Generators.Model
-        .createGen(imageListId1, List.empty)
-        .sample
-        .get
-        .copy(categoryId = categoryId1, imageListId = imageList1.id)
-    val modelId = impl.create(createModel).trRun()
-
-    forAll(Generators.Model.updateGen(imageListId2, categoryId2)) { update =>
-      impl.update(update.copy(id = modelId)).trRun()
-      val model = impl.get(modelId).trRun()
+    forAll(Generators.Model.updateGen(f.imageListId2, f.categoryId2)) { update =>
+      impl.update(update.copy(id = f.modelId)).trRun()
+      val model = impl.get(f.modelId).trRun()
 
       update.categoryId.foreach(_ should equal(model.categoryUid))
       update.description.foreach(_ should equal(model.description))

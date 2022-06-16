@@ -8,6 +8,7 @@ import doobie.implicits._
 import doobie.postgres.implicits._
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.error.NotFound
+import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.image._
 import shapeless._
 
@@ -22,8 +23,8 @@ object ImageListRepositoryImpl {
         imageListId <- Queries
           .createImageList(imageList.displayName)
           .withUniqueGeneratedKeys[ImageListId]("id")
-        imagesCount <- Queries.createImages.updateMany(imageList.images.zipWithIndex.map { case (x, i) =>
-          (x.src, x.alt, imageListId, i)
+        imagesCount <- Queries.createImageAssociations.updateMany(imageList.images.zipWithIndex.map { case (x, i) =>
+          (x.id, imageListId, i)
         })
         _ <- Sync[ConnectionIO].whenA(imagesCount != imageList.images.size) {
           delete(imageListId) >> new Exception("returned ids...").raiseError[ConnectionIO, Unit]
@@ -51,9 +52,9 @@ object ImageListRepositoryImpl {
             updated1 <- Queries.updateImageList(req).fold(0.pure[ConnectionIO])(_.run)
             updated2 <- req.images.fold(0.pure[ConnectionIO]) { images =>
               for {
-                deleted <- Queries.deleteImages(req.id).run
-                created <- Queries.createImages.updateMany(images.zipWithIndex.map { case (x, i) =>
-                  (x.src, x.alt, req.id, i)
+                deleted <- Queries.deleteImagesAssociations(req.id).run
+                created <- Queries.createImageAssociations.updateMany(images.zipWithIndex.map { case (x, i) =>
+                  (x, req.id, i)
                 })
               } yield deleted + created
             }
@@ -79,11 +80,7 @@ object ImageListRepositoryImpl {
       sql"""
             select il.id, 
                    il.display_name,
-                   COALESCE((
-                       select json_agg(json_build_object('id', i.id,'src', i.src,'alt', i.alt) ORDER BY i.list_order)
-                       from images i
-                       where il.id = i.image_list_id
-                   ), '[]')
+                   ${ImageRepositoryImpl.Queries.jsonList("il.id")}
             from image_lists il
             where ${compile("il", query.selector)}
             group by il.id, il.create_time
@@ -100,17 +97,17 @@ object ImageListRepositoryImpl {
          """.update
     }
 
-    def createImages: Update[(ImageSrc, ImageAlt, ImageListId, Int)] = {
+    def createImageAssociations: Update[(ImageId, ImageListId, Int)] = {
       val sql =
         """
-           insert into images (src, alt, image_list_id, list_order)
-           values (?,?,?,?)
+           insert into image_list_member (image_id, image_list_id, list_order)
+           values (?,?,?)
          """
       Update(sql)
     }
 
-    def deleteImages(id: ImageListId): Update0 = {
-      sql"""delete from images where image_list_id=$id""".update
+    def deleteImagesAssociations(id: ImageListId): Update0 = {
+      sql"""delete from image_list_member where image_list_id=$id""".update
     }
 
     def updateImageList(req: ImageListUpdate): Option[Update0] = {

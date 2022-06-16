@@ -3,7 +3,7 @@ package ua.pomo.catalog.infrastructure.persistance
 import cats.effect.{Ref, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import squants.market.{Money, USD}
-import ua.pomo.catalog.domain.image._
+import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
 
 import java.util.UUID

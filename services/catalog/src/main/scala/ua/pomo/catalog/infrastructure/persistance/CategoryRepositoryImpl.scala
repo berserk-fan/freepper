@@ -74,13 +74,9 @@ object CategoryRepositoryImpl {
         from categories cat
         where $where
         order by cat.display_name
-        limit ${req.token.size}
-        offset ${req.token.offset}
+        ${compileToken(req.token)}
         """
-        .query[
-          CategoryUUID :: CategoryReadableId :: CategoryDisplayName :: CategoryDescription :: HNil
-        ]
-        .map { Generic[Category].from(_) }
+        .query[Category]
     }
 
     def delete(id: CategoryUUID): Update0 = {
@@ -88,7 +84,8 @@ object CategoryRepositoryImpl {
             where id=$id""".update
     }
 
-    def single(id: CategoryUUID) = Queries.query(CategoryQuery(CategorySelector.UidIs(id), PageToken.Two))
+    def single(id: CategoryUUID): Query0[Category] =
+      Queries.query(CategoryQuery(CategorySelector.UidIs(id), PageToken.Two))
 
     def update(cat: UpdateCategory): Update0 = {
       val rId = cat.readableId.map(x => fr"readable_id = $x")

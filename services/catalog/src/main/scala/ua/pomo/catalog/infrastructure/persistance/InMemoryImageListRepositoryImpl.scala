@@ -3,6 +3,8 @@ package ua.pomo.catalog.infrastructure.persistance
 import cats.MonadThrow
 import cats.effect.{Ref, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
+import monocle.syntax.AppliedLens
+import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.image._
 
 import java.util.UUID
@@ -38,7 +40,15 @@ class InMemoryImageListRepositoryImpl[F[_]: MonadThrow] private (var mapRef: Ref
   override def update(command: ImageListUpdate): F[Int] = mapRef.modify { map =>
     object updateObj extends InMemoryUpdaterPoly[ImageList] {
       implicit val a: Res[ImageListDisplayName] = gen(_.focus(_.displayName))
-      implicit val b: Res[List[Image]] = gen(_.focus(_.images))
+      implicit val b: Res[List[ImageId]] =
+        gen(x =>
+          AppliedLens[ImageList, List[ImageId]](
+            x,
+            monocle.Lens[ImageList, List[ImageId]](_.images.map(_.id))(value =>
+              imageList => imageList.copy(images = value.map(id => Image(id, ImageSrc(""), ImageAlt(""))))
+            )
+          )
+        )
     }
     val updater = Generic[ImageListUpdate].to(command).drop(Nat._1).map(updateObj).toList.flatten.reduce(_ andThen _)
     (map.updatedWith(command.id)(_.map(updater)), if (map.contains(command.id)) 1 else 0)

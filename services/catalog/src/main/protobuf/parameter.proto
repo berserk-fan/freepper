@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ua.pomo.catalog.api;
 
-import "image_list.proto";
+import "image.proto";
 
 message Parameter {
   string uid = 2;

@@ -5,7 +5,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.domain.category._
-import ua.pomo.catalog.domain.image.ImageListId
+import ua.pomo.catalog.domain.imageList.ImageListId
 import ua.pomo.catalog.domain.model.ModelId
 import ua.pomo.catalog.domain.product.ProductId
 

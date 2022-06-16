@@ -35,10 +35,11 @@ import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.error.ValidationErr
-import ua.pomo.catalog.domain.image._
+import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter.{Parameter, ParameterId, ParameterList, ParameterListId}
 import ua.pomo.catalog.domain.product._
+import ua.pomo.catalog.domain.image._
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}
@@ -194,10 +195,6 @@ object Converters {
     )
   }
 
-  def toDomain(image: api.Image): Image = {
-    Image(ImageSrc(image.src), ImageAlt(image.alt))
-  }
-
   def toDomain(req: ListCategoriesRequest): CategoryQuery = {
     val token = parseToken(req.pageToken, req.pageSize)
     CategoryQuery(CategorySelector.All, token)
@@ -209,7 +206,7 @@ object Converters {
     ImageListUpdate(
       id,
       nonEmptyString(obj.displayName).map(ImageListDisplayName.apply),
-      nonEmptyList(obj.images.toList.map(toDomain))
+      nonEmptyList(obj.images.toList.map(image => ApiName.image(image.name).toTry.get.id))
     )
   }
 
@@ -261,7 +258,7 @@ object Converters {
     ImageList(
       ImageListId(DefaultUUID),
       ImageListDisplayName(il.displayName),
-      il.images.map(im => Image(ImageSrc(im.src), ImageAlt(im.alt))).toList
+      il.images.map(im => Image(ApiName.image(im.name).toTry.get.id, ImageSrc(im.src), ImageAlt(im.alt))).toList
     )
   }
 

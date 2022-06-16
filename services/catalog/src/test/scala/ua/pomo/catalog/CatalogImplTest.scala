@@ -22,7 +22,7 @@ import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.app.programs.{CategoryServiceImpl, ImageListServiceImpl, ModelServiceImpl, ProductServiceImpl}
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.error.NotFound
-import ua.pomo.catalog.domain.image.ImageListId
+import ua.pomo.catalog.domain.imageList.ImageListId
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter.ParameterListId
 import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbResources, Resources}

@@ -6,11 +6,7 @@ import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
 import "validate/validate.proto";
 import "google/protobuf/field_mask.proto";
-
-message Image {
-  string src = 1;
-  string alt = 2;
-}
+import "image.proto";
 
 message ImageList {
   option (google.api.resource) = {

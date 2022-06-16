@@ -1,6 +1,5 @@
 package ua.pomo.catalog.domain
 
-import cats.data.NonEmptyList
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.decoder
 import derevo.derive
@@ -11,6 +10,10 @@ import java.util.UUID
 object image {
   @derive(eqv, show, decoder)
   @newtype
+  case class ImageId(value: UUID)
+
+  @derive(eqv, show, decoder)
+  @newtype
   case class ImageSrc(value: String)
 
   @derive(eqv, show, decoder)
@@ -18,47 +21,33 @@ object image {
   case class ImageAlt(value: String)
 
   @derive(eqv, show, decoder)
-  case class Image(src: ImageSrc, alt: ImageAlt)
+  case class Image(id: ImageId, src: ImageSrc, alt: ImageAlt)
 
-  @derive(eqv, show, decoder)
-  @newtype
-  case class ImageListId(uuid: UUID)
+  case class CreateImage(src: ImageSrc, alt: ImageAlt, data: Array[Byte])
+  case class DbCreateImage(src: ImageSrc, alt: ImageAlt)
 
-  @derive(eqv, show)
-  @newtype
-  case class ImageListDisplayName(value: String)
-
-  @derive(eqv, show)
-  case class ImageList(id: ImageListId, displayName: ImageListDisplayName, images: List[Image])
-
-  @derive(eqv, show)
-  case class ImageListUpdate(id: ImageListId, displayName: Option[ImageListDisplayName], images: Option[List[Image]])
-
-  case class ImageListQuery(selector: ImageListSelector, page: PageToken.NonEmpty)
-
-  @derive(eqv, show)
-  case class FindImageListResponse(imageLists: List[ImageList], nextPageToken: PageToken)
-
-  sealed trait ImageListSelector
-  object ImageListSelector {
-    final case object All extends ImageListSelector
-    final case class IdsIn(ids: NonEmptyList[ImageListId]) extends ImageListSelector
+  sealed trait ImageSelector
+  object ImageSelector {
+    case object All extends ImageSelector
+    case class IdIs(id: ImageId) extends ImageSelector
   }
 
-  trait ImageListRepository[F[_]] {
-    def create(imageList: ImageList): F[ImageListId]
-    def get(id: ImageListId): F[ImageList]
-    def find(id: ImageListId): F[Option[ImageList]]
-    def query(query: ImageListQuery): F[List[ImageList]]
-    def update(imageList: ImageListUpdate): F[Int]
-    def delete(imageListId: ImageListId): F[Int]
+  case class ImageQuery(selector: ImageSelector, page: PageToken.NonEmpty)
+
+  @derive(eqv, show)
+  case class FindImagesResponse(images: List[Image], nextPageToken: PageToken)
+
+  trait ImageRepository[F[_]] {
+    def create(image: DbCreateImage): F[ImageId]
+    def get(id: ImageId): F[Image]
+    def query(query: ImageQuery): F[List[Image]]
+    def delete(imageId: ImageId): F[Int]
   }
 
-  trait ImageListService[F[_]] {
-    def create(imageList: ImageList): F[ImageList]
-    def get(id: ImageListId): F[ImageList]
-    def update(imageList: ImageListUpdate): F[ImageList]
-    def delete(imageListId: ImageListId): F[Unit]
-    def find(query: ImageListQuery): F[FindImageListResponse]
+  trait ImageService[F[_]] {
+    def create(image: CreateImage): F[Image]
+    def get(id: ImageId): F[Image]
+    def delete(imageId: ImageId): F[Unit]
+    def query(query: ImageQuery): F[FindImagesResponse]
   }
 }

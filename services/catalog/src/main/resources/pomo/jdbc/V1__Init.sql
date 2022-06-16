@@ -7,11 +7,17 @@ CREATE TABLE image_lists
 
 CREATE TABLE images
 (
-    id            UUID PRIMARY KEY DEFAULT public.uuid_generate_v4(),
-    src           VARCHAR NOT NULL,
-    alt           VARCHAR NOT NULL,
-    image_list_id UUID REFERENCES image_lists ON DELETE CASCADE,
-    list_order    INT     NOT NULL,
+    id  UUID PRIMARY KEY DEFAULT public.uuid_generate_v4(),
+    src VARCHAR NOT NULL,
+    alt VARCHAR NOT NULL
+);
+
+CREATE TABLE image_list_member
+(
+    image_id      UUID NOT NULL REFERENCES images ON DELETE RESTRICT,
+    image_list_id UUID NOT NULL REFERENCES image_lists ON DELETE CASCADE,
+    list_order    INT  NOT NULL,
+    UNIQUE (image_id, image_list_id),
     UNIQUE (image_list_id, list_order)
 );
 
@@ -54,7 +60,6 @@ CREATE TABLE models
 
 CREATE TABLE model_parameter_lists
 (
-    id                UUID PRIMARY KEY DEFAULT public.uuid_generate_v4(),
     model_id          UUID NOT NULL REFERENCES models ON DELETE CASCADE,
     parameter_list_id UUID NOT NULL REFERENCES parameter_lists,
     UNIQUE (model_id, parameter_list_id)
@@ -62,14 +67,14 @@ CREATE TABLE model_parameter_lists
 
 CREATE TABLE products
 (
-    id              UUID PRIMARY KEY   DEFAULT public.uuid_generate_v4(),
-    price       FLOAT     NOT NULL,
-    promo_price FLOAT,
-    image_list_id   UUID      NOT NULL references image_lists ON DELETE RESTRICT,
-    model_id        UUID      NOT NULL references models ON DELETE CASCADE,
-    create_time     TIMESTAMP NOT NULL DEFAULT NOW(),
-    update_time     TIMESTAMP NOT NULL DEFAULT NOW(),
-    parameter_ids   UUID[]    NOT NULL,
+    id            UUID PRIMARY KEY   DEFAULT public.uuid_generate_v4(),
+    price         FLOAT     NOT NULL,
+    promo_price   FLOAT,
+    image_list_id UUID      NOT NULL references image_lists ON DELETE RESTRICT,
+    model_id      UUID      NOT NULL references models ON DELETE CASCADE,
+    create_time   TIMESTAMP NOT NULL DEFAULT NOW(),
+    update_time   TIMESTAMP NOT NULL DEFAULT NOW(),
+    parameter_ids UUID[]    NOT NULL,
     UNIQUE (model_id, parameter_ids)
 );
 
@@ -97,7 +102,8 @@ BEGIN
 
     select array_agg(mpl.parameter_list_id ORDER BY mpl.parameter_list_id)
     into model_parameter_lists
-    from models m inner join model_parameter_lists mpl on m.id = mpl.model_id
+    from models m
+             inner join model_parameter_lists mpl on m.id = mpl.model_id
     where m.id = NEW.model_id;
 
     IF model_parameter_lists != product_parameter_lists THEN

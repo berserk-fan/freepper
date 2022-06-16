@@ -8,6 +8,9 @@ import io.circe.{Decoder, Json, parser}
 import io.estatico.newtype.Coercible
 import io.estatico.newtype.ops.toCoercibleIdOps
 import org.postgresql.util.PGobject
+import ua.pomo.catalog.domain.PageToken
+import doobie._
+import doobie.implicits._
 
 package object persistance {
   implicit def newTypePut[B, A](implicit ev: Coercible[B, A], evp: Put[A]): Put[B] = evp.contramap[B](ev(_))
@@ -29,5 +32,9 @@ package object persistance {
           _.traverse(Decoder[T].decodeJson).leftMap(_.show)
         }
     }
+  }
+
+  def compileToken(token: PageToken.NonEmpty): Fragment = {
+    fr"limit ${token.size} offset ${token.offset}"
   }
 }

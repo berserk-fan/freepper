@@ -5,17 +5,16 @@ import doobie.ConnectionIO
 import doobie.implicits.toSqlInterpolator
 import doobie.postgres.implicits._
 import org.scalatest.ParallelTestExecution
-import ua.pomo.catalog.domain.{PageToken, image}
+import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryRepository
-import ua.pomo.catalog.domain.image.{ImageListId, ImageListRepository}
-import ua.pomo.catalog.domain.parameter._
+import ua.pomo.catalog.domain.imageList.{ImageListId, ImageListRepository}
 import ua.pomo.catalog.domain.model.{ModelId, ModelRepository}
-import ua.pomo.catalog.domain.product.{ProductId, ProductQuery, ProductRepository, ProductSelector, UpdateProduct}
-import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbResources, Resources}
+import ua.pomo.catalog.domain.product.{ProductId, ProductQuery, ProductRepository, ProductSelector}
+import ua.pomo.catalog.shared._
 
 import java.util.UUID
 
-class ProductRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution {
+class ProductRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution with Fixtures {
   case class TestResources(
       imageListRepo: ImageListRepository[ConnectionIO],
       categoryRepo: CategoryRepository[ConnectionIO],
@@ -64,14 +63,13 @@ class ProductRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecuti
   }
 
   testEachImplR("create get delete get") { (res, impl) =>
-    val imageList: image.ImageList = Generators.ImageList.gen.sample.get
-    val catId = res.categoryRepo.create(Generators.Category.create.sample.get).trRun()
-    val imageListId = res.imageListRepo.create(imageList).trRun()
-
-    val modelId = res.modelRepo
-      .create(Generators.Model.createGen(imageListId, List.empty).sample.get.copy(categoryId = catId))
-      .trRun()
-    forAll(Generators.Product.create(imageListId, modelId, List())) { create =>
+    abstract class fa(
+        val modelRepo: ModelRepository[ConnectionIO],
+        val imageListRepo: ImageListRepository[ConnectionIO],
+        val categoryRepo: CategoryRepository[ConnectionIO]
+    ) extends ModelFixture
+    object f extends fa(res.modelRepo, res.imageListRepo, res.categoryRepo)
+    forAll(Generators.Product.create(f.imageListId1, f.modelId, List())) { create =>
       val id = impl.create(create).trRun()
       impl.find(id).trRun() shouldBe defined
       impl.delete(id).trRun()
@@ -80,49 +78,35 @@ class ProductRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecuti
   }
 
   testR("insert wrong parameter list should throw exception") { res =>
-    val imageList: image.ImageList = Generators.ImageList.gen.filter(_.images.nonEmpty).sample.get
-    val catId = res.categoryRepo.create(Generators.Category.create.sample.get).trRun()
-    val imageListId = res.imageListRepo.create(imageList).trRun()
+    abstract class fa(
+        val modelRepo: ModelRepository[ConnectionIO],
+        val categoryRepo: CategoryRepository[ConnectionIO],
+        val imageListRepo: ImageListRepository[ConnectionIO]
+    ) extends ModelFixture
+    object f extends fa(res.modelRepo, res.categoryRepo, res.imageListRepo)
 
-    val parameterListId = sql"""insert into parameter_lists (display_name) values ('')""".update
-      .withUniqueGeneratedKeys[ParameterListId]("id")
-      .trRun()
-    val parameterListIds = List(parameterListId)
-    val imageId = sql"select id from images limit 1".query[UUID].option.trRun().head
-    val parameterId =
-      sql"""insert into parameters (display_name, image_id, list_order, parameter_list_id) VALUES ('',$imageId, 1, $parameterListId)""".update
-        .withUniqueGeneratedKeys[ParameterId]("id")
-        .trRun()
-    val modelId = res.modelRepo
-      .create(Generators.Model.createGen(imageListId, parameterListIds).sample.get.copy(categoryId = catId))
-      .trRun()
-
+    // should throw
     intercept[Exception] {
-      res.postgres.create(Generators.Product.create(imageListId, modelId, List()).sample.get).trRun()
+      res.postgres.create(Generators.Product.create(f.imageListId1, f.modelWithParamList1Id, List()).sample.get).trRun()
     }
 
     noException should be thrownBy res.postgres
-      .create(Generators.Product.create(imageListId, modelId, List(parameterId)).sample.get)
+      .create(Generators.Product.create(f.imageListId1, f.modelWithParamList1Id, List(f.parameterId1)).sample.get)
       .trRun()
   }
 
   testR("forbid parameter_ids updates") { res =>
-    val imageList: image.ImageList = Generators.ImageList.gen.filter(_.images.nonEmpty).sample.get
-    val catId = res.categoryRepo.create(Generators.Category.create.sample.get).trRun()
-    val imageListId = res.imageListRepo.create(imageList).trRun()
-    val parameterListId = sql"""insert into parameter_lists (display_name) values ('')""".update
-      .withUniqueGeneratedKeys[ParameterListId]("id")
+    abstract class fa(
+        val modelRepo: ModelRepository[ConnectionIO],
+        val categoryRepo: CategoryRepository[ConnectionIO],
+        val imageListRepo: ImageListRepository[ConnectionIO]
+    ) extends ModelFixture
+    object f extends fa(res.modelRepo, res.categoryRepo, res.imageListRepo)
+
+    val id = res.postgres
+      .create(Generators.Product.create(f.imageListId1, f.modelWithParamList1Id, List(f.parameterId1)).sample.get)
       .trRun()
-    val parameterListIds = List(parameterListId)
-    val imageId = sql"select id from images limit 1".query[UUID].option.trRun().head
-    val parameterId =
-      sql"""insert into parameters (display_name, image_id, list_order, parameter_list_id) VALUES ('',$imageId, 1, $parameterListId)""".update
-        .withUniqueGeneratedKeys[ParameterId]("id")
-        .trRun()
-    val modelId = res.modelRepo
-      .create(Generators.Model.createGen(imageListId, parameterListIds).sample.get.copy(categoryId = catId))
-      .trRun()
-    val id = res.postgres.create(Generators.Product.create(imageListId, modelId, List(parameterId)).sample.get).trRun()
+      .value
     val ex = intercept[Exception] {
       sql"""update products SET parameter_ids=ARRAY[]::UUID[] WHERE id=$id""".update.run.trRun()
     }

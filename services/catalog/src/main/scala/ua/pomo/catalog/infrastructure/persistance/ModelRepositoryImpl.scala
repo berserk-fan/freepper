@@ -12,6 +12,7 @@ import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.image._
+import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter._
 
@@ -126,28 +127,9 @@ object ModelRepositoryImpl {
                   from products p
                   where p.model_id = m.id
                ), 0),
-               COALESCE( (
-                    select json_agg(json_build_object(
-                        'id', pl.id, 
-                        'displayName', pl.display_name, 
-                        'parameters', COALESCE( (
-                            select json_agg(json_build_object(
-                                'id', par.id,
-                                'displayName', par.display_name ,
-                                'image', (select json_build_object('src', img.src, 'alt', img.alt)
-                                          from images img
-                                          where img.id = par.image_id)) ORDER BY par.list_order)
-                            from parameters par where par.parameter_list_id = pl.id), '[]'))
-                        )
-                    from parameter_lists pl join model_parameter_lists mpl on pl.id = mpl.parameter_list_id 
-                    WHERE mpl.model_id = m.id
-               ), '[]'),
+               ${ParameterListRepository.Queries.jsonList("m.id")},
                il.id, il.display_name,
-               COALESCE((
-                   select json_agg(json_build_object('src', img.src, 'alt', img.alt) ORDER BY img.list_order)
-                   from images img
-                   where img.image_list_id = il.id
-               ), '[]'::json)
+               ${ImageRepositoryImpl.Queries.jsonList("il.id")}
         from models m 
             left join categories c on c.id = m.category_id 
             left join image_lists il on il.id = m.image_list_id

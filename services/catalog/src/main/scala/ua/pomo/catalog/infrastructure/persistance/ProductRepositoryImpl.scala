@@ -9,6 +9,7 @@ import shapeless._
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.error.NotFound
+import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 import ua.pomo.catalog.domain.parameter._
@@ -107,11 +108,7 @@ object ProductRepositoryImpl {
         sql"""
             select p.id, m.id, m.category_id, m.display_name, p.price, p.promo_price,
                    il.id, il.display_name, 
-                   case
-                     when count(i.id) = 0
-                     then '[]'
-                     else json_agg(json_build_object('id', i.id, 'src', i.src, 'alt', i.alt) ORDER BY i.list_order)
-                   end,
+                   (${ImageRepositoryImpl.Queries.jsonList("p.image_list_id")}),
                    p.parameter_ids,
                    (
                        select COALESCE(array_agg(ps.display_name), ARRAY[]::VARCHAR[]) 
@@ -120,7 +117,6 @@ object ProductRepositoryImpl {
             from products p 
                 left join models m on p.model_id = m.id 
                 left join image_lists il on p.image_list_id = il.id
-                join images i on il.id = i.image_list_id
             where ${compile("p", query.selector)}
             group by p.id, m.id, il.id
             order by p.create_time

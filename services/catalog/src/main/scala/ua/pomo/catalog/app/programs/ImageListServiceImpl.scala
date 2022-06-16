@@ -6,7 +6,7 @@ import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, to
 import cats.~>
 import doobie.{ConnectionIO, Transactor}
 import ua.pomo.catalog.domain.error.NotFound
-import ua.pomo.catalog.domain.image._
+import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.infrastructure.persistance.InMemoryImageListRepositoryImpl
 
 class ImageListServiceImpl[F[_]: Async, G[_]: Sync] private (xa: G ~> F, repository: ImageListRepository[G])

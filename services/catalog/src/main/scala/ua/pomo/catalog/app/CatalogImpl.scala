@@ -9,7 +9,7 @@ import scalapb.validate.{Failure, Success, Validator}
 import ua.pomo.catalog.domain.{category, model, product}
 import ua.pomo.catalog.api._
 import ua.pomo.catalog.domain.error._
-import ua.pomo.catalog.domain.image.ImageListService
+import ua.pomo.catalog.domain.imageList.ImageListService
 
 import scala.util.Try
 import org.typelevel.log4cats.Logger

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package ua.pomo.catalog.api;
+
+message Image {
+  string name = 1;
+  string uid = 2;
+  string src = 3;
+  string alt = 4;
+  bytes data = 5;
+}
