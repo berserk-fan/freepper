@@ -10,11 +10,13 @@ const WINDOW_SIZE = 2;
 export default function Slider({
   slides,
   className = "",
+  slideClassName = "",
   onChange,
   isShowingArrows = true,
 }: {
   slides: ReactElement[];
   className?: string;
+  slideClassName?: string;
   onChange?: (slideNum: number) => void;
   isShowingArrows?: boolean;
 }) {
@@ -40,11 +42,14 @@ export default function Slider({
 
   return (
     <Box className={className} position="relative">
-      <div ref={sliderRef as any} className="keen-slider">
+      <div ref={sliderRef as any} className={`keen-slider ${className}`}>
         {slides.map((slide, idx) => (
-          <div key={slide.key} className="keen-slider__slide">
+          <Box
+            key={slide.key}
+            className={`keen-slider__slide ${slideClassName}`}
+          >
             {isRendering(idx) ? slide : null}
-          </div>
+          </Box>
         ))}
       </div>
       {isShowingArrows && (

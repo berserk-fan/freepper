@@ -1,17 +1,18 @@
 import { Category } from "apis/category.pb";
-import React from "react";
-import { TextField, Select } from "mui-rff";
+import React, { useState } from "react";
+import { TextField, Select, Autocomplete } from "mui-rff";
 import Grid from "@material-ui/core/Grid";
 import { Form } from "react-final-form";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography/Typography";
-import { DialogTitle, MenuItem } from "@material-ui/core";
+import { DialogTitle, MenuItem, Radio as MuiRadio } from "@material-ui/core";
 import { Model } from "apis/model.pb";
 import Button from "@material-ui/core/Button/Button";
 import { Product } from "apis/product.pb";
 import Table from "@material-ui/core/Table";
+import MuiTextField from "@material-ui/core/TextField";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
@@ -21,10 +22,13 @@ import Dialog from "@material-ui/core/Dialog";
 import Paper from "@material-ui/core/Paper";
 import { Parameter, ParameterList } from "apis/parameter.pb";
 import { ImageList } from "apis/image_list.pb";
+import CloseIcon from "@material-ui/icons/Close";
 import parameterLists1 from "../../commons/parameterLists.json";
 import grpcClient from "../../commons/shop-node";
 import { indexProducts } from "../../commons/utils";
 import Markdown from "../../components/Markdown/Renderers";
+import SliderWithThumbs from "../../components/SliderWithThumbs";
+import { SIZES } from "../../components/Shop/definitions";
 
 type Matrix = {
   top: Parameter[];
@@ -35,7 +39,112 @@ function alreadyCreated(m: Model) {
   return !!m.name;
 }
 
-export interface SimpleDialogProps {
+function ImageListController() {
+  const [imageLists, setImageLists] = React.useState<ImageList[]>([]);
+  React.useEffect(() => {
+    grpcClient()
+      .listImageLists({
+        parent: "imageLists",
+        pageSize: 1000,
+      })
+      .then((x) => setImageLists(x.imageLists));
+  }, []);
+
+  const indexed = React.useMemo(
+    () => Object.fromEntries(imageLists.map((x) => [x.name, x])),
+    [imageLists],
+  );
+
+  const autocompleteData = React.useMemo(
+    () => imageLists.map((x) => ({ label: x.displayName, value: x.name })),
+    [imageLists],
+  );
+
+  const [activeImageSrc, setActiveImageSrc] = React.useState("");
+
+  const [currentList, setCurrentList] = React.useState(
+    ImageList.fromPartial({}),
+  );
+
+  React.useEffect(() => {
+    if (imageLists.length > 0 && !currentList.name) {
+      setCurrentList(imageLists[0]);
+    }
+  }, [imageLists]);
+
+  if (!currentList.name) {
+    return <Typography>No image lists!(</Typography>;
+  }
+
+  function deleteImage() {
+    setCurrentList((prev) => ({
+      ...prev,
+      images: prev.images.filter((x) => x.src !== activeImageSrc),
+    }));
+  }
+
+  async function submitNewImageList() {
+    const imageList = await grpcClient().updateImageList({
+      imageList: currentList,
+      updateMask: ["*"],
+    });
+    setCurrentList(imageList);
+    alert(`ImageList updated: ${JSON.stringify(imageList)}`);
+    const newLists = await grpcClient().listImageLists({
+      parent: "imageLists",
+      pageSize: 1000,
+    });
+    setImageLists(newLists.imageLists);
+  }
+
+  return (
+    <Box maxWidth="500px">
+      <Typography variant="subtitle1">Name: {currentList.name}</Typography>
+      <Typography variant="h6">{currentList.displayName}</Typography>
+      <Form
+        onSubmit={(vals) => setCurrentList(indexed[vals.name])}
+        initialValues={{ name: imageLists[0].name }}
+        render={({ handleSubmit }) => (
+          <Autocomplete
+            label="Select an images"
+            name="name"
+            required
+            color="secondary"
+            options={autocompleteData}
+            getOptionValue={(option) => option.value}
+            getOptionLabel={(option) => option.label}
+            onSelect={handleSubmit}
+            renderOption={(option, { selected }) => (
+              <>
+                <MuiRadio style={{ marginRight: 8 }} checked={selected} />
+                {option.label}
+              </>
+            )}
+          />
+        )}
+      />
+      <Box marginY={2}>
+        <Divider />
+        <Button variant="outlined" onClick={submitNewImageList}>
+          Submit Image List
+        </Button>
+        <Button variant="outlined" onClick={deleteImage}>
+          Delete Image
+        </Button>
+      </Box>
+      <Box maxHeight="500px" maxWidth="500px">
+        <SliderWithThumbs
+          images={currentList.images}
+          thumbs={currentList.images}
+          sizes={SIZES}
+          onChange={setActiveImageSrc}
+        />
+      </Box>
+    </Box>
+  );
+}
+
+export interface SetProductProdsdDialog {
   imageLists: ImageList[];
   parameters: Parameter[];
   open: boolean;
@@ -45,7 +154,7 @@ export interface SimpleDialogProps {
 
 const parameterLists: ParameterList[] = parameterLists1;
 
-function SimpleDialog(props: SimpleDialogProps) {
+function SetProductPropsDialog(props: SetProductProdsdDialog) {
   const { onSubmit, open, parameters, imageLists, onClose } = props;
 
   const imageListsSorted = React.useMemo(
@@ -111,6 +220,27 @@ function SimpleDialog(props: SimpleDialogProps) {
   );
 }
 
+function ImageListDialog({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  return (
+    <Dialog open={open}>
+      <Box margin={1} width="700px" height="100vh">
+        <Box marginTop={1} marginLeft={1}>
+          <Button onClick={onClose} variant="outlined">
+            <CloseIcon />
+          </Button>
+        </Box>
+        <ImageListController />
+      </Box>
+    </Dialog>
+  );
+}
+
 export interface DeleteDialogProps {
   m: Model;
   open: boolean;
@@ -149,6 +279,8 @@ export default function ModelAdder() {
   }, [products]);
   const [dialogParams, setDialogParams] = React.useState<Parameter[]>([]);
   const [deleteDialog, setDeleteDialog] = React.useState<boolean>(false);
+  const [imageListControllerDialog, setImageListControllerDialog] =
+    React.useState<boolean>(false);
   const [imageLists, setImageLists] = React.useState<ImageList[]>([]);
 
   const fetchProducts = React.useCallback(() => {
@@ -292,6 +424,14 @@ export default function ModelAdder() {
     setDeleteDialog(true);
   }, []);
 
+  const closeImageListControllerDialog = React.useCallback(() => {
+    setImageListControllerDialog(false);
+  }, []);
+
+  const openImageListControllerDialog = React.useCallback(() => {
+    setImageListControllerDialog(true);
+  }, []);
+
   const deleteDialogSubmit = React.useCallback(() => {
     deleteModel(modelBase).then(() => fetchModels(categoryName));
     closeDeleteDialog();
@@ -299,230 +439,266 @@ export default function ModelAdder() {
 
   return (
     <Container>
-      <Typography variant="h4">Model Selector</Typography>
-      <Form
-        onSubmit={(x) => setCategoryName(x.category_name)}
-        initialValues={{ category_name: categories[0]?.name }}
-        render={({ handleSubmit }) => (
-          <form onSubmit={handleSubmit} noValidate>
-            <Select
-              key="category_name"
-              name="category_name"
-              label="Category Id"
+      <Box display="flex">
+        <Box
+          height="100%"
+          display="flex"
+          flexDirection="column"
+          justifyContent="space-between"
+          marginX={2}
+        >
+          <Box flexDirection="column">
+            <Typography variant="h6">Notes</Typography>
+            <MuiTextField
+              minRows={20}
               variant="outlined"
               color="secondary"
+              multiline
+            />
+          </Box>
+
+          <Box>
+            <Button
+              variant="contained"
+              size="large"
+              color="secondary"
+              onClick={openImageListControllerDialog}
             >
-              {categories.map((category) => (
-                <MenuItem key={category.name} value={category.name}>
-                  {category.displayName}
-                </MenuItem>
-              ))}
-            </Select>
-            <Button type="submit">Submit</Button>
-            <Button onClick={dropModelBase}>Reload model</Button>
-          </form>
-        )}
-      />
+              Images
+            </Button>
+          </Box>
+        </Box>
+        <Box marginX={2}>
+          <Typography variant="h4">Model Selector</Typography>
+          <Form
+            onSubmit={(x) => setCategoryName(x.category_name)}
+            initialValues={{ category_name: categories[0]?.name }}
+            render={({ handleSubmit }) => (
+              <form onSubmit={handleSubmit} noValidate>
+                <Select
+                  key="category_name"
+                  name="category_name"
+                  label="Category Id"
+                  variant="outlined"
+                  color="secondary"
+                >
+                  {categories.map((category) => (
+                    <MenuItem key={category.name} value={category.name}>
+                      {category.displayName}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Button type="submit">Submit</Button>
+                <Button onClick={dropModelBase}>Reload model</Button>
+              </form>
+            )}
+          />
 
-      <Box width="100%" marginY={1}>
-        <Divider variant="fullWidth" />
-      </Box>
+          <Box width="100%" marginY={1}>
+            <Divider variant="fullWidth" />
+          </Box>
 
-      {models.length === 0 ? (
-        <></>
-      ) : (
-        <Form
-          onSubmit={(values) => setupModel(values.model_name)}
-          initialValues={{ model_name: models[0].name }}
-          render={({ handleSubmit }) => (
-            <form onSubmit={handleSubmit} noValidate>
-              <Select
-                key="model_name"
-                name="model_name"
-                label="Model Name"
-                formControlProps={{ margin: "normal" }}
-                variant="outlined"
-                color="secondary"
-              >
-                {models.map((model) => (
-                  <MenuItem key={model.uid} value={model.name}>
-                    {model.displayName}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Button type="submit">Submit</Button>
-            </form>
+          {models.length === 0 ? (
+            <></>
+          ) : (
+            <Form
+              onSubmit={(values) => setupModel(values.model_name)}
+              initialValues={{ model_name: models[0].name }}
+              render={({ handleSubmit }) => (
+                <form onSubmit={handleSubmit} noValidate>
+                  <Select
+                    key="model_name"
+                    name="model_name"
+                    label="Model Name"
+                    formControlProps={{ margin: "normal" }}
+                    variant="outlined"
+                    color="secondary"
+                  >
+                    {models.map((model) => (
+                      <MenuItem key={model.uid} value={model.name}>
+                        {model.displayName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <Button type="submit">Submit</Button>
+                </form>
+              )}
+            />
           )}
-        />
-      )}
 
-      <Box width="100%" marginY={1}>
-        <Divider variant="fullWidth" />
-      </Box>
+          <Box width="100%" marginY={1}>
+            <Divider variant="fullWidth" />
+          </Box>
 
-      <Form
-        onSubmit={submitModel}
-        initialValues={modelBase}
-        render={({ handleSubmit, values }) => (
-          <form onSubmit={handleSubmit} noValidate>
-            <Grid
-              container
-              direction="column"
-              alignContent="stretch"
-              spacing={2}
-            >
-              <Grid item>
-                <TextField
-                  label="Model Display Name"
-                  name="displayName"
-                  required
-                  variant="outlined"
-                  color="secondary"
-                />
-              </Grid>
-              <Grid item>
-                <TextField
-                  label="Readable Id"
-                  name="readableId"
-                  required
-                  variant="outlined"
-                  color="secondary"
-                />
-              </Grid>
-              <Grid item>
-                <Select
-                  key="parameter_ids"
-                  name="parameterIds"
-                  label="Parameter Ids"
-                  variant="outlined"
-                  color="secondary"
-                  multiple
-                  disabled={!!values.name}
+          <Form
+            onSubmit={submitModel}
+            initialValues={modelBase}
+            render={({ handleSubmit, values }) => (
+              <form onSubmit={handleSubmit} noValidate>
+                <Grid
+                  container
+                  direction="column"
+                  alignContent="stretch"
+                  spacing={2}
                 >
-                  {parameterLists.map((x) => (
-                    <MenuItem key={x.uid} value={x.uid}>
-                      {x.displayName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Grid>
-              <Grid item>
-                <Select
-                  key="imageList.name"
-                  name="imageList.name"
-                  label="Image List"
-                  variant="outlined"
-                  color="secondary"
-                >
-                  {imageLists.map((x) => (
-                    <MenuItem key={x.name} value={x.name}>
-                      {x.displayName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Grid>
-              <Grid item>
-                <Grid container spacing={1}>
-                  <Grid item xs={12} md={6}>
+                  <Grid item>
                     <TextField
-                      multiline
-                      label="Model Description"
-                      name="description"
+                      label="Model Display Name"
+                      name="displayName"
                       required
                       variant="outlined"
                       color="secondary"
                     />
                   </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Box
-                      borderRadius="5px"
-                      border={1}
-                      borderColor="grey"
-                      minWidth="500px"
+                  <Grid item>
+                    <TextField
+                      label="Readable Id"
+                      name="readableId"
+                      required
+                      variant="outlined"
+                      color="secondary"
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Select
+                      key="parameter_ids"
+                      name="parameterIds"
+                      label="Parameter Ids"
+                      variant="outlined"
+                      color="secondary"
+                      multiple
+                      disabled={!!values.name}
                     >
-                      <Typography variant="h6">Description Preview</Typography>
-                      <Divider />
-                      <Markdown>{values.description}</Markdown>
-                    </Box>
+                      {parameterLists.map((x) => (
+                        <MenuItem key={x.uid} value={x.uid}>
+                          {x.displayName}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      key="imageList.name"
+                      name="imageList.name"
+                      label="Image List"
+                      variant="outlined"
+                      color="secondary"
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12} md={6}>
+                        <TextField
+                          multiline
+                          label="Model Description"
+                          name="description"
+                          required
+                          variant="outlined"
+                          color="secondary"
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <Box
+                          borderRadius="5px"
+                          border={1}
+                          borderColor="grey"
+                          minWidth="500px"
+                        >
+                          <Typography variant="h6">
+                            Description Preview
+                          </Typography>
+                          <Divider />
+                          <Markdown>{values.description}</Markdown>
+                        </Box>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
-            </Grid>
-            <Button type="submit">Submit</Button>
-            {!alreadyCreated(modelBase) ? (
-              <></>
-            ) : (
-              <Button onClick={openDeleteDialog}>Delete</Button>
+                <Button type="submit">Submit</Button>
+                {!alreadyCreated(modelBase) ? (
+                  <></>
+                ) : (
+                  <Button onClick={openDeleteDialog}>Delete</Button>
+                )}
+              </form>
             )}
-          </form>
-        )}
-      />
+          />
 
-      <Box width="100%" marginY={1}>
-        <Divider variant="fullWidth" />
+          <Box width="100%" marginY={1}>
+            <Divider variant="fullWidth" />
+          </Box>
+
+          <ImageListDialog
+            open={imageListControllerDialog}
+            onClose={closeImageListControllerDialog}
+          />
+          <DeleteDialog
+            m={modelBase}
+            open={deleteDialog}
+            onSubmit={deleteDialogSubmit}
+            onClose={closeDeleteDialog}
+          />
+          <SetProductPropsDialog
+            open={dialogParams.length !== 0}
+            onSubmit={onProductSpec}
+            imageLists={imageLists}
+            parameters={dialogParams}
+            onClose={() => setDialogParams([])}
+          />
+          {!alreadyCreated(modelBase) ? (
+            <></>
+          ) : (
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>***</TableCell>
+                    {cells.top.map((x) => (
+                      <TableCell key={x.uid}>{x.displayName}</TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {cells.side.map((y) => (
+                    <TableRow key={y.uid}>
+                      <TableCell>{y.displayName}</TableCell>
+                      {cells.top.map((x) => {
+                        const value =
+                          indexed[
+                            [x.uid, y.uid]
+                              .sort((a, b) => a.localeCompare(b))
+                              .join()
+                          ];
+
+                        return (
+                          <TableCell key={x.uid + y.uid}>
+                            {value ? (
+                              <>
+                                {value.price.standard?.amount}
+                                ---
+                                {value.imageList.displayName}
+                                <Button
+                                  onClick={() => deleteProduct(value.name)}
+                                >
+                                  Remove
+                                </Button>
+                              </>
+                            ) : (
+                              <Button onClick={() => setDialogarams(x, y)}>
+                                Add
+                              </Button>
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </Box>
       </Box>
-
-      <DeleteDialog
-        m={modelBase}
-        open={deleteDialog}
-        onSubmit={deleteDialogSubmit}
-        onClose={closeDeleteDialog}
-      />
-      <SimpleDialog
-        open={dialogParams.length !== 0}
-        onSubmit={onProductSpec}
-        imageLists={imageLists}
-        parameters={dialogParams}
-        onClose={() => setDialogParams([])}
-      />
-      {!alreadyCreated(modelBase) ? (
-        <></>
-      ) : (
-        <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>***</TableCell>
-                {cells.top.map((x) => (
-                  <TableCell key={x.uid}>{x.displayName}</TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {cells.side.map((y) => (
-                <TableRow key={y.uid}>
-                  <TableCell>{y.displayName}</TableCell>
-                  {cells.top.map((x) => {
-                    const value =
-                      indexed[
-                        [x.uid, y.uid].sort((a, b) => a.localeCompare(b)).join()
-                      ];
-
-                    return (
-                      <TableCell key={x.uid + y.uid}>
-                        {value ? (
-                          <>
-                            {value.price.standard?.amount}
-                            ---
-                            {value.imageList.displayName}
-                            <Button onClick={() => deleteProduct(value.name)}>
-                              Remove
-                            </Button>
-                          </>
-                        ) : (
-                          <Button onClick={() => setDialogarams(x, y)}>
-                            Add
-                          </Button>
-                        )}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
     </Container>
   );
 }

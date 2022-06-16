@@ -17,17 +17,19 @@ export default function SliderWithThumbs({
   images,
   thumbs,
   sizes,
+  onChange = () => {},
 }: {
   images: ImageData[];
   thumbs: ImageData[];
   sizes: string;
+  onChange?: (src: string) => void;
 }) {
   const classes = useStyles();
   const thumbserDirRef = useRef<KeenSlider>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [thumbSlide, setThumbSlide] = useState(0);
 
-  // main slider
+  useEffect(() => onChange(images[activeSlide]?.src), [activeSlide]);
 
   const lock = useRef(-1);
 
@@ -38,7 +40,6 @@ export default function SliderWithThumbs({
       const idx = s.details().relativeSlide;
       const thumbser = thumbserDirRef.current;
       setActiveSlide(idx);
-
       if (lock.current === -1) {
         thumbser?.moveToSlideRelative(idx);
       }
