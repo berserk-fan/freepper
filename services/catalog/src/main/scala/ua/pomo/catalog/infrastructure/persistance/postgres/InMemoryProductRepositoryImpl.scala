@@ -1,16 +1,16 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.data.OptionT
 import cats.effect.{Ref, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
+import monocle.syntax.all._
+import shapeless._
 import ua.pomo.catalog.domain.PageToken
+import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.imageList.{ImageList, ImageListDisplayName, ImageListId}
 import ua.pomo.catalog.domain.model.ModelId
 import ua.pomo.catalog.domain.product._
-import monocle.syntax.all._
-import shapeless._
-import ua.pomo.catalog.domain.category.{CategoryUUID}
 
 import java.util.UUID
 

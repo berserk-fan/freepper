@@ -7,9 +7,9 @@ import cats.~>
 import doobie.{ConnectionIO, Transactor}
 import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.imageList._
-import ua.pomo.catalog.infrastructure.persistance.InMemoryImageListRepositoryImpl
+import ua.pomo.catalog.infrastructure.persistance.postgres.InMemoryImageListRepositoryImpl
 
-class ImageListServiceImpl[F[_]: Async, G[_]: Sync] private (xa: G ~> F, repository: ImageListRepository[G])
+class ImageListServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, repository: ImageListRepository[G])
     extends ImageListService[F] {
   override def create(imageList: ImageList): F[ImageList] = {
     repository.create(imageList).flatMap(repository.get).mapK(xa)

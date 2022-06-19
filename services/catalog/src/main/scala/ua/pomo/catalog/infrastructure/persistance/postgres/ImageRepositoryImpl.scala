@@ -1,17 +1,21 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
-import doobie._
-import doobie.implicits._
-import doobie.postgres.implicits._
+import doobie.{ConnectionIO, Fragment, Update0}
+import doobie.implicits.toSqlInterpolator
+import doobie.postgres.implicits.UuidType
 import ua.pomo.catalog.domain.PageToken
+import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.image._
+import cats.data.OptionT
+import cats.implicits.catsSyntaxApplicativeErrorId
 
 object ImageRepositoryImpl extends ImageRepository[ConnectionIO] {
-  override def create(image: DbCreateImage): doobie.ConnectionIO[ImageId] = Queries
+  override def create(image: CreateImageMetadata): doobie.ConnectionIO[ImageId] = Queries
     .create(image)
     .withUniqueGeneratedKeys[ImageId]("id")
 
-  override def get(id: ImageId): doobie.ConnectionIO[Image] = Queries.get(id).unique
+  override def get(id: ImageId): doobie.ConnectionIO[Image] = OptionT(Queries.get(id).option)
+    .getOrElseF(NotFound("image", id).raiseError[ConnectionIO, Image])
 
   override def query(req: ImageQuery): doobie.ConnectionIO[List[Image]] = Queries.query(req).to[List]
 
@@ -25,7 +29,7 @@ object ImageRepositoryImpl extends ImageRepository[ConnectionIO] {
       }
     }
 
-    def create(image: DbCreateImage): doobie.Update0 = {
+    def create(image: CreateImageMetadata): doobie.Update0 = {
       sql"""
         insert into images (src, alt) values (${image.src}, ${image.alt})
       """.update
@@ -44,7 +48,7 @@ object ImageRepositoryImpl extends ImageRepository[ConnectionIO] {
 
     def delete(id: ImageId): Update0 = {
       sql"""
-        delete from images
+        delete from images im
         where ${compile(ImageSelector.IdIs(id))}
       """.update
     }

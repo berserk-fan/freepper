@@ -1,28 +1,30 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.effect.{IO, Resource}
 import doobie.ConnectionIO
 import org.scalatest.ParallelTestExecution
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category._
-import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbResources, Resources}
+import ua.pomo.catalog.shared._
 
 import java.util.UUID
 
 class CategoryRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution {
   import CategoryRepositoryImpl._
   override type Impl = CategoryRepository[ConnectionIO]
-  override type Res = TestResources
+  override type TestResource = TestResources
   override val resourcePerTest: Boolean = true
 
-  case class TestResources(db: DbResources, impls: Seq[Impl]) extends HasDbResources with HasImpls
-  override val names = Seq("postgres", "inmemory")
-  override def resource: Resource[IO, Res] =
+  case class TestResources(db: DbResources, impls: Seq[(String, Impl)])
+  override def getDbResources(resources: TestResources): DbResources = resources.db
+  override def getImpls(resources: TestResource): Seq[(String, Impl)] = resources.impls
+  override def names: Seq[String] = Seq("postgres", "inmemory")
+  override def resource: Resource[IO, TestResource] =
     for {
       db <- Resources.dbTest
-      a <- Resource.pure(CategoryRepositoryImpl())
-      b <- Resource.eval(CategoryRepositoryImpl.makeInMemory[ConnectionIO]).mapK[IO](db.xa.trans)
-    } yield TestResources(db, Seq(a, b))
+      pg <- Resource.pure(CategoryRepositoryImpl())
+      inMem <- Resource.eval(CategoryRepositoryImpl.makeInMemory[ConnectionIO]).mapK[IO](db.xa.trans)
+    } yield TestResources(db, Seq(("postgres", pg), ("inmemory", inMem)))
 
   test(s"queries") {
     val uuid = CategoryUUID(UUID.randomUUID())

@@ -1,16 +1,16 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.effect.{Ref, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
+import monocle.syntax.all._
+import shapeless._
 import squants.market.{Money, USD}
+import ua.pomo.catalog.domain.category.{CategoryReadableId, CategoryUUID}
 import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
+import ua.pomo.catalog.domain.parameter.{ParamListDisplayName, ParameterList}
 
 import java.util.UUID
-import shapeless._
-import monocle.syntax.all._
-import ua.pomo.catalog.domain.category.{CategoryReadableId, CategoryUUID}
-import ua.pomo.catalog.domain.parameter.{ParamListDisplayName, ParameterList}
 
 class InMemoryModelRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, Map[ModelId, Model]])
     extends ModelRepository[F] {

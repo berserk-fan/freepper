@@ -64,7 +64,7 @@ object ApiName {
 
   private object Parsers extends RegexParsers {
     def any: Parser[ApiName] =
-      categories ||| category ||| models ||| model ||| imageLists ||| imageList ||| products ||| product
+      categories ||| category ||| models ||| model ||| imageLists ||| imageList ||| products ||| product ||| image ||| images
 
     def parseAllToEither[T](p: Parser[T], s: String): NameParseResult[T] = parseAll(p, s) match {
       case Success(matched, _) => Right(matched)
@@ -81,7 +81,7 @@ object ApiName {
     }
     def imageLists: Parser[ImageListsName.type] = s"^$ImageLists$$".r ^^ (_ => ImageListsName)
     def images: Parser[ImagesName.type] = s"^$Images$$".r ^^ (_ => ImagesName)
-    def image: Parser[ImageName] = images ~> "/" ~> imageId ^^ ImageName.apply
+    def image: Parser[ImageName] = Images ~> "/" ~> imageId ^^ ImageName.apply
     def imageList: Parser[ImageListName] = ImageLists ~> "/" ~> imageListId ^^ ImageListName.apply
     def products: Parser[ProductsName] = {
       model <~ "/" <~ Products ^^ (modelName => ProductsName(modelName.categoryId, modelName.modelId))

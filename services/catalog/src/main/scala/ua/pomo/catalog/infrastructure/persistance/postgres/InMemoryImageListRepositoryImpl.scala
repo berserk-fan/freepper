@@ -1,15 +1,15 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.MonadThrow
 import cats.effect.{Ref, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import monocle.syntax.AppliedLens
-import ua.pomo.catalog.domain.imageList._
+import monocle.syntax.all._
+import shapeless._
 import ua.pomo.catalog.domain.image._
+import ua.pomo.catalog.domain.imageList._
 
 import java.util.UUID
-import shapeless._
-import monocle.syntax.all._
 
 class InMemoryImageListRepositoryImpl[F[_]: MonadThrow] private (var mapRef: Ref[F, Map[ImageListId, ImageList]])
     extends ImageListRepository[F] {
@@ -29,7 +29,7 @@ class InMemoryImageListRepositoryImpl[F[_]: MonadThrow] private (var mapRef: Ref
       case ImageListSelector.IdsIn(ids) =>
         (i: ImageList) => ids.toList.toSet.contains(i.id)
       case ImageListSelector.All =>
-        (i: ImageList) => true
+        (_: ImageList) => true
     }
     map.values
       .filter(filter)

@@ -4,8 +4,8 @@ import cats.~>
 import ua.pomo.catalog.domain.PageToken
 
 package object programs {
-  implicit class MapKOps[F[_], G[_], T](value: F[T]) {
-    def mapK(f: F ~> G): G[T] = f(value)
+  implicit class MapKOps[F[_], T](value: F[T]) {
+    def mapK[G[_]](f: F ~> G): G[T] = f(value)
   }
 
   def computeNextPageToken[T](page: PageToken.NonEmpty, res: List[T]): PageToken = {

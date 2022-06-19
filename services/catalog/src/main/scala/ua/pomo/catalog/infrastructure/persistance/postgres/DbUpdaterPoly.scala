@@ -1,8 +1,8 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
-import doobie.implicits._
 import doobie.{Fragment, Write}
-import shapeless._
+import doobie.implicits.toSqlInterpolator
+import shapeless.Poly1
 
 trait DbUpdaterPoly extends Poly1 {
   type Res[T] = Case.Aux[Option[T], Option[Fragment]]

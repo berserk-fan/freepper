@@ -1,9 +1,9 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.effect.{IO, Resource}
 import doobie.ConnectionIO
 import doobie.implicits.toSqlInterpolator
-import doobie.postgres.implicits._
+import doobie.postgres.implicits.UuidType
 import org.scalatest.ParallelTestExecution
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.CategoryRepository
@@ -20,29 +20,27 @@ class ProductRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecuti
       categoryRepo: CategoryRepository[ConnectionIO],
       modelRepo: ModelRepository[ConnectionIO],
       postgres: ProductRepository[ConnectionIO],
-      impls: Seq[Impl],
+      impls: Seq[(String, Impl)],
       db: DbResources
-  ) extends HasDbResources
-      with HasImpls
+  )
 
-  override type Res = TestResources
+  override type TestResource = TestResources
   override type Impl = ProductRepository[ConnectionIO]
   override val resourcePerTest: Boolean = true
+  override def getDbResources(resources: TestResources): DbResources = resources.db
+  override def getImpls(resources: TestResources): Seq[(String, Impl)] = resources.impls
   override def names: Seq[String] = Seq("postgres", "inmemory")
-  override protected def resource: Resource[IO, Res] =
+  override protected def resource: Resource[IO, TestResource] =
     for {
       db <- Resources.dbTest
-      imageListRepo = ImageListRepositoryImpl()
-      categoryRepo = CategoryRepositoryImpl()
-      modelRepo = ModelRepositoryImpl()
-      productPostgres = ProductRepositoryImpl()
       productInMemory <- Resource.eval(InMemoryProductRepositoryImpl[ConnectionIO]).mapK(db.xa.trans)
+      productPostgres = ProductRepositoryImpl()
     } yield TestResources(
-      imageListRepo,
-      categoryRepo,
-      modelRepo,
+      ImageListRepositoryImpl(),
+      CategoryRepositoryImpl(),
+      ModelRepositoryImpl(),
       productPostgres,
-      Seq(productPostgres, productInMemory),
+      Seq(("postgres", productPostgres), ("inmemory", productInMemory)),
       db
     )
 

@@ -1,15 +1,14 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.effect.{IO, Resource}
 import doobie.ConnectionIO
 import doobie.implicits._
-import org.scalacheck.Gen
 import org.scalatest.ParallelTestExecution
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category.{CategoryRepository, CategoryUUID}
 import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
-import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Fixtures, Generators, HasDbResources, Resources}
+import ua.pomo.catalog.shared._
 
 import java.util.UUID
 
@@ -20,22 +19,27 @@ class ModelRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution
       imageListRepo: ImageListRepository[ConnectionIO],
       postgres: ModelRepository[ConnectionIO],
       db: DbResources,
-      impls: Seq[Impl]
-  ) extends HasDbResources
-      with HasImpls
+      impls: Seq[(String, Impl)]
+  )
 
-  override type Res = TestResources
+  override type TestResource = TestResources
   override val resourcePerTest: Boolean = true
   override type Impl = ModelRepository[ConnectionIO]
+  override def getDbResources(resources: TestResources): DbResources = resources.db
+  override def getImpls(resources: TestResource): scala.Seq[(String, Impl)] = resources.impls
   override def names: Seq[String] = Seq("postgres", "inmemory")
-  override protected def resource: Resource[IO, Res] =
+  override protected def resource: Resource[IO, TestResource] =
     for {
       db <- Resources.dbTest
-      imageListRepo <- Resource.pure(ImageListRepositoryImpl())
-      categoryRepo = CategoryRepositoryImpl()
-      modelRepo = ModelRepositoryImpl()
       modelInMemory <- Resource.eval(ModelRepositoryImpl.makeInMemory[ConnectionIO]).mapK(db.xa.trans)
-    } yield TestResources(categoryRepo, imageListRepo, modelRepo, db, Seq(modelRepo, modelInMemory))
+      modelRepo = ModelRepositoryImpl()
+    } yield TestResources(
+      CategoryRepositoryImpl(),
+      ImageListRepositoryImpl(),
+      modelRepo,
+      db,
+      Seq(("postgres", modelRepo), ("inmemory", modelInMemory))
+    )
 
   test("queries") {
     val modelId = ModelId(UUID.randomUUID())

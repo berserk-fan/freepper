@@ -1,11 +1,10 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.effect.{MonadCancelThrow, Ref}
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import ua.pomo.catalog.domain.category._
 
 import java.util.UUID
-import monocle.syntax.all._
 
 class InMemoryCategoryRepositoryImpl[F[_]: MonadCancelThrow] private[persistance] (
     ref: Ref[F, Map[CategoryUUID, Category]]
@@ -29,9 +28,6 @@ class InMemoryCategoryRepositoryImpl[F[_]: MonadCancelThrow] private[persistance
   override def find(id: CategoryUUID): F[Option[Category]] = ref.get.map(_.get(id))
 
   override def update(req: UpdateCategory): F[Int] = ref.modify { map =>
-    object updateObj extends InMemoryUpdaterPoly[Category] {
-      val a: Res[CategoryDisplayName] = gen(_.focus(_.displayName))
-    }
     map.get(req.id).fold((map, 0)) { category =>
       var updated = category.copy()
       req.readableId.foreach { rId =>

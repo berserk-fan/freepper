@@ -1,16 +1,16 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.data.{NonEmptyList, OptionT}
 import cats.effect.Sync
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, catsSyntaxFlatMapOps}
 import doobie._
-import doobie.implicits._
-import doobie.postgres.implicits._
+import doobie.postgres.implicits.UuidType
+import doobie.implicits.toSqlInterpolator
+import shapeless.HNil
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.error.NotFound
+import ua.pomo.catalog.domain.image.{Image, ImageId}
 import ua.pomo.catalog.domain.imageList._
-import ua.pomo.catalog.domain.image._
-import shapeless._
 
 object ImageListRepositoryImpl {
   def apply(): ImageListRepository[ConnectionIO] = {

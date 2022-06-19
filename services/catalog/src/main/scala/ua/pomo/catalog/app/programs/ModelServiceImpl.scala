@@ -3,20 +3,15 @@ package ua.pomo.catalog.app.programs
 import cats.arrow.FunctionK
 import cats.effect.Sync
 import cats.effect.kernel.Async
-import cats.implicits.{
-  catsSyntaxApplicativeErrorId,
-  catsSyntaxApplicativeId,
-  toFlatMapOps,
-  toFunctorOps
-}
+import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import cats.~>
 import doobie.ConnectionIO
 import doobie.util.transactor.Transactor
 import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.model._
-import ua.pomo.catalog.infrastructure.persistance.ModelRepositoryImpl
+import ua.pomo.catalog.infrastructure.persistance.postgres.ModelRepositoryImpl
 
-private class ModelServiceImpl[F[_]: Sync, G[_]: Sync] private (xa: G ~> F, repository: ModelRepository[G])
+private class ModelServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, repository: ModelRepository[G])
     extends ModelService[F] {
 
   def create(model: CreateModel): F[Model] = repository.create(model).flatMap(repository.get).mapK(xa)

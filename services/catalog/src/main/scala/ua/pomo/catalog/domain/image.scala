@@ -23,8 +23,11 @@ object image {
   @derive(eqv, show, decoder)
   case class Image(id: ImageId, src: ImageSrc, alt: ImageAlt)
 
-  case class CreateImage(src: ImageSrc, alt: ImageAlt, data: Array[Byte])
-  case class DbCreateImage(src: ImageSrc, alt: ImageAlt)
+  case class ImageData(value: Array[Byte])
+
+  case class CreateImage(src: ImageSrc, alt: ImageAlt, data: ImageData)
+  case class CreateImageMetadata(src: ImageSrc, alt: ImageAlt)
+  case class CreateImageData(src: ImageSrc, data: ImageData)
 
   sealed trait ImageSelector
   object ImageSelector {
@@ -37,8 +40,14 @@ object image {
   @derive(eqv, show)
   case class FindImagesResponse(images: List[Image], nextPageToken: PageToken)
 
+  trait ImageDataRepository[F[_]] {
+    def create(image: CreateImageData): F[Unit]
+    def delete(src: ImageSrc): F[Unit]
+    def list(prefix: String): F[List[ImageSrc]]
+  }
+
   trait ImageRepository[F[_]] {
-    def create(image: DbCreateImage): F[ImageId]
+    def create(image: CreateImageMetadata): F[ImageId]
     def get(id: ImageId): F[Image]
     def query(query: ImageQuery): F[List[Image]]
     def delete(imageId: ImageId): F[Int]

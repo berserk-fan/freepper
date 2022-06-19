@@ -1,9 +1,7 @@
 package ua.pomo.catalog
 
 import cats.effect.{IO, Resource}
-import cats.effect.unsafe.implicits.global
 import cats.implicits.toTraverseOps
-import cats.kernel.Monoid
 import com.google.protobuf.field_mask.FieldMask
 import io.grpc.{Metadata, Status, StatusException}
 import ua.pomo.catalog.api.{
@@ -25,33 +23,39 @@ import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.imageList.ImageListId
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter.ParameterListId
-import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, HasDbResources, Resources}
+import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Generators, Resources}
 import ua.pomo.catalog.shared.Generators.ToLazyListOps
 import doobie.implicits._
-import doobie.postgres.implicits._
+import doobie.postgres.implicits.UuidType
+import org.typelevel.log4cats.LoggerFactory
+import org.typelevel.log4cats.slf4j.Slf4jFactory
 import ua.pomo.catalog.app.{CatalogImpl, Converters}
-import ua.pomo.catalog.app.programs.modifiers.{MessageModifier, PageDefaultsApplier, ReadableIdInNamesResolver}
-import ua.pomo.catalog.infrastructure.persistance._
+import ua.pomo.catalog.app.programs.modifiers.PageDefaultsApplier
+import ua.pomo.catalog.infrastructure.persistance.postgres._
 
 import java.util.UUID
 
 class CatalogImplTest extends DbUnitTestSuite {
   override val resourcePerTest: Boolean = true
-  override type Impl = Unit
-  override val names: Seq[String] = Seq.empty
-  case class TestResources(db: DbResources, impls: Seq[Impl]) extends HasDbResources with HasImpls
-  override type Res = TestResources
-  override def resource: Resource[IO, Res] = Resources.dbTest.map(db => TestResources(db, Seq.empty))
+  override type Impl = Nothing
+  case class TestResources(db: DbResources)
+  override type TestResource = TestResources
+  override def resource: Resource[IO, TestResource] = Resources.dbTest.map(db => TestResources(db))
+
+  override def getDbResources(resources: TestResources): DbResources = resources.db
+  override def getImpls(resources: TestResources): Seq[(String, Nothing)] = Seq.empty
+  override def names: Seq[String] = Seq.empty
 
   private val config = CatalogApiConfig(5)
   def makeImpls: (CategoryService[IO], ModelService[IO], CatalogFs2Grpc[IO, Metadata]) = {
+    implicit val lf: LoggerFactory[IO] = Slf4jFactory[IO]
     val categoryService = CategoryServiceImpl.makeInMemory[IO].unsafeRunSync()
     val modelService = ModelServiceImpl.makeInMemory[IO].unsafeRunSync()
     val imageListService = ImageListServiceImpl.makeInMemory[IO]
     val productService = ProductServiceImpl.makeInMemory[IO].unsafeRunSync()
     val defaultsApplier = PageDefaultsApplier[IO](config.defaultPageSize)
     val catalogImpl =
-      CatalogImpl[IO](productService, categoryService, modelService, imageListService, defaultsApplier)
+      CatalogImpl[IO](productService, categoryService, modelService, imageListService, null, defaultsApplier)
     (categoryService, modelService, catalogImpl)
   }
 
@@ -79,7 +83,7 @@ class CatalogImplTest extends DbUnitTestSuite {
     page2.models.length should equal(pageLength)
     val page3 = impl.listModels(ListModelsRequest(modelsCol, pageLength, page2.nextPageToken), null).unsafeRunSync()
     page3.models.length should equal(2)
-    impl.listModels(ListModelsRequest(modelsCol, 0, ""), null).unsafeRunSync().models.length should equal(
+    impl.listModels(ListModelsRequest(modelsCol), null).unsafeRunSync().models.length should equal(
       config.defaultPageSize
     )
 
@@ -187,5 +191,4 @@ class CatalogImplTest extends DbUnitTestSuite {
       .unsafeRunSync()
     modelService.get(updated.id).unsafeRunSync().description should equal(newDescr)
   }
-
 }

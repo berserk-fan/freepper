@@ -1,6 +1,7 @@
 package ua.pomo.catalog.app
 
 import cats.implicits.toShow
+import com.google.protobuf.ByteString
 import com.google.protobuf.field_mask.FieldMask
 import io.circe.{Decoder, Encoder, parser}
 import scalapb.{FieldMaskUtil, GeneratedMessage, GeneratedMessageCompanion}
@@ -9,20 +10,25 @@ import ua.pomo.catalog.api
 import ua.pomo.catalog.api.{
   CreateCategoryRequest,
   CreateImageListRequest,
+  CreateImageRequest,
   CreateModelRequest,
   CreateProductRequest,
   DeleteCategoryRequest,
   DeleteImageListRequest,
+  DeleteImageRequest,
   DeleteModelRequest,
   DeleteProductRequest,
   GetCategoryRequest,
   GetImageListRequest,
+  GetImageRequest,
   GetModelRequest,
   GetProductRequest,
   ListCategoriesRequest,
   ListCategoriesResponse,
   ListImageListsRequest,
   ListImageListsResponse,
+  ListImagesRequest,
+  ListImagesResponse,
   ListModelsRequest,
   ListModelsResponse,
   ListProductsRequest,
@@ -37,7 +43,7 @@ import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.error.ValidationErr
 import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
-import ua.pomo.catalog.domain.parameter.{Parameter, ParameterId, ParameterList, ParameterListId}
+import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.product._
 import ua.pomo.catalog.domain.image._
 
@@ -108,6 +114,10 @@ object Converters {
     ListProductsResponse(products.products.map(toApi), toApi(products.nextPageToken))
   }
 
+  def toApi(resp: FindImagesResponse): ListImagesResponse = {
+    ListImagesResponse(resp.images.map(toApi), toApi(resp.nextPageToken))
+  }
+
   def toApi(money: Money): api.Money = {
     api.Money(money.amount.toFloat)
   }
@@ -146,13 +156,6 @@ object Converters {
     )
   }
 
-  def toApi(image: Image): api.Image = {
-    api.Image(
-      image.src.show,
-      image.alt.show
-    )
-  }
-
   def toApi(p: Product): api.Product = {
     api.Product(
       ProductName(CategoryRefId.Uid(p.categoryId), p.modelId, p.id).toNameString,
@@ -174,8 +177,16 @@ object Converters {
     )
   }
 
+  def toDomain(request: GetImageRequest): ImageId = {
+    ApiName.image(request.name).toTry.get.id
+  }
+
   def toDomain(request: GetCategoryRequest): CategoryUUID = {
     ApiName.category(request.name).toTry.get.categoryId.uid
+  }
+
+  def toDomain(request: DeleteImageRequest): ImageId = {
+    ApiName.image(request.name).toTry.get.id
   }
 
   def toDomain(request: DeleteCategoryRequest): CategoryUUID = {
@@ -213,6 +224,10 @@ object Converters {
   def toDomain(request: ListProductsRequest): ProductQuery = {
     val modelId = ApiName.products(request.parent).toTry.get.modelId
     ProductQuery(parseToken(request.pageToken, request.pageSize), ProductSelector.ModelIs(modelId))
+  }
+
+  def toDomain(request: ListImagesRequest): ImageQuery = {
+    ImageQuery(ImageSelector.All, parseToken(request.pageToken, request.pageSize))
   }
 
   def toDomain(request: UpdateModelRequest): UpdateModel = {
@@ -294,6 +309,21 @@ object Converters {
     } else {
       FieldMaskUtil.applyFieldMask(m, fieldMask)
     }
+  }
+
+  def toDomain(req: CreateImageRequest): CreateImage = {
+    val im = req.image.get
+    CreateImage(ImageSrc(im.src), ImageAlt(im.alt), ImageData(im.data.toByteArray))
+  }
+
+  def toApi(image: Image): api.Image = {
+    api.Image(
+      ApiName.ImageName(image.id).toNameString,
+      image.id.show,
+      image.src.show,
+      image.alt.show,
+      ByteString.EMPTY
+    )
   }
 
   def toDomain(request: UpdateCategoryRequest): UpdateCategory = {

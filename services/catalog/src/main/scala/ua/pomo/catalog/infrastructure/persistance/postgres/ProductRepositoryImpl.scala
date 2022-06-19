@@ -1,7 +1,7 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.data.OptionT
-import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
+import cats.implicits.catsSyntaxApplicativeErrorId
 import doobie._
 import doobie.implicits._
 import doobie.postgres.implicits._
@@ -14,8 +14,6 @@ import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.product._
-
-import java.util.UUID
 
 class ProductRepositoryImpl private () extends ProductRepository[ConnectionIO] {
 
@@ -100,9 +98,6 @@ object ProductRepositoryImpl {
     )
 
     def find(query: ProductQuery): Query0[Product] = {
-      implicit val readParamList: Get[List[ParameterId]] = Get[List[UUID]].map(_.map(ParameterId.apply))
-      implicit val readParamDisplayNames: Get[List[ParameterDisplayName]] =
-        Get[List[String]].map(_.map(ParameterDisplayName.apply))
       implicit val readListImage: Get[List[Image]] = jsonAggListJson[Image]
       val sql =
         sql"""

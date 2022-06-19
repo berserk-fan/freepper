@@ -1,4 +1,4 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.data.NonEmptyList
 import cats.effect.{IO, Resource}
@@ -7,24 +7,25 @@ import org.scalatest.ParallelTestExecution
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.imageList.ImageListSelector.IdsIn
 import ua.pomo.catalog.domain.imageList._
-import ua.pomo.catalog.domain.image._
-import ua.pomo.catalog.infrastructure.persistance.ImageListRepositoryImpl.Queries
-import ua.pomo.catalog.shared.{DbResources, DbUnitTestSuite, Fixtures, Generators, HasDbResources, Resources}
+import ua.pomo.catalog.infrastructure.persistance.postgres.ImageListRepositoryImpl.Queries
+import ua.pomo.catalog.shared._
 
 import java.util.UUID
 
 class ImageListRepositoryImplTest extends DbUnitTestSuite with ParallelTestExecution with Fixtures {
   override type Impl = ImageListRepository[ConnectionIO]
+  override type TestResource = TestResources
   override val resourcePerTest: Boolean = true
-  case class TestResources(postgres: Impl, db: DbResources, impls: Seq[Impl]) extends HasDbResources with HasImpls
-  override type Res = TestResources
-  override val names = Seq("postgres", "inmemory")
-  override def resource: Resource[IO, Res] =
+  case class TestResources(postgres: Impl, db: DbResources, impls: Seq[(String, Impl)])
+  override def getDbResources(resources: TestResources): DbResources = resources.db
+  override def getImpls(resources: TestResource): Seq[(String, Impl)] = resources.impls
+  override def names: Seq[String] = Seq("postgres", "inmemory")
+  override def resource: Resource[IO, TestResource] =
     for {
       db <- Resources.dbTest
       postgres <- Resource.pure(ImageListRepositoryImpl())
       inMemory <- Resource.pure(InMemoryImageListRepositoryImpl[ConnectionIO]()).mapK(db.xa.trans)
-    } yield TestResources(postgres, db, Seq(postgres, inMemory))
+    } yield TestResources(postgres, db, Seq(("postgres", postgres), ("inmemory", inMemory)))
 
   test("queries") {
     val f = new ImageFixture {}

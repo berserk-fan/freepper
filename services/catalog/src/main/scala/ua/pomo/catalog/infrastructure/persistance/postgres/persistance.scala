@@ -1,18 +1,17 @@
-package ua.pomo.catalog.infrastructure
+package ua.pomo.catalog.infrastructure.persistance
 
+import doobie.implicits.toSqlInterpolator
 import cats.Show
 import cats.data.NonEmptyList
 import cats.implicits.{toBifunctorOps, toShow, toTraverseOps}
-import doobie._
+import doobie.{Fragment, Get, Put, Read}
 import io.circe.{Decoder, Json, parser}
 import io.estatico.newtype.Coercible
 import io.estatico.newtype.ops.toCoercibleIdOps
 import org.postgresql.util.PGobject
 import ua.pomo.catalog.domain.PageToken
-import doobie._
-import doobie.implicits._
 
-package object persistance {
+package object postgres {
   implicit def newTypePut[B, A](implicit ev: Coercible[B, A], evp: Put[A]): Put[B] = evp.contramap[B](ev(_))
   implicit def newTypeRead[N: Coercible[R, *], R: Read]: Read[N] = Read[R].map(_.coerce[N])
   implicit val jsonGet: Get[Json] = {

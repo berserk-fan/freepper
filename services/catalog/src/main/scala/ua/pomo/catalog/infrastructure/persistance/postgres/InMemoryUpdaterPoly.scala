@@ -1,4 +1,4 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import monocle.AppliedLens
 import shapeless.Poly1

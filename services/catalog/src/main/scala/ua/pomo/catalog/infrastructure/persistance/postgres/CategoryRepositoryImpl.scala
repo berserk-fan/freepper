@@ -1,4 +1,4 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.effect.{Ref, Sync}
 import cats.syntax.functor._
@@ -6,7 +6,6 @@ import cats.~>
 import doobie._
 import doobie.implicits._
 import doobie.postgres.implicits._
-import shapeless._
 import ua.pomo.catalog.domain.PageToken
 import ua.pomo.catalog.domain.category._
 

@@ -9,7 +9,7 @@ import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter.{ParameterId, ParameterListId}
-import ua.pomo.catalog.infrastructure.persistance.ImageRepositoryImpl
+import ua.pomo.catalog.infrastructure.persistance.postgres.ImageRepositoryImpl
 
 import java.util.UUID
 

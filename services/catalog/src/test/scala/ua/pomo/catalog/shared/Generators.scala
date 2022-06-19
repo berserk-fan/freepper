@@ -48,8 +48,8 @@ object Generators {
     private val src = Gen.alphaNumStr.map(ImageSrc.apply)
 
     val gen: Gen[Image] = (id, src, alt).mapN(image.Image.apply)
-    val create: Gen[DbCreateImage] = (src, alt).mapN(DbCreateImage.apply)
-    val createListOf5: Gen[List[DbCreateImage]] = Gen.listOfN(5, create)
+    val create: Gen[CreateImageMetadata] = (src, alt).mapN(CreateImageMetadata.apply)
+    val createListOf5: Gen[List[CreateImageMetadata]] = Gen.listOfN(5, create)
   }
 
   object ImageList {

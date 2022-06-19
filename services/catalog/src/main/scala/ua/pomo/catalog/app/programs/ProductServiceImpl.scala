@@ -9,9 +9,9 @@ import cats.~>
 import doobie.{ConnectionIO, Transactor}
 import ua.pomo.catalog.domain.error.NotFound
 import ua.pomo.catalog.domain.product._
-import ua.pomo.catalog.infrastructure.persistance.InMemoryProductRepositoryImpl
+import ua.pomo.catalog.infrastructure.persistance.postgres.InMemoryProductRepositoryImpl
 
-private class ProductServiceImpl[F[_]: Sync, G[_]: Sync] private (xa: G ~> F, repository: ProductRepository[G])
+private class ProductServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, repository: ProductRepository[G])
     extends ProductService[F] {
   override def create(command: CreateProduct): F[Product] = {
     repository.create(command).flatMap(repository.get).mapK(xa)

@@ -3,7 +3,7 @@ import scalapb.GeneratorOption
 
 ThisBuild / scalaVersion := "2.13.6"
 ThisBuild / version := "0.1.0-SNAPSHOT"
-ThisBuild / organization := "ua.pomo.catalog"
+ThisBuild / organization := "ua.pomo"
 ThisBuild / organizationName := "Pomo"
 
 //Env File
@@ -13,7 +13,8 @@ Test / envVars := (Test / envFromFile).value
 
 //ScalaTest
 
-Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-P16")
+Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-P32")
+Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-h", "test-results", "-o")
 
 //grpc plugins
 
@@ -84,6 +85,7 @@ lazy val root = (project in file("."))
     runMigrate / fork := true,
     libraryDependencies ++= Seq(
       Libraries.scalaTest,
+      Libraries.scalaTestHtml,
       Libraries.scalaCheck,
       Libraries.scalaTestScalaCheck,
       Libraries.grpcNetty,
@@ -120,10 +122,13 @@ lazy val root = (project in file("."))
       Libraries.parserCombinators,
       Libraries.log4CatsSlf4j,
       Libraries.log4Cats,
+      Libraries.awsS3Sdk,
       CompilerPlugin.kindProjector,
       CompilerPlugin.betterMonadicFor,
       CompilerPlugin.semanticDB
     )
   )
 
+addCommandAlias("test", ";testOnly *Test *IT")
+addCommandAlias("testEvil", ";testOnly *Evil")
 addCommandAlias("runLinter", ";scalafixAll --rules RemoveUnused")

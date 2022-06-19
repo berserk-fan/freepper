@@ -1,7 +1,7 @@
-package ua.pomo.catalog.infrastructure.persistance
+package ua.pomo.catalog.infrastructure.persistance.postgres
 
-import doobie._
-import doobie.implicits._
+import doobie.Fragment
+import doobie.implicits.toSqlInterpolator
 
 object ParameterListRepository {
   object Queries {
