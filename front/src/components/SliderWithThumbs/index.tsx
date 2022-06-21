@@ -6,7 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIosOutlined from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlined from "@material-ui/icons/ArrowForwardIosOutlined";
 import Image from "next/image";
-import { Image as ImageData } from "apis/image_list.pb";
+import { Image as ImageData } from "apis/image.pb";
 import { SliderArrows } from "../Slider/helpers";
 import { useStyles } from "./styles";
 import { useSliderVirtualization } from "../Slider/utils";

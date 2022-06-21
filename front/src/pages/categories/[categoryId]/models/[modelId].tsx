@@ -1,6 +1,6 @@
 import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
-import grpcClient from "commons/shop-node";
+import grpcClient from "commons/shopClient";
 import FoundProductPage from "components/ProductPage/FoundProductPage";
 import LayoutWithHeaderAndFooter from "components/Layout/LayoutWithHeaderAndFooter";
 import Box from "@material-ui/core/Box/Box";

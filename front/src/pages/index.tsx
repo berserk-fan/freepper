@@ -1,6 +1,6 @@
 import { GetStaticProps } from "next";
 import { Home, HotDealsWithCategory } from "../components/Pages/Home";
-import grpcClient from "../commons/shop-node";
+import grpcClient from "../commons/shopClient";
 import { removeUndefined } from "../commons/utils";
 
 export default Home;
