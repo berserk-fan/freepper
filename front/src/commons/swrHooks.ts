@@ -1,10 +1,11 @@
 import useSWR, { useSWRConfig } from "swr";
 import { hash } from "immutable";
+import { ImageList } from "apis/image_list.pb";
+import { Model } from "apis/model.pb";
+import { Category } from "apis/category.pb";
+import { Product } from "apis/product.pb";
+import { Image } from "apis/image.pb";
 import grpcClient from "./shopClient";
-import {ImageList} from "apis/image_list.pb";
-import {Model} from "apis/model.pb";
-import {Category} from "apis/category.pb";
-import {Product} from "apis/product.pb";
 
 type Named = { name: string };
 function compareArr(x?: Named[], y?: Named[]) {
@@ -12,6 +13,28 @@ function compareArr(x?: Named[], y?: Named[]) {
     return x === y;
   }
   return hash(x.map((x1) => x1.name)) === hash(y.map((x1) => x1.name));
+}
+
+export function useImages() {
+  const key = `images`;
+  const { data, error, mutate } = useSWR<Image[]>(
+    key,
+    () =>
+      grpcClient()
+        .listImages({
+          parent: key,
+          pageSize: 1000,
+        })
+        .then((x) => x.images),
+    { compare: compareArr },
+  );
+
+  return {
+    data,
+    isLoading: !error && !data,
+    isError: error,
+    mutate,
+  };
 }
 
 export function useCategories() {
