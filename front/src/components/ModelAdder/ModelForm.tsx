@@ -109,12 +109,7 @@ export default function ModelForm({
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <Box
-                      borderRadius="5px"
-                      border={1}
-                      borderColor="grey"
-                      minWidth="500px"
-                    >
+                    <Box borderRadius="5px" border={1} borderColor="grey">
                       <Typography variant="h6">Description Preview</Typography>
                       <Divider />
                       <Markdown>{values.description}</Markdown>

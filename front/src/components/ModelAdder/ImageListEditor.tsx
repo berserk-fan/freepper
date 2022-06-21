@@ -16,13 +16,18 @@ import SwrFallback from "../Swr/SwrFallback";
 export function ImageListController() {
   const imageLists1 = useImageLists();
   const indexed = React.useMemo(
-    () => Object.fromEntries(imageLists1.data.map((x) => [x.name, x])),
+    () =>
+      imageLists1.data
+        ? Object.fromEntries(imageLists1.data.map((x) => [x.name, x]))
+        : {},
     [imageLists1.data],
   );
 
   const autocompleteData = React.useMemo(
     () =>
-      imageLists1.data.map((x) => ({ label: x.displayName, value: x.name })),
+      imageLists1.data
+        ? imageLists1.data.map((x) => ({ label: x.displayName, value: x.name }))
+        : [],
     [imageLists1.data],
   );
 
@@ -33,6 +38,9 @@ export function ImageListController() {
   );
 
   React.useEffect(() => {
+    if (!imageLists1.data || !!currentList.name) {
+      return;
+    }
     if (!imageLists1.isLoading && imageLists1.data.length > 0) {
       setCurrentList(imageLists1.data[0]);
     }
@@ -52,7 +60,6 @@ export function ImageListController() {
     });
     setCurrentList(imageList);
     alert(`ImageList updated: ${JSON.stringify(imageList)}`);
-    await imageLists1.mutate();
   }
 
   return (
@@ -94,12 +101,13 @@ export function ImageListController() {
               Delete Image
             </Button>
           </Box>
-          <Box maxHeight="500px" maxWidth="500px">
+          <Box height="500px" width="500px">
             <SliderWithThumbs
               images={currentList.images}
               thumbs={currentList.images}
               sizes={SIZES}
               onChange={setActiveImageSrc}
+              resetSlideIndex
             />
           </Box>
         </Box>

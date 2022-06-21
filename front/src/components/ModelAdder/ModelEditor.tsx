@@ -11,6 +11,7 @@ import MuiTextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import CloseIcon from "@material-ui/icons/Close";
 import { Category } from "apis/category.pb";
+import Grid from "@material-ui/core/Grid";
 import ModelUpdater from "./ModelUpdater";
 import ProductPropsEditor from "./ProductPropsEditor";
 import { ImageListController } from "./ImageListEditor";
@@ -18,6 +19,7 @@ import { useCategories } from "../../commons/swrHooks";
 import ModelSelector from "./ModelSelector";
 import ModelCreator from "./ModelCreator";
 import SwrFallback from "../Swr/SwrFallback";
+import LayoutWithHeaderAndFooter from "../Layout/LayoutWithHeaderAndFooter";
 
 function ImageListDialog({
   open,
@@ -60,93 +62,89 @@ export default function ModelEditor() {
       swrData={categories}
       main={() => (
         <Container>
-          <Box display="flex">
-            <Box
-              height="100%"
-              display="flex"
-              flexDirection="column"
-              justifyContent="space-between"
-              marginX={2}
-            >
-              <Box flexDirection="column">
-                <Typography variant="h6">Notes</Typography>
-                <MuiTextField
-                  minRows={20}
-                  variant="outlined"
-                  color="secondary"
-                  multiline
+          <Box minHeight="100vh" marginTop={4} padding={1} bgcolor="white">
+            <Grid container spacing={1}>
+              <Grid item xs={3}>
+                <Box>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    color="secondary"
+                    onClick={openImageListControllerDialog}
+                  >
+                    Images
+                  </Button>
+                </Box>
+                <Box>
+                  <Typography variant="h6">Notes</Typography>
+                  <MuiTextField
+                    fullWidth
+                    minRows={20}
+                    variant="outlined"
+                    color="secondary"
+                    multiline
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={9}>
+                <Typography variant="h4">Model Selector</Typography>
+                <Form
+                  onSubmit={(x) => setCategoryName(x.category_name)}
+                  initialValues={{ category_name: categories.data[0].name }}
+                  render={({ handleSubmit }) => (
+                    <form onSubmit={handleSubmit} noValidate>
+                      <Select
+                        key="category_name"
+                        name="category_name"
+                        label="Category Id"
+                        variant="outlined"
+                        color="secondary"
+                      >
+                        {categories.data.map((category) => (
+                          <MenuItem key={category.name} value={category.name}>
+                            {category.displayName}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      <Button type="submit">Submit</Button>
+                      <Button onClick={dropModel}>Reload model</Button>
+                    </form>
+                  )}
                 />
-              </Box>
 
-              <Box>
-                <Button
-                  variant="contained"
-                  size="large"
-                  color="secondary"
-                  onClick={openImageListControllerDialog}
-                >
-                  Images
-                </Button>
-              </Box>
-            </Box>
-            <Box marginX={2}>
-              <Typography variant="h4">Model Selector</Typography>
-              <Form
-                onSubmit={(x) => setCategoryName(x.category_name)}
-                initialValues={{ category_name: categories.data[0].name }}
-                render={({ handleSubmit }) => (
-                  <form onSubmit={handleSubmit} noValidate>
-                    <Select
-                      key="category_name"
-                      name="category_name"
-                      label="Category Id"
-                      variant="outlined"
-                      color="secondary"
-                    >
-                      {categories.data.map((category) => (
-                        <MenuItem key={category.name} value={category.name}>
-                          {category.displayName}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    <Button type="submit">Submit</Button>
-                    <Button onClick={dropModel}>Reload model</Button>
-                  </form>
+                <Box width="100%" marginY={1}>
+                  <Divider variant="fullWidth" />
+                </Box>
+
+                {categoryName && (
+                  <ModelSelector
+                    categoryName={categoryName}
+                    onSelect={setModelName}
+                  />
                 )}
-              />
 
-              <Box width="100%" marginY={1}>
-                <Divider variant="fullWidth" />
-              </Box>
+                <Box width="100%" marginY={1}>
+                  <Divider variant="fullWidth" />
+                </Box>
 
-              {categoryName && (
-                <ModelSelector
-                  categoryName={categoryName}
-                  onSelect={setModelName}
+                {modelName ? (
+                  <ModelUpdater modelName={modelName} />
+                ) : (
+                  <ModelCreator categoryName={categoryName} />
+                )}
+
+                <Box width="100%" marginY={1}>
+                  <Divider variant="fullWidth" />
+                </Box>
+
+                <ImageListDialog
+                  open={imageListControllerDialog}
+                  onClose={closeImageListControllerDialog}
                 />
-              )}
 
-              <Box width="100%" marginY={1}>
-                <Divider variant="fullWidth" />
-              </Box>
-
-              {modelName ? (
-                <ModelUpdater modelName={modelName} />
-              ) : (
-                <ModelCreator categoryName={categoryName} />
-              )}
-
-              <Box width="100%" marginY={1}>
-                <Divider variant="fullWidth" />
-              </Box>
-
-              <ImageListDialog
-                open={imageListControllerDialog}
-                onClose={closeImageListControllerDialog}
-              />
-
-              {modelName && <ProductPropsEditor modelName={modelName} />}
-            </Box>
+                {modelName && <ProductPropsEditor modelName={modelName} />}
+              </Grid>
+            </Grid>
           </Box>
         </Container>
       )}

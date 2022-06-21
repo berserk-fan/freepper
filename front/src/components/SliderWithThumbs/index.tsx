@@ -7,6 +7,7 @@ import ArrowBackIosOutlined from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlined from "@material-ui/icons/ArrowForwardIosOutlined";
 import Image from "next/image";
 import { Image as ImageData } from "apis/image.pb";
+import Typography from "@material-ui/core/Typography/Typography";
 import { SliderArrows } from "../Slider/helpers";
 import { useStyles } from "./styles";
 import { useSliderVirtualization } from "../Slider/utils";
@@ -18,12 +19,18 @@ export default function SliderWithThumbs({
   thumbs,
   sizes,
   onChange = () => {},
+  resetSlideIndex = false,
 }: {
   images: ImageData[];
   thumbs: ImageData[];
   sizes: string;
   onChange?: (src: string) => void;
+  resetSlideIndex?: boolean;
 }) {
+  if (images.length === 0 || thumbs.length === 0) {
+    return <Typography>Empty images</Typography>;
+  }
+
   const classes = useStyles();
   const thumbserDirRef = useRef<KeenSlider>(null);
   const [activeSlide, setActiveSlide] = useState(0);
@@ -51,8 +58,10 @@ export default function SliderWithThumbs({
   });
 
   function changeSlide(idx) {
-    lock.current = idx;
-    slider.moveToSlideRelative(idx);
+    if (slider) {
+      lock.current = idx;
+      slider.moveToSlideRelative(idx);
+    }
   }
 
   // thumbs slider
@@ -79,6 +88,9 @@ export default function SliderWithThumbs({
   useEffect(() => {
     slider?.refresh();
     thumbser?.refresh();
+    if (resetSlideIndex) {
+      changeSlide(0);
+    }
   }, [images, thumbs]);
 
   useEffect(() => {
