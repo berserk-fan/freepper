@@ -10,12 +10,12 @@ import Divider from "@mui/material/Divider";
 import Image from "next/image";
 import { connect } from "react-redux";
 import { CartProduct, CartState, StoreState } from "store";
-import makeStyles from "@mui/material/styles/makeStyles";
-import Typography from "@mui/material/Typography/Typography";
-import useTheme from "@mui/material/styles/useTheme";
+import makeStyles from "@mui/styles/makeStyles";
+import Typography from "@mui/material/Typography";
+import useTheme from "@mui/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery/useMediaQuery";
-import Box from "@mui/material/Box/Box";
-import Grid from "@mui/material/Grid/Grid";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import {
   getDeliveryOptionName,
   getDeliveryProviderName,
@@ -149,7 +149,7 @@ function Summary({
                   <Grid
                     container
                     spacing={2}
-                    justify="space-between"
+                    justifyContent="space-between"
                     alignItems="center"
                     direction={fullWidth ? "row" : "column"}
                   >

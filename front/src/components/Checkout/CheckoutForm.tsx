@@ -3,7 +3,7 @@ import { Form } from "react-final-form";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import { CartState, clearCartAction, StoreState } from "store";
-import Box from "@mui/material/Box/Box";
+import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper/Paper";
 import FormStepper from "./FormStepper";
 import useErrorHandling from "../Commons/UseErrorHandling";

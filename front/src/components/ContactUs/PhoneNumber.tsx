@@ -1,7 +1,7 @@
-import Box from "@mui/material/Box/Box";
+import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
-import ListItem from "@mui/material/ListItem/ListItem";
-import ListItemText from "@mui/material/ListItemText/ListItemText";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
 import React from "react";
 
 export default function PhoneNumber({

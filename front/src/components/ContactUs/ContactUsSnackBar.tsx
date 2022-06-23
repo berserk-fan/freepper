@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton/IconButton";
-import Snackbar from "@mui/material/Snackbar/Snackbar";
-import useTheme from "@mui/material/styles/useTheme";
+import IconButton from "@mui/material/IconButton";
+import Snackbar from "@mui/material/Snackbar";
+import useTheme from "@mui/styles/useTheme";
 import CloseIcon from "@mui/icons-material/Close";
 import React, { useCallback } from "react";
 import ContactUs from "./ContactUs";
@@ -41,6 +41,7 @@ export default function ContactUsSnackBar({
           aria-label="закрыть"
           color="inherit"
           onClick={handleCloseMemoized}
+          size="large"
         >
           <CloseIcon fontSize="small" />
         </IconButton>

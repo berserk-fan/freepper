@@ -1,4 +1,4 @@
-import Box from "@mui/material/Box/Box";
+import Box from "@mui/material/Box";
 import React from "react";
 
 export default function HideOnMobile({ display = "block", children }) {

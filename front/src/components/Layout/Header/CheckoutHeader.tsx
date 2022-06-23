@@ -1,4 +1,4 @@
-import Box from "@mui/material/Box/Box";
+import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar/Toolbar";
 import React from "react";
 import { CustomAppBar } from "./CustomAppBar";

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import Typography from "@mui/material/Typography/Typography";
+import Typography from "@mui/material/Typography";
 
 export default function SwrFallback<
   T extends { data: U; isLoading: boolean; isError: boolean },

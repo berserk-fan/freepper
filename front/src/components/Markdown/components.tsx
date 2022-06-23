@@ -10,7 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import List from "@mui/material/List";
-import useTheme from "@mui/material/styles/useTheme";
+import useTheme from "@mui/styles/useTheme";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";

@@ -26,7 +26,7 @@ const Footer = React.memo(() => {
                 mt={-3}
                 width="100%"
                 height={120}
-                borderRadius={12}
+                borderRadius="12px"
                 className="center overflow-hidden"
                 fontSize={400}
               >

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import Avatar from "@mui/material/Avatar/Avatar";
+import Avatar from "@mui/material/Avatar";
 
 export function MyAvatar({
   image,
@@ -11,7 +11,7 @@ export function MyAvatar({
 }) {
   const dim = variant === "small" ? 24 : 56;
   return (
-    <Avatar style={{ width: 56, height: 56 }}>
+    <Avatar style={{ width: dim, height: dim }}>
       <Image width={dim} height={dim} src={image.src} alt={image.alt} />
     </Avatar>
   );

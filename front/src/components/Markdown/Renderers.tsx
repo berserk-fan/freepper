@@ -1,7 +1,5 @@
 import React, { ReactNode } from "react";
-import withStyles, {
-  StyledComponentProps,
-} from "@mui/material/styles/withStyles";
+import withStyles, { StyledComponentProps } from "@mui/styles/withStyles";
 import Typography, { TypographyProps } from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import Table from "@mui/material/Table";
@@ -11,7 +9,7 @@ import { List as MdList, ListContent } from "mdast";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import useTheme from "@mui/material/styles/useTheme";
+import useTheme from "@mui/styles/useTheme";
 import ListItemText from "@mui/material/ListItemText";
 import List from "@mui/material/List";
 import TableCell from "@mui/material/TableCell";

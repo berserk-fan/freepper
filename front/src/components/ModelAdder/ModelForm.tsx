@@ -6,9 +6,9 @@ import Grid from "@mui/material/Grid";
 import { Select, TextField } from "mui-rff";
 import { MenuItem } from "@mui/material";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography/Typography";
+import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-import Button from "@mui/material/Button/Button";
+import Button from "@mui/material/Button";
 import Markdown from "../Markdown/Renderers";
 import parameterLists1 from "../../commons/parameterLists.json";
 

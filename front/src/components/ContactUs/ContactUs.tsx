@@ -3,7 +3,7 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import TelegramIcon from "@mui/icons-material/Telegram";
-import makeStyles from "@mui/material/styles/makeStyles";
+import makeStyles from "@mui/styles/makeStyles";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";

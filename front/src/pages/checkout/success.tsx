@@ -1,10 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import { pages } from "components/Layout/Header/pages";
-import Box from "@mui/material/Box/Box";
+import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography/Typography";
-import Button from "@mui/material/Button/Button";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import CheckoutHeader from "../../components/Layout/Header/CheckoutHeader";
 
 export default function Success() {

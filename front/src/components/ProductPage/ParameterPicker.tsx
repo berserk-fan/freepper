@@ -1,11 +1,10 @@
-import Typography from "@mui/material/Typography/Typography";
-import React, {MouseEventHandler} from "react";
-import {Parameter, ParameterList} from "apis/parameter.pb";
-import Box from "@mui/material/Box/Box";
-import makeStyles from "@mui/material/styles/makeStyles";
-import Chip from "@mui/material/Chip/Chip";
-import Avatar from "@mui/material/Avatar/Avatar";
-import {Icon} from "./Icon";
+import Typography from "@mui/material/Typography";
+import React, { MouseEventHandler } from "react";
+import { Parameter, ParameterList } from "apis/parameter.pb";
+import Box from "@mui/material/Box";
+import makeStyles from "@mui/styles/makeStyles";
+import Chip from "@mui/material/Chip";
+import { MyAvatar } from "../Commons/Icon";
 
 const useStyles = makeStyles({
   fabricNode: {
@@ -27,11 +26,7 @@ function MyChipNoMemo({
     <Chip
       className={classes.fabricNode}
       avatar={
-        parameter.image ? (
-          <Avatar>
-            <Icon image={parameter.image} />
-          </Avatar>
-        ) : undefined
+        parameter.image ? <MyAvatar image={parameter.image} /> : undefined
       }
       clickable
       color={selected ? "secondary" : "default"}

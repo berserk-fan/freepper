@@ -1,4 +1,4 @@
-import makeStyles from "@mui/material/styles/makeStyles";
+import makeStyles from "@mui/styles/makeStyles";
 import SvgIcon from "@mui/material/SvgIcon";
 import React, { memo } from "react";
 import NovayaPochta from "./svg/Nova_Poshta_2014_logo.svg";

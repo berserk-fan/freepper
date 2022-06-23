@@ -5,12 +5,12 @@ import { connect } from "react-redux";
 import AddIcon from "@mui/icons-material/Add";
 
 import { CartProduct, deleteProductAction, setProductCountAction } from "store";
-import makeStyles from "@mui/material/styles/makeStyles";
-import Box from "@mui/material/Box/Box";
-import IconButton from "@mui/material/IconButton/IconButton";
+import makeStyles from "@mui/styles/makeStyles";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
 import Card from "@mui/material/Card/Card";
 import CardContent from "@mui/material/CardContent/CardContent";
-import Typography from "@mui/material/Typography/Typography";
+import Typography from "@mui/material/Typography";
 import ActionsPopover from "./ActionsPopover";
 import { priceToString } from "../../commons/utils";
 
@@ -75,6 +75,7 @@ const cartItem = function CartItem({
           className={classes.quantityControlsIconButton}
           disabled={count <= 1}
           onClick={() => setProductCount(uid, count - 1)}
+          size="large"
         >
           <RemoveIcon className={classes.quantityControlsIcon} />
         </IconButton>
@@ -84,6 +85,7 @@ const cartItem = function CartItem({
         <IconButton
           className={classes.quantityControlsIconButton}
           onClick={() => setProductCount(uid, count + 1)}
+          size="large"
         >
           <AddIcon className={classes.quantityControlsIcon} />
         </IconButton>

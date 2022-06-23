@@ -4,7 +4,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
-import Button from "@mui/material/Button/Button";
+import Button from "@mui/material/Button";
 import TableContainer from "@mui/material/TableContainer";
 import React from "react";
 import { Parameter } from "apis/parameter.pb";

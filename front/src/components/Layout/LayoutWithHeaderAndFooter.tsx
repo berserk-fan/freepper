@@ -6,7 +6,12 @@ import Box from "@mui/material/Box";
 const Header = dynamic(() => import("./Header/Header"), {
   ssr: false,
   loading: () => (
-    <Skeleton component="div" variant="rect" width="100vw" height="100px" />
+    <Skeleton
+      component="div"
+      variant="rectangular"
+      width="100vw"
+      height="100px"
+    />
   ),
 });
 

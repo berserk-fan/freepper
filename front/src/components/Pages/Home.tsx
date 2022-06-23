@@ -1,11 +1,11 @@
 import withStyles from "@mui/styles/withStyles";
-import Button from "@mui/material/Button/Button";
-import makeStyles from "@mui/material/styles/makeStyles";
+import Button from "@mui/material/Button";
+import makeStyles from "@mui/styles/makeStyles";
 import React from "react";
 import Link from "next/link";
-import Box from "@mui/material/Box/Box";
+import Box from "@mui/material/Box";
 import Image from "next/image";
-import Typography from "@mui/material/Typography/Typography";
+import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { Model } from "apis/model.pb";

@@ -8,7 +8,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import StepConnector from "@mui/material/StepConnector";
 import withStyles from "@mui/styles/withStyles";
-import makeStyles from "@mui/material/styles/makeStyles";
+import makeStyles from "@mui/styles/makeStyles";
 import { StepIconProps } from "@mui/material";
 
 const ColorlibConnector = withStyles({

@@ -1,13 +1,12 @@
 import React from "react";
 import Document, { Html, Head, Main, NextScript } from "next/document";
-import { ServerStyleSheets } from "@mui/material/styles";
+import ServerStyleSheets from "@mui/styles/ServerStyleSheets";
 
 export default class MyDocument extends Document {
   render() {
     return (
       <Html lang="ru">
         <Head>
-          <link rel="preload" href="/fonts/fonts.css" />
           <link
             rel="icon"
             type="image/png"

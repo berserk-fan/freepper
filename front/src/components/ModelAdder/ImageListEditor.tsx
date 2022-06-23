@@ -1,12 +1,12 @@
 import React from "react";
 import { ImageList } from "apis/image_list.pb";
-import Typography from "@mui/material/Typography/Typography";
+import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { Form } from "react-final-form";
 import { Autocomplete } from "mui-rff";
 import { Radio as MuiRadio } from "@mui/material";
 import Divider from "@mui/material/Divider";
-import Button from "@mui/material/Button/Button";
+import Button from "@mui/material/Button";
 import grpcClient from "../../commons/shopClient";
 import SliderWithThumbs from "../SliderWithThumbs";
 import { SIZES } from "../Shop/definitions";
@@ -46,21 +46,21 @@ export function ImageListController() {
     }
   }, [imageLists1.data]);
 
-  function deleteImage() {
+  const deleteImage = React.useCallback(() => {
     setCurrentList((prev) => ({
       ...prev,
       images: prev.images.filter((x) => x.src !== activeImageSrc),
     }));
-  }
+  }, [activeImageSrc]);
 
-  async function submitNewImageList() {
+  const submitNewImageList = React.useCallback(async () => {
     const imageList = await grpcClient().updateImageList({
       imageList: currentList,
       updateMask: ["*"],
     });
     setCurrentList(imageList);
     alert(`ImageList updated: ${JSON.stringify(imageList)}`);
-  }
+  }, [currentList]);
 
   return (
     <SwrFallback

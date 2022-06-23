@@ -7,14 +7,14 @@ import { TransitionProps } from "@mui/material/transitions";
 import { connect } from "react-redux";
 import Badge from "@mui/material/Badge";
 import { StoreState } from "store";
-import useTheme from "@mui/material/styles/useTheme";
+import useTheme from "@mui/styles/useTheme";
 import withStyles from "@mui/styles/withStyles";
-import makeStyles from "@mui/material/styles/makeStyles";
+import makeStyles from "@mui/styles/makeStyles";
 import Slide from "@mui/material/Slide/Slide";
 import Fab from "@mui/material/Fab/Fab";
 import Dialog from "@mui/material/Dialog/Dialog";
-import IconButton from "@mui/material/IconButton/IconButton";
-import Box from "@mui/material/Box/Box";
+import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
 import Cart from "../../Cart/Cart";
 import ShoppingCartIcon from "../../Icons/ShoppingCartIcon";
 import { CustomAppBar } from "./CustomAppBar";
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Transition = React.forwardRef(
   (
-    props: TransitionProps & { children?: React.ReactElement<any, any> },
+    props: TransitionProps & { children: React.ReactElement<any, any> },
     ref: React.Ref<unknown>,
   ) => <Slide direction="up" ref={ref} {...props} />,
 );
@@ -90,6 +90,7 @@ function HeaderCart({ cartSize }: { cartSize: number }) {
                 className={classes.closeButton}
                 onClick={handleClose}
                 aria-label="close cart"
+                size="large"
               >
                 <CloseIcon fontSize="large" />
               </IconButton>

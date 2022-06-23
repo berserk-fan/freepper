@@ -9,7 +9,9 @@ import ValueProp from "../../components/Layout/Header/ValueProp";
 const CheckoutForm = dynamic(
   () => import("../../components/Checkout/CheckoutForm"),
   {
-    loading: () => <Skeleton variant="rect" width="100%" height="600px" />,
+    loading: () => (
+      <Skeleton variant="rectangular" width="100%" height="600px" />
+    ),
   },
 );
 

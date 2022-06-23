@@ -13,7 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import Collapse from "@mui/material/Collapse";
 import Link from "next/link";
-import makeStyles from "@mui/material/styles/makeStyles";
+import makeStyles from "@mui/styles/makeStyles";
 import { Page, pages, shopPageGroup } from "./pages";
 import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
 import ContactsIcon from "../../Icons/ContactsIcon";
@@ -101,7 +101,7 @@ export default function HeaderMobileSidebar({ open, toggle }) {
           className={classes.closeMenuButton}
           onClick={toggle(false)}
         >
-          <IconButton>
+          <IconButton size="large">
             <CloseIcon fontSize="large" />
           </IconButton>
         </Box>

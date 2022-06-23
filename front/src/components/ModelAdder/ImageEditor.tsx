@@ -3,16 +3,16 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import TreeItem from "@mui/lab/TreeItem";
 import React from "react";
-import Typography from "@mui/material/Typography/Typography";
+import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button/Button";
-import ButtonGroup from "@mui/material/ButtonGroup/ButtonGroup";
+import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
 import Grid from "@mui/material/Grid";
 import { Image } from "apis/image.pb";
 import SwrFallback from "../Swr/SwrFallback";
 import { useImages } from "../../commons/swrHooks";
 import { MyAvatar } from "../Commons/Icon";
-import grpcClient from "../../commons/shopClient";
+// import grpcClient from "../../commons/shopClient";
 
 function getPrefix(src: string) {
   return src.slice(0, src.lastIndexOf("/"));
@@ -82,19 +82,18 @@ function Label({ image }: { image: Image }) {
   );
 }
 
-function DeleteImageButton({ name }: { name: string }) {
-  const [loading, setLoading] = React.useState(false);
-
-  const deleteImage = React.useCallback(() => {
-    setLoading(true);
-    grpcClient()
-      .deleteImage({ name })
-      .then(() => setLoading(false));
-  }, []);
-
-  <LoadingButton></LoadingButton>
-  return <Button onClick={deleteImage}>Delete</Button>;
-}
+// function DeleteImageButton({ name }: { name: string }) {
+//   const [loading, setLoading] = React.useState(false);
+//
+//   const deleteImage = React.useCallback(() => {
+//     setLoading(true);
+//     grpcClient()
+//       .deleteImage({ name })
+//       .then(() => setLoading(false));
+//   }, []);
+//
+//   return <Button onClick={deleteImage}>Delete</Button>;
+// }
 
 function FolderLabel({ folder }: { folder }) {
   return (

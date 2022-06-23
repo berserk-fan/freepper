@@ -6,10 +6,10 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
-import IconButton from "@mui/material/IconButton/IconButton";
+import IconButton from "@mui/material/IconButton";
 import Popover from "@mui/material/Popover/Popover";
-import Button from "@mui/material/Button/Button";
-import Typography from "@mui/material/Typography/Typography";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 
 export default function ActionsPopover({
   productId,

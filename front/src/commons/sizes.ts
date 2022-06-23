@@ -1,4 +1,4 @@
-import { Breakpoint } from "@mui/material/styles/createBreakpoints";
+import { Breakpoint } from "@mui/system/createTheme/createBreakpoints";
 import { GridSize } from "@mui/material";
 import theme from "../theme";
 

@@ -1,4 +1,4 @@
-import Typography from "@mui/material/Typography/Typography";
+import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 
 export default function CountDown({

@@ -1,5 +1,5 @@
-import Button, { ButtonProps } from "@mui/material/Button/Button";
-import ButtonGroup from "@mui/material/ButtonGroup/ButtonGroup";
+import Button, { ButtonProps } from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
 import React from "react";
 import Detail from "./Detail";
 

@@ -1,6 +1,6 @@
 import { DialogTitle } from "@mui/material";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button/Button";
+import Button from "@mui/material/Button";
 import React from "react";
 import { Model } from "apis/model.pb";
 import Dialog from "@mui/material/Dialog";

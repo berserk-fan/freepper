@@ -4,13 +4,12 @@ import { Form } from "react-final-form";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography/Typography";
+import Typography from "@mui/material/Typography";
 import { MenuItem } from "@mui/material";
-import Button from "@mui/material/Button/Button";
+import Button from "@mui/material/Button";
 import MuiTextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import CloseIcon from "@mui/icons-material/Close";
-import { Category } from "apis/category.pb";
 import Grid from "@mui/material/Grid";
 import ModelUpdater from "./ModelUpdater";
 import ProductPropsEditor from "./ProductPropsEditor";
@@ -19,7 +18,6 @@ import { useCategories } from "../../commons/swrHooks";
 import ModelSelector from "./ModelSelector";
 import ModelCreator from "./ModelCreator";
 import SwrFallback from "../Swr/SwrFallback";
-import LayoutWithHeaderAndFooter from "../Layout/LayoutWithHeaderAndFooter";
 
 function ImageListDialog({
   open,

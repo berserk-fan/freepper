@@ -1,9 +1,9 @@
-import Box from "@mui/material/Box/Box";
+import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem/ListItem";
-import ListItemText from "@mui/material/ListItemText/ListItemText";
-import Typography from "@mui/material/Typography/Typography";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Typography from "@mui/material/Typography";
 import React from "react";
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
 

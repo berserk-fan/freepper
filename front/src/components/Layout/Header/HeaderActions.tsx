@@ -2,7 +2,7 @@ import Link from "next/link";
 import React, { memo } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import makeStyles from "@mui/material/styles/makeStyles";
+import makeStyles from "@mui/styles/makeStyles";
 import { Page, pages, shopPageGroup } from "./pages";
 
 const useStyles = makeStyles(({ palette, spacing, breakpoints }) => ({

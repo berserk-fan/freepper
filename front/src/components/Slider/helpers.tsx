@@ -67,12 +67,17 @@ export const SliderArrows = memo(
           <IconButton
             onClick={forwardHandler}
             className={classes.forwardButton}
+            size="large"
           >
             <ArrowForwardIosOutlined className={classes.icon} />
           </IconButton>
         )}
         {showBackButton && (
-          <IconButton onClick={backHandler} className={classes.backButton}>
+          <IconButton
+            onClick={backHandler}
+            className={classes.backButton}
+            size="large"
+          >
             <ArrowBackIosOutlined className={classes.icon} />
           </IconButton>
         )}

@@ -1,4 +1,4 @@
-import Box from "@mui/material/Box/Box";
+import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade/Fade";
 import LinearProgress from "@mui/material/LinearProgress/LinearProgress";
 import React from "react";

@@ -6,7 +6,7 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import dynamic from "next/dynamic";
 import Fab from "@mui/material/Fab";
 import Typography from "@mui/material/Typography";
-import useTheme from "@mui/material/styles/useTheme";
+import useTheme from "@mui/styles/useTheme";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Zoom from "@mui/material/Zoom";
@@ -41,20 +41,23 @@ type MakeFabProps = {
 };
 
 const MakeFab = React.memo(
-  ({ icon, label, onClick, href, style }: MakeFabProps) => {
-    const innerPart = (
-      <Fab
-        color="secondary"
-        variant="extended"
-        onClick={onClick}
-        style={style}
-        component="a"
-      >
-        {icon} <Typography variant="button">{label}</Typography>
-      </Fab>
-    );
-    return href ? <Link href={href}>{innerPart}</Link> : innerPart;
-  },
+  React.forwardRef(
+    ({ icon, label, onClick, href, style }: MakeFabProps, ref) => {
+      const innerPart = (
+        <Fab
+          ref={ref}
+          color="secondary"
+          variant="extended"
+          onClick={onClick}
+          style={style}
+          component="a"
+        >
+          {icon} <Typography variant="button">{label}</Typography>
+        </Fab>
+      );
+      return href ? <Link href={href}>{innerPart}</Link> : innerPart;
+    },
+  ),
 );
 
 function ProductPage({

@@ -7,7 +7,7 @@ import ArrowBackIosOutlined from "@mui/icons-material/ArrowBackIosOutlined";
 import ArrowForwardIosOutlined from "@mui/icons-material/ArrowForwardIosOutlined";
 import Image from "next/image";
 import { Image as ImageData } from "apis/image.pb";
-import Typography from "@mui/material/Typography/Typography";
+import Typography from "@mui/material/Typography";
 import { SliderArrows } from "../Slider/helpers";
 import { useStyles } from "./styles";
 import { useSliderVirtualization } from "../Slider/utils";
@@ -161,6 +161,7 @@ export default function SliderWithThumbs({
           <IconButton
             onClick={() => thumbser.next()}
             className={`${classes.forwardButton} ${classes.smallButton}`}
+            size="large"
           >
             <ArrowForwardIosOutlined className={classes.smallIcon} />
           </IconButton>
@@ -169,6 +170,7 @@ export default function SliderWithThumbs({
           <IconButton
             onClick={() => thumbser.prev()}
             className={`${classes.backButton} ${classes.smallButton}`}
+            size="large"
           >
             <ArrowBackIosOutlined className={classes.smallIcon} />
           </IconButton>
