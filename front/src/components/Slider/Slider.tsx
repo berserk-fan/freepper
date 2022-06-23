@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { Dots, Numbers, SliderArrows } from "./helpers";
 import { useSliderVirtualization } from "./utils";
 

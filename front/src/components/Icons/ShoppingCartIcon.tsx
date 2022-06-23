@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import SvgIcon from "@material-ui/core/SvgIcon";
+import SvgIcon from "@mui/material/SvgIcon";
 import ShopingCart from "./svg/shopping-cart.svg";
 
 function ShoppingCartIcon(props) {

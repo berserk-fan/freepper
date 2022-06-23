@@ -1,7 +1,7 @@
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import Image from "next/image";
 import React, { ReactElement, useState } from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 import { Image as MyImage } from "apis/image_list.pb";
 import { SIZES } from "../Shop/definitions";
 import Slider from "./Slider";

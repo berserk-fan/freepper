@@ -1,6 +1,6 @@
 import React from "react";
 import Document, { Html, Head, Main, NextScript } from "next/document";
-import { ServerStyleSheets } from "@material-ui/core/styles";
+import { ServerStyleSheets } from "@mui/material/styles";
 
 export default class MyDocument extends Document {
   render() {
@@ -12,15 +12,14 @@ export default class MyDocument extends Document {
             rel="icon"
             type="image/png"
             sizes="32x32"
-            href="/favicon-32x32.png"
+            href="https://pomo.imgix.net/favicon-32x32.png"
           />
           <link
             rel="icon"
             type="image/png"
             sizes="16x16"
-            href="/favicon-16x16.png"
+            href="https://pomo.imgix.net/favicon-16x16.png"
           />
-          <link rel="manifest" href="/site.webmanifest" />
           <meta
             name="apple-mobile-web-app-status-bar-style"
             content="black-translucent"

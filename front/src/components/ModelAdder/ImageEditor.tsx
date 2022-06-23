@@ -1,17 +1,18 @@
-import TreeView from "@material-ui/lab/TreeView";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import TreeItem from "@material-ui/lab/TreeItem";
+import TreeView from "@mui/lab/TreeView";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import TreeItem from "@mui/lab/TreeItem";
 import React from "react";
-import Typography from "@material-ui/core/Typography/Typography";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button/Button";
-import ButtonGroup from "@material-ui/core/ButtonGroup/ButtonGroup";
-import Grid from "@material-ui/core/Grid";
+import Typography from "@mui/material/Typography/Typography";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button/Button";
+import ButtonGroup from "@mui/material/ButtonGroup/ButtonGroup";
+import Grid from "@mui/material/Grid";
 import { Image } from "apis/image.pb";
 import SwrFallback from "../Swr/SwrFallback";
 import { useImages } from "../../commons/swrHooks";
 import { MyAvatar } from "../Commons/Icon";
+import grpcClient from "../../commons/shopClient";
 
 function getPrefix(src: string) {
   return src.slice(0, src.lastIndexOf("/"));
@@ -75,18 +76,31 @@ function Label({ image }: { image: Image }) {
         <Typography variant="h5">{fileName}</Typography>
       </Grid>
       <Grid item>
-        <ButtonGroup>
-          <Button>Delete</Button>
-        </ButtonGroup>
+        <ButtonGroup />
       </Grid>
     </Grid>
   );
 }
+
+function DeleteImageButton({ name }: { name: string }) {
+  const [loading, setLoading] = React.useState(false);
+
+  const deleteImage = React.useCallback(() => {
+    setLoading(true);
+    grpcClient()
+      .deleteImage({ name })
+      .then(() => setLoading(false));
+  }, []);
+
+  <LoadingButton></LoadingButton>
+  return <Button onClick={deleteImage}>Delete</Button>;
+}
+
 function FolderLabel({ folder }: { folder }) {
   return (
     <Grid container alignItems="center" spacing={1}>
       <Grid item>
-        <Typography>{folder}</Typography>
+        <Typography variant="h6">{folder}</Typography>
       </Grid>
       <Grid item>
         <Button size="small" variant="outlined">
@@ -107,7 +121,7 @@ function toTree(obj: any, prefix: string) {
           <TreeItem
             key={`${prefix}/${folder}`}
             nodeId={`${prefix}/${folder}`}
-            label={<FolderLabel folder={folder}/>}
+            label={<FolderLabel folder={folder} />}
           >
             {toTree(obj[folder], `${prefix}/${folder}`)}
           </TreeItem>
@@ -154,7 +168,9 @@ export default function ImageEditor() {
             expanded={expanded}
             onNodeToggle={handleToggle}
           >
-            {toTree(recursive1, "")}
+            <TreeItem nodeId="/" label={<FolderLabel folder="/" />}>
+              {toTree(recursive1, "")}
+            </TreeItem>
           </TreeView>
         </Box>
       )}

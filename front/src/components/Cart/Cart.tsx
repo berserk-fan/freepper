@@ -2,10 +2,10 @@ import React, { memo } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
 import { CartState, StoreState } from "store";
-import Box from "@material-ui/core/Box/Box";
-import Typography from "@material-ui/core/Typography/Typography";
-import Button from "@material-ui/core/Button/Button";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Box from "@mui/material/Box/Box";
+import Typography from "@mui/material/Typography/Typography";
+import Button from "@mui/material/Button/Button";
+import makeStyles from "@mui/material/styles/makeStyles";
 import CartItem from "./CartItem";
 import { pages } from "../Layout/Header/pages";
 

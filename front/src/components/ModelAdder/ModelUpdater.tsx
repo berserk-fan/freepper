@@ -1,9 +1,9 @@
-import { DialogTitle } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button/Button";
+import { DialogTitle } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button/Button";
 import React from "react";
 import { Model } from "apis/model.pb";
-import Dialog from "@material-ui/core/Dialog";
+import Dialog from "@mui/material/Dialog";
 import grpcClient from "../../commons/shopClient";
 import { useModel } from "../../commons/swrHooks";
 import ModelForm from "./ModelForm";

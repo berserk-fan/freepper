@@ -1,8 +1,8 @@
 import React, { ReactElement } from "react";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import Link from "next/link";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import dynamic from "next/dynamic";
 import { Model } from "apis/model.pb";
 import Price from "./Price";

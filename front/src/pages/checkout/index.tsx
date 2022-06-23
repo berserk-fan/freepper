@@ -1,7 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
-import Skeleton from "@material-ui/lab/Skeleton/Skeleton";
-import Container from "@material-ui/core/Container";
+import Skeleton from "@mui/lab/Skeleton/Skeleton";
+import Container from "@mui/material/Container";
 import CheckoutHeader from "../../components/Layout/Header/CheckoutHeader";
 
 import ValueProp from "../../components/Layout/Header/ValueProp";

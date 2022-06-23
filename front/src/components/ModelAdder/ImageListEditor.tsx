@@ -1,12 +1,12 @@
 import React from "react";
 import { ImageList } from "apis/image_list.pb";
-import Typography from "@material-ui/core/Typography/Typography";
-import Box from "@material-ui/core/Box";
+import Typography from "@mui/material/Typography/Typography";
+import Box from "@mui/material/Box";
 import { Form } from "react-final-form";
 import { Autocomplete } from "mui-rff";
-import { Radio as MuiRadio } from "@material-ui/core";
-import Divider from "@material-ui/core/Divider";
-import Button from "@material-ui/core/Button/Button";
+import { Radio as MuiRadio } from "@mui/material";
+import Divider from "@mui/material/Divider";
+import Button from "@mui/material/Button/Button";
 import grpcClient from "../../commons/shopClient";
 import SliderWithThumbs from "../SliderWithThumbs";
 import { SIZES } from "../Shop/definitions";

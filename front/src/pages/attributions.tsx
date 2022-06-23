@@ -1,7 +1,7 @@
-import List from "@material-ui/core/List/List";
-import ListItem from "@material-ui/core/ListItem/ListItem";
-import ListItemText from "@material-ui/core/ListItemText/ListItemText";
-import Typography from "@material-ui/core/Typography/Typography";
+import List from "@mui/material/List/List";
+import ListItem from "@mui/material/ListItem/ListItem";
+import ListItemText from "@mui/material/ListItemText/ListItemText";
+import Typography from "@mui/material/Typography/Typography";
 import React from "react";
 import LayoutWithHeaderAndFooter from "../components/Layout/LayoutWithHeaderAndFooter";
 

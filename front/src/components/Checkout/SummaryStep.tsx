@@ -1,21 +1,21 @@
 import React, { memo } from "react";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import Divider from "@material-ui/core/Divider";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import Divider from "@mui/material/Divider";
 import Image from "next/image";
 import { connect } from "react-redux";
 import { CartProduct, CartState, StoreState } from "store";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography/Typography";
-import useTheme from "@material-ui/core/styles/useTheme";
-import useMediaQuery from "@material-ui/core/useMediaQuery/useMediaQuery";
-import Box from "@material-ui/core/Box/Box";
-import Grid from "@material-ui/core/Grid/Grid";
+import makeStyles from "@mui/material/styles/makeStyles";
+import Typography from "@mui/material/Typography/Typography";
+import useTheme from "@mui/material/styles/useTheme";
+import useMediaQuery from "@mui/material/useMediaQuery/useMediaQuery";
+import Box from "@mui/material/Box/Box";
+import Grid from "@mui/material/Grid/Grid";
 import {
   getDeliveryOptionName,
   getDeliveryProviderName,

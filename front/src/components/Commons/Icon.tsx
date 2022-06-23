@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import Avatar from "@material-ui/core/Avatar/Avatar";
+import Avatar from "@mui/material/Avatar/Avatar";
 
 export function MyAvatar({
   image,

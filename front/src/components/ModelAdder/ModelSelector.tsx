@@ -1,7 +1,7 @@
 import { Form } from "react-final-form";
 import { Select } from "mui-rff";
-import { MenuItem } from "@material-ui/core";
-import Button from "@material-ui/core/Button/Button";
+import { MenuItem } from "@mui/material";
+import Button from "@mui/material/Button/Button";
 import React from "react";
 import { useModels } from "../../commons/swrHooks";
 import SwrFallback from "../Swr/SwrFallback";

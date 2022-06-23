@@ -1,16 +1,16 @@
 import Image from "next/image";
 import React from "react";
-import RemoveIcon from "@material-ui/icons/Remove";
+import RemoveIcon from "@mui/icons-material/Remove";
 import { connect } from "react-redux";
-import AddIcon from "@material-ui/icons/Add";
+import AddIcon from "@mui/icons-material/Add";
 
 import { CartProduct, deleteProductAction, setProductCountAction } from "store";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Box from "@material-ui/core/Box/Box";
-import IconButton from "@material-ui/core/IconButton/IconButton";
-import Card from "@material-ui/core/Card/Card";
-import CardContent from "@material-ui/core/CardContent/CardContent";
-import Typography from "@material-ui/core/Typography/Typography";
+import makeStyles from "@mui/material/styles/makeStyles";
+import Box from "@mui/material/Box/Box";
+import IconButton from "@mui/material/IconButton/IconButton";
+import Card from "@mui/material/Card/Card";
+import CardContent from "@mui/material/CardContent/CardContent";
+import Typography from "@mui/material/Typography/Typography";
 import ActionsPopover from "./ActionsPopover";
 import { priceToString } from "../../commons/utils";
 

@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import KeenSlider, { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import Box from "@material-ui/core/Box";
-import IconButton from "@material-ui/core/IconButton";
-import ArrowBackIosOutlined from "@material-ui/icons/ArrowBackIosOutlined";
-import ArrowForwardIosOutlined from "@material-ui/icons/ArrowForwardIosOutlined";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import ArrowBackIosOutlined from "@mui/icons-material/ArrowBackIosOutlined";
+import ArrowForwardIosOutlined from "@mui/icons-material/ArrowForwardIosOutlined";
 import Image from "next/image";
 import { Image as ImageData } from "apis/image.pb";
-import Typography from "@material-ui/core/Typography/Typography";
+import Typography from "@mui/material/Typography/Typography";
 import { SliderArrows } from "../Slider/helpers";
 import { useStyles } from "./styles";
 import { useSliderVirtualization } from "../Slider/utils";

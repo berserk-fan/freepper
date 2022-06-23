@@ -1,6 +1,6 @@
-import Box from "@material-ui/core/Box/Box";
-import Fade from "@material-ui/core/Fade/Fade";
-import LinearProgress from "@material-ui/core/LinearProgress/LinearProgress";
+import Box from "@mui/material/Box/Box";
+import Fade from "@mui/material/Fade/Fade";
+import LinearProgress from "@mui/material/LinearProgress/LinearProgress";
 import React from "react";
 
 export default function MakeRequestWrapper({ children, isProcessing }) {

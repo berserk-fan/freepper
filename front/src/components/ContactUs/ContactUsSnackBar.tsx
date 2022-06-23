@@ -1,8 +1,8 @@
-import Box from "@material-ui/core/Box";
-import IconButton from "@material-ui/core/IconButton/IconButton";
-import Snackbar from "@material-ui/core/Snackbar/Snackbar";
-import useTheme from "@material-ui/core/styles/useTheme";
-import CloseIcon from "@material-ui/icons/Close";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton/IconButton";
+import Snackbar from "@mui/material/Snackbar/Snackbar";
+import useTheme from "@mui/material/styles/useTheme";
+import CloseIcon from "@mui/icons-material/Close";
 import React, { useCallback } from "react";
 import ContactUs from "./ContactUs";
 

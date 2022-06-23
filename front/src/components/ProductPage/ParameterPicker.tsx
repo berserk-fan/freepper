@@ -1,10 +1,10 @@
-import Typography from "@material-ui/core/Typography/Typography";
+import Typography from "@mui/material/Typography/Typography";
 import React, {MouseEventHandler} from "react";
 import {Parameter, ParameterList} from "apis/parameter.pb";
-import Box from "@material-ui/core/Box/Box";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Chip from "@material-ui/core/Chip/Chip";
-import Avatar from "@material-ui/core/Avatar/Avatar";
+import Box from "@mui/material/Box/Box";
+import makeStyles from "@mui/material/styles/makeStyles";
+import Chip from "@mui/material/Chip/Chip";
+import Avatar from "@mui/material/Avatar/Avatar";
 import {Icon} from "./Icon";
 
 const useStyles = makeStyles({

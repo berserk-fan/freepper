@@ -1,5 +1,5 @@
-import Button, { ButtonProps } from "@material-ui/core/Button/Button";
-import ButtonGroup from "@material-ui/core/ButtonGroup/ButtonGroup";
+import Button, { ButtonProps } from "@mui/material/Button/Button";
+import ButtonGroup from "@mui/material/ButtonGroup/ButtonGroup";
 import React from "react";
 import Detail from "./Detail";
 

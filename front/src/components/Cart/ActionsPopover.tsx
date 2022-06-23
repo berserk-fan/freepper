@@ -2,14 +2,14 @@ import PopupStateComponent, {
   bindPopover,
   bindTrigger,
 } from "material-ui-popup-state";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import DeleteIcon from "@material-ui/icons/Delete";
-import CloseIcon from "@material-ui/icons/Close";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
-import IconButton from "@material-ui/core/IconButton/IconButton";
-import Popover from "@material-ui/core/Popover/Popover";
-import Button from "@material-ui/core/Button/Button";
-import Typography from "@material-ui/core/Typography/Typography";
+import IconButton from "@mui/material/IconButton/IconButton";
+import Popover from "@mui/material/Popover/Popover";
+import Button from "@mui/material/Button/Button";
+import Typography from "@mui/material/Typography/Typography";
 
 export default function ActionsPopover({
   productId,
