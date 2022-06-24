@@ -30,7 +30,7 @@ export default function LayoutWithHeaderAndFooter({
       <Header />
       {showValueProp && <ValueProp />}
       {!disableBreadcrumbs && (
-        <Box px={1} pt={2} className="w-full flex justify-center">
+        <Box px={1} py={1} className="w-full flex justify-center">
           <BreadCrumbs overrides={breadcrumbsOverrides} />
         </Box>
       )}

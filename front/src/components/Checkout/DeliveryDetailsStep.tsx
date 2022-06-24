@@ -1,10 +1,12 @@
 import React from "react";
-import { Radios, showErrorOnBlur, TextField, Switches } from "mui-rff";
-import { Field } from "react-final-form";
+import { Radios, showErrorOnBlur, TextField } from "mui-rff";
+import { TextField as MuiTextField } from "@mui/material";
+import { Field, FieldRenderProps } from "react-final-form";
 import { DeliveryOption, DeliveryProvider } from "order-model";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { PhoneNumber } from "../Inputs/PhoneNumber";
+import dynamic from "next/dynamic";
+import { MuiPhoneNumberProps } from "material-ui-phone-number";
 import Spacing from "../Commons/Spacing";
 import { getDeliveryOptionName, OrderForm } from "./Definitions";
 import NovayaPochtaIcon from "../Icons/NovayaPochtaIcon";
@@ -12,6 +14,10 @@ import NovayaPochtaIcon from "../Icons/NovayaPochtaIcon";
 function pathName<T>(key1: keyof T) {
   return `${String(key1)}`;
 }
+
+const PhoneNumber = dynamic(() => import("../Inputs/PhoneNumber"), {
+  ssr: false,
+});
 
 export default function DeliveryDetailsForm() {
   const deliveryOptions = [DeliveryOption.TO_WAREHOUSE];
@@ -43,6 +49,7 @@ export default function DeliveryDetailsForm() {
           label="Служба доставки"
           name={pathName<OrderForm>("deliveryProvider")}
           required
+          color="secondary"
           data={[
             {
               label: <NovayaPochtaIcon />,
@@ -53,9 +60,9 @@ export default function DeliveryDetailsForm() {
         <Radios
           required
           name={pathName<OrderForm>("deliveryOption")}
+          color="secondary"
           id="select-devilery-option"
           label="Способ доставки"
-          color="secondary"
           data={deliveryOptions.map((option) => ({
             label: <Typography>{getDeliveryOptionName(option)}</Typography>,
             value: option,
@@ -82,11 +89,6 @@ export default function DeliveryDetailsForm() {
           variant="filled"
           type="number"
           autoComplete="warehouseNumber"
-        />
-        <Switches
-          name={pathName<OrderForm>("deleteData")}
-          required
-          data={{ label: "Не хранить данные", value: false }}
         />
       </Spacing>
     </Box>

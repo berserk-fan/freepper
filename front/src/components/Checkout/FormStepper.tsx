@@ -16,13 +16,13 @@ const ColorlibConnector = withStyles({
     top: 22,
   },
   active: {
-    "& $line": {
+    "& .line": {
       backgroundImage:
         "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
     },
   },
   completed: {
-    "& $line": {
+    "& .line": {
       backgroundImage:
         "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
     },

@@ -13,7 +13,7 @@ import { CartProduct, CartState, StoreState } from "store";
 import makeStyles from "@mui/styles/makeStyles";
 import Typography from "@mui/material/Typography";
 import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery/useMediaQuery";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import {

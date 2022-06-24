@@ -1,6 +1,6 @@
 import React from "react";
 import dynamic from "next/dynamic";
-import Skeleton from "@mui/lab/Skeleton/Skeleton";
+import Skeleton from "@mui/lab/Skeleton";
 import Container from "@mui/material/Container";
 import CheckoutHeader from "../../components/Layout/Header/CheckoutHeader";
 

@@ -33,10 +33,15 @@ const SIZES = createSizes(sizesSpec);
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
 type MakeFabProps = {
+  // eslint-disable-next-line react/no-unused-prop-types
   href?: string;
+  // eslint-disable-next-line react/no-unused-prop-types
   onClick?: () => void;
+  // eslint-disable-next-line react/no-unused-prop-types
   icon?: any;
+  // eslint-disable-next-line react/no-unused-prop-types
   label: string;
+  // eslint-disable-next-line react/no-unused-prop-types
   style?: any;
 };
 
@@ -45,7 +50,7 @@ const MakeFab = React.memo(
     ({ icon, label, onClick, href, style }: MakeFabProps, ref) => {
       const innerPart = (
         <Fab
-          ref={ref}
+          ref={ref as any}
           color="secondary"
           variant="extended"
           onClick={onClick}

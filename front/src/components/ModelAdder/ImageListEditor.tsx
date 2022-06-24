@@ -23,7 +23,7 @@ export function ImageListController() {
     [imageLists1.data],
   );
 
-  const autocompleteData = React.useMemo(
+  const autocompleteData: { label: string; value: string }[] = React.useMemo(
     () =>
       imageLists1.data
         ? imageLists1.data.map((x) => ({ label: x.displayName, value: x.name }))
@@ -81,13 +81,13 @@ export function ImageListController() {
                 color="secondary"
                 options={autocompleteData}
                 getOptionValue={(option) => option.value}
-                getOptionLabel={(option) => option.label}
+                getOptionLabel={(option) => (option as any).label}
                 onSelect={handleSubmit}
-                renderOption={(option, { selected }) => (
-                  <>
+                renderOption={(props, option, { selected }) => (
+                  <li {...props}>
                     <MuiRadio style={{ marginRight: 8 }} checked={selected} />
                     {option.label}
-                  </>
+                  </li>
                 )}
               />
             )}

@@ -7,7 +7,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 import IconButton from "@mui/material/IconButton";
-import Popover from "@mui/material/Popover/Popover";
+import Popover from "@mui/material/Popover";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 

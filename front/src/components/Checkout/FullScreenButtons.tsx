@@ -20,12 +20,17 @@ export default function FullScreenButtons({
 }: FullScreenButtonsProps) {
   return (
     <Box margin={1} className="flex justify-between">
-      <Button disabled={backDisabled} onClick={onBack}>
+      <Button
+        disabled={backDisabled}
+        onClick={onBack}
+        variant="outlined"
+        color="secondary"
+      >
         Назад
       </Button>
       <Button
-        variant="contained"
-        color="primary"
+        variant="outlined"
+        color="secondary"
         onClick={onNext}
         type="submit"
         disabled={nextDisabled}

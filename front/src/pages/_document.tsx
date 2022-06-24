@@ -1,12 +1,14 @@
 import React from "react";
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import ServerStyleSheets from "@mui/styles/ServerStyleSheets";
+import theme from "../theme";
 
 export default class MyDocument extends Document {
   render() {
     return (
       <Html lang="ru">
         <Head>
+          <meta name="theme-color" content={theme.palette.primary.main} />
           <link
             rel="icon"
             type="image/png"

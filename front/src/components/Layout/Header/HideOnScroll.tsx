@@ -1,5 +1,5 @@
-import Slide from "@mui/material/Slide/Slide";
-import useScrollTrigger from "@mui/material/useScrollTrigger/useScrollTrigger";
+import Slide from "@mui/material/Slide";
+import useScrollTrigger from "@mui/material/useScrollTrigger";
 import React from "react";
 
 export default function HideOnScroll(props) {

@@ -4,6 +4,7 @@ import { Parameter, ParameterList } from "apis/parameter.pb";
 import Box from "@mui/material/Box";
 import makeStyles from "@mui/styles/makeStyles";
 import Chip from "@mui/material/Chip";
+import Avatar from "@mui/material/Avatar";
 import { MyAvatar } from "../Commons/Icon";
 
 const useStyles = makeStyles({
@@ -26,7 +27,11 @@ function MyChipNoMemo({
     <Chip
       className={classes.fabricNode}
       avatar={
-        parameter.image ? <MyAvatar image={parameter.image} /> : undefined
+        parameter.image ? (
+          <Avatar>
+            <MyAvatar image={parameter.image} />
+          </Avatar>
+        ) : undefined
       }
       clickable
       color={selected ? "secondary" : "default"}

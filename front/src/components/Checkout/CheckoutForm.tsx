@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import { CartState, clearCartAction, StoreState } from "store";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper/Paper";
+import Paper from "@mui/material/Paper";
 import FormStepper from "./FormStepper";
 import useErrorHandling from "../Commons/UseErrorHandling";
 import CustomMobileStepper from "./CustomMobileStepper";

@@ -10,7 +10,7 @@ import { StoreState } from "store";
 import useTheme from "@mui/styles/useTheme";
 import withStyles from "@mui/styles/withStyles";
 import makeStyles from "@mui/styles/makeStyles";
-import Slide from "@mui/material/Slide/Slide";
+import Slide from "@mui/material/Slide";
 import Fab from "@mui/material/Fab/Fab";
 import Dialog from "@mui/material/Dialog/Dialog";
 import IconButton from "@mui/material/IconButton";
