@@ -7,9 +7,18 @@ export function MyAvatar({
   variant = "small",
 }: {
   image: { src: string; alt: string };
-  variant?: "small" | "big";
+  variant?: "small" | "big" | "huge";
 }) {
-  const dim = variant === "small" ? 24 : 56;
+  let dim;
+  if (variant === "small") {
+    dim = 25;
+  } else if (variant === "big") {
+    dim = 50;
+  } else if (variant === "huge") {
+    dim = 75;
+  } else {
+    dim = 25;
+  }
   return (
     <Avatar style={{ width: dim, height: dim }}>
       <Image width={dim} height={dim} src={image.src} alt={image.alt} />

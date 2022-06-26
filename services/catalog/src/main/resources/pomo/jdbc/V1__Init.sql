@@ -14,7 +14,7 @@ CREATE TABLE images
 
 CREATE TABLE image_list_member
 (
-    image_id      UUID NOT NULL REFERENCES images ON DELETE RESTRICT,
+    image_id      UUID NOT NULL REFERENCES images,
     image_list_id UUID NOT NULL REFERENCES image_lists ON DELETE CASCADE,
     list_order    INT  NOT NULL,
     UNIQUE (image_id, image_list_id),
@@ -119,6 +119,16 @@ $$
 BEGIN
     NEW.update_time = now();
     RETURN NEW;
+END;
+$$ language 'plpgsql' IMMUTABLE
+                      STRICT;
+
+CREATE OR REPLACE FUNCTION restrict_image_deletion() RETURNS TRIGGER AS
+$$
+DECLARE
+    count INT;
+BEGIN
+    SELECT count(*)
 END;
 $$ language 'plpgsql' IMMUTABLE
                       STRICT;

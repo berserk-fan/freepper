@@ -8,10 +8,12 @@ export default function SwrFallback<
   swrData,
   main,
   name,
+  allowEmpty = false,
 }: {
   name: string;
   swrData: T | T[];
   main: () => ReactNode;
+  allowEmpty?: boolean;
 }) {
   if (
     Array.isArray(swrData)
@@ -30,11 +32,12 @@ export default function SwrFallback<
   }
 
   if (
-    Array.isArray(swrData)
+    !allowEmpty &&
+    (Array.isArray(swrData)
       ? swrData
           .map((x) => Array.isArray(x.data) && x.data.length === 0)
           .reduce((a, b) => a || b)
-      : Array.isArray(swrData.data) && swrData.data.length === 0
+      : Array.isArray(swrData.data) && swrData.data.length === 0)
   ) {
     return <Typography>{name} is empty!</Typography>;
   }

@@ -30,11 +30,15 @@ case class ImageServiceImpl[DBIO[_]: Monad, F[_]: MonadThrow: LoggerFactory] pri
 
   override def delete(imageId: ImageId): F[Unit] = for {
     logger <- LoggerFactory[F].create
-    src <- repo.get(imageId).map(_.src).flatTap(_ => repo.delete(imageId)).mapK(xa)
+    src <- deleteFromRepo(imageId).mapK(xa)
     _ <- dataRepository.delete(src) onError { case e =>
       logger.error(e)(s"Failed to delete image from s3. $src. You should delete it by yourself")
     }
   } yield ()
+
+  private def deleteFromRepo(imageId: ImageId): DBIO[ImageSrc] = {
+    repo.get(imageId).map(_.src).flatTap(_ => repo.delete(imageId))
+  }
 
   override def query(query: ImageQuery): F[FindImagesResponse] = {
     repo

@@ -15,6 +15,8 @@ import Box from "@mui/material/Box";
 import { DialogTitle, MenuItem } from "@mui/material";
 import { Form } from "react-final-form";
 import { Select, TextField } from "mui-rff";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import InputAdornment from "@mui/material/InputAdornment";
 import grpcClient from "../../commons/shopClient";
 import { indexProducts } from "../../commons/utils";
 import { useImageLists, useModel, useProducts } from "../../commons/swrHooks";
@@ -51,6 +53,11 @@ function SetProductPropsDialog(props: SetProductPropsdDialog) {
                   variant="outlined"
                   color="secondary"
                   required
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">Гривен</InputAdornment>
+                    ),
+                  }}
                 />
                 <Select
                   name="imageListIdx"
@@ -66,13 +73,18 @@ function SetProductPropsDialog(props: SetProductPropsdDialog) {
                     </MenuItem>
                   ))}
                 </Select>
-                <pre>{JSON.stringify(values)}</pre>
-                <Button type="submit" variant="contained" fullWidth>
-                  Submit
-                </Button>
-                <Button fullWidth variant="outlined" onClick={() => onClose()}>
-                  Close
-                </Button>
+                <ButtonGroup orientation="vertical" fullWidth color="secondary">
+                  <Button type="submit" variant="contained" fullWidth>
+                    Submit
+                  </Button>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    onClick={() => onClose()}
+                  >
+                    Close
+                  </Button>
+                </ButtonGroup>
               </form>
             )}
           />
@@ -166,6 +178,7 @@ export default function ProductPropsEditor({
     <SwrFallback
       name="model or products or imagelists"
       swrData={[products, model, imageLists]}
+      allowEmpty
       main={() => (
         <>
           <SetProductPropsDialog
@@ -203,12 +216,20 @@ export default function ProductPropsEditor({
                               {value.price.standard?.amount}
                               ---
                               {value.imageList.displayName}
-                              <Button onClick={() => deleteProduct(value.name)}>
+                              <Button
+                                variant="outlined"
+                                color="secondary"
+                                onClick={() => deleteProduct(value.name)}
+                              >
                                 Remove
                               </Button>
                             </>
                           ) : (
-                            <Button onClick={() => setDialogParams1(x, y)}>
+                            <Button
+                              variant="outlined"
+                              color="secondary"
+                              onClick={() => setDialogParams1(x, y)}
+                            >
                               Add
                             </Button>
                           )}

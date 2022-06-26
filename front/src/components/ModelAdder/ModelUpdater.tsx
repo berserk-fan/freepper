@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import React from "react";
 import { Model } from "apis/model.pb";
 import Dialog from "@mui/material/Dialog";
+import { useSWRConfig } from "swr";
 import grpcClient from "../../commons/shopClient";
 import { useModel } from "../../commons/swrHooks";
 import ModelForm from "./ModelForm";
@@ -35,8 +36,12 @@ function DeleteDialog(props: DeleteDialogProps) {
         <DialogTitle>
           Are you sure you want to delete a model {displayName}
         </DialogTitle>
-        <Button onClick={onSubmit}>Yes</Button>
-        <Button onClick={onClose}>No</Button>
+        <Button color="secondary" onClick={onSubmit}>
+          Yes
+        </Button>
+        <Button color="secondary" onClick={onClose}>
+          No
+        </Button>
       </Box>
     </Dialog>
   );
@@ -44,12 +49,19 @@ function DeleteDialog(props: DeleteDialogProps) {
 
 export default function ModelUpdater1({ modelName }: { modelName: string }) {
   const model = useModel(modelName);
+  const { mutate } = useSWRConfig();
   const [deleteDialog, setDeleteDialog] = React.useState(false);
 
-  const deleteModel = React.useCallback(
-    () => grpcClient().deleteModel({ name: model.data.name }),
-    [model?.data?.name],
-  );
+  const deleteModel = React.useCallback(async () => {
+    try {
+      await grpcClient().deleteModel({ name: model.data.name });
+      await mutate(modelName.slice(0, modelName.lastIndexOf("/")));
+    } catch (e) {
+      alert(
+        `failed to delete model ${model.data.displayName}. Reason: ${e.message}`,
+      );
+    }
+  }, [model?.data?.name]);
 
   const openDeleteDialog = React.useCallback(() => {
     setDeleteDialog(true);
@@ -64,7 +76,16 @@ export default function ModelUpdater1({ modelName }: { modelName: string }) {
     closeDeleteDialog();
   }, [deleteModel]);
 
-  const button = <Button onClick={openDeleteDialog}>Delete</Button>;
+  const button = (
+    <Button
+      size="large"
+      color="warning"
+      variant="outlined"
+      onClick={openDeleteDialog}
+    >
+      Delete
+    </Button>
+  );
 
   return (
     <SwrFallback

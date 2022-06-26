@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import makeStyles from "@mui/styles/makeStyles";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
-import { MyAvatar } from "../Commons/Icon";
+import { MyAvatar } from "../Commons/MyAvatar";
 
 const useStyles = makeStyles({
   fabricNode: {
