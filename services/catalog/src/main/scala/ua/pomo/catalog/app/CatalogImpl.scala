@@ -1,6 +1,5 @@
 package ua.pomo.catalog.app
 
-import cats.Monoid
 import cats.effect.kernel.Async
 import cats.implicits._
 import com.google.protobuf.empty.Empty
@@ -9,22 +8,21 @@ import scalapb.validate.{Failure, Success, Validator}
 import ua.pomo.catalog.domain.{category, model, product}
 import ua.pomo.catalog.api._
 import ua.pomo.catalog.domain.error._
-import ua.pomo.catalog.domain.image.ImageListService
+import ua.pomo.catalog.domain.imageList.ImageListService
 
 import scala.util.Try
-import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.slf4j.Slf4jLogger
-import ua.pomo.catalog.app.programs.modifiers.{MessageModifier, PageDefaultsApplier, ReadableIdInNamesResolver}
+import org.typelevel.log4cats.LoggerFactory
+import ua.pomo.catalog.app.programs.modifiers.MessageModifier
+import ua.pomo.catalog.domain.image.ImageService
 
-case class CatalogImpl[F[_]: Async] private (
+case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     productService: product.ProductService[F],
     categoryService: category.CategoryService[F],
     modelService: model.ModelService[F],
     imageListService: ImageListService[F],
+    imageService: ImageService[F],
     modifications: MessageModifier[F]
 ) extends CatalogFs2Grpc[F, Metadata] {
-
-  implicit def logger: Logger[F] = Slf4jLogger.getLogger[F]
 
   // categories
 
@@ -186,8 +184,41 @@ case class CatalogImpl[F[_]: Async] private (
       .map(Converters.toApi)
   }
 
-  private def adaptError[T](f: => F[T]): F[T] = {
-    Async[F]
+  def createImage(request: CreateImageRequest, ctx: Metadata): F[Image] = adaptError {
+    validate(request)
+      .flatMap(_ => modifications.modify(request))
+      .map(Converters.toDomain)
+      .flatMap(imageService.create)
+      .map(Converters.toApi)
+  }
+
+  def deleteImage(request: DeleteImageRequest, ctx: Metadata): F[Empty] = adaptError {
+    validate(request)
+      .flatMap(_ => modifications.modify(request))
+      .map(Converters.toDomain)
+      .flatMap(imageService.delete)
+      .as(Empty())
+  }
+
+  def getImage(request: GetImageRequest, ctx: Metadata): F[Image] = adaptError {
+    validate(request)
+      .flatMap(_ => modifications.modify(request))
+      .map(Converters.toDomain)
+      .flatMap(imageService.get)
+      .map(Converters.toApi)
+  }
+
+  def listImages(request: ListImagesRequest, ctx: Metadata): F[ListImagesResponse] = adaptError {
+    validate(request)
+      .flatMap(_ => modifications.modify(request))
+      .map(Converters.toDomain)
+      .flatMap(imageService.query)
+      .map(Converters.toApi)
+  }
+
+  private def adaptError[T](f: => F[T]): F[T] = for {
+    logger <- LoggerFactory[F].create
+    res <- Async[F]
       .fromEither(Try(f).toEither.leftMap(err => UnexpectedError("Api method has thrown an error: impure", Some(err))))
       .flatten
       .onError { e =>
@@ -202,7 +233,7 @@ case class CatalogImpl[F[_]: Async] private (
         }
         status.withDescription(s"${e.getClass.getSimpleName} ${e.getMessage}").withCause(e).asException()
       }
-  }
+  } yield res
 
   private def validate[T: Validator, U](t: T): F[Unit] = Validator[T].validate(t) match {
     case Success => ().pure[F]

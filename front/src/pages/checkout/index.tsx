@@ -1,7 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
-import Skeleton from "@material-ui/lab/Skeleton/Skeleton";
-import Container from "@material-ui/core/Container";
+import Skeleton from "@mui/lab/Skeleton";
+import Container from "@mui/material/Container";
 import CheckoutHeader from "../../components/Layout/Header/CheckoutHeader";
 
 import ValueProp from "../../components/Layout/Header/ValueProp";
@@ -9,7 +9,9 @@ import ValueProp from "../../components/Layout/Header/ValueProp";
 const CheckoutForm = dynamic(
   () => import("../../components/Checkout/CheckoutForm"),
   {
-    loading: () => <Skeleton variant="rect" width="100%" height="600px" />,
+    loading: () => (
+      <Skeleton variant="rectangular" width="100%" height="600px" />
+    ),
   },
 );
 

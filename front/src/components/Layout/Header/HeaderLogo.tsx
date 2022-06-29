@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import Link from "next/link";
-import Box from "@material-ui/core/Box/Box";
+import Box from "@mui/material/Box";
 import Logo from "../Logo/Logo";
 
 function HeaderLogo({ className = "" }: { className?: string }) {

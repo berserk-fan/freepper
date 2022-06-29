@@ -1,8 +1,8 @@
 import React from "react";
-import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { Typography } from "@material-ui/core";
+import { Typography } from "@mui/material";
 import { pathNeeded, prefixes, toName, toPath } from "./utils";
 
 // overrides: /collection/element_125 + overrides == {element_125: "My Element"} = /collection/My Element

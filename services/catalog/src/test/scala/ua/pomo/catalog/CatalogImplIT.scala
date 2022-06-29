@@ -1,32 +1,34 @@
 package ua.pomo.catalog
 
-import cats.effect.unsafe.implicits.global
 import cats.effect.{IO, Resource}
 import cats.implicits.{catsSyntaxOptionId, toTraverseOps}
+import com.google.protobuf.ByteString
 import com.google.protobuf.field_mask.FieldMask
 import doobie.implicits._
 import doobie.postgres.implicits._
 import doobie.{ConnectionIO, Transactor}
 import io.grpc.{Metadata, Status, StatusRuntimeException}
-import org.scalatest.ParallelTestExecution
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import ua.pomo.catalog.api._
-import ua.pomo.catalog.shared.{HasIOResource, Resources}
+import ua.pomo.catalog.infrastructure.persistance.s3.InMemoryImageDataRepository
+import ua.pomo.catalog.shared.{HasIOResource, HasIORuntime, Resources}
 
 import java.util.UUID
 import scala.language.reflectiveCalls
 
-class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers with ParallelTestExecution {
-  type Res = (CatalogFs2Grpc[IO, Metadata], Transactor[IO])
+class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers with HasIORuntime {
+  type TestResource = (CatalogFs2Grpc[IO, Metadata], Transactor[IO])
   override val resourcePerTest: Boolean = true
-  override protected val resource: Resource[IO, Res] = for {
+  override protected def resource: Resource[IO, TestResource] = for {
     config <- Resources.config
     jdbcConfig = config.jdbc.copy(schema = UUID.randomUUID().toString)
     appConfig = config.copy(jdbc = jdbcConfig)
     transactor <- Resources.transactor(jdbcConfig)
     _ <- Resources.schema(jdbcConfig, transactor)
-    _ <- Resource.suspend(Server.resource(appConfig))
+    _ <- Resource.suspend(
+      Server.of(appConfig, InMemoryImageDataRepository())
+    )
     client <- Resources.catalogClient(appConfig.server)
   } yield (client, transactor)
 
@@ -37,6 +39,56 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers with Pa
     "test category name",
     "descr"
   )
+
+  private val imageData = getClass.getResourceAsStream("/kitty.webp").readAllBytes()
+  private val image = Image(
+    "",
+    "",
+    "some-folder/some-src",
+    "some alt lalala",
+    ByteString.copyFrom(imageData)
+  )
+  private val createImageRequest = CreateImageRequest("images", Some(image))
+
+  // images
+  testR("create image") { case (client, _) =>
+    val resp = client.createImage(createImageRequest, new Metadata()).unsafeRunSync()
+    resp.copy(uid = "", name = "") should equal(image.copy(data = ByteString.EMPTY))
+  }
+
+  testR("get image") { case (client, _) =>
+    val name = client.createImage(createImageRequest, new Metadata()).unsafeRunSync().name
+    val getResp = client.getImage(GetImageRequest(name), new Metadata()).unsafeRunSync()
+    getResp.copy(uid = "", name = "") should equal(image.copy(data = ByteString.EMPTY))
+
+    val ex = intercept[StatusRuntimeException] {
+      client.getImage(GetImageRequest("bad name @!#!@#"), new Metadata()).unsafeRunSync()
+    }
+    ex.getStatus.getCode should equal(Status.Code.INVALID_ARGUMENT)
+  }
+
+  testR("delete image") { case (client, _) =>
+    val name = client.createImage(createImageRequest, new Metadata()).unsafeRunSync().name
+    client.getImage(GetImageRequest(name), new Metadata()).unsafeRunSync()
+    client.deleteImage(DeleteImageRequest(name), new Metadata()).unsafeRunSync()
+    val ex = intercept[StatusRuntimeException] {
+      client.getImage(GetImageRequest(name), new Metadata()).unsafeRunSync()
+    }
+    ex.getStatus.getCode should equal(Status.Code.NOT_FOUND)
+  }
+
+  testR("list images") { case (client, _) =>
+    val name1 = client.createImage(createImageRequest, new Metadata()).unsafeRunSync().name
+    val name2 = client.createImage(createImageRequest, new Metadata()).unsafeRunSync().name
+    val name3 = client.createImage(createImageRequest, new Metadata()).unsafeRunSync().name
+
+    val resp1 = client.listImages(ListImagesRequest("images", 2), new Metadata()).unsafeRunSync()
+    resp1.images should have length 2
+    val resp2 = client.listImages(ListImagesRequest("images", 2, resp1.nextPageToken), new Metadata()).unsafeRunSync()
+    resp2.images should have length 1
+    resp2.nextPageToken should equal("")
+    (resp1.images ++ resp2.images).toSet.map((x: Image) => x.name) should equal(Set(name1, name2, name3))
+  }
 
   // categories
 
@@ -89,11 +141,10 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers with Pa
   // image lists
 
   private val imageList =
-    ImageList("", "", "some name", Seq(Image("some-src", "some-alt"), Image("some-src2", "some-alt2")))
+    ImageList("", "", "some name", Seq(Image("", "some-src", "some-alt"), Image("", "some-src2", "some-alt2")))
 
   testR("create image list") { case (client, _) =>
     val createResp = createImageList(client)
-    createResp.copy(name = "", uid = "") should equal(imageList)
     val getResp = client.getImageList(GetImageListRequest(createResp.name), new Metadata()).unsafeRunSync()
     getResp should equal(createResp)
   }
@@ -113,7 +164,7 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers with Pa
     val newImageList =
       createResponse.copy(
         displayName = "abc",
-        images = List(Image("some-src-3", "some-alt-3"), Image("some-src-4", "some-alt-4"))
+        images = createResponse.images.take(1)
       )
     val fieldMask = FieldMask(Seq("display_name", "images"))
     val updated = client
@@ -121,15 +172,15 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers with Pa
       .unsafeRunSync()
     updated should equal(newImageList)
 
-    val newImages = List(Image("some-src-5", "some-alt-5"))
+    val newImages2 = createResponse.images.drop(1)
     // update images
-    val newImageList2 = createResponse.copy(displayName = "qwer", images = newImages)
+    val newImageList2 = createResponse.copy(displayName = "qwer", images = newImages2)
     val fieldMask2 = FieldMask(Seq("images"))
     val updated2 = client
       .updateImageList(UpdateImageListRequest(Some(newImageList2), Some(fieldMask2)), new Metadata())
       .unsafeRunSync()
     updated2.displayName should equal("abc")
-    updated2.images should equal(newImages)
+    updated2.images should equal(newImages2)
   }
 
   testR("delete image list") { case (client, _) =>
@@ -148,15 +199,19 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers with Pa
   }
 
   private def createImageList(client: CatalogFs2Grpc[IO, Metadata]) = {
-    client.createImageList(CreateImageListRequest("imageLists", Some(imageList)), new Metadata()).unsafeRunSync()
+    val images = imageList.images.map { image =>
+      client.createImage(CreateImageRequest("images", Some(image)), new Metadata()).unsafeRunSync()
+    }
+    client
+      .createImageList(CreateImageListRequest("imageLists", Some(imageList.copy(images = images))), new Metadata())
+      .unsafeRunSync()
   }
 
   def modelFixture(client: CatalogFs2Grpc[IO, Metadata], xa: Transactor[IO]) =
     new {
       val category1 =
         client.createCategory(CreateCategoryRequest("categories", Some(category)), new Metadata()).unsafeRunSync()
-      val imageList1 =
-        client.createImageList(CreateImageListRequest("imageLists", Some(imageList)), new Metadata()).unsafeRunSync()
+      val imageList1 = createImageList(client)
       val image = api.Image("src", "alt")
       val parameterList1 = api.ParameterList(
         UUID.randomUUID().toString,
@@ -345,8 +400,7 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers with Pa
     new {
       val category1 =
         client.createCategory(CreateCategoryRequest("categories", Some(category)), new Metadata()).unsafeRunSync()
-      val imageList1 =
-        client.createImageList(CreateImageListRequest("imageLists", Some(imageList)), new Metadata()).unsafeRunSync()
+      val imageList1 = createImageList(client)
       val image = api.Image("src", "alt")
       private val param1_1: api.Parameter = api.Parameter(UUID.randomUUID().toString, "param-name-1", Some(image))
       private val param1_2: api.Parameter = api.Parameter(UUID.randomUUID().toString, "param-name-2", Some(image))
@@ -408,7 +462,7 @@ class CatalogImplIT extends AnyFunSuite with HasIOResource with Matchers with Pa
     def createParameter(listId: String, p: api.Parameter, order: Int): ConnectionIO[Unit] =
       for {
         imageId <-
-          sql"""insert into images (src, alt, list_order) VALUES (${p.image.get.src}, ${p.image.get.alt}, 1)""".update
+          sql"""insert into images (src, alt) VALUES (${p.image.get.src}, ${p.image.get.alt})""".update
             .withUniqueGeneratedKeys[UUID]("id")
         _ <- sql"""
        INSERT INTO parameters (id, display_name, image_id, list_order, parameter_list_id)

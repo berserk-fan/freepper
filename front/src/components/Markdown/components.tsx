@@ -1,19 +1,19 @@
 import React, { memo } from "react";
-import Checkbox from "@material-ui/core/Checkbox";
-import Divider from "@material-ui/core/Divider";
-import Paper from "@material-ui/core/Paper";
-import MuiTable from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Typography from "@material-ui/core/Typography";
-import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-import List from "@material-ui/core/List";
-import useTheme from "@material-ui/core/styles/useTheme";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
+import Checkbox from "@mui/material/Checkbox";
+import Divider from "@mui/material/Divider";
+import Paper from "@mui/material/Paper";
+import MuiTable from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import List from "@mui/material/List";
+import useTheme from "@mui/styles/useTheme";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 
 export const components = {
   p: Typography,

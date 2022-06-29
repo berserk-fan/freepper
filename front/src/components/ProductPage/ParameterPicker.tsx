@@ -1,16 +1,11 @@
-import Typography from "@material-ui/core/Typography/Typography";
+import Typography from "@mui/material/Typography";
 import React, { MouseEventHandler } from "react";
 import { Parameter, ParameterList } from "apis/parameter.pb";
-import Box from "@material-ui/core/Box/Box";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Chip from "@material-ui/core/Chip/Chip";
-import Avatar from "@material-ui/core/Avatar/Avatar";
-import Image from "next/image";
-import { Image as ApiImage } from "apis/image_list.pb";
-
-function Icon({ image }: { image: ApiImage }) {
-  return <Image width={24} height={24} src={image.src} alt={image.alt} />;
-}
+import Box from "@mui/material/Box";
+import makeStyles from "@mui/styles/makeStyles";
+import Chip from "@mui/material/Chip";
+import Avatar from "@mui/material/Avatar";
+import { MyAvatar } from "../Commons/MyAvatar";
 
 const useStyles = makeStyles({
   fabricNode: {
@@ -34,7 +29,7 @@ function MyChipNoMemo({
       avatar={
         parameter.image ? (
           <Avatar>
-            <Icon image={parameter.image} />
+            <MyAvatar image={parameter.image} />
           </Avatar>
         ) : undefined
       }

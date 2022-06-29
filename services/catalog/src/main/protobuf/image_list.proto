@@ -6,11 +6,7 @@ import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
 import "validate/validate.proto";
 import "google/protobuf/field_mask.proto";
-
-message Image {
-  string src = 1;
-  string alt = 2;
-}
+import "image.proto";
 
 message ImageList {
   option (google.api.resource) = {
@@ -20,7 +16,7 @@ message ImageList {
   string name = 1;
   string uid = 2;
   string display_name = 3 [(validate.rules).string.min_len = 1];
-  repeated Image images = 4 [(validate.rules).repeated.min_items = 1];
+  repeated Image images = 4;
 }
 
 message GetImageListRequest {

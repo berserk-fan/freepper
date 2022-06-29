@@ -8,7 +8,7 @@ import doobie.{ConnectionIO, Transactor}
 import doobie.implicits._
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.error.NotFound
-import ua.pomo.catalog.infrastructure.persistance.CategoryRepositoryImpl
+import ua.pomo.catalog.infrastructure.persistance.postgres.CategoryRepositoryImpl
 
 class CategoryServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, repository: CategoryRepository[G])
     extends CategoryService[F] {

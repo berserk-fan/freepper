@@ -1,28 +1,28 @@
 import React, { memo } from "react";
-import LocalShippingIcon from "@material-ui/icons/LocalShipping";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import PaymentIcon from "@material-ui/icons/Payment";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import PaymentIcon from "@mui/icons-material/Payment";
 import clsx from "clsx";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import StepConnector from "@material-ui/core/StepConnector";
-import withStyles from "@material-ui/styles/withStyles";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import { StepIconProps } from "@material-ui/core";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import StepConnector from "@mui/material/StepConnector";
+import withStyles from "@mui/styles/withStyles";
+import makeStyles from "@mui/styles/makeStyles";
+import { StepIconProps } from "@mui/material";
 
 const ColorlibConnector = withStyles({
   alternativeLabel: {
     top: 22,
   },
   active: {
-    "& $line": {
+    "& .line": {
       backgroundImage:
         "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
     },
   },
   completed: {
-    "& $line": {
+    "& .line": {
       backgroundImage:
         "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
     },

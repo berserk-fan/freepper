@@ -1,6 +1,6 @@
-import AppBar from "@material-ui/core/AppBar";
+import AppBar from "@mui/material/AppBar";
 import React from "react";
-import { AppBarProps } from "@material-ui/core/AppBar/AppBar";
+import { AppBarProps } from "@mui/material/AppBar/AppBar";
 import HideOnScroll from "./HideOnScroll";
 
 export const CustomAppBar = (props: AppBarProps & { show?: boolean }) => {

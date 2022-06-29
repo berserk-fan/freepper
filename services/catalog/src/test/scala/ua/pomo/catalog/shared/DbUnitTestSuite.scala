@@ -15,10 +15,14 @@ trait DbUnitTestSuite
     with ScalaCheckDrivenPropertyChecks
     with HasIOResource
     with ForEachImpl
-    with EitherValues {
-  override def transactor: doobie.Transactor[IO] = resources.db.xa
+    with EitherValues
+    with HasIORuntime {
+  def getDbResources(resources: TestResource): DbResources
+
+  override def transactor: doobie.Transactor[IO] = getDbResources(resources).xa
   implicit class ConnIOOps[T](t: ConnectionIO[T]) {
-    def trRun(): T = t.transact(resources.db.xa).unsafeRunSync()(resources.db.runtime)
+    def trRun(): T = t.transact(getDbResources(resources).xa).unsafeRunSync()
   }
-  override type Res <: HasDbResources with HasImpls
+  implicit override val generatorDrivenConfig: PropertyCheckConfiguration =
+    PropertyCheckConfiguration(minSuccessful = 5)
 }

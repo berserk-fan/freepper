@@ -5,9 +5,10 @@ import cats.syntax.apply._
 import org.scalacheck.Gen
 import squants.market.{Money, USD}
 import ua.pomo.catalog.domain.category._
-import ua.pomo.catalog.domain.{category, image, model, product}
+import ua.pomo.catalog.domain.{category, imageList, model, product, image}
 import ua.pomo.catalog.domain
 import ua.pomo.catalog.domain.model._
+import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.product._
 import ua.pomo.catalog.domain.parameter._
@@ -41,22 +42,34 @@ object Generators {
     val gen: Gen[Category] = (catId, readableId, displayName, description).mapN(category.Category.apply)
   }
 
+  object Image {
+    private val id = Gen.uuid.map(ImageId.apply)
+    private val alt = Gen.alphaNumStr.map(ImageAlt.apply)
+    private val src = Gen.alphaNumStr.map(ImageSrc.apply)
+
+    val gen: Gen[Image] = (id, src, alt).mapN(image.Image.apply)
+    val create: Gen[CreateImageMetadata] = (src, alt).mapN(CreateImageMetadata.apply)
+    val createListOf5: Gen[List[CreateImageMetadata]] = Gen.listOfN(5, create)
+  }
+
   object ImageList {
     private val listId = Gen.uuid.map(ImageListId.apply)
+    private val imageId = Gen.uuid.map(ImageId.apply)
     private val imageSrc = Gen.alphaNumStr.map(ImageSrc.apply)
     private val imageAlt = Gen.alphaNumStr.map(ImageAlt.apply)
     private val displayName = Gen.alphaNumStr.map(ImageListDisplayName.apply)
     private[shared] val imageGen =
-      (imageSrc, imageAlt).mapN(Image.apply)
+      (imageId, imageSrc, imageAlt).mapN(image.Image.apply)
     private val imageListGen = Gen.listOf(imageGen).map(_.groupBy(_.src).values.map(_.head).toList)
 
-    val update: Gen[image.ImageListUpdate] = (
+    def update(listGen: Gen[List[ImageId]] = Gen.listOf(imageId)): Gen[imageList.ImageListUpdate] = (
       listId,
       Gen.option(displayName),
-      Gen.option(imageListGen)
-    ).mapN(image.ImageListUpdate.apply)
+      Gen.option(listGen)
+    ).mapN(imageList.ImageListUpdate.apply)
 
-    val gen: Gen[image.ImageList] = (listId, displayName, imageListGen).mapN(image.ImageList.apply)
+    def gen(genImages: Gen[List[Image]] = imageListGen): Gen[imageList.ImageList] =
+      (listId, displayName, genImages).mapN(imageList.ImageList.apply)
   }
 
   object Model {
@@ -81,7 +94,7 @@ object Generators {
         .mapN(model.CreateModel.apply)
 
     val gen: Gen[model.Model] =
-      (id, rId, catId, catRid, rDisplayName, rDescription, rMoney, paramLists, ImageList.gen).mapN(model.Model.apply)
+      (id, rId, catId, catRid, rDisplayName, rDescription, rMoney, paramLists, ImageList.gen()).mapN(model.Model.apply)
 
     def updateGen(imageListId: ImageListId, categoryId: CategoryUUID): Gen[model.UpdateModel] =
       (
@@ -113,7 +126,7 @@ object Generators {
       (standardPrice, promoPrice)
         .mapN(ProductPrice.apply)
     val gen: Gen[product.Product] =
-      (id, modelId, displayName, categoryId, ImageList.gen, price, paramIds)
+      (id, modelId, displayName, categoryId, ImageList.gen(), price, paramIds)
         .mapN(product.Product.apply)
 
     private val imageListId = Gen.uuid.map(ImageListId.apply)

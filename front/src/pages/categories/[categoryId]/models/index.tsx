@@ -3,7 +3,7 @@ import { GetStaticProps } from "next";
 import ShopPage from "components/Shop/ShopPage";
 import "keen-slider/keen-slider.min.css";
 import { Model } from "apis/model.pb";
-import grpcClient from "commons/shop-node";
+import grpcClient from "commons/shopClient";
 import { removeUndefined } from "../../../../commons/utils";
 
 export default function Shop(props: { models: Model[] }) {
@@ -21,6 +21,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     props: {
       models: JSON.parse(JSON.stringify(models1.models)),
     },
+    revalidate: 30,
   });
 };
 

@@ -1,5 +1,5 @@
-import Typography from "@material-ui/core/Typography/Typography";
-import Box from "@material-ui/core/Box/Box";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import React from "react";
 
 export default function PaymentStep() {

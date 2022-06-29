@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import KeenSlider, { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import Box from "@material-ui/core/Box";
-import IconButton from "@material-ui/core/IconButton";
-import ArrowBackIosOutlined from "@material-ui/icons/ArrowBackIosOutlined";
-import ArrowForwardIosOutlined from "@material-ui/icons/ArrowForwardIosOutlined";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import ArrowBackIosOutlined from "@mui/icons-material/ArrowBackIosOutlined";
+import ArrowForwardIosOutlined from "@mui/icons-material/ArrowForwardIosOutlined";
 import Image from "next/image";
-import { Image as ImageData } from "apis/image_list.pb";
+import { Image as ImageData } from "apis/image.pb";
+import Typography from "@mui/material/Typography";
 import { SliderArrows } from "../Slider/helpers";
 import { useStyles } from "./styles";
 import { useSliderVirtualization } from "../Slider/utils";
@@ -17,17 +18,25 @@ export default function SliderWithThumbs({
   images,
   thumbs,
   sizes,
+  onChange = () => {},
+  resetSlideIndex = false,
 }: {
   images: ImageData[];
   thumbs: ImageData[];
   sizes: string;
+  onChange?: (src: string) => void;
+  resetSlideIndex?: boolean;
 }) {
+  if (images.length === 0 || thumbs.length === 0) {
+    return <Typography>Empty images</Typography>;
+  }
+
   const classes = useStyles();
   const thumbserDirRef = useRef<KeenSlider>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [thumbSlide, setThumbSlide] = useState(0);
 
-  // main slider
+  useEffect(() => onChange(images[activeSlide]?.src), [activeSlide]);
 
   const lock = useRef(-1);
 
@@ -38,7 +47,6 @@ export default function SliderWithThumbs({
       const idx = s.details().relativeSlide;
       const thumbser = thumbserDirRef.current;
       setActiveSlide(idx);
-
       if (lock.current === -1) {
         thumbser?.moveToSlideRelative(idx);
       }
@@ -50,8 +58,10 @@ export default function SliderWithThumbs({
   });
 
   function changeSlide(idx) {
-    lock.current = idx;
-    slider.moveToSlideRelative(idx);
+    if (slider) {
+      lock.current = idx;
+      slider.moveToSlideRelative(idx);
+    }
   }
 
   // thumbs slider
@@ -78,6 +88,9 @@ export default function SliderWithThumbs({
   useEffect(() => {
     slider?.refresh();
     thumbser?.refresh();
+    if (resetSlideIndex) {
+      changeSlide(0);
+    }
   }, [images, thumbs]);
 
   useEffect(() => {
@@ -148,6 +161,7 @@ export default function SliderWithThumbs({
           <IconButton
             onClick={() => thumbser.next()}
             className={`${classes.forwardButton} ${classes.smallButton}`}
+            size="large"
           >
             <ArrowForwardIosOutlined className={classes.smallIcon} />
           </IconButton>
@@ -156,6 +170,7 @@ export default function SliderWithThumbs({
           <IconButton
             onClick={() => thumbser.prev()}
             className={`${classes.backButton} ${classes.smallButton}`}
+            size="large"
           >
             <ArrowBackIosOutlined className={classes.smallIcon} />
           </IconButton>

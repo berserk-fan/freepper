@@ -6,7 +6,7 @@ import derevo.derive
 import io.estatico.newtype.macros.newtype
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.parameter._
-import ua.pomo.catalog.domain.image.{ImageList, ImageListId}
+import ua.pomo.catalog.domain.imageList.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 
 import java.util.UUID

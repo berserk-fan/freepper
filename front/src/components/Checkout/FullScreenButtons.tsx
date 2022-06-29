@@ -1,6 +1,6 @@
 import React, { MouseEventHandler } from "react";
-import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box/Box";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import { buttonTexts } from "./Definitions";
 
 type FullScreenButtonsProps = {
@@ -20,12 +20,17 @@ export default function FullScreenButtons({
 }: FullScreenButtonsProps) {
   return (
     <Box margin={1} className="flex justify-between">
-      <Button disabled={backDisabled} onClick={onBack}>
+      <Button
+        disabled={backDisabled}
+        onClick={onBack}
+        variant="outlined"
+        color="secondary"
+      >
         Назад
       </Button>
       <Button
-        variant="contained"
-        color="primary"
+        variant="outlined"
+        color="secondary"
         onClick={onNext}
         type="submit"
         disabled={nextDisabled}

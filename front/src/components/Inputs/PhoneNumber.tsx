@@ -1,22 +1,19 @@
-import React, { useCallback } from "react";
-import PhoneInput from "mui-phone-input-ssr";
+import React, { ComponentType, useCallback } from "react";
+import PhoneInput, { MuiPhoneNumberProps } from "material-ui-phone-number";
 import { showErrorOnChange } from "mui-rff";
+import { FieldRenderProps } from "react-final-form";
 
-const locale = {
-  Ukraine: "Україна",
-  Russia: "Россия",
-  Belarus: "Беларусь",
-};
-
-function handleChange(val, country, onChange) {
-  if (country.countryCode === "ua") {
+function handleChange(val: string, onChange) {
+  if (val.startsWith("+380")) {
     onChange(val.replace("+380 (0", "+380 ("));
     return;
   }
   onChange(val);
 }
 
-export const PhoneNumber = (props) => {
+const PhoneNumber: ComponentType<FieldRenderProps<MuiPhoneNumberProps>> = (
+  props,
+) => {
   const {
     input: { value, onChange, ...restInput },
     meta,
@@ -30,8 +27,8 @@ export const PhoneNumber = (props) => {
   const isError = showError({ meta });
 
   const handleChangeMemoized = useCallback(
-    (val, country) => {
-      handleChange(val, country, onChange);
+    (val) => {
+      handleChange(val, onChange);
     },
     [onChange],
   );
@@ -49,11 +46,12 @@ export const PhoneNumber = (props) => {
       onChange={handleChangeMemoized}
       defaultCountry="ua"
       regions="europe"
-      localization={locale}
-      onlyCountries={["ua", "ru", "by", "fr"]}
+      onlyCountries={["ua", "fr"]}
       variant="filled"
       inputProps={{ required, ...restInput }}
       {...rest}
     />
   );
 };
+
+export default PhoneNumber;

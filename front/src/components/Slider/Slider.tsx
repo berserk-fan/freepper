@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { Dots, Numbers, SliderArrows } from "./helpers";
 import { useSliderVirtualization } from "./utils";
 
@@ -10,11 +10,13 @@ const WINDOW_SIZE = 2;
 export default function Slider({
   slides,
   className = "",
+  slideClassName = "",
   onChange,
   isShowingArrows = true,
 }: {
   slides: ReactElement[];
   className?: string;
+  slideClassName?: string;
   onChange?: (slideNum: number) => void;
   isShowingArrows?: boolean;
 }) {
@@ -40,11 +42,14 @@ export default function Slider({
 
   return (
     <Box className={className} position="relative">
-      <div ref={sliderRef as any} className="keen-slider">
+      <div ref={sliderRef as any} className={`keen-slider ${className}`}>
         {slides.map((slide, idx) => (
-          <div key={slide.key} className="keen-slider__slide">
+          <Box
+            key={slide.key}
+            className={`keen-slider__slide ${slideClassName}`}
+          >
             {isRendering(idx) ? slide : null}
-          </div>
+          </Box>
         ))}
       </div>
       {isShowingArrows && (

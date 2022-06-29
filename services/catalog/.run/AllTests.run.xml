@@ -20,22 +20,23 @@
     <option name="testKind" value="All in package" />
     <option name="classBuf">
       <list>
-        <option value="ua.pomo.catalog.CatalogImplTest" />
         <option value="ua.pomo.catalog.AppConfigTest" />
         <option value="ua.pomo.catalog.CatalogImplIT" />
+        <option value="ua.pomo.catalog.CatalogImplTest" />
         <option value="ua.pomo.catalog.domain.CommonsTest" />
-        <option value="ua.pomo.catalog.infrastructure.persistance.ModelRepositoryImplTest" />
-        <option value="ua.pomo.catalog.infrastructure.persistance.ProductRepositoryImplTest" />
-        <option value="ua.pomo.catalog.infrastructure.persistance.CategoryRepositoryImplTest" />
-        <option value="ua.pomo.catalog.infrastructure.persistance.ImageListRepositoryImplTest" />
-        <option value="ua.pomo.catalog.app.ConvertersTest" />
+        <option value="ua.pomo.catalog.infrastructure.persistance.postgres.ModelRepositoryImplTest" />
+        <option value="ua.pomo.catalog.infrastructure.persistance.postgres.ProductRepositoryImplTest" />
+        <option value="ua.pomo.catalog.infrastructure.persistance.postgres.CategoryRepositoryImplTest" />
+        <option value="ua.pomo.catalog.infrastructure.persistance.postgres.ImageListRepositoryImplTest" />
         <option value="ua.pomo.catalog.app.ApiNameTest" />
+        <option value="ua.pomo.catalog.app.ConvertersTest" />
         <option value="ua.pomo.catalog.app.programs.CategoryServiceImplTest" />
       </list>
     </option>
-    <option name="programParameters" value="-P16" />
+    <option name="programParameters" value="-P32" />
     <option name="shortenClasspath" value="NONE" />
-    <option name="testArgs" value="-P16" />
+    <option name="testArgs" value="-P32" />
+    <option name="useSbt" value="true" />
     <option name="workingDirectory" value="$PROJECT_DIR$" />
     <method v="2">
       <option name="Make" enabled="true" />

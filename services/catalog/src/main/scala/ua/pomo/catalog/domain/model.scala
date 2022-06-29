@@ -5,14 +5,13 @@ import derevo.derive
 import io.estatico.newtype.macros.newtype
 import squants.market.Money
 import ua.pomo.catalog.domain.category.{CategoryReadableId, CategoryUUID}
-import ua.pomo.catalog.domain.image.{ImageList, ImageListId}
+import ua.pomo.catalog.domain.imageList.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.parameter.{ParameterList, ParameterListId}
-import ua.pomo.catalog.optics.uuid
 
 import java.util.UUID
 
 object model {
-  @derive(eqv, show, uuid)
+  @derive(eqv, show)
   @newtype
   case class ModelId(value: UUID)
 

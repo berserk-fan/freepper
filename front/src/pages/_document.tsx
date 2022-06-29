@@ -1,26 +1,26 @@
 import React from "react";
 import Document, { Html, Head, Main, NextScript } from "next/document";
-import { ServerStyleSheets } from "@material-ui/core/styles";
+import ServerStyleSheets from "@mui/styles/ServerStyleSheets";
+import theme from "../theme";
 
 export default class MyDocument extends Document {
   render() {
     return (
       <Html lang="ru">
         <Head>
-          <link rel="preload" href="/fonts/fonts.css" />
+          <meta name="theme-color" content={theme.palette.primary.main} />
           <link
             rel="icon"
             type="image/png"
             sizes="32x32"
-            href="/favicon-32x32.png"
+            href="https://pomo.imgix.net/favicon-32x32.png"
           />
           <link
             rel="icon"
             type="image/png"
             sizes="16x16"
-            href="/favicon-16x16.png"
+            href="https://pomo.imgix.net/favicon-16x16.png"
           />
-          <link rel="manifest" href="/site.webmanifest" />
           <meta
             name="apple-mobile-web-app-status-bar-style"
             content="black-translucent"

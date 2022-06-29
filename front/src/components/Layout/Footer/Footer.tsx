@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import Box from "@material-ui/core/Box";
-import Container from "@material-ui/core/Container";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 import Link from "next/link";
 import { useStyles } from "components/Layout/Footer/styles";
-import MailOutline from "@material-ui/icons/MailOutline";
-import Instagram from "@material-ui/icons/Instagram";
+import MailOutline from "@mui/icons-material/MailOutline";
+import Instagram from "@mui/icons-material/Instagram";
 import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
 import Logo from "../Logo/Logo";
 import { modelPages, pages } from "../Header/pages";
@@ -26,7 +26,7 @@ const Footer = React.memo(() => {
                 mt={-3}
                 width="100%"
                 height={120}
-                borderRadius={12}
+                borderRadius="12px"
                 className="center overflow-hidden"
                 fontSize={400}
               >

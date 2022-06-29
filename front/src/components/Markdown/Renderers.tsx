@@ -1,23 +1,21 @@
 import React, { ReactNode } from "react";
-import withStyles, {
-  StyledComponentProps,
-} from "@material-ui/core/styles/withStyles";
-import Typography, { TypographyProps } from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
-import Table from "@material-ui/core/Table";
-import Paper from "@material-ui/core/Paper";
+import withStyles, { StyledComponentProps } from "@mui/styles/withStyles";
+import Typography, { TypographyProps } from "@mui/material/Typography";
+import Link from "@mui/material/Link";
+import Table from "@mui/material/Table";
+import Paper from "@mui/material/Paper";
 import ReactMarkdown from "react-markdown";
 import { List as MdList, ListContent } from "mdast";
-import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import useTheme from "@material-ui/core/styles/useTheme";
-import ListItemText from "@material-ui/core/ListItemText";
-import List from "@material-ui/core/List";
-import TableCell from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
-import TableBody from "@material-ui/core/TableBody";
-import TableHead from "@material-ui/core/TableHead";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import useTheme from "@mui/styles/useTheme";
+import ListItemText from "@mui/material/ListItemText";
+import List from "@mui/material/List";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
+import TableBody from "@mui/material/TableBody";
+import TableHead from "@mui/material/TableHead";
 
 const styles = {
   header: {

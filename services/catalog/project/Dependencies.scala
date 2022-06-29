@@ -9,7 +9,7 @@ object Dependencies {
     val derevo = "0.13.0"
     val javaxCrypto = "1.0.1"
     val fs2 = "3.1.3"
-    val log4cats = "2.1.1"
+    val log4cats = "2.3.1"
     val monocle = "3.0.0-M6"
     val newtype = "0.4.4"
     val refined = "0.9.28"
@@ -37,6 +37,8 @@ object Dependencies {
     val scalaTestScalaCheck = "3.2.9.0"
 
     val parserCombinators = "2.1.0"
+    val flexMark = "0.35.10"
+    val awsS3Sdk = "2.17.214"
   }
 
   object Libraries {
@@ -45,6 +47,7 @@ object Dependencies {
 
     lazy val scalaTest = "org.scalatest" %% "scalatest" % V.scalaTest % Test
     lazy val scalaCheck = "org.scalacheck" %% "scalacheck" % V.scalaCheck % Test
+    lazy val scalaTestHtml = "com.vladsch.flexmark" % "flexmark-all" % V.flexMark % Test
     lazy val scalaTestScalaCheck = "org.scalatestplus" %% "scalacheck-1-15" % V.scalaTestScalaCheck % Test
 
     lazy val grpcNetty = "io.grpc" % "grpc-netty" % scalapb.compiler.Version.grpcJavaVersion
@@ -97,6 +100,9 @@ object Dependencies {
     val derevoCore = derevo("core")
     val derevoCats = derevo("cats")
     val derevoCirce = derevo("circe-magnolia")
+
+    val awsS3Sdk = "software.amazon.awssdk" % "s3" % V.awsS3Sdk
+
   }
 
   object CompilerPlugin {

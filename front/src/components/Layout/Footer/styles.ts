@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core/styles";
+import makeStyles from "@mui/styles/makeStyles";
 
 export const useStyles = makeStyles(({ palette, typography, spacing }) => ({
   top: {
@@ -6,11 +6,11 @@ export const useStyles = makeStyles(({ palette, typography, spacing }) => ({
     overflow: "hidden",
   },
   middle: {
-    backgroundColor: palette.type === "dark" ? "#192D36" : palette.action.hover,
+    backgroundColor: palette.mode === "dark" ? "#192D36" : palette.action.hover,
   },
   bottom: {
     backgroundColor:
-      palette.type === "dark" ? "#0F2128" : palette.action.selected,
+      palette.mode === "dark" ? "#0F2128" : palette.action.selected,
   },
   newsletterText: {
     color: "#fff",
@@ -87,7 +87,7 @@ export const useStyles = makeStyles(({ palette, typography, spacing }) => ({
       bottom: 0,
       zIndex: 0,
       backgroundColor:
-        palette.type === "dark" ? palette.action.focus : palette.action.hover,
+        palette.mode === "dark" ? palette.action.focus : palette.action.hover,
       borderRadius: 40,
       transition: "0.3s cubic-bezier(.47,1.64,.41,.8)",
       transform: "scale(0)",
@@ -96,7 +96,7 @@ export const useStyles = makeStyles(({ palette, typography, spacing }) => ({
       marginLeft: "0.5rem",
     },
     "&:hover, &:focus": {
-      color: palette.type === "dark" ? "#fff" : palette.primary.main,
+      color: palette.mode === "dark" ? "#fff" : palette.primary.main,
       "&:after": {
         transform: "scale(1)",
       },
@@ -126,12 +126,12 @@ export const useStyles = makeStyles(({ palette, typography, spacing }) => ({
     color: palette.text.hint,
     letterSpacing: "0.5px",
     "&:hover": {
-      color: palette.type === "dark" ? "#fff" : palette.text.primary,
+      color: palette.mode === "dark" ? "#fff" : palette.text.primary,
     },
   },
   menuItemActive: {
     "&$menuItem": {
-      color: palette.type === "dark" ? "#fff" : palette.text.primary,
+      color: palette.mode === "dark" ? "#fff" : palette.text.primary,
     },
   },
 }));

@@ -1,9 +1,9 @@
 import React, { memo, MouseEventHandler } from "react";
-import Button from "@material-ui/core/Button";
-import MobileStepper from "@material-ui/core/MobileStepper/MobileStepper";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
-import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import Button from "@mui/material/Button";
+import MobileStepper from "@mui/material/MobileStepper";
+import makeStyles from "@mui/styles/makeStyles";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import { buttonTexts } from "./Definitions";
 
 const useStyles = makeStyles((theme) => ({
@@ -36,14 +36,26 @@ function CustomMobileStepper({
       position="static"
       activeStep={activeStep}
       nextButton={
-        <Button size="small" onClick={handleNext} disabled={isNextDisabled}>
+        <Button
+          size="small"
+          color="secondary"
+          variant="outlined"
+          onClick={handleNext}
+          disabled={isNextDisabled}
+          endIcon={<KeyboardArrowRight />}
+        >
           {buttonTexts[activeStep]}
-          <KeyboardArrowRight />
         </Button>
       }
       backButton={
-        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-          <KeyboardArrowLeft />
+        <Button
+          size="small"
+          color="secondary"
+          variant="outlined"
+          onClick={handleBack}
+          disabled={activeStep === 0}
+          startIcon={<KeyboardArrowLeft />}
+        >
           Назад
         </Button>
       }

@@ -1,6 +1,6 @@
-import { Theme } from "@material-ui/core/styles";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography";
+import { Theme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
+import Typography from "@mui/material/Typography";
 import React, { memo } from "react";
 
 const useStyles = makeStyles((theme: Theme) => ({

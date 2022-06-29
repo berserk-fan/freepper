@@ -1,19 +1,19 @@
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import CloseIcon from "@material-ui/icons/Close";
-import ExpandLess from "@material-ui/icons/ExpandLess";
-import ExpandMore from "@material-ui/icons/ExpandMore";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import Drawer from "@material-ui/core/Drawer";
-import Fade from "@material-ui/core/Fade";
-import Box from "@material-ui/core/Box";
-import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
-import Collapse from "@material-ui/core/Collapse";
+import CloseIcon from "@mui/icons-material/Close";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Drawer from "@mui/material/Drawer";
+import Fade from "@mui/material/Fade";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import Collapse from "@mui/material/Collapse";
 import Link from "next/link";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/styles/makeStyles";
 import { Page, pages, shopPageGroup } from "./pages";
 import ContactUsSnackBar from "../../ContactUs/ContactUsSnackBar";
 import ContactsIcon from "../../Icons/ContactsIcon";
@@ -101,7 +101,7 @@ export default function HeaderMobileSidebar({ open, toggle }) {
           className={classes.closeMenuButton}
           onClick={toggle(false)}
         >
-          <IconButton>
+          <IconButton size="large">
             <CloseIcon fontSize="large" />
           </IconButton>
         </Box>

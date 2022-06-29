@@ -1,9 +1,9 @@
 import React from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
-import grpcClient from "commons/shop-node";
+import grpcClient from "commons/shopClient";
 import FoundProductPage from "components/ProductPage/FoundProductPage";
 import LayoutWithHeaderAndFooter from "components/Layout/LayoutWithHeaderAndFooter";
-import Box from "@material-ui/core/Box/Box";
+import Box from "@mui/material/Box";
 import { Model } from "apis/model.pb";
 import { Product } from "apis/product.pb";
 import { Category } from "apis/category.pb";
@@ -43,6 +43,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     .then((x) => x.products);
   return removeUndefined({
     props: { model: model || null, products },
+    revalidate: 30,
   });
 };
 
@@ -64,5 +65,5 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths = models1.flatMap(([cat, ms]) =>
     ms.map((m) => ({ params: { categoryId: cat.readableId, modelId: m.uid } })),
   );
-  return { paths, fallback: false };
+  return { paths, fallback: "blocking" };
 };

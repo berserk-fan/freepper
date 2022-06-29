@@ -1,7 +1,7 @@
 import React from "react";
 import { MDXProvider } from "@mdx-js/react";
-import Container from "@material-ui/core/Container";
-import Box from "@material-ui/core/Box";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
 import LayoutWithHeaderAndFooter from "../Layout/LayoutWithHeaderAndFooter";
 import { components } from "./components";
 

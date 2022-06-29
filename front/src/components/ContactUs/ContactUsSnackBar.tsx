@@ -1,8 +1,8 @@
-import Box from "@material-ui/core/Box";
-import IconButton from "@material-ui/core/IconButton/IconButton";
-import Snackbar from "@material-ui/core/Snackbar/Snackbar";
-import useTheme from "@material-ui/core/styles/useTheme";
-import CloseIcon from "@material-ui/icons/Close";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Snackbar from "@mui/material/Snackbar";
+import useTheme from "@mui/styles/useTheme";
+import CloseIcon from "@mui/icons-material/Close";
 import React, { useCallback } from "react";
 import ContactUs from "./ContactUs";
 
@@ -41,6 +41,7 @@ export default function ContactUsSnackBar({
           aria-label="закрыть"
           color="inherit"
           onClick={handleCloseMemoized}
+          size="large"
         >
           <CloseIcon fontSize="small" />
         </IconButton>

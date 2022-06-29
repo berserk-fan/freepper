@@ -1,5 +1,5 @@
-import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
-import { GridSize } from "@material-ui/core";
+import { Breakpoint } from "@mui/system/createTheme/createBreakpoints";
+import { GridSize } from "@mui/material";
 import theme from "../theme";
 
 function noMedia(query: string) {

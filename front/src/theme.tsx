@@ -1,10 +1,33 @@
-import responsiveFontSizes from "@material-ui/core/styles/responsiveFontSizes";
-import createMuiTheme from "@material-ui/core/styles/createTheme";
-import red from "@material-ui/core/colors/red";
+import { Theme, responsiveFontSizes } from "@mui/material/styles";
+import { red } from "@mui/material/colors";
+import { createTheme } from "@mui/material";
 
-// Create a theme instance.
-const theme = createMuiTheme({
+declare module "@mui/material/styles" {
+  interface TypeText {
+    hint: TypeText["primary"];
+  }
+}
+
+declare module "@mui/styles/defaultTheme" {
+  interface DefaultTheme extends Theme {}
+}
+
+const theme = createTheme({
   spacing: 8,
+  palette: {
+    primary: {
+      main: "#F5F5F5",
+    },
+    secondary: {
+      main: "#81c3db",
+    },
+    error: {
+      main: red.A400,
+    },
+    text: {
+      hint: "rgba(0, 0, 0, 0.38)",
+    },
+  },
   typography: {
     fontFamily: ["Roboto, sans-serif", "Monospace"].join(","),
     h1: {
@@ -76,17 +99,6 @@ const theme = createMuiTheme({
       textTransform: "capitalize",
     },
   },
-  palette: {
-    primary: {
-      main: "#FFFFFF",
-    },
-    secondary: {
-      main: "#81c3db",
-    },
-    error: {
-      main: red.A400,
-    },
-  },
   breakpoints: {
     values: {
       xs: 0,
@@ -96,13 +108,15 @@ const theme = createMuiTheme({
       xl: 1920,
     },
   },
-  overrides: {
+  components: {
     MuiButton: {
-      containedPrimary: {
-        borderTop: 1,
-        borderLeft: 1,
-        borderColor: "#CCCCCC",
-        borderStyle: "solid",
+      styleOverrides: {
+        containedPrimary: {
+          borderTop: 1,
+          borderLeft: 1,
+          borderColor: "#CCCCCC",
+          borderStyle: "solid",
+        },
       },
     },
   },

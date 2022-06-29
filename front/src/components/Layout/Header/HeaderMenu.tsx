@@ -1,6 +1,6 @@
-import IconButton from "@material-ui/core/IconButton/IconButton";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import MenuIcon from "@material-ui/icons/Menu";
+import IconButton from "@mui/material/IconButton";
+import makeStyles from "@mui/styles/makeStyles";
+import MenuIcon from "@mui/icons-material/Menu";
 import React from "react";
 import HeaderMobileSidebar from "./HeaderMobileSidebar";
 
@@ -32,6 +32,7 @@ export default function HeaderMenu() {
         className={classes.menuButton}
         color="inherit"
         aria-label="menu"
+        size="large"
       >
         <MenuIcon />
       </IconButton>

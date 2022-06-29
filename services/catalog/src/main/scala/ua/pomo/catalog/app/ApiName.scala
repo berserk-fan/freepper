@@ -8,7 +8,8 @@ import derevo.cats.eqv
 import derevo.derive
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.error.ValidationErr
-import ua.pomo.catalog.domain.image._
+import ua.pomo.catalog.domain.image.ImageId
+import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.product.ProductId
 
@@ -41,7 +42,9 @@ object ApiName {
   case class ModelsName(categoryId: CategoryRefId) extends ApiName
   case class ModelName(categoryId: CategoryRefId, modelId: ModelId) extends ApiName
   case object ImageListsName extends ApiName
+  case object ImagesName extends ApiName
   case class ImageListName(id: ImageListId) extends ApiName
+  case class ImageName(id: ImageId) extends ApiName
   case class ProductsName(categoryId: CategoryRefId, modelId: ModelId) extends ApiName
   case class ProductName(categoryId: CategoryRefId, modelId: ModelId, productId: ProductId) extends ApiName
 
@@ -57,10 +60,11 @@ object ApiName {
   def products(s: String): NameParseResult[ProductsName] = parseAllToEither(Parsers.products, s)
   def product(s: String): NameParseResult[ProductName] = parseAllToEither(Parsers.product, s)
   def imageLists(s: String): NameParseResult[ImageListsName.type] = parseAllToEither(Parsers.imageLists, s)
+  def image(s: String): NameParseResult[ImageName] = parseAllToEither(Parsers.image, s)
 
   private object Parsers extends RegexParsers {
     def any: Parser[ApiName] =
-      categories ||| category ||| models ||| model ||| imageLists ||| imageList ||| products ||| product
+      categories ||| category ||| models ||| model ||| imageLists ||| imageList ||| products ||| product ||| image ||| images
 
     def parseAllToEither[T](p: Parser[T], s: String): NameParseResult[T] = parseAll(p, s) match {
       case Success(matched, _) => Right(matched)
@@ -76,6 +80,8 @@ object ApiName {
       (models <~ "/") ~ modelUUID ^^ { case col ~ id => ModelName(col.categoryId, id) }
     }
     def imageLists: Parser[ImageListsName.type] = s"^$ImageLists$$".r ^^ (_ => ImageListsName)
+    def images: Parser[ImagesName.type] = s"^$Images$$".r ^^ (_ => ImagesName)
+    def image: Parser[ImageName] = Images ~> "/" ~> imageId ^^ ImageName.apply
     def imageList: Parser[ImageListName] = ImageLists ~> "/" ~> imageListId ^^ ImageListName.apply
     def products: Parser[ProductsName] = {
       model <~ "/" <~ Products ^^ (modelName => ProductsName(modelName.categoryId, modelName.modelId))
@@ -96,13 +102,16 @@ object ApiName {
 
     private def modelUUID = uuid ^^ ModelId.apply
     private def imageListId = uuid ^^ ImageListId.apply
+    private def imageId = uuid ^^ ImageId.apply
     private def productId = uuid ^^ ProductId.apply
+    private val Images: String = "images"
     private val Categories: String = "categories"
     private val Models: String = "models"
     private val ImageLists: String = "imageLists"
     private val Products: String = "products"
 
     object Show {
+      private implicit val image: Show[ImageName] = t => s"$Images/${t.id.show}"
       private implicit val category: Show[CategoryName] = t => s"$Categories/${t.categoryId.show}"
       private implicit val models: Show[ModelsName] = t => {
         s"${CategoryName(t.categoryId).show}/$Models"
@@ -114,6 +123,8 @@ object ApiName {
         s"${ProductsName(t.categoryId, t.modelId).show}/${t.productId}"
 
       implicit val value: Show[ApiName] = {
+        case ImagesName               => Images
+        case x @ ImageName(_)         => image.show(x)
         case x @ CategoryName(_)      => category.show(x)
         case x @ ModelsName(_)        => models.show(x)
         case x @ ModelName(_, _)      => model.show(x)

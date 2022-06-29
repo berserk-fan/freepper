@@ -1,9 +1,9 @@
 import React, { memo } from "react";
-import IconButton from "@material-ui/core/IconButton";
-import ArrowBackIosOutlined from "@material-ui/icons/ArrowBackIosOutlined";
-import ArrowForwardIosOutlined from "@material-ui/icons/ArrowForwardIosOutlined";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import IconButton from "@mui/material/IconButton";
+import ArrowBackIosOutlined from "@mui/icons-material/ArrowBackIosOutlined";
+import ArrowForwardIosOutlined from "@mui/icons-material/ArrowForwardIosOutlined";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { useStyles } from "./styles";
 
 export const Dots = memo(
@@ -67,12 +67,17 @@ export const SliderArrows = memo(
           <IconButton
             onClick={forwardHandler}
             className={classes.forwardButton}
+            size="large"
           >
             <ArrowForwardIosOutlined className={classes.icon} />
           </IconButton>
         )}
         {showBackButton && (
-          <IconButton onClick={backHandler} className={classes.backButton}>
+          <IconButton
+            onClick={backHandler}
+            className={classes.backButton}
+            size="large"
+          >
             <ArrowBackIosOutlined className={classes.icon} />
           </IconButton>
         )}

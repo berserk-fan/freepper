@@ -1,18 +1,18 @@
-import CheckCircleOutlineOutlinedIcon from "@material-ui/icons/CheckCircleOutlineOutlined";
+import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import React, { memo } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
-import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import dynamic from "next/dynamic";
-import Fab from "@material-ui/core/Fab";
-import Typography from "@material-ui/core/Typography";
-import useTheme from "@material-ui/core/styles/useTheme";
-import Box from "@material-ui/core/Box";
-import Divider from "@material-ui/core/Divider";
-import Zoom from "@material-ui/core/Zoom";
+import Fab from "@mui/material/Fab";
+import Typography from "@mui/material/Typography";
+import useTheme from "@mui/styles/useTheme";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Zoom from "@mui/material/Zoom";
 import { addProductAction, CartProduct, CartState, StoreState } from "store";
-import Grid from "@material-ui/core/Grid";
-import Container from "@material-ui/core/Container";
+import Grid from "@mui/material/Grid";
+import Container from "@mui/material/Container";
 import { Model } from "apis/model.pb";
 import { Product } from "apis/product.pb";
 import SliderWithThumbs from "../SliderWithThumbs";
@@ -33,28 +33,36 @@ const SIZES = createSizes(sizesSpec);
 const checkMarks = ["Гарантия 2 месяца", "Сделано в Украине"];
 
 type MakeFabProps = {
+  // eslint-disable-next-line react/no-unused-prop-types
   href?: string;
+  // eslint-disable-next-line react/no-unused-prop-types
   onClick?: () => void;
+  // eslint-disable-next-line react/no-unused-prop-types
   icon?: any;
+  // eslint-disable-next-line react/no-unused-prop-types
   label: string;
+  // eslint-disable-next-line react/no-unused-prop-types
   style?: any;
 };
 
 const MakeFab = React.memo(
-  ({ icon, label, onClick, href, style }: MakeFabProps) => {
-    const innerPart = (
-      <Fab
-        color="secondary"
-        variant="extended"
-        onClick={onClick}
-        style={style}
-        component="a"
-      >
-        {icon} <Typography variant="button">{label}</Typography>
-      </Fab>
-    );
-    return href ? <Link href={href}>{innerPart}</Link> : innerPart;
-  },
+  React.forwardRef(
+    ({ icon, label, onClick, href, style }: MakeFabProps, ref) => {
+      const innerPart = (
+        <Fab
+          ref={ref as any}
+          color="secondary"
+          variant="extended"
+          onClick={onClick}
+          style={style}
+          component="a"
+        >
+          {icon} <Typography variant="button">{label}</Typography>
+        </Fab>
+      );
+      return href ? <Link href={href}>{innerPart}</Link> : innerPart;
+    },
+  ),
 );
 
 function ProductPage({
