@@ -39,7 +39,9 @@ export default function ModelSelector({
                   </MenuItem>
                 ))}
               </Select>
-              <Button variant={"outlined"} color={"secondary"} type="submit">Submit</Button>
+              <Button variant="outlined" color="secondary" type="submit">
+                Submit
+              </Button>
             </form>
           )}
         />

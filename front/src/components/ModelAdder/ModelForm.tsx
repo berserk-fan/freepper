@@ -45,7 +45,7 @@ export default function ModelForm({
       initialValues={model || Model.fromPartial({})}
       render={({ handleSubmit, values }) => (
         <form onSubmit={handleSubmit} noValidate>
-          <Box marginBottom={3} className={"flex justify-between"}>
+          <Box marginBottom={3} className="flex justify-between">
             <Button
               size="large"
               variant="contained"
@@ -54,9 +54,7 @@ export default function ModelForm({
             >
               Submit
             </Button>
-            <Box>
-                {additionalButtons}
-            </Box>
+            <Box>{additionalButtons}</Box>
           </Box>
 
           <Grid container direction="column" alignContent="stretch" spacing={2}>

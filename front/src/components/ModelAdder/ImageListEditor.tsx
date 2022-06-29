@@ -21,7 +21,8 @@ import Tabs from "@mui/material/Tabs";
 import Divider from "@mui/material/Divider";
 
 import { FormApi } from "final-form";
-import { AvatarGroup, Dialog } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import AvatarGroup from "@mui/material/AvatarGroup";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import TreeItem from "@mui/lab/TreeItem";
@@ -80,7 +81,8 @@ function ImageAdder({ onAdd }: { onAdd: (imageNames: Image[]) => void }) {
   }, [images.data]);
 
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
-  const handleNodeSelect = (ev, nodeIds: string[]) => setSelected(new Set(nodeIds));
+  const handleNodeSelect = (ev, nodeIds: string[]) =>
+    setSelected(new Set(nodeIds));
   const handleAdd = () => {
     onAdd(getImages(images, selected));
   };

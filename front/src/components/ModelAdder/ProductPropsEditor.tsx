@@ -45,7 +45,7 @@ function SetProductPropsDialog(props: SetProductPropsdDialog) {
           <Form
             initialValues={{}}
             onSubmit={onSubmit}
-            render={({ handleSubmit, values }) => (
+            render={({ handleSubmit }) => (
               <form onSubmit={handleSubmit}>
                 <TextField
                   name="price"
