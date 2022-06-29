@@ -21,6 +21,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     props: {
       models: JSON.parse(JSON.stringify(models1.models)),
     },
+    revalidate: 30,
   });
 };
 

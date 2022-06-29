@@ -43,6 +43,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     .then((x) => x.products);
   return removeUndefined({
     props: { model: model || null, products },
+    revalidate: 10,
   });
 };
 
