@@ -43,7 +43,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     .then((x) => x.products);
   return removeUndefined({
     props: { model: model || null, products },
-    revalidate: 10,
+    revalidate: 30,
   });
 };
 
@@ -65,5 +65,5 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths = models1.flatMap(([cat, ms]) =>
     ms.map((m) => ({ params: { categoryId: cat.readableId, modelId: m.uid } })),
   );
-  return { paths, fallback: false };
+  return { paths, fallback: "blocking" };
 };
