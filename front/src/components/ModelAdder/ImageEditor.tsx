@@ -52,7 +52,7 @@ function pushValue(obj: any, value: Image) {
   }
 }
 
-function recursive(images: Image[]) {
+export function recursive(images: Image[]) {
   const result = {};
   let currentNode = result;
   let prevPrefix = "";
@@ -342,7 +342,7 @@ export default function ImageEditor() {
       swrData={images}
       name="images"
       main={() => (
-        <Container maxWidth={"sm"}>
+        <Container maxWidth="sm">
           <Typography>Images</Typography>
           <Button
             variant="outlined"

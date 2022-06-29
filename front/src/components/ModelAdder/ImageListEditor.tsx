@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import MuiRadio from "@mui/material/Radio";
 import ListItemText from "@mui/material/ListItemText";
-import { Image as MyImage } from "apis/image.pb";
+import { Image, Image as MyImage } from "apis/image.pb";
 import DeleteIcon from "@mui/icons-material/Delete";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -21,12 +21,106 @@ import Tabs from "@mui/material/Tabs";
 import Divider from "@mui/material/Divider";
 
 import { FormApi } from "final-form";
-import { Dialog } from "@mui/material";
+import { AvatarGroup, Dialog } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import TreeItem from "@mui/lab/TreeItem";
+import TreeView from "@mui/lab/TreeView";
 import Spacing from "../Commons/Spacing";
 import grpcClient from "../../commons/shopClient";
-import { useImageLists } from "../../commons/swrHooks";
+import { useImageLists, useImages } from "../../commons/swrHooks";
 import SwrFallback from "../Swr/SwrFallback";
 import { MyAvatar } from "../Commons/MyAvatar";
+import { recursive } from "./ImageEditor";
+
+function toTree(obj: any, prefix: string) {
+  const next = Object.keys(obj);
+  return (
+    <>
+      {next
+        .filter((x) => x !== "values")
+        .map((folderName) => (
+          <TreeItem
+            key={`${prefix}/${folderName}`}
+            nodeId={`${prefix}/${folderName}`}
+            label={folderName}
+          >
+            {toTree(obj[folderName], `${prefix}/${folderName}`)}
+          </TreeItem>
+        ))}
+      {obj.values &&
+        obj.values.map((image: Image) => (
+          <TreeItem
+            key={image.name}
+            nodeId={image.name}
+            label={
+              <Box>
+                <MyAvatar image={image} variant="big" />
+                {image.name}
+              </Box>
+            }
+          />
+        ))}
+    </>
+  );
+}
+
+function getImages(images: { data: Image[] }, selected: Set<string>) {
+  return images.data.filter((im) => selected.has(im.name));
+}
+
+function ImageAdder({ onAdd }: { onAdd: (imageNames: Image[]) => void }) {
+  const images = useImages();
+
+  const recursive1 = React.useMemo(() => {
+    if (images.data) {
+      return recursive(images.data.sort((a, b) => a.src.localeCompare(b.src)));
+    }
+    return {};
+  }, [images.data]);
+
+  const [selected, setSelected] = React.useState<Set<string>>(new Set());
+  const handleNodeSelect = (ev, nodeIds: string[]) => setSelected(new Set(nodeIds));
+  const handleAdd = () => {
+    onAdd(getImages(images, selected));
+  };
+
+  return (
+    <SwrFallback
+      name="images"
+      swrData={images}
+      main={() => (
+        <Box minWidth="500px" className="select-none" margin={2}>
+          <Button
+            size="large"
+            variant="contained"
+            color="secondary"
+            onClick={handleAdd}
+          >
+            Submit
+          </Button>
+          <Box className="flex justify-content">
+            <Typography variant="h4">Selected: </Typography>
+            <AvatarGroup>
+              {getImages(images, selected).map((image) => (
+                <MyAvatar key={image.name} variant="big" image={image} />
+              ))}
+            </AvatarGroup>
+          </Box>
+          <TreeView
+            aria-label="file system navigator"
+            defaultCollapseIcon={<ExpandMoreIcon />}
+            defaultExpandIcon={<ChevronRightIcon />}
+            multiSelect
+            onNodeSelect={handleNodeSelect}
+          >
+            {toTree(recursive1, "")}
+          </TreeView>
+        </Box>
+      )}
+    />
+  );
+}
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -199,15 +293,13 @@ export function ImageListEditor() {
     alert(`ImageList updated: ${JSON.stringify(imageList)}`);
   }, [currentList]);
 
-
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const openDeleteDialog = () => setDeleteDialogOpen(true);
   const closeDeleteDialog = () => setDeleteDialogOpen(false);
 
-
   const deleteImageList = React.useCallback(async () => {
     try {
-      closeDeleteDialog(); f
+      closeDeleteDialog();
       await grpcClient().deleteImageList({
         name: currentList.name,
       });
@@ -222,6 +314,21 @@ export function ImageListEditor() {
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setCurTab(newValue);
+  };
+
+  const [addImageDialog, setAddImageDialog] = React.useState(false);
+  const handleImageDialogClose = () => setAddImageDialog(false);
+  const openImageDialog = () => setAddImageDialog(true);
+  const addImages = (images1: Image[]) => {
+    setCurrentList((prev) => {
+      const images = Object.values(
+        Object.fromEntries(
+          [...images1, ...prev.images].map((x) => [x.name, x]),
+        ),
+      );
+      return { ...prev, images };
+    });
+    handleImageDialogClose();
   };
 
   // @ts-ignore
@@ -263,6 +370,9 @@ export function ImageListEditor() {
             />
             {currentList && (
               <>
+                <Dialog open={addImageDialog} onClose={handleImageDialogClose}>
+                  <ImageAdder onAdd={addImages} />
+                </Dialog>
                 <Dialog open={deleteDialogOpen} onClose={closeDeleteDialog}>
                   <Box margin={2}>
                     <Spacing spacing={1} direction="column">
@@ -314,6 +424,9 @@ export function ImageListEditor() {
                   </Button>
                 </Box>
                 <Box height="500px" width="500px">
+                  <Button color="secondary" onClick={openImageDialog}>
+                    ADD IMAGES
+                  </Button>
                   <List>
                     {currentList.images.map((image) => (
                       <ImageControls
