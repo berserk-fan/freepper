@@ -123,16 +123,6 @@ END;
 $$ language 'plpgsql' IMMUTABLE
                       STRICT;
 
-CREATE OR REPLACE FUNCTION restrict_image_deletion() RETURNS TRIGGER AS
-$$
-DECLARE
-    count INT;
-BEGIN
-    SELECT count(*)
-END;
-$$ language 'plpgsql' IMMUTABLE
-                      STRICT;
-
 CREATE TRIGGER update_product_update_time
     BEFORE UPDATE
     ON products
