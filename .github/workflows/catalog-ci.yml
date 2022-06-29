@@ -26,6 +26,12 @@ jobs:
       - name: "Starting up Postgres"
         run: |
           set -x -e
+          echo "Copying .env.ci"
+          cp .env.ci .env.local
+
+      - name: "Starting up Postgres"
+        run: |
+          set -x -e
           echo "Running catalog"
           docker network create catalog
           make local.postgres.start
@@ -33,7 +39,7 @@ jobs:
       - name: Tests
         run: |
           set -x -e
-          source .env.ci
+          source .env.local
           sbt -J-Xms4G -J-Xmx4G test
 
       - name: "Shutting down Postgres"
