@@ -37,11 +37,7 @@ export default function useErrorHandling(
     currentState.current = state;
     setSubmitState(state);
     if (submitState === "OK") {
-      try {
-        onComplete();
-      } catch (e) {
-        console.error(e);
-      }
+      onComplete();
     }
   }
 

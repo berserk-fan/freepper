@@ -30,7 +30,7 @@ type CheckoutProps = {
 
 function retryPostForm(reset, postform, formState) {
   reset();
-  postform(formState).catch(console.error);
+  postform(formState);
 }
 
 function postForm(
