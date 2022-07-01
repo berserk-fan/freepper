@@ -1,12 +1,11 @@
 import React from "react";
 import { ImageList } from "apis/image_list.pb";
-import { TextField, Autocomplete } from "mui-rff";
+import { TextField } from "mui-rff";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { Form } from "react-final-form";
 import Button from "@mui/material/Button";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
-import MuiRadio from "@mui/material/Radio";
 import ListItemText from "@mui/material/ListItemText";
 import { Image, Image as MyImage } from "apis/image.pb";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -33,6 +32,7 @@ import { useImageLists, useImages } from "../../commons/swrHooks";
 import SwrFallback from "../Swr/SwrFallback";
 import { MyAvatar } from "../Commons/MyAvatar";
 import { recursive } from "./ImageEditor";
+import ImageListSelector from "./ImageListSelector";
 
 function toTree(obj: any, prefix: string) {
   const next = Object.keys(obj);
@@ -228,25 +228,6 @@ function ImageControls({
 
 export function ImageListEditor() {
   const imageLists1 = useImageLists();
-  const indexed = React.useMemo(
-    () =>
-      imageLists1.data
-        ? Object.fromEntries(imageLists1.data.map((x) => [x.name, x]))
-        : {},
-    [imageLists1.data],
-  );
-
-  const autocompleteData: { label: string; value: string }[] = React.useMemo(
-    () =>
-      imageLists1.data
-        ? imageLists1.data.map((x) => ({
-            label: x.displayName,
-            value: x.name,
-          }))
-        : [],
-    [imageLists1.data],
-  );
-
   const [currentList, setCurrentList] = React.useState<ImageList | null>(null);
 
   // React.useEffect(() => {
@@ -348,27 +329,9 @@ export function ImageListEditor() {
             <Divider />
           </Box>
           <TabPanel value={curTab} index={0}>
-            <Form
-              onSubmit={(vals) => setCurrentList(indexed[vals.name] || null)}
-              initialValues={{ name: imageLists1.data[0].name }}
-              render={({ handleSubmit }) => (
-                <Autocomplete
-                  label="Select an images"
-                  name="name"
-                  required
-                  color="secondary"
-                  options={autocompleteData}
-                  getOptionValue={(option) => option.value}
-                  getOptionLabel={(option) => (option as any).label}
-                  onSelect={handleSubmit}
-                  renderOption={(props, option, { selected }) => (
-                    <li {...props}>
-                      <MuiRadio style={{ marginRight: 8 }} checked={selected} />
-                      {option.label}
-                    </li>
-                  )}
-                />
-              )}
+            <ImageListSelector
+              imageLists={imageLists1.data}
+              onSelect={setCurrentList}
             />
             {currentList && (
               <>

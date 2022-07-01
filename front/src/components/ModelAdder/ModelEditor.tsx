@@ -51,6 +51,16 @@ function ImageDialog({
   );
 }
 
+function getModelForm(modelName: string | null, categoryName: string | null) {
+  if (modelName) {
+    return <ModelUpdater modelName={modelName} />;
+  }
+  if (categoryName) {
+    return <ModelCreator categoryName={categoryName} />;
+  }
+  return "Category name unspecified!";
+}
+
 export default function ModelEditor() {
   const categories = useCategories();
   const [categoryName, setCategoryName] = React.useState<string | null>(null);
@@ -127,7 +137,6 @@ export default function ModelEditor() {
                     <Typography variant="h4">Category Name Selector</Typography>
                     <Form
                       onSubmit={(x) => setCategoryName(x.category_name)}
-                      initialValues={{ category_name: categories.data[0].name }}
                       render={({ handleSubmit }) => (
                         <form onSubmit={handleSubmit} noValidate>
                           <Select
@@ -177,11 +186,7 @@ export default function ModelEditor() {
 
                   <Box>
                     <Typography variant="h4">Model form</Typography>
-                    {modelName ? (
-                      <ModelUpdater modelName={modelName} />
-                    ) : (
-                      <ModelCreator categoryName={categoryName} />
-                    )}
+                    {getModelForm(modelName, categoryName)}
                   </Box>
 
                   {modelName && <ProductPropsEditor modelName={modelName} />}

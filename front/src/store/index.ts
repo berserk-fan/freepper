@@ -24,12 +24,8 @@ export const loadState: () => StoreState = () => {
 };
 
 export const saveState = (state) => {
-  try {
-    const serializedState = JSON.stringify(state);
-    localStorage.setItem("state", serializedState);
-  } catch (err) {
-    console.error(err);
-  }
+  const serializedState = JSON.stringify(state);
+  localStorage.setItem("state", serializedState);
 };
 
 export function SetProductCountAction(productId: string, count: number) {
