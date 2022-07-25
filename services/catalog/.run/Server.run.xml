@@ -5,7 +5,7 @@
     <module name="catalog" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="ua.pomo.catalog.*" />
+        <option name="PATTERN" value=".*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

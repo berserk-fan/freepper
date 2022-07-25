@@ -1,0 +1,67 @@
+package ua.pomo.catalog.domain
+
+import cats.data.NonEmptyList
+import derevo.cats.{eqv, show}
+import derevo.circe.magnolia.decoder
+import derevo.derive
+import io.estatico.newtype.macros.newtype
+import ua.pomo.catalog.domain.image._
+import ua.pomo.common.domain.repository
+import ua.pomo.common.domain.repository.{Crud, CrudOps, EntityDisplayName, PageToken, Query, Repository}
+
+import java.util.UUID
+
+object imageList {
+
+  @derive(eqv, show, decoder)
+  @newtype
+  case class ImageListId(uuid: UUID)
+
+  @derive(eqv, show)
+  @newtype
+  case class ImageListDisplayName(value: String)
+
+  @derive(eqv, show)
+  case class ImageList(id: ImageListId, displayName: ImageListDisplayName, images: List[Image])
+
+  @derive(eqv, show)
+  case class ImageListUpdate(id: ImageListId, displayName: Option[ImageListDisplayName], images: Option[List[ImageId]])
+
+  type ImageListQuery = Query[ImageListSelector]
+
+  @derive(eqv, show)
+  case class FindImageListResponse(imageLists: List[ImageList], nextPageToken: PageToken)
+
+  sealed trait ImageListSelector
+  object ImageListSelector {
+    final case object All extends ImageListSelector
+    final case class IdsIn(ids: NonEmptyList[ImageListId]) extends ImageListSelector
+  }
+
+  type ImageListCrud = Crud.type
+
+  object Crud extends Crud {
+    override type Create = ImageList
+    override type Update = ImageListUpdate
+    override type Entity = ImageList
+    override type EntityId = ImageListId
+    override type Selector = ImageListSelector
+    override implicit val ops: CrudOps[ImageListCrud] = new CrudOps[ImageListCrud] {
+      override val entityDisplayName: EntityDisplayName = EntityDisplayName("imageList")
+
+      override def getIdUpdate(update: ImageListUpdate): ImageListId = update.id
+
+      override def getIdEntity(entity: ImageList): ImageListId = entity.id
+    }
+  }
+
+  type ImageListRepository[F[_]] = Repository[F, ImageListCrud]
+
+  trait ImageListService[F[_]] {
+    def create(imageList: ImageList): F[ImageList]
+    def get(id: ImageListId): F[ImageList]
+    def update(imageList: ImageListUpdate): F[ImageList]
+    def delete(imageListId: ImageListId): F[Unit]
+    def find(query: ImageListQuery): F[FindImageListResponse]
+  }
+}
