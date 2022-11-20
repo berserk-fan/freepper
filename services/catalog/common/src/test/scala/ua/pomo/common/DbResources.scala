@@ -2,5 +2,9 @@ package ua.pomo.common
 
 import cats.effect.IO
 import doobie.Transactor
+import ua.pomo.common.domain.Schema
 
-case class DbResources(xa: Transactor[IO], schema: Schema)
+trait DbResources[F[_]] {
+  def xa: Transactor[F]
+  def schema: Schema
+}

@@ -1,92 +1,116 @@
 package ua.pomo.catalog.shared
 
-import cats.effect.IO
-import doobie.ConnectionIO
+import doobie.{ConnectionIO, Transactor}
 import doobie.implicits._
 import doobie.postgres.implicits.UuidType
 import org.scalacheck.Gen
 import ua.pomo.catalog.domain.category.{CategoryRepository, CategoryUUID, CreateCategory}
-import ua.pomo.catalog.domain.image
-import ua.pomo.catalog.domain.image.{Image, ImageId}
+import ua.pomo.catalog.domain.image.{Image, ImageId, ImageRepository}
 import ua.pomo.catalog.domain.imageList.{ImageList, ImageListId, ImageListRepository}
-import ua.pomo.catalog.domain.model.{CreateModel, ModelRepository}
+import ua.pomo.catalog.domain.model.{CreateModel, Model, ModelRepository}
 import ua.pomo.catalog.domain.parameter.{ParameterId, ParameterListId}
-import ua.pomo.common.UnsafeRunnable
-import ua.pomo.common.UnsafeRunnable.UnsafeRunnableSyntax
-import ua.pomo.common.domain.repository.Repository
+import cats.{Monad, Traverse, ~>}
+import cats.effect.MonadCancelThrow
+import cats.syntax.flatMap.toFlatMapOps
+import cats.syntax.functor.toFunctorOps
 
 import java.util.UUID
 
 object FixturesV2 {
-  import UnsafeRunnable._
+  class ImageFixture[F[_]: Monad](imageRepository: ImageRepository[F]) {
+    case class Result(images: Seq[Image], imagesGen: Gen[List[Image]], imagesGenId: Gen[List[ImageId]])
 
-  class AbstractFixture()(implicit ops: UnsafeRunnable[IO])
+    def init(): F[Result] = {
+      for {
+        images <- Traverse[List].traverse(
+          Generators.Image.createListOf5.sample.get
+        )(x => imageRepository.create(x).flatMap(x => imageRepository.get(x)))
 
-  trait ImageFixture[F[_]] { self: AbstractFixture =>
-    def imageRepository: Repository[IO, image.Crud.type]
-    val images: Seq[Image] = Generators.Image.createListOf5.sample.get
-      .map(imageRepository.create(_).trRun())
-      .map(imageRepository.get(_).trRun())
-
-    val imagesGen: Gen[List[Image]] = Gen.someOf(images).map(_.toList)
-    val imagesGenId: Gen[List[ImageId]] = Gen.someOf(images).map(_.toList).map(_.map(_.id))
+      } yield {
+        val imagesGen: Gen[List[Image]] = Gen.someOf(images).map(_.toList)
+        val imagesGenId: Gen[List[ImageId]] = Gen.someOf(images).map(_.toList).map(_.map(_.id))
+        Result(images, imagesGen, imagesGenId)
+      }
+    }
   }
 
-  trait ImageListFixture extends ImageFixture { self: AbstractFixture =>
-    val imageListRepo: ImageListRepository[ConnectionIO]
-    val imageListId1: ImageListId =
-      imageListRepo
-        .create(Generators.ImageList.gen(genImages = imagesGen).sample.get)
-        .trRun()
+  class ImageListFixture[F[_]: Monad](imageFixtureRes: ImageFixture[F]#Result, imageListRepo: ImageListRepository[F]) {
+    case class Result(imageListId1: ImageListId, imageList1: ImageList, imageListId2: ImageListId)
 
-    val imageList1: ImageList = imageListRepo.get(imageListId1).trRun()
-    val imageListId2: ImageListId =
-      imageListRepo.create(Generators.ImageList.gen(genImages = imagesGen).sample.get).trRun()
+    def init(): F[Result] = {
+      val existentImagesGen = imageFixtureRes.imagesGen
+      for {
+        imageListId1 <- imageListRepo.create(Generators.ImageList.gen(genImages = existentImagesGen).sample.get)
+        i <- imageListRepo.get(imageListId1)
+        i2 <- imageListRepo.create(Generators.ImageList.gen(genImages = existentImagesGen).sample.get)
+      } yield Result(imageListId1, i, i2)
+
+    }
   }
 
-  trait ParameterFixture extends ImageFixture { self: AbstractFixture =>
-    val parameterListWithParameter1Id = sql"""insert into parameter_lists (display_name) values ('')""".update
-      .withUniqueGeneratedKeys[UUID]("id")
-      .map(ParameterListId.apply)
-      .trRun()
-    val parameter1ImageId = images.head.id
-    val parameterId1 =
-      sql"""insert into parameters (display_name, image_id, list_order, parameter_list_id) 
-            VALUES ('',${parameter1ImageId.value}, 1, ${parameterListWithParameter1Id.value})""".update
-        .withUniqueGeneratedKeys[UUID]("id")
-        .map(ParameterId.apply)
-        .trRun()
+  class CategoryFixture[F[_]: Monad](categoryRepo: CategoryRepository[F]) {
+    case class Result(categoryId1: CategoryUUID, categoryId2: CategoryUUID)
+    def init(): F[Result] = {
+      val category1: CreateCategory = Generators.Category.create.sample.get
+      val category2: CreateCategory = Generators.Category.create.sample.get
+
+      for { a <- categoryRepo.create(category1); b <- categoryRepo.create(category2) } yield Result(a, b)
+    }
   }
 
-  trait CategoryFixture { self: AbstractFixture =>
-    val categoryRepo: CategoryRepository[ConnectionIO]
+  class ParameterFixture[F[_]: MonadCancelThrow](imageFixture: ImageFixture[F]#Result) {
+    case class Result(parameterListWithParameter1Id: ParameterListId, parameterId1: ParameterId)
 
-    private val category1: CreateCategory = Generators.Category.create.sample.get
-    val categoryId1: CategoryUUID = categoryRepo.create(category1).trRun()
-
-    private val category2: CreateCategory = Generators.Category.create.sample.get
-    val categoryId2: CategoryUUID = categoryRepo.create(category2).trRun()
+    def init(t: ConnectionIO ~> F): F[Result] = {
+      val existentImageId = imageFixture.images.head.id
+      for {
+        parameterListId1 <- t(sql"""insert into parameter_lists (display_name) values ('')""".update
+          .withUniqueGeneratedKeys[UUID]("id")
+          .map(ParameterListId.apply))
+        parameterId1 <-
+          t(sql"""insert into parameters (display_name, image_id, list_order, parameter_list_id)
+                      VALUES ('',${existentImageId.value}, 1, ${parameterListId1.value})""".update
+            .withUniqueGeneratedKeys[UUID]("id")
+            .map(ParameterId.apply(_)))
+      } yield Result(parameterListId1, parameterId1)
+    }
   }
 
-  trait ModelFixture extends CategoryFixture with ImageListFixture with ParameterFixture { self: AbstractFixture =>
-    val modelRepo: ModelRepository[ConnectionIO]
-    private val createModel: CreateModel =
-      Generators.Model
-        .createGen(imageListId1, List.empty)
-        .sample
-        .get
-        .copy(categoryId = categoryId1, imageListId = imageList1.id)
-    val modelId = modelRepo.create(createModel).trRun()
+  class ModelFixture[F[_]: Monad](
+      modelRepo: ModelRepository[F],
+      ilf: ImageListFixture[F]#Result,
+      cf: CategoryFixture[F]#Result,
+      pf: ParameterFixture[F]#Result
+  ) {
 
-    private val modelWithParamList1 = Generators.Model
-      .createGen(imageListId1, List.empty)
-      .sample
-      .get
-      .copy(
-        categoryId = categoryId1,
-        imageListId = imageList1.id,
-        parameterListIds = List(parameterListWithParameter1Id)
-      )
-    val modelWithParamList1Id = modelRepo.create(modelWithParamList1).trRun()
+    case class Result(model: Model, modelWithParamList1: Model)
+
+    def init(): F[Result] = {
+      for {
+        createModel <- Monad[F].pure {
+          Generators.Model
+            .createGen(ilf.imageListId1, List.empty)
+            .sample
+            .get
+            .copy(categoryId = cf.categoryId1, imageListId = ilf.imageList1.id)
+        }
+        modelId <- modelRepo.create(createModel)
+        model <- modelRepo.get(modelId)
+        createModelWithParamList1: CreateModel = Generators.Model
+          .createGen(ilf.imageListId1, List.empty)
+          .sample
+          .get
+          .copy(
+            categoryId = cf.categoryId1,
+            imageListId = ilf.imageList1.id,
+            parameterListIds = List(pf.parameterListWithParameter1Id)
+          )
+        modelWithParamList1Id <- modelRepo.create(createModelWithParamList1)
+        modelWithParamList1 <- modelRepo.get(modelWithParamList1Id)
+      } yield {
+        Result(model, modelWithParamList1)
+      }
+    }
+
   }
 }

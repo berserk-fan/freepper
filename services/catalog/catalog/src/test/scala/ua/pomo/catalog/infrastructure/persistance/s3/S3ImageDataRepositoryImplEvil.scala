@@ -1,18 +1,19 @@
 package ua.pomo.catalog.infrastructure.persistance.s3
 
 import cats.effect.{IO, Resource}
+import doobie.util.testing.UnsafeRun
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import org.typelevel.log4cats.LoggerFactory
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import ua.pomo.catalog.domain.image.{CreateImageData, ImageData, ImageDataRepository, ImageSrc}
 import ua.pomo.catalog.shared.{ForEachImpl, Resources}
-import ua.pomo.common.{HasIOResource, TestRuntime}
+import ua.pomo.common.{HasIORuntime, HasResource}
 
 class S3ImageDataRepositoryImplEvil
     extends AnyFunSuite
     with Matchers
-    with HasIOResource
+    with HasResource[IO]
     with ForEachImpl
     with HasIORuntime {
   case class TestRes(impls: Seq[(String, ImageDataRepository[IO])])
@@ -43,4 +44,9 @@ class S3ImageDataRepositoryImplEvil
     impl.delete(src).unsafeRunSync()
     impl.list("").unsafeRunSync() shouldBe empty
   })
+
+  def monadCancelThrow: cats.effect.MonadCancelThrow[cats.effect.IO] = implicitly 
+  def unsafeRun: UnsafeRun[cats.effect.IO] = new UnsafeRun[IO] {
+    override def unsafeRunSync[A](fa: IO[A]): A = fa.unsafeRunSync()
+  }
 }

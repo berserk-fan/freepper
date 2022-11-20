@@ -12,6 +12,7 @@ import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.product._
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.common.domain.repository
+import ua.pomo.common.domain.repository.Query
 
 object Generators {
   implicit class ToLazyListOps[T](g: Gen[T]) {
@@ -29,27 +30,47 @@ object Generators {
     private val readableId: Gen[CategoryReadableId] = Gen.alphaNumStr.map(CategoryReadableId.apply)
     private val displayName: Gen[CategoryDisplayName] = Gen.alphaNumStr.map(CategoryDisplayName.apply)
     private val description: Gen[CategoryDescription] = Gen.alphaNumStr.map(CategoryDescription.apply)
+    private val selector: Gen[CategorySelector] = Gen.oneOf[CategorySelector](
+      CategorySelector.All,
+      readableId.flatMap(CategorySelector.RidIs.apply),
+      catId.flatMap((c: CategoryUUID) => CategorySelector.UidIs(c))
+    )
 
-    val update: Gen[UpdateCategory] = (
-      catId,
-      Gen.option(readableId),
-      Gen.option(displayName),
-      Gen.option(description)
-    ).mapN(UpdateCategory.apply)
-      .filter(x => x.displayName.isDefined || x.description.isDefined || x.readableId.isDefined)
+    val update: Gen[CategoryUUID => UpdateCategory] = for {
+      a <- Gen.option(readableId)
+      b <- Gen.option(displayName)
+      c <- Gen.option(description)
+    } yield (id: CategoryUUID) => UpdateCategory(id, a, b, c)
 
     val create: Gen[CreateCategory] = (readableId, displayName, description).mapN(CreateCategory.apply)
     val gen: Gen[Category] = (catId, readableId, displayName, description).mapN(category.Category.apply)
+
+    val query: Gen[CategoryQuery] = {
+      for {
+        s <- selector
+        p <- PageToken.nonEmpty
+      } yield Query(s, p)
+    }
   }
 
   object Image {
-    private val id = Gen.uuid.map(ImageId.apply)
+    val id = Gen.uuid.map(ImageId.apply)
     private val alt = Gen.alphaNumStr.map(ImageAlt.apply)
     private val src = Gen.alphaNumStr.map(ImageSrc.apply)
 
     val gen: Gen[Image] = (id, src, alt).mapN(image.Image.apply)
     val create: Gen[CreateImageMetadata] = (src, alt).mapN(CreateImageMetadata.apply)
     val createListOf5: Gen[List[CreateImageMetadata]] = Gen.listOfN(5, create)
+    val selector: Gen[ImageSelector] = Gen.oneOf(
+      Gen.const(ImageSelector.All),
+      id.map(ImageSelector.IdIs.apply)
+    )
+    val query: Gen[ImageQuery] = for {
+      s <- selector
+      p <- PageToken.nonEmpty
+    } yield Query(s, p)
+
+    def update: Gen[ImageId => BuzzImageUpdate] = Gen.const(id => BuzzImageUpdate(id))
   }
 
   object ImageList {
@@ -109,7 +130,7 @@ object Generators {
   }
 
   object PageToken {
-    private val nonEmpty = (Gen.posNum[Long], Gen.posNum[Long]).mapN(repository.PageToken.NonEmpty.apply)
+    val nonEmpty = (Gen.posNum[Long], Gen.posNum[Long]).mapN(repository.PageToken.NonEmpty.apply)
     val gen: Gen[repository.PageToken] = Gen.oneOf(Gen.const(repository.PageToken.Empty), nonEmpty)
   }
 

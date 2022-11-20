@@ -11,8 +11,9 @@ import org.typelevel.log4cats.slf4j.Slf4jFactory
 import ua.pomo.catalog.{AppConfig, ServerConfig}
 import ua.pomo.catalog.api.CatalogFs2Grpc
 import ua.pomo.common.config.JdbcDatabaseConfig
-import ua.pomo.common.{AppConfigLoader, DBMigrations, DbResources, Schema, TransactorHelpers}
+import ua.pomo.common.{AppConfigLoader, DBMigrations, DbResources, TransactorHelpers}
 import pureconfig.generic.auto._
+import ua.pomo.common.domain.Schema
 
 import java.util.UUID
 
@@ -51,11 +52,15 @@ object Resources {
       }
   }
 
-  def dbTest: Resource[IO, DbResources] =
+  def dbTest: Resource[IO, DbResources[IO]] =
     for {
       configInit <- Resources.config
       config = configInit.jdbc.copy(schema = UUID.randomUUID().toString)
       transactor <- Resources.transactor(config)
-      schema <- Resources.schema(config, transactor)
-    } yield DbResources(transactor, schema)
+      schema1 <- Resources.schema(config, transactor)
+    } yield new DbResources[IO] {
+      override def xa: Transactor[IO] = transactor
+
+      override def schema: Schema = schema1
+    }
 }

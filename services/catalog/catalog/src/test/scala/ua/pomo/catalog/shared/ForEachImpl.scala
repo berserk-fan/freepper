@@ -1,10 +1,11 @@
 package ua.pomo.catalog.shared
 
+import cats.effect.IO
 import org.scalactic.source
 import org.scalatest.funsuite.AnyFunSuite
-import ua.pomo.common.HasIOResource
+import ua.pomo.common.HasResource
 
-trait ForEachImpl { self: AnyFunSuite with HasIOResource =>
+trait ForEachImpl { self: AnyFunSuite with HasResource[IO] =>
   type Impl
   def getImpls(resources: TestResource): Seq[(String, Impl)]
   def names: Seq[String]
@@ -20,14 +21,15 @@ trait ForEachImpl { self: AnyFunSuite with HasIOResource =>
       }
     }
   }
+
   protected def testEachImplR(testName: String)(t: (TestResource, Impl) => Any)(implicit pos: source.Position): Unit = {
     names.zipWithIndex.foreach { case (implName, idx) =>
-      testR(s"$testName for $implName impl") { res =>
+      test(s"$testName for $implName impl") {
         val (name, impl) = getImpls(resources)(idx)
         if (implName != name) {
           throw new IllegalArgumentException("mismatched 'names' and 'getImpls'")
         }
-        t(res, impl)
+        t(resources, impl)
       }
     }
   }

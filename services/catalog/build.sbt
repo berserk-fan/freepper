@@ -52,6 +52,7 @@ lazy val commonLibs = Seq(
     Libraries.scalaTestHtml,
     Libraries.scalaCheck,
     Libraries.scalaTestScalaCheck,
+    Libraries.scalaCheckEffect,
     Libraries.doobieCore,
     Libraries.doobiePostgres,
     Libraries.doobieScalaTest,
