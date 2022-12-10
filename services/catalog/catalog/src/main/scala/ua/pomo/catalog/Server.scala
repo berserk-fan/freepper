@@ -31,14 +31,14 @@ object Server {
       logger <- LoggerFactory[IO].create
       _ <- logger.info("Creating catalog service...")
       transactor = TransactorHelpers.fromConfig[IO](config.jdbc)
-      categoryRepo = CategoryRepositoryImpl()
+      categoryRepo = CategoryRepository.postgres
       categoryService = CategoryServiceImpl(transactor, categoryRepo)
       imageListService = ImageListServiceImpl(transactor, ImageListRepositoryImpl())
       modelService = ModelServiceImpl(transactor, ModelRepositoryImpl())
       productService = ProductServiceImpl(transactor, ProductRepositoryImpl())
       imageDataRepository <- imageDataRepositoryLifted
       imageService = ImageServiceImpl(ImageRepositoryImpl, imageDataRepository, transactor.trans)
-      resolver = ReadableIdInNamesResolver[IO](CategoryRepositoryImpl.withEffect[IO](transactor.trans))
+      resolver = ReadableIdInNamesResolver[IO](CategoryRepository.withEffect[IO](transactor.trans))
       pageDefaultsApplier = PageDefaultsApplier[IO](config.api.defaultPageSize)
       modifier = Monoid[MessageModifier[IO]].combineAll(List(resolver, pageDefaultsApplier))
       catalogService = CatalogFs2Grpc.bindServiceResource[IO](

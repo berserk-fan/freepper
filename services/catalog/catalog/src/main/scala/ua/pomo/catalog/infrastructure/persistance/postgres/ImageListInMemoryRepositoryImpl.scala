@@ -2,7 +2,7 @@ package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.MonadThrow
 import cats.effect.{Ref, Sync}
-import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
+import cats.implicits.toFunctorOps
 import monocle.syntax.AppliedLens
 import monocle.syntax.all._
 import shapeless._
@@ -14,7 +14,8 @@ import java.util.UUID
 
 class ImageListInMemoryRepositoryImpl[F[_]: MonadThrow] private (mapRef: Ref[F, Map[ImageListId, ImageList]])
     extends AbstractInMemoryRepository[F, ImageListCrud](mapRef) {
-  override protected def creator: ImageList => ImageList = _.copy(id = ImageListId(UUID.randomUUID()))
+  override protected def creator: CreateImageList => ImageList = cil =>
+    ImageList(ImageListId(UUID.randomUUID()), cil.displayName, cil.images.map(Image(_, ImageSrc(""), ImageAlt(""))))
 
   override protected def filter: ImageListSelector => ImageList => Boolean = {
     case ImageListSelector.IdsIn(ids) =>
@@ -36,8 +37,8 @@ class ImageListInMemoryRepositoryImpl[F[_]: MonadThrow] private (mapRef: Ref[F, 
       )
   }
 
-  override def update(req: ImageListUpdate): F[Int] = mapRef.modify { map =>
-    val updater = Generic[ImageListUpdate].to(req).drop(Nat._1).map(updateObj).toList.flatten.reduce(_ andThen _)
+  override def update(req: UpdateImageList): F[Int] = mapRef.modify { map =>
+    val updater = Generic[UpdateImageList].to(req).drop(Nat._1).map(updateObj).toList.flatten.reduce(_ andThen _)
     (map.updatedWith(req.id)(_.map(updater)), if (map.contains(req.id)) 1 else 0)
   }
 }

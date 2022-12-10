@@ -11,15 +11,14 @@ import ua.pomo.catalog.infrastructure.persistance.postgres.ImageListInMemoryRepo
 
 class ImageListServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, repository: ImageListRepository[G])
     extends ImageListService[F] {
-  override def create(imageList: ImageList): F[ImageList] = {
+  override def create(imageList: CreateImageList): F[ImageList] = {
     repository.create(imageList).flatMap(repository.get).mapK(xa)
   }
-
   override def get(id: ImageListId): F[ImageList] = {
     repository.get(id).mapK(xa)
   }
 
-  override def update(imageList: ImageListUpdate): F[ImageList] = {
+  override def update(imageList: UpdateImageList): F[ImageList] = {
     repository
       .update(imageList)
       .flatMap { _ =>

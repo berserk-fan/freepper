@@ -1,11 +1,11 @@
 package ua.pomo.catalog.infrastructure.persistance.postgres
 
-import doobie.{Fragment, Fragments}
 import ua.pomo.catalog.domain.category._
 import ua.pomo.common.domain.repository
-import ua.pomo.common.infrastracture.persistance.postgres.Queries
+import ua.pomo.common.infrastracture.persistance.postgres.{DbUpdaterPoly, Queries, QueriesHelpers}
 import doobie.implicits._
 import doobie.postgres.implicits._
+import shapeless.Generic
 
 import java.util.UUID
 
@@ -42,19 +42,13 @@ object CategoryQueries extends Queries[CategoryCrud] {
       .query[Category]
   }
 
-  override def update(cat: UpdateCategory): doobie.Update0 = {
-    val rId = cat.readableId.map(x => fr"readable_id = $x")
-    val dName = cat.displayName.map(x => fr"display_name = $x")
-    val desc = cat.description.map(x => fr"description = $x")
+  object updaterObj extends DbUpdaterPoly {
+    implicit val a1: Res[CategoryReadableId] = gen("readable_id")
+    implicit val a2: Res[CategoryDisplayName] = gen("display_name")
+    implicit val a3: Res[CategoryDescription] = gen("description")
+  }
 
-    val setFr = Fragments.setOpt(List(rId, dName, desc): _*)
-    if (Fragment.empty == setFr) {
-      throw new IllegalArgumentException("Empty update in updateCategory")
-    }
-    sql"""
-           update categories cat
-           $setFr
-           where id=${cat.id}
-         """.update
+  override def update(cat: UpdateCategory): Option[doobie.Update0] = {
+    QueriesHelpers[CategoryCrud]().updateQHelper(cat, updaterObj, "categories", Generic[UpdateCategory])
   }
 }

@@ -51,6 +51,7 @@ object model {
 
   @derive(eqv, show)
   case class CreateModel(
+      id: Option[ModelId],
       readableId: ModelReadableId,
       categoryId: CategoryUUID,
       displayName: ModelDisplayName,

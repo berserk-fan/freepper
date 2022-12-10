@@ -6,12 +6,12 @@ import cats.effect.unsafe.IORuntime
 import java.util.concurrent.Executors
 import scala.concurrent.ExecutionContext
 
-trait HasIORuntime {
-  implicit protected def runtime: IORuntime = HasIORuntime.runtime
+trait TestIORuntime {
+  implicit protected def runtime: IORuntime = TestIORuntime.runtime
 }
 
-object HasIORuntime {
-  lazy val runtime: IORuntime = {
+object TestIORuntime {
+  lazy implicit val runtime: IORuntime = {
     val ec: ExecutionContext = ExecutionContext.fromExecutor(Executors.newCachedThreadPool())
     val (blocking, blockingSD) = unsafe.IORuntime.createDefaultBlockingExecutionContext()
     val (scheduler, schedulerSD) = unsafe.IORuntime.createDefaultScheduler()

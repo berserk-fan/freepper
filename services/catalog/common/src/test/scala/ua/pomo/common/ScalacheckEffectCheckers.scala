@@ -16,7 +16,7 @@ trait ScalacheckEffectCheckers { self: AnyFunSuite =>
   protected def scalaCheckPrettyParameters: Pretty.Params = Pretty.defaultParams
   protected def scalaCheckInitialSeed: String = Seed.random().toBase64
 
-  protected def goodCheck[F[_]: Monad](prop: PropF[F])(implicit pos: source.Position): F[Unit] = {
+  protected def checkProperty[F[_]: Monad](prop: PropF[F])(implicit pos: source.Position): F[Unit] = {
     def makeSeed() =
       scalaCheckTestParameters.initialSeed.getOrElse(
         Seed.fromBase64(scalaCheckInitialSeed).get

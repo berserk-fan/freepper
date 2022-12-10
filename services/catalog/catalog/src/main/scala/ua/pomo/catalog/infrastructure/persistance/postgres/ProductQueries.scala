@@ -19,7 +19,7 @@ import java.util.UUID
 object ProductQueries extends Queries[ProductCrud] {
   override def create(req: CreateProduct): (doobie.Update0, ProductId) = {
     import req._
-    val id = ProductId(UUID.randomUUID())
+    val id = req.id.getOrElse(ProductId(UUID.randomUUID()))
 
     val sql = sql"""
         INSERT INTO products 
@@ -101,7 +101,7 @@ object ProductQueries extends Queries[ProductCrud] {
     implicit val productPromoPrice: Res[Option[ProductPromoPrice]] = gen("promo_price")
   }
 
-  override def update(req: UpdateProduct): doobie.Update0 = {
+  override def update(req: UpdateProduct): Option[doobie.Update0] = {
     QueriesHelpers[ProductCrud]().updateQHelper(req, updaterPoly, "products", Generic[UpdateProduct])
   }
 }

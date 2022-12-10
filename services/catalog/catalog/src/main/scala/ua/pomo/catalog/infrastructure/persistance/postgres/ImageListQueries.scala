@@ -37,7 +37,7 @@ object ImageListQueries extends Queries[ImageListCrud] {
       .query[ImageList]
   }
 
-  private def updateImageList(req: ImageListUpdate): Fragment = {
+  private def updateImageList(req: UpdateImageList): Fragment = {
     object update extends DbUpdaterPoly {
       implicit val a1: Res[ImageListDisplayName] = gen("display_name")
     }
@@ -69,8 +69,8 @@ object ImageListQueries extends Queries[ImageListCrud] {
       """
   }
 
-  override def create(req: ImageList): (doobie.Update0, ImageListId) = {
-    val id = ImageListId(UUID.randomUUID())
+  override def create(req: CreateImageList): (doobie.Update0, ImageListId) = {
+    val id = req.id.getOrElse(ImageListId(UUID.randomUUID()))
 
     val vals = Fragments.parentheses(Fragments.values((id, req.displayName)))
     val insert = fr"""insert into image_lists values $vals"""
@@ -78,7 +78,7 @@ object ImageListQueries extends Queries[ImageListCrud] {
     val sql = NonEmptyList
       .fromList(req.images)
       .fold(insert) { nonEmptyImages =>
-        val imageIds = insertImagesToImageList(id, nonEmptyImages.map(_.id))
+        val imageIds = insertImagesToImageList(id, nonEmptyImages)
         fr"""
            WITH queries AS (
              $imageIds
@@ -91,24 +91,29 @@ object ImageListQueries extends Queries[ImageListCrud] {
     (sql, id)
   }
 
-  override def update(req: ImageListUpdate): doobie.Update0 = {
-    val updateList = updateImageList(req)
-    req.images.fold {
-      updateList.update
-    } { images =>
-      val del = fr"DELETE FROM image_lists_member WHERE image_list_id=${req.id}"
-      val insertNew = NonEmptyList.fromList(images).map(insertImagesToImageList(req.id, _))
-      val subQueries = NonEmptyList
-        .of(del)
-        .concat(insertNew.toList)
-        .toList
-        .reduce[Fragment] { case (a, b) => fr"(" ++ a ++ fr"\n," ++ fr"($b)" }
-      fr"""
-         WITH sub_queries AS (
-            $subQueries
-         )
-         $updateList
-      """.update
+  override def update(req: UpdateImageList): Option[doobie.Update0] = {
+    if (req.productIterator.forall(x => x == req.id || x == None)) {
+      None
+    } else {
+      val updateList = updateImageList(req)
+      val res = req.images.fold {
+        updateList.update
+      } { images =>
+        val del = fr"DELETE FROM image_lists_member WHERE image_list_id=${req.id}"
+        val insertNew = NonEmptyList.fromList(images).map(insertImagesToImageList(req.id, _))
+        val subQueries = NonEmptyList
+          .of(del)
+          .concat(insertNew.toList)
+          .toList
+          .reduce[Fragment] { case (a, b) => fr"(" ++ a ++ fr"\n," ++ fr"($b)" }
+        fr"""
+          WITH sub_queries AS (
+             $subQueries
+          )
+          $updateList
+       """.update
+      }
+      Some(res)
     }
   }
 }

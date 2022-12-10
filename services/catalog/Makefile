@@ -3,3 +3,6 @@ local.%.start:
 
 local.%.stop:
 	./deployment/local/$*/stop.sh
+
+local.postgres.migrate.%:
+	./deployment/local/postgres/migrate/$*.sh

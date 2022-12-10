@@ -59,6 +59,7 @@ object product {
 
   @derive(eqv, show)
   case class CreateProduct(
+      id: Option[ProductId],
       modelId: ModelId,
       imageListId: ImageListId,
       priceUsd: ProductStandardPrice,

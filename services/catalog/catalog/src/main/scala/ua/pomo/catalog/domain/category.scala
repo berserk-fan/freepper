@@ -36,6 +36,7 @@ object category {
 
   @derive(eqv, show)
   case class CreateCategory(
+      id: Option[CategoryUUID],
       readableId: CategoryReadableId,
       displayName: CategoryDisplayName,
       description: CategoryDescription

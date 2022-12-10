@@ -9,10 +9,8 @@ import squants.market.{Money, USD}
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.image.Image
 import ua.pomo.catalog.domain.imageList.ImageListId
-import ua.pomo.catalog.domain.model
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter.ParameterList
-import ua.pomo.common.domain.repository.CrudOps
 import ua.pomo.common.infrastracture.persistance.postgres.{DbUpdaterPoly, Queries, QueriesHelpers}
 
 import java.util.UUID
@@ -22,7 +20,7 @@ object ModelQueries extends Queries[ModelCrud] {
     Read[Double].map(x => ModelMinimalPrice(Money(x, USD)))
 
   override def create(req: CreateModel): (Update0, ModelId) = {
-    val modelId = UUID.randomUUID()
+    val modelId = req.id.map(_.value).getOrElse(UUID.randomUUID())
     val modelsInsert =
       sql"""
           INSERT INTO models (id, readable_id, display_name, description, category_id, image_list_id)
@@ -103,7 +101,7 @@ object ModelQueries extends Queries[ModelCrud] {
     implicit val a5: Res[ImageListId] = gen("image_list_id")
   }
 
-  override def update(req: UpdateModel): Update0 = {
+  override def update(req: UpdateModel): Option[Update0] = {
     QueriesHelpers[ModelCrud]().updateQHelper(req, updaterObj, "model", Generic[UpdateModel])
   }
 }

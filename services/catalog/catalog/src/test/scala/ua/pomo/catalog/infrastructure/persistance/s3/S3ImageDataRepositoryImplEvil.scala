@@ -8,19 +8,21 @@ import org.typelevel.log4cats.LoggerFactory
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import ua.pomo.catalog.domain.image.{CreateImageData, ImageData, ImageDataRepository, ImageSrc}
 import ua.pomo.catalog.shared.{ForEachImpl, Resources}
-import ua.pomo.common.{HasIORuntime, HasResource}
+import ua.pomo.common.{TestIORuntime, HasResource}
 
 class S3ImageDataRepositoryImplEvil
     extends AnyFunSuite
     with Matchers
     with HasResource[IO]
     with ForEachImpl
-    with HasIORuntime {
+    with TestIORuntime {
   case class TestRes(impls: Seq[(String, ImageDataRepository[IO])])
   override type TestResource = TestRes
   override type Impl = ImageDataRepository[IO]
   override def getImpls(resources: TestRes): Seq[(String, Impl)] = resources.impls
   override def names: Seq[String] = Seq("s3", "inmemory")
+
+   override def runResource[T](r: cats.effect.IO[T]): T = r.unsafeRunSync()(runtime)
 
   override protected def resource: Resource[IO, TestRes] = for {
     appConfig <- Resources.config

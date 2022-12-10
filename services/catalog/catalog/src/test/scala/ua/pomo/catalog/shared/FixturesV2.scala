@@ -1,6 +1,6 @@
 package ua.pomo.catalog.shared
 
-import doobie.{ConnectionIO, Transactor}
+import doobie.{ConnectionIO}
 import doobie.implicits._
 import doobie.postgres.implicits.UuidType
 import org.scalacheck.Gen
@@ -38,11 +38,11 @@ object FixturesV2 {
     case class Result(imageListId1: ImageListId, imageList1: ImageList, imageListId2: ImageListId)
 
     def init(): F[Result] = {
-      val existentImagesGen = imageFixtureRes.imagesGen
+      val existentImagesIdGen = imageFixtureRes.imagesGen.map(_.map(_.id))
       for {
-        imageListId1 <- imageListRepo.create(Generators.ImageList.gen(genImages = existentImagesGen).sample.get)
+        imageListId1 <- imageListRepo.create(Generators.ImageList.genCreate(genImages = existentImagesIdGen).sample.get)
         i <- imageListRepo.get(imageListId1)
-        i2 <- imageListRepo.create(Generators.ImageList.gen(genImages = existentImagesGen).sample.get)
+        i2 <- imageListRepo.create(Generators.ImageList.genCreate(genImages = existentImagesIdGen).sample.get)
       } yield Result(imageListId1, i, i2)
 
     }
@@ -64,14 +64,18 @@ object FixturesV2 {
     def init(t: ConnectionIO ~> F): F[Result] = {
       val existentImageId = imageFixture.images.head.id
       for {
-        parameterListId1 <- t(sql"""insert into parameter_lists (display_name) values ('')""".update
-          .withUniqueGeneratedKeys[UUID]("id")
-          .map(ParameterListId.apply))
-        parameterId1 <-
-          t(sql"""insert into parameters (display_name, image_id, list_order, parameter_list_id)
-                      VALUES ('',${existentImageId.value}, 1, ${parameterListId1.value})""".update
+        parameterListId1 <- t(
+          sql"""insert into parameter_lists (display_name) values ('')""".update
             .withUniqueGeneratedKeys[UUID]("id")
-            .map(ParameterId.apply(_)))
+            .map(ParameterListId.apply)
+        )
+        parameterId1 <-
+          t(
+            sql"""insert into parameters (display_name, image_id, list_order, parameter_list_id)
+                      VALUES ('',${existentImageId.value}, 1, ${parameterListId1.value})""".update
+              .withUniqueGeneratedKeys[UUID]("id")
+              .map(ParameterId.apply(_))
+          )
       } yield Result(parameterListId1, parameterId1)
     }
   }

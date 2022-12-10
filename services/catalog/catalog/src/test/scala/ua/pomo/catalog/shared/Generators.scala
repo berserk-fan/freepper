@@ -42,7 +42,8 @@ object Generators {
       c <- Gen.option(description)
     } yield (id: CategoryUUID) => UpdateCategory(id, a, b, c)
 
-    val create: Gen[CreateCategory] = (readableId, displayName, description).mapN(CreateCategory.apply)
+    val create: Gen[CreateCategory] =
+      (Gen.const[Option[CategoryUUID]](None), readableId, displayName, description).mapN(CreateCategory.apply)
     val gen: Gen[Category] = (catId, readableId, displayName, description).mapN(category.Category.apply)
 
     val query: Gen[CategoryQuery] = {
@@ -59,7 +60,7 @@ object Generators {
     private val src = Gen.alphaNumStr.map(ImageSrc.apply)
 
     val gen: Gen[Image] = (id, src, alt).mapN(image.Image.apply)
-    val create: Gen[CreateImageMetadata] = (src, alt).mapN(CreateImageMetadata.apply)
+    val create: Gen[CreateImageMetadata] = (Gen.const[Option[ImageId]](None), src, alt).mapN(CreateImageMetadata.apply)
     val createListOf5: Gen[List[CreateImageMetadata]] = Gen.listOfN(5, create)
     val selector: Gen[ImageSelector] = Gen.oneOf(
       Gen.const(ImageSelector.All),
@@ -83,14 +84,17 @@ object Generators {
       (imageId, imageSrc, imageAlt).mapN(image.Image.apply)
     private val imageListGen = Gen.listOf(imageGen).map(_.groupBy(_.src).values.map(_.head).toList)
 
-    def update(listGen: Gen[List[ImageId]] = Gen.listOf(imageId)): Gen[imageList.ImageListUpdate] = (
+    def update(listGen: Gen[List[ImageId]] = Gen.listOf(imageId)): Gen[imageList.UpdateImageList] = (
       listId,
       Gen.option(displayName),
       Gen.option(listGen)
-    ).mapN(imageList.ImageListUpdate.apply)
+    ).mapN(imageList.UpdateImageList.apply)
 
     def gen(genImages: Gen[List[Image]] = imageListGen): Gen[imageList.ImageList] =
       (listId, displayName, genImages).mapN(imageList.ImageList.apply)
+
+    def genCreate(genImages: Gen[List[ImageId]]): Gen[imageList.CreateImageList] =
+      (listId.map(Some(_)), displayName, genImages).mapN(imageList.CreateImageList.apply)
   }
 
   object Model {
@@ -111,7 +115,7 @@ object Generators {
     private val rMoney = Gen.posNum[Double].map(Money(_, USD)).map(ModelMinimalPrice.apply)
 
     def createGen(imListId: ImageListId, parameterListIds: List[ParameterListId]): Gen[CreateModel] =
-      (rId, catId, rDisplayName, rDescription, Gen.const(imListId), Gen.const(parameterListIds))
+      (Gen.const(None), rId, catId, rDisplayName, rDescription, Gen.const(imListId), Gen.const(parameterListIds))
         .mapN(model.CreateModel.apply)
 
     val gen: Gen[model.Model] =
@@ -152,7 +156,14 @@ object Generators {
 
     private val imageListId = Gen.uuid.map(ImageListId.apply)
     def create(imageListId1: ImageListId, modelId1: ModelId, paramIds: List[ParameterId]): Gen[CreateProduct] =
-      (Gen.const(modelId1), Gen.const(imageListId1), standardPrice, promoPrice, Gen.const(paramIds))
+      (
+        Gen.const[Option[ProductId]](None),
+        Gen.const(modelId1),
+        Gen.const(imageListId1),
+        standardPrice,
+        promoPrice,
+        Gen.const(paramIds)
+      )
         .mapN(CreateProduct.apply)
 
     val update: Gen[UpdateProduct] =

@@ -52,7 +52,6 @@ import java.util.{Base64, UUID}
 import scala.util.{Failure, Try}
 
 object Converters {
-  private val DefaultUUID = new UUID(0, 0)
   def toApi(cat: Category): api.Category = {
     api.Category(
       CategoryName(CategoryRefId.Readable(cat.readableId)).toNameString,
@@ -200,6 +199,7 @@ object Converters {
   def toDomain(request: CreateCategoryRequest): CreateCategory = {
     val category = request.category.get
     CreateCategory(
+      None,
       CategoryReadableId(category.readableId),
       CategoryDisplayName(category.displayName),
       CategoryDescription(category.description)
@@ -211,10 +211,10 @@ object Converters {
     Query(CategorySelector.All, token)
   }
 
-  def toDomain(request: UpdateImageListRequest): ImageListUpdate = {
+  def toDomain(request: UpdateImageListRequest): UpdateImageList = {
     val id = ApiName.imageList(request.imageList.get.name).toTry.get.id
     val obj = applyFieldMask(request.imageList.get, request.updateMask.get)
-    ImageListUpdate(
+    UpdateImageList(
       id,
       nonEmptyString(obj.displayName).map(ImageListDisplayName.apply),
       nonEmptyList(obj.images.toList.map(image => ApiName.image(image.name).toTry.get.id))
@@ -258,6 +258,7 @@ object Converters {
       .get
 
     val res = CreateProduct(
+      None,
       productsName.modelId,
       imageListId,
       ProductStandardPrice(product.price.get.standard.get.amount.toDouble),
@@ -268,12 +269,12 @@ object Converters {
     res
   }
 
-  def toDomain(request: CreateImageListRequest): ImageList = {
+  def toDomain(request: CreateImageListRequest): CreateImageList = {
     val il = request.imageList.get
-    ImageList(
-      ImageListId(DefaultUUID),
+    CreateImageList(
+      None,
       ImageListDisplayName(il.displayName),
-      il.images.map(im => Image(ApiName.image(im.name).toTry.get.id, ImageSrc(im.src), ImageAlt(im.alt))).toList
+      il.images.map(im => ApiName.image(im.name).toTry.get.id).toList
     )
   }
 
@@ -291,6 +292,7 @@ object Converters {
     val imageListId = ApiName.imageList(model.imageList.get.name).toTry.get.id
 
     CreateModel(
+      None,
       ModelReadableId(model.readableId),
       models,
       ModelDisplayName(model.displayName),

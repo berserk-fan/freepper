@@ -2,7 +2,6 @@ package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import doobie._
 import doobie.implicits._
-import doobie.postgres.implicits._
 
 object DeprecatedMethods {
   def jsonList(imageListId: String): Fragment = {

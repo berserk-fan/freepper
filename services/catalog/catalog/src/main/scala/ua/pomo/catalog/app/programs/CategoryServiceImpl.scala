@@ -8,7 +8,7 @@ import doobie.{ConnectionIO, Transactor}
 import doobie.implicits._
 import ua.pomo.catalog.domain.category._
 import ua.pomo.common.domain.error.NotFound
-import ua.pomo.catalog.infrastructure.persistance.postgres.CategoryRepositoryImpl
+import ua.pomo.catalog.infrastructure.persistance.postgres.CategoryRepository
 
 class CategoryServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, repository: CategoryRepository[G])
     extends CategoryService[F] {
@@ -68,8 +68,8 @@ object CategoryServiceImpl {
   }
 
   def makeInMemory[F[_]: Sync]: F[CategoryService[F]] = {
-    CategoryRepositoryImpl
-      .makeInMemory[F]
+    CategoryRepository
+      .inmemory[F]
       .map(
         new CategoryServiceImpl[F, F](FunctionK.id[F], _)
       )

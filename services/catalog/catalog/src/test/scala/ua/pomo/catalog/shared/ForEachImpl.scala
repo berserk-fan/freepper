@@ -12,7 +12,7 @@ trait ForEachImpl { self: AnyFunSuite with HasResource[IO] =>
 
   protected def testEachImpl(testName: String)(t: Impl => Any)(implicit pos: source.Position): Unit = {
     names.zipWithIndex.foreach { case (implName, idx) =>
-      test(s"$testName for $implName impl") {
+      testR(s"$testName for $implName impl") { resources =>
         val (name, impl) = getImpls(resources)(idx)
         if (implName != name) {
           throw new IllegalArgumentException("mismatched 'names' and 'getImpls'")
@@ -24,7 +24,7 @@ trait ForEachImpl { self: AnyFunSuite with HasResource[IO] =>
 
   protected def testEachImplR(testName: String)(t: (TestResource, Impl) => Any)(implicit pos: source.Position): Unit = {
     names.zipWithIndex.foreach { case (implName, idx) =>
-      test(s"$testName for $implName impl") {
+      testR(s"$testName for $implName impl") { resources =>
         val (name, impl) = getImpls(resources)(idx)
         if (implName != name) {
           throw new IllegalArgumentException("mismatched 'names' and 'getImpls'")

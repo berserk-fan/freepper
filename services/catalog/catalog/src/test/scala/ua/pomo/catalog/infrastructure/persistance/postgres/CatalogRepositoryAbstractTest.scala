@@ -1,0 +1,20 @@
+package ua.pomo.catalog.infrastructure.persistance.postgres
+
+import cats.effect.unsafe.IORuntime
+import cats.effect.{IO, MonadCancelThrow, Resource}
+import cats.~>
+import doobie.ConnectionIO
+import ua.pomo.common.TestIORuntime
+import ua.pomo.common.domain.{EntityTest, UnsafeRun}
+import ua.pomo.common.domain.repository.{Crud, CrudOps}
+import ua.pomo.common.infrastructure.persistance.postgres.RepositoryAbstractTest
+import TestIORuntime.runtime
+
+abstract class CatalogRepositoryAbstractTest[T <: Crud: CrudOps](r: CatalogRepositoryAbstractTest.SuiteResource[T])
+    extends RepositoryAbstractTest[ConnectionIO, IO, T]() {
+  override def suiteResource: CatalogRepositoryAbstractTest.SuiteResource[T] = r
+}
+
+object CatalogRepositoryAbstractTest {
+  type SuiteResource[T <: Crud] = Resource[IO, (ConnectionIO ~> IO, EntityTest[ConnectionIO, T])]
+}

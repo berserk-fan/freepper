@@ -17,14 +17,19 @@ case class QueriesHelpers[T <: Crud: CrudOps]() {
       m: Mapper.Aux[poly.type, U2, U3],
       l: ToTraversable.Aux[U3, List, Option[Fragment]],
       w: Put[T#EntityId]
-  ): Update0 = {
-    val qq = g.to(req).drop[Nat._1].map(poly).toList
-    val setFr = Fragments.setOpt(qq: _*)
-    val id = CrudOps[T].getIdUpdate(req)
-    sql"""
-           update ${Fragment.const0(tableName)}
-           $setFr
-           where id=$id
-         """.update
+  ): Option[Update0] = {
+    val qq: Seq[Option[Fragment]] = g.to(req).drop[Nat._1].map(poly).toList
+    if(qq.forall(_.isEmpty)) {
+      None
+    } else {
+      val setFr = Fragments.setOpt(qq: _*)
+      val id = CrudOps[T].getIdUpdate(req)
+      val res = sql"""
+            update ${Fragment.const0(tableName)}
+            $setFr
+            where id=$id
+          """.update
+      Some(res)
+    }
   }
 }

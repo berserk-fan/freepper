@@ -4,8 +4,6 @@ import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.decoder
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import ua.pomo.catalog.domain.image.ImageCrud
-import ua.pomo.common.domain.repository
 import ua.pomo.common.domain.repository.{Crud, CrudOps, EntityDisplayName, PageToken, Query, Repository}
 
 import java.util.UUID
@@ -29,7 +27,7 @@ object image {
   case class ImageData(value: Array[Byte])
 
   case class CreateImage(src: ImageSrc, alt: ImageAlt, data: ImageData)
-  case class CreateImageMetadata(src: ImageSrc, alt: ImageAlt)
+  case class CreateImageMetadata(id: Option[ImageId], src: ImageSrc, alt: ImageAlt)
   case class CreateImageData(src: ImageSrc, data: ImageData)
   case class BuzzImageUpdate(id: ImageId)
 

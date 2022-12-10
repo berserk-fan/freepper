@@ -3,7 +3,6 @@ package ua.pomo.catalog.infrastructure.persistance.postgres
 import cats.effect.{Ref, Sync}
 import cats.implicits.toFunctorOps
 import doobie._
-import doobie.implicits._
 import ua.pomo.catalog.domain.model
 import ua.pomo.catalog.domain.model._
 import ua.pomo.common.infrastracture.persistance.postgres.AbstractPostgresRepository

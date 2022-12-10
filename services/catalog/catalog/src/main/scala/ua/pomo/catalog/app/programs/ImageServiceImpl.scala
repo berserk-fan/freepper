@@ -14,7 +14,7 @@ case class ImageServiceImpl[DBIO[_]: Monad, F[_]: MonadThrow: LoggerFactory] pri
   override def create(image: CreateImage): F[Image] = for {
     logger <- LoggerFactory[F].create
     res <- repo
-      .create(CreateImageMetadata(image.src, image.alt))
+      .create(CreateImageMetadata(None, image.src, image.alt))
       .flatMap(id => repo.get(id))
       .mapK(xa)
     _ <- dataRepository.create(CreateImageData(image.src, image.data)) onError { case e =>

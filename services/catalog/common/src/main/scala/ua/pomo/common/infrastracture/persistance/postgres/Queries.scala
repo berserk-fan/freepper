@@ -7,5 +7,5 @@ trait Queries[T <: Crud] {
   def create(req: T#Create): (Update0, T#EntityId)
   def delete(id: T#EntityId): Update0
   def find(query: Query[T#Selector]): Query0[T#Entity]
-  def update(req: T#Update): Update0
+  def update(req: T#Update): Option[Update0]
 }

@@ -1,6 +1,7 @@
 package ua.pomo.common.infrastracture.persistance.postgres
 
 import cats.data.OptionT
+import cats.effect.Sync
 import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
 import doobie.implicits.toSqlInterpolator
 import doobie.{ConnectionIO, Fragment, Fragments, Update0}
@@ -35,6 +36,6 @@ abstract class AbstractPostgresRepository[T <: Crud: CrudOps](val queries: Queri
   }
 
   override def update(req: T#Update): ConnectionIO[Int] = {
-    queries.update(req).run
+    queries.update(req).fold(Sync[ConnectionIO].pure(0))(_.run)
   }
 }

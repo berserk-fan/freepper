@@ -5,7 +5,7 @@ import doobie.implicits.toSqlInterpolator
 import doobie.postgres.implicits.UuidType
 import ua.pomo.catalog.domain.image._
 import ua.pomo.common.domain.repository.Query
-import ua.pomo.common.infrastracture.persistance.postgres.{Queries, QueriesHelpers}
+import ua.pomo.common.infrastracture.persistance.postgres.Queries
 
 import java.util.UUID
 
@@ -41,5 +41,5 @@ object ImageQueries extends Queries[ImageCrud] {
       """.update
   }
 
-  override def update(req: BuzzImageUpdate): doobie.Update0 = ???
+  override def update(req: BuzzImageUpdate): Option[doobie.Update0] = ???
 }
