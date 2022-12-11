@@ -1,10 +1,17 @@
 package ua.pomo.catalog.shared
 
-import doobie.{ConnectionIO}
+import doobie.ConnectionIO
 import doobie.implicits._
 import doobie.postgres.implicits.UuidType
 import org.scalacheck.Gen
-import ua.pomo.catalog.domain.category.{CategoryRepository, CategoryUUID, CreateCategory}
+import ua.pomo.catalog.domain.category.{
+  CategoryDescription,
+  CategoryDisplayName,
+  CategoryReadableId,
+  CategoryRepository,
+  CategoryUUID,
+  CreateCategory
+}
 import ua.pomo.catalog.domain.image.{Image, ImageId, ImageRepository}
 import ua.pomo.catalog.domain.imageList.{ImageList, ImageListId, ImageListRepository}
 import ua.pomo.catalog.domain.model.{CreateModel, Model, ModelRepository}
@@ -51,8 +58,18 @@ object FixturesV2 {
   class CategoryFixture[F[_]: Monad](categoryRepo: CategoryRepository[F]) {
     case class Result(categoryId1: CategoryUUID, categoryId2: CategoryUUID)
     def init(): F[Result] = {
-      val category1: CreateCategory = Generators.Category.create.sample.get
-      val category2: CreateCategory = Generators.Category.create.sample.get
+      val category1: CreateCategory = CreateCategory(
+        None,
+        CategoryReadableId("category1"),
+        CategoryDisplayName("Category 1"),
+        CategoryDescription("Some category 1 description")
+      )
+      val category2: CreateCategory = CreateCategory(
+        None,
+        CategoryReadableId("category2"),
+        CategoryDisplayName("Category 2"),
+        CategoryDescription("Some category 2 description")
+      )
 
       for { a <- categoryRepo.create(category1); b <- categoryRepo.create(category2) } yield Result(a, b)
     }

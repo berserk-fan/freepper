@@ -9,6 +9,7 @@ import ua.pomo.common.domain.{EntityTest, UnsafeRun}
 import ua.pomo.common.domain.repository.{Crud, CrudOps}
 import ua.pomo.common.infrastructure.persistance.postgres.RepositoryAbstractTest
 import TestIORuntime.runtime
+import org.typelevel.log4cats.slf4j.loggerFactoryforSync
 
 abstract class CatalogRepositoryAbstractTest[T <: Crud: CrudOps](r: CatalogRepositoryAbstractTest.SuiteResource[T])
     extends RepositoryAbstractTest[ConnectionIO, IO, T]() {

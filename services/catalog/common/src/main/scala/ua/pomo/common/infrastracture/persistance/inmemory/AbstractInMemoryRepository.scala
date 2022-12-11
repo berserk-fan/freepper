@@ -39,7 +39,7 @@ abstract class AbstractInMemoryRepository[F[_]: MonadThrow, T <: Crud](ref: Ref[
 
   override def delete(id: T#EntityId): F[Int] = ref.modify { map =>
     // qq
-    map.get(id).fold((map, 0))(x => (map - crudOps.getIdEntity(x), 1))
+    map.get(id).fold((map, 0))(x => (map - id, 1))
   }
 
   protected def updateHelper[U <: HList, U2 <: HList, U3 <: HList, V <: Poly1](

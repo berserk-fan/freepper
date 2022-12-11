@@ -10,6 +10,7 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import ua.pomo.catalog.AppConfig
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.image.{BuzzImageUpdate, CreateImageMetadata, Image, ImageCrud}
+import ua.pomo.catalog.infrastructure.persistance.postgres.CatalogRepositoryAbstractTest.SuiteResource
 import ua.pomo.catalog.infrastructure.persistance.postgres.DbGenerators.{CategoryGenerators, ImageGenerators}
 import ua.pomo.catalog.shared.FixturesV2.{CategoryFixture, ImageFixture}
 import ua.pomo.common.domain.{Assertions, EntityTest, Schema}
@@ -19,17 +20,17 @@ import java.util.UUID
 
 object DbModuleTest extends Matchers {
 
-  def categoryPostgres: CatalogRepositoryAbstractTest.SuiteResource[CategoryCrud] = allModules.map(_._1)
-  def categoryInMemory: CatalogRepositoryAbstractTest.SuiteResource[CategoryCrud] = allModules.map(_._2)
-  def imagePostgres: CatalogRepositoryAbstractTest.SuiteResource[ImageCrud] = allModules.map(_._3)
+  def categoryPostgres: SuiteResource[CategoryCrud] = allModules(("category-postgres")).map(_._1)
+  def categoryInMemory: SuiteResource[CategoryCrud] = allModules("category-inmem").map(_._2)
+  def imagePostgres: SuiteResource[ImageCrud] = allModules("image-postgres").map(_._3)
 
-  private def allModules = {
+  private def allModules(schemaName: String) = {
     for {
       _ <- Resource.make(Sync[IO].blocking(println("Instantiating dbModuleTest")))(_ =>
         Sync[IO].blocking(println("Shutting down dbModuleTest"))
       )
       config <- Resource.eval(AppConfigLoader.loadDefault[IO, AppConfig]("catalog")).map { cfg =>
-        cfg.copy(jdbc = cfg.jdbc.copy(schema = UUID.randomUUID.toString))
+        cfg.copy(jdbc = cfg.jdbc.copy(schema = s"$schemaName-test-schema"))
       }
 
       l <- Resource.eval(Slf4jLogger.create[IO])
