@@ -1,6 +1,7 @@
 package ua.pomo.catalog.shared
 
 import cats.Applicative
+import cats.data.NonEmptyList
 import cats.syntax.apply._
 import org.scalacheck.Gen
 import squants.market.{Money, USD}
@@ -75,7 +76,7 @@ object Generators {
   }
 
   object ImageList {
-    private val listId = Gen.uuid.map(ImageListId.apply)
+    val id = Gen.uuid.map(ImageListId.apply)
     private val imageId = Gen.uuid.map(ImageId.apply)
     private val imageSrc = Gen.alphaNumStr.map(ImageSrc.apply)
     private val imageAlt = Gen.alphaNumStr.map(ImageAlt.apply)
@@ -84,17 +85,26 @@ object Generators {
       (imageId, imageSrc, imageAlt).mapN(image.Image.apply)
     private val imageListGen = Gen.listOf(imageGen).map(_.groupBy(_.src).values.map(_.head).toList)
 
-    def update(listGen: Gen[List[ImageId]] = Gen.listOf(imageId)): Gen[imageList.UpdateImageList] = (
-      listId,
-      Gen.option(displayName),
-      Gen.option(listGen)
-    ).mapN(imageList.UpdateImageList.apply)
+    def update(listGen: Gen[List[ImageId]] = Gen.listOf(imageId)): Gen[ImageListId => imageList.UpdateImageList] = for {
+      a <- Gen.option(displayName)
+      b <- Gen.option(listGen)
+    } yield (id: ImageListId) => imageList.UpdateImageList(id, a, b)
 
     def gen(genImages: Gen[List[Image]] = imageListGen): Gen[imageList.ImageList] =
-      (listId, displayName, genImages).mapN(imageList.ImageList.apply)
+      (id, displayName, genImages).mapN(imageList.ImageList.apply)
 
     def genCreate(genImages: Gen[List[ImageId]]): Gen[imageList.CreateImageList] =
-      (listId.map(Some(_)), displayName, genImages).mapN(imageList.CreateImageList.apply)
+      (id.map(Some(_)), displayName, genImages).mapN(imageList.CreateImageList.apply)
+
+    val selector: Gen[ImageListSelector] = Gen.oneOf(
+      Gen.const(ImageListSelector.All),
+      Gen.nonEmptyListOf(id).map(NonEmptyList.fromListUnsafe(_)).map(ImageListSelector.IdsIn(_))
+    )
+
+    val query: Gen[ImageListQuery] = for {
+      s <- selector
+      p <- PageToken.nonEmpty
+    } yield Query(s, p)
   }
 
   object Model {

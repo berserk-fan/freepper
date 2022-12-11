@@ -3,14 +3,30 @@ package ua.pomo.catalog.infrastructure.persistance.postgres
 import cats.Monad
 import org.scalacheck.Gen
 import ua.pomo.catalog.domain._
-import ua.pomo.catalog.domain.category.{Category, CategoryQuery, CategoryUUID, CreateCategory, UpdateCategory}
-import ua.pomo.catalog.domain.image.{BuzzImageUpdate, CreateImageData, CreateImageMetadata, Image, ImageId, ImageQuery}
+import ua.pomo.catalog.domain.category.{
+  Category,
+  CategoryCrud,
+  CategoryQuery,
+  CategoryUUID,
+  CreateCategory,
+  UpdateCategory
+}
+import ua.pomo.catalog.domain.image.{
+  BuzzImageUpdate,
+  CreateImageData,
+  CreateImageMetadata,
+  Image,
+  ImageCrud,
+  ImageId,
+  ImageQuery
+}
+import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.shared.FixturesV2._
 import ua.pomo.catalog.shared.Generators
-import ua.pomo.common.domain.Generators
+import ua.pomo.common.domain.{Generators, repository}
 
 object DbGenerators {
-  class CategoryGenerators[F[_]: Monad](cf: CategoryFixture[F]#Result) extends Generators[category.Crud.type] {
+  case class CategoryGenerators() extends Generators[CategoryCrud] {
     override def create: Gen[CreateCategory] = Generators.Category.create
 
     override def update: Gen[CategoryUUID => UpdateCategory] = Generators.Category.update
@@ -22,7 +38,7 @@ object DbGenerators {
     def query: Gen[CategoryQuery] = Generators.Category.query
   }
 
-  class ImageGenerators[F[_] : Monad](cf: ImageFixture[F]#Result) extends Generators[image.Crud.type] {
+  case class ImageGenerators() extends Generators[ImageCrud] {
     override def create: Gen[CreateImageMetadata] = Generators.Image.create
 
     override def update: Gen[ImageId => BuzzImageUpdate] = Generators.Image.update
@@ -31,6 +47,18 @@ object DbGenerators {
 
     override def id: Gen[ImageId] = Generators.Image.id
 
-    def query: Gen[ImageQuery] = Generators.Image.query
+    override def query: Gen[ImageQuery] = Generators.Image.query
+  }
+
+  case class ImageListGenerators[F[_]: Monad](cf: ImageFixture[F]#Result) extends Generators[ImageListCrud] {
+    override def update: Gen[ImageListId => UpdateImageList] = Generators.ImageList.update(cf.imagesGenId)
+
+    override def genE: Gen[ImageList] = Generators.ImageList.gen(cf.imagesGen)
+
+    override def create: Gen[CreateImageList] = Generators.ImageList.genCreate(cf.imagesGenId)
+
+    override def query: Gen[repository.Query[ImageListSelector]] = Generators.ImageList.query
+
+    override def id: Gen[ImageListId] = Generators.ImageList.id
   }
 }
