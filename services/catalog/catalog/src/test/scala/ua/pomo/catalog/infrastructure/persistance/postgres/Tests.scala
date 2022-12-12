@@ -8,6 +8,9 @@ import ua.pomo.common.infrastructure.persistance.postgres.RepositoryAbstractTest
 class CategoryPostgresTest extends CatalogRepositoryAbstractTest[CategoryCrud](DbModuleTest.categoryPostgres)
 class CategoryInMemoryTest extends CatalogRepositoryAbstractTest[CategoryCrud](DbModuleTest.categoryInMemory)
 class ImagePostgresTest extends CatalogRepositoryAbstractTest[ImageCrud](DbModuleTest.imagePostgres) {
-  override def ignoredContracts: Set[RepositoryAbstractTest.TestContract] = Set(RepositoryAbstractTest.TestContract.UpdateContract)
+  override def ignoredContracts: Set[RepositoryAbstractTest.TestContract] = Set(
+    RepositoryAbstractTest.TestContract.UpdateContract
+  )
 }
 class ImageListPostgresTest extends CatalogRepositoryAbstractTest[ImageListCrud](DbModuleTest.imageListPostgres)
+class ImageListInMemoryTest extends CatalogRepositoryAbstractTest[ImageListCrud](DbModuleTest.imageListInMemory)

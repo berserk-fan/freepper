@@ -29,12 +29,11 @@ object repository {
     type Entity
     type EntityId
     type Selector
-
-    implicit val ops: CrudOps[self.type]
   }
 
   trait CrudOps[T <: Crud] {
     def getIdUpdate(update: T#Update): T#EntityId
+    def getIdCreate(update: T#Create): Option[T#EntityId]
     def getIdEntity(entity: T#Entity): T#EntityId
     def entityDisplayName: EntityDisplayName
   }

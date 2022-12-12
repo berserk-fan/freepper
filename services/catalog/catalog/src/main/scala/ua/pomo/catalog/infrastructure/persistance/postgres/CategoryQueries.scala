@@ -6,25 +6,25 @@ import ua.pomo.common.infrastracture.persistance.postgres.{DbUpdaterPoly, Querie
 import doobie.implicits._
 import doobie.postgres.implicits._
 import shapeless.Generic
+import ua.pomo.common.domain.error.DbErr
 
 import java.util.UUID
 
 object CategoryQueries extends Queries[CategoryCrud] {
-  override def create(cat: CreateCategory): (doobie.Update0, CategoryUUID) = {
-    val id = CategoryUUID(UUID.randomUUID())
+  override def create(cat: CreateCategory): List[doobie.Update0] = List({
+    val id = cat.id.getOrElse(throw DbErr("No ID(("))
 
-    val sql = sql"""
+    sql"""
          insert into categories (id, readable_id, display_name, description)
          VALUES ($id, ${cat.readableId}, ${cat.displayName}, ${cat.description})
        """.update
 
-    (sql, id)
-  }
+  })
 
-  override def delete(id: CategoryUUID): doobie.Update0 = {
+  override def delete(id: CategoryUUID): List[doobie.Update0] = List({
     sql"""delete from categories cat
             where id=$id""".update
-  }
+  })
 
   override def find(req: repository.Query[CategorySelector]): doobie.Query0[Category] = {
     val where = req.selector match {
@@ -48,7 +48,7 @@ object CategoryQueries extends Queries[CategoryCrud] {
     implicit val a3: Res[CategoryDescription] = gen("description")
   }
 
-  override def update(cat: UpdateCategory): Option[doobie.Update0] = {
-    QueriesHelpers[CategoryCrud]().updateQHelper(cat, updaterObj, "categories", Generic[UpdateCategory])
+  override def update(cat: UpdateCategory): List[doobie.Update0] = {
+    QueriesHelpers[CategoryCrud]().updateQHelper(cat, updaterObj, "categories", Generic[UpdateCategory]).toList
   }
 }

@@ -48,12 +48,14 @@ object imageList {
     override type Entity = ImageList
     override type EntityId = ImageListId
     override type Selector = ImageListSelector
-    override implicit val ops: CrudOps[ImageListCrud] = new CrudOps[ImageListCrud] {
+    implicit val ops: CrudOps[ImageListCrud] = new CrudOps[ImageListCrud] {
       override val entityDisplayName: EntityDisplayName = EntityDisplayName("imageList")
 
       override def getIdUpdate(update: UpdateImageList): ImageListId = update.id
 
       override def getIdEntity(entity: ImageList): ImageListId = entity.id
+
+      override def getIdCreate(update: CreateImageList): Option[ImageListId] = update.id
     }
   }
 

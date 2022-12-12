@@ -82,12 +82,14 @@ object category {
     override type Entity = Category
     override type EntityId = CategoryUUID
     override type Selector = CategorySelector
-    override implicit val ops: repository.CrudOps[CategoryCrud] = new CrudOps[CategoryCrud] {
+    implicit val ops: repository.CrudOps[CategoryCrud] = new CrudOps[CategoryCrud] {
       override def getIdUpdate(update: UpdateCategory): CategoryUUID = update.id
 
       override def getIdEntity(entity: Category): CategoryUUID = entity.id
 
       override def entityDisplayName: EntityDisplayName = EntityDisplayName("category")
+
+      override def getIdCreate(update: CreateCategory): Option[CategoryUUID] = update.id
     }
   }
 }

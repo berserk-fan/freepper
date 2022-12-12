@@ -59,13 +59,13 @@ object FixturesV2 {
     case class Result(categoryId1: CategoryUUID, categoryId2: CategoryUUID)
     def init(): F[Result] = {
       val category1: CreateCategory = CreateCategory(
-        None,
+        Some(CategoryUUID(UUID.randomUUID())),
         CategoryReadableId("category1"),
         CategoryDisplayName("Category 1"),
         CategoryDescription("Some category 1 description")
       )
       val category2: CreateCategory = CreateCategory(
-        None,
+        Some(CategoryUUID(UUID.randomUUID())),
         CategoryReadableId("category2"),
         CategoryDisplayName("Category 2"),
         CategoryDescription("Some category 2 description")

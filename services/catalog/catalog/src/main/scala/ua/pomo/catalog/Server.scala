@@ -33,7 +33,7 @@ object Server {
       transactor = TransactorHelpers.fromConfig[IO](config.jdbc)
       categoryRepo = CategoryRepository.postgres
       categoryService = CategoryServiceImpl(transactor, categoryRepo)
-      imageListService = ImageListServiceImpl(transactor, ImageListRepositoryImpl())
+      imageListService = ImageListServiceImpl(transactor, ImageListRepository.postgres)
       modelService = ModelServiceImpl(transactor, ModelRepositoryImpl())
       productService = ProductServiceImpl(transactor, ProductRepositoryImpl())
       imageDataRepository <- imageDataRepositoryLifted

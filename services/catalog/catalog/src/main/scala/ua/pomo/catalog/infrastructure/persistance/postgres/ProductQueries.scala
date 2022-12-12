@@ -4,22 +4,22 @@ import doobie.{Fragment, Fragments, Get}
 import shapeless.Generic
 import doobie.postgres.implicits._
 import doobie.implicits._
-
 import ua.pomo.catalog.domain.category.CategoryUUID
 import ua.pomo.catalog.domain.image.Image
 import ua.pomo.catalog.domain.imageList.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 import ua.pomo.catalog.domain.parameter.{ParameterDisplayName, ParameterId}
 import ua.pomo.catalog.domain.product._
+import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.domain.repository
 import ua.pomo.common.infrastracture.persistance.postgres.{DbUpdaterPoly, Queries, QueriesHelpers}
 
 import java.util.UUID
 
 object ProductQueries extends Queries[ProductCrud] {
-  override def create(req: CreateProduct): (doobie.Update0, ProductId) = {
+  override def create(req: CreateProduct): List[doobie.Update0] = List {
     import req._
-    val id = req.id.getOrElse(ProductId(UUID.randomUUID()))
+    val id = req.id.getOrElse(throw DbErr("No id("))
 
     val sql = sql"""
         INSERT INTO products 
@@ -31,10 +31,10 @@ object ProductQueries extends Queries[ProductCrud] {
                 $modelId, 
                 ${parameterIds.map(_.value)})
          """.update
-    (sql, id)
+    sql
   }
 
-  override def delete(id: ProductId): doobie.Update0 = {
+  override def delete(id: ProductId): List[doobie.Update0] = List {
     sql"delete from products where id=$id".update
   }
 
@@ -101,7 +101,7 @@ object ProductQueries extends Queries[ProductCrud] {
     implicit val productPromoPrice: Res[Option[ProductPromoPrice]] = gen("promo_price")
   }
 
-  override def update(req: UpdateProduct): Option[doobie.Update0] = {
-    QueriesHelpers[ProductCrud]().updateQHelper(req, updaterPoly, "products", Generic[UpdateProduct])
+  override def update(req: UpdateProduct): List[doobie.Update0] = {
+    QueriesHelpers[ProductCrud]().updateQHelper(req, updaterPoly, "products", Generic[UpdateProduct]).toList
   }
 }

@@ -56,12 +56,14 @@ object image {
     override type Entity = Image
     override type EntityId = ImageId
     override type Selector = ImageSelector
-    override implicit val ops: CrudOps[ImageCrud] = new CrudOps[ImageCrud] {
+    implicit val ops: CrudOps[ImageCrud] = new CrudOps[ImageCrud] {
       override def getIdUpdate(update: BuzzImageUpdate): ImageId = update.id
 
       override def getIdEntity(entity: Image): ImageId = entity.id
 
       override def entityDisplayName: EntityDisplayName = EntityDisplayName("image")
+
+      override def getIdCreate(update: CreateImageMetadata): Option[ImageId] = update.id
     }
   }
 

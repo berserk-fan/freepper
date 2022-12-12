@@ -29,7 +29,7 @@ abstract class RepositoryAbstractTest[F[_]: MonadThrow: LoggerFactory, G[
   override protected type SuiteResource = (F ~> G, EntityTest[F, T])
 
   implicit override protected def scalaCheckTestParameters: Test.Parameters =
-    Test.Parameters.default.withMinSuccessfulTests(10)
+    Test.Parameters.default.withMinSuccessfulTests(20)
 
   override protected def genParameters: Gen.Parameters = Gen.Parameters.default
 

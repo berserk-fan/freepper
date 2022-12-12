@@ -104,12 +104,14 @@ object model {
     override type Entity = Model
     override type EntityId = ModelId
     override type Selector = ModelSelector
-    override implicit val ops: CrudOps[ModelCrud] = new CrudOps[ModelCrud] {
+    implicit val ops: CrudOps[ModelCrud] = new CrudOps[ModelCrud] {
       override def getIdUpdate(update: UpdateModel): ModelId = update.id
 
       override def getIdEntity(entity: Model): ModelId = entity.id
 
       override def entityDisplayName: EntityDisplayName = EntityDisplayName("model")
+
+      override def getIdCreate(update: CreateModel): Option[ModelId] = update.id
     }
   }
 }

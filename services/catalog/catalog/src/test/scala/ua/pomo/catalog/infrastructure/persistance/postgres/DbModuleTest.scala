@@ -22,14 +22,13 @@ import ua.pomo.catalog.shared.FixturesV2.{CategoryFixture, ImageFixture}
 import ua.pomo.common.domain.{Assertions, EntityTest, Schema}
 import ua.pomo.common.{AppConfigLoader, DBMigrations, TransactorHelpers}
 
-import java.util.UUID
-
 object DbModuleTest extends Matchers {
 
   def categoryPostgres: SuiteResource[CategoryCrud] = allModules(("category-postgres")).map(_._1)
   def categoryInMemory: SuiteResource[CategoryCrud] = allModules("category-inmem").map(_._2)
   def imagePostgres: SuiteResource[ImageCrud] = allModules("image-postgres").map(_._3)
   def imageListPostgres: SuiteResource[ImageListCrud] = allModules("image-list-postgres").map(_._4)
+  def imageListInMemory: SuiteResource[ImageListCrud] = allModules("image-list-inmem").map(_._5)
 
   private def allModules(schemaName: String) = {
     for {
@@ -67,6 +66,14 @@ object DbModuleTest extends Matchers {
               c.description should equal(v.description)
             }
           }
+          entityTest1 = (
+            trans,
+            EntityTest[ConnectionIO, CategoryCrud](categoryRepo, categoryGenerators, catCheckers, implicitly)
+          )
+          entityTest2 = (
+            trans,
+            EntityTest[ConnectionIO, CategoryCrud](categoryInMemRepo, categoryGenerators, catCheckers, implicitly)
+          )
           imageRepo = ImageRepositoryImpl
           imageFixtureRes <- new ImageFixture(imageRepo).init()
           imageGenerators = ImageGenerators()
@@ -78,31 +85,38 @@ object DbModuleTest extends Matchers {
               c.alt should equal(v.alt)
             }
           }
-          imageListRepo = ImageListRepositoryImpl()
+          entityTest3 = (
+            trans,
+            EntityTest[ConnectionIO, ImageCrud](imageRepo, imageGenerators, imageCheckers, implicitly)
+          )
+          imageListRepo = ImageListRepository.postgres
+          imageListInMemRepo <- ImageListRepository.inmemory[ConnectionIO]
           imageListGenerators = ImageListGenerators[ConnectionIO](imageFixtureRes)
           imageListCheckers = new Assertions[ImageListCrud] {
             override def update(c: imageList.UpdateImageList, v: imageList.ImageList): Any = {
               c.displayName.foreach(_ should equal(v.displayName))
-              c.images.foreach(_ should equal(v.images))
+              c.images.foreach(_ should equal(v.images.map(_.id)))
             }
 
             override def create(c: imageList.CreateImageList, v: imageList.ImageList): Any = {
               c.displayName should equal(v.displayName)
-              c.images should equal(v.images)
+              c.images should equal(v.images.map(_.id))
             }
           }
-        } yield (
-          (trans, EntityTest[ConnectionIO, CategoryCrud](categoryRepo, categoryGenerators, catCheckers, implicitly)),
-          (
-            trans,
-            EntityTest[ConnectionIO, CategoryCrud](categoryInMemRepo, categoryGenerators, catCheckers, implicitly)
-          ),
-          (trans, EntityTest[ConnectionIO, ImageCrud](imageRepo, imageGenerators, imageCheckers, implicitly)),
-          (
+          entityTest4 = (
             trans,
             EntityTest[ConnectionIO, ImageListCrud](imageListRepo, imageListGenerators, imageListCheckers, implicitly)
           )
-        )
+          entityTest5 = (
+            trans,
+            EntityTest[ConnectionIO, ImageListCrud](
+              imageListInMemRepo,
+              imageListGenerators,
+              imageListCheckers,
+              implicitly
+            )
+          )
+        } yield (entityTest1, entityTest2, entityTest3, entityTest4, entityTest5)
       })
     } yield res
   }

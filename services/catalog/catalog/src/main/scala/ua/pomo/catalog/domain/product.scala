@@ -101,12 +101,14 @@ object product {
     override type Entity = Product
     override type EntityId = ProductId
     override type Selector = ProductSelector
-    override implicit val ops: CrudOps[ProductCrud] = new CrudOps[ProductCrud] {
+    implicit val ops: CrudOps[ProductCrud] = new CrudOps[ProductCrud] {
       override def getIdUpdate(update: UpdateProduct): ProductId = update.id
 
       override def getIdEntity(entity: Product): ProductId = entity.id
 
       override def entityDisplayName: repository.EntityDisplayName = EntityDisplayName("product")
+
+      override def getIdCreate(update: CreateProduct): Option[ProductId] = update.id
     }
   }
 

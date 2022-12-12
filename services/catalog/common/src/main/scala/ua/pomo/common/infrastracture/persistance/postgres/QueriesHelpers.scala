@@ -19,7 +19,7 @@ case class QueriesHelpers[T <: Crud: CrudOps]() {
       w: Put[T#EntityId]
   ): Option[Update0] = {
     val qq: Seq[Option[Fragment]] = g.to(req).drop[Nat._1].map(poly).toList
-    if(qq.forall(_.isEmpty)) {
+    if (qq.forall(_.isEmpty)) {
       None
     } else {
       val setFr = Fragments.setOpt(qq: _*)

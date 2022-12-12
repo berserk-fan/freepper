@@ -4,6 +4,7 @@ import doobie._
 import doobie.implicits.toSqlInterpolator
 import doobie.postgres.implicits.UuidType
 import ua.pomo.catalog.domain.image._
+import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.domain.repository.Query
 import ua.pomo.common.infrastracture.persistance.postgres.Queries
 
@@ -17,13 +18,12 @@ object ImageQueries extends Queries[ImageCrud] {
     }
   }
 
-  override def create(image: CreateImageMetadata): (doobie.Update0, ImageId) = {
-    val id = ImageId(UUID.randomUUID())
-    val sql = sql"""
+  override def create(image: CreateImageMetadata): List[doobie.Update0] = List({
+    val id = image.id.getOrElse(throw DbErr("No Id(("))
+    sql"""
         insert into images (id, src, alt) values ($id, ${image.src}, ${image.alt})
       """.update
-    (sql, id)
-  }
+  })
 
   override def find(req: Query[ImageSelector]): doobie.Query0[Image] = {
     sql"""
@@ -34,12 +34,12 @@ object ImageQueries extends Queries[ImageCrud] {
        """.query[Image]
   }
 
-  override def delete(id: ImageId): Update0 = {
+  override def delete(id: ImageId): List[doobie.Update0] = List({
     sql"""
         delete from images im
         where ${compile(ImageSelector.IdIs(id))}
       """.update
-  }
+  })
 
-  override def update(req: BuzzImageUpdate): Option[doobie.Update0] = ???
+  override def update(req: BuzzImageUpdate): List[doobie.Update0] = ???
 }

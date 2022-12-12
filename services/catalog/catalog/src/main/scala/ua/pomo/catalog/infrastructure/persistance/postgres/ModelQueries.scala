@@ -11,6 +11,7 @@ import ua.pomo.catalog.domain.image.Image
 import ua.pomo.catalog.domain.imageList.ImageListId
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter.ParameterList
+import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.infrastracture.persistance.postgres.{DbUpdaterPoly, Queries, QueriesHelpers}
 
 import java.util.UUID
@@ -19,8 +20,8 @@ object ModelQueries extends Queries[ModelCrud] {
   private implicit val readModelMinimalPrice: Read[ModelMinimalPrice] =
     Read[Double].map(x => ModelMinimalPrice(Money(x, USD)))
 
-  override def create(req: CreateModel): (Update0, ModelId) = {
-    val modelId = req.id.map(_.value).getOrElse(UUID.randomUUID())
+  override def create(req: CreateModel): List[doobie.Update0] = List({
+    val modelId = req.id.getOrElse(throw DbErr("No Id(")).value
     val modelsInsert =
       sql"""
           INSERT INTO models (id, readable_id, display_name, description, category_id, image_list_id)
@@ -43,10 +44,10 @@ object ModelQueries extends Queries[ModelCrud] {
           """
     }
 
-    (res.update, ModelId(modelId))
-  }
+    res.update
+  })
 
-  override def delete(id: ModelId): Update0 = {
+  override def delete(id: ModelId): List[doobie.Update0] = List {
     sql"""
            delete from models m
            where id=$id
@@ -101,7 +102,7 @@ object ModelQueries extends Queries[ModelCrud] {
     implicit val a5: Res[ImageListId] = gen("image_list_id")
   }
 
-  override def update(req: UpdateModel): Option[Update0] = {
-    QueriesHelpers[ModelCrud]().updateQHelper(req, updaterObj, "model", Generic[UpdateModel])
+  override def update(req: UpdateModel): List[doobie.Update0] = {
+    QueriesHelpers[ModelCrud]().updateQHelper(req, updaterObj, "model", Generic[UpdateModel]).toList
   }
 }
