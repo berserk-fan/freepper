@@ -14,8 +14,6 @@ import ua.pomo.catalog.domain.parameter.ParameterList
 import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.infrastracture.persistance.postgres.{DbUpdaterPoly, Queries, QueriesHelpers}
 
-import java.util.UUID
-
 object ModelQueries extends Queries[ModelCrud] {
   private implicit val readModelMinimalPrice: Read[ModelMinimalPrice] =
     Read[Double].map(x => ModelMinimalPrice(Money(x, USD)))
@@ -103,6 +101,6 @@ object ModelQueries extends Queries[ModelCrud] {
   }
 
   override def update(req: UpdateModel): List[doobie.Update0] = {
-    QueriesHelpers[ModelCrud]().updateQHelper(req, updaterObj, "model", Generic[UpdateModel]).toList
+    QueriesHelpers.updateQHelper(Generic[UpdateModel].to(req), req.id, updaterObj, "model").map(_.update).toList
   }
 }

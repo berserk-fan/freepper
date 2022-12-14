@@ -4,22 +4,32 @@ import cats.effect.{MonadCancelThrow, Resource}
 import cats.MonadThrow
 import cats.~>
 import cats.syntax.flatMap.toFlatMapOps
+import cats.syntax.monadError.catsSyntaxMonadError
 import cats.syntax.functor.toFunctorOps
 import org.scalacheck.{Gen, Test}
 import org.scalacheck.effect.PropF
 import org.scalatest.EitherValues
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.Assertion
 import org.scalatest.matchers.should.Matchers
 import ua.pomo.common.{HasSuiteResource, ScalacheckEffectCheckers}
-import ua.pomo.common.domain.repository.{Crud, CrudOps}
+import ua.pomo.common.domain.repository.Crud
 import org.scalactic.source
-import org.typelevel.log4cats.{Logger, LoggerFactory, SelfAwareStructuredLogger}
+import org.typelevel.log4cats.LoggerFactory
 import ua.pomo.common.domain.{EntityTest, UnsafeRun}
+import ua.pomo.common.domain.error.NotFound
 import ua.pomo.common.infrastructure.persistance.postgres.RepositoryAbstractTest.TestContract
 
-abstract class RepositoryAbstractTest[F[_]: MonadThrow: LoggerFactory, G[
-    _
-]: UnsafeRun: MonadCancelThrow, T <: Crud: CrudOps]()
+//
+//  testEachImpl("delete count") { impl =>
+//    impl.delete(ImageId(UUID.randomUUID())).trRun() should equal(0)
+//    val id = impl.create(Generators.Image.create.sample.get).trRun()
+//    val id2 = impl.create(Generators.Image.create.sample.get).trRun()
+//    impl.delete(id).trRun() should equal(1)
+//    impl.delete(id2).trRun() should equal(1)
+//  }
+
+abstract class RepositoryAbstractTest[F[_]: MonadThrow: LoggerFactory, G[_]: UnsafeRun: MonadCancelThrow, T <: Crud]()
     extends AnyFunSuite
     with Matchers
     with HasSuiteResource[G]
@@ -29,7 +39,7 @@ abstract class RepositoryAbstractTest[F[_]: MonadThrow: LoggerFactory, G[
   override protected type SuiteResource = (F ~> G, EntityTest[F, T])
 
   implicit override protected def scalaCheckTestParameters: Test.Parameters =
-    Test.Parameters.default.withMinSuccessfulTests(20)
+    Test.Parameters.default.withMinSuccessfulTests(50)
 
   override protected def genParameters: Gen.Parameters = Gen.Parameters.default
 
@@ -93,6 +103,25 @@ abstract class RepositoryAbstractTest[F[_]: MonadThrow: LoggerFactory, G[
       testA(name)(testWithLog)
     }
   }
+
+  testContract(TestContract.GetReturnsNotFound, s"get on empty returns not found error") { case (_, et) =>
+    val p = PropF.forAllF(et.generators.id) { id: T#EntityId =>
+      et.repository
+        .get(id)
+        .redeemWith(
+          err => MonadThrow[F].catchNonFatal(err shouldBe a[NotFound]),
+          entity => MonadThrow[F].catchNonFatal[Assertion](fail(s"found entity $entity"))
+        )
+        .as(())
+    }
+    checkProperty(p)
+  }
+
+  //  testEachImpl("get failure should return NotFound") { impl =>
+  //    intercept[NotFound] {
+  //      impl.get(ImageId(UUID.randomUUID())).trRun()
+  //    }
+  //  }
 }
 
 object RepositoryAbstractTest {
@@ -100,5 +129,6 @@ object RepositoryAbstractTest {
   object TestContract {
     case object CreateDelete extends TestContract
     case object UpdateContract extends TestContract
+    case object GetReturnsNotFound extends TestContract
   }
 }

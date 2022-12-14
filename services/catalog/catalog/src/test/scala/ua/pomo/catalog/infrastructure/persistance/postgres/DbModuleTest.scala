@@ -10,8 +10,9 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import ua.pomo.catalog.AppConfig
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.image.{BuzzImageUpdate, CreateImageMetadata, Image, ImageCrud}
-import ua.pomo.catalog.domain.imageList
+import ua.pomo.catalog.domain.{imageList, parameter}
 import ua.pomo.catalog.domain.imageList.ImageListCrud
+import ua.pomo.catalog.domain.parameter.ParameterListCrud
 import ua.pomo.catalog.infrastructure.persistance.postgres.CatalogRepositoryAbstractTest.SuiteResource
 import ua.pomo.catalog.infrastructure.persistance.postgres.DbGenerators.{
   CategoryGenerators,
@@ -29,6 +30,7 @@ object DbModuleTest extends Matchers {
   def imagePostgres: SuiteResource[ImageCrud] = allModules("image-postgres").map(_._3)
   def imageListPostgres: SuiteResource[ImageListCrud] = allModules("image-list-postgres").map(_._4)
   def imageListInMemory: SuiteResource[ImageListCrud] = allModules("image-list-inmem").map(_._5)
+  def parameterListPostgres: SuiteResource[ParameterListCrud] = allModules("parameter-list-postgres").map(_._6)
 
   private def allModules(schemaName: String) = {
     for {
@@ -51,7 +53,6 @@ object DbModuleTest extends Matchers {
         for {
           categoryInMemRepo <- CategoryRepository.inmemory[ConnectionIO]
           categoryRepo = CategoryRepository.withEffect[ConnectionIO](FunctionK.id)
-          categoryFixtureRes <- new CategoryFixture[ConnectionIO](categoryRepo).init()
           categoryGenerators = CategoryGenerators()
           catCheckers = new Assertions[CategoryCrud] {
             def update(c: UpdateCategory, v: Category): Any = {
@@ -116,7 +117,43 @@ object DbModuleTest extends Matchers {
               implicitly
             )
           )
-        } yield (entityTest1, entityTest2, entityTest3, entityTest4, entityTest5)
+          parameterListRepo = ParameterListRepository.postgres
+          parameterListGenerators = DbGenerators.ParameterList(imageFixtureRes)
+          plAssertions = new Assertions[ParameterListCrud] {
+            override def update(c: parameter.UpdateParameterList, v: parameter.ParameterList): Any = {
+              c.displayName.foreach(_ should equal(v.displayName))
+
+              c.parameters.foreach { parametersUpdate =>
+                parametersUpdate.map(_.id.get) should equal(v.parameters.map(_.id))
+
+                parametersUpdate.foreach { paramUpdate =>
+                  val updated = v.parameters.find(_.id == paramUpdate.id.get).get
+                  paramUpdate.displayName should equal(updated.displayName)
+                  paramUpdate.image should equal(updated.image.map(_.id))
+                  paramUpdate.description should equal(updated.description)
+                }
+              }
+            }
+
+            override def create(c: parameter.CreateParameterList, v: parameter.ParameterList): Any = {
+              c.displayName should equal(v.displayName)
+
+              c.parameters.map(cp => (cp.displayName, cp.image, cp.description)) should equal(
+                v.parameters.map(p => (p.displayName, p.image.map(_.id), p.description))
+              )
+            }
+          }
+
+          entityTest6 = (
+            trans,
+            EntityTest[ConnectionIO, ParameterListCrud](
+              parameterListRepo,
+              parameterListGenerators,
+              plAssertions,
+              implicitly
+            )
+          )
+        } yield (entityTest1, entityTest2, entityTest3, entityTest4, entityTest5, entityTest6)
       })
     } yield res
   }

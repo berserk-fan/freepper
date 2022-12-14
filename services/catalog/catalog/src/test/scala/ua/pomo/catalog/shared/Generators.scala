@@ -6,7 +6,7 @@ import cats.syntax.apply._
 import org.scalacheck.Gen
 import squants.market.{Money, USD}
 import ua.pomo.catalog.domain.category._
-import ua.pomo.catalog.domain.{category, image, imageList, model, product}
+import ua.pomo.catalog.domain.{category, image, imageList, model, product, parameter}
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.image._
@@ -107,6 +107,45 @@ object Generators {
     } yield Query(s, p)
   }
 
+  object ParameterList {
+    private val parameterId = Gen.uuid.map(ParameterId.apply)
+    private val parameterDisplayName = Gen.alphaNumStr.map(ParameterDisplayName.apply)
+    private val parameterDescription = Gen.alphaNumStr.map(ParameterDescription.apply)
+    private val param: Gen[Parameter] =
+      (parameterId, parameterDisplayName, Gen.option(Image.gen), parameterDescription).mapN(Parameter.apply)
+
+    private def createParameter(imageId: Gen[ImageId]): Gen[CreateParameter] =
+      (Gen.some(parameterId), parameterDisplayName, Gen.option(imageId), parameterDescription)
+        .mapN(CreateParameter.apply)
+
+    val paramListId = Gen.uuid.map(ParameterListId.apply)
+    private val paramListDisplayName = Gen.alphaNumStr.map(ParamListDisplayName.apply)
+
+    val paramList: Gen[ParameterList] =
+      (paramListId, paramListDisplayName, Gen.listOf(param)).mapN(parameter.ParameterList.apply)
+    def create(imageIdGen: Gen[ImageId]): Gen[CreateParameterList] = for {
+      imageId <- imageIdGen
+      id <- paramListId
+      dn <- paramListDisplayName
+      params <- Gen.listOf(createParameter(imageId)).filter(_.nonEmpty)
+    } yield CreateParameterList(Some(id), dn, params)
+
+    def update(imageIdGen: Gen[ImageId]): Gen[ParameterListId => UpdateParameterList] = for {
+      dn <- Gen.option(paramListDisplayName)
+      params <- Gen.option(Gen.listOf(createParameter(imageIdGen)).filter(_.nonEmpty))
+    } yield id => UpdateParameterList(id, dn, params)
+
+    val query: Gen[ParameterListQuery] = for {
+      s <- Gen.oneOf(
+        Gen.const[ParameterListSelector](ParameterListSelector.All),
+        paramListId.map(ParameterListSelector.IdIs)
+      )
+      p <- PageToken.nonEmpty
+    } yield Query(s, p)
+
+    val paramLists: Gen[List[ParameterList]] = Gen.listOf(paramList)
+  }
+
   object Model {
     private val id = Gen.const(ModelId(Gen.uuid.sample.get))
     private val catId = Gen.const(CategoryUUID(Gen.uuid.sample.get))
@@ -114,14 +153,6 @@ object Generators {
     private val rId = Gen.alphaNumStr.map(ModelReadableId.apply)
     private val rDisplayName = Gen.alphaNumStr.map(ModelDisplayName.apply)
     private val rDescription = Gen.alphaNumStr.map(ModelDescription.apply)
-    private val parameterId = Gen.uuid.map(ParameterId.apply)
-    private val parameterDisplayName = Gen.alphaNumStr.map(ParameterDisplayName.apply)
-    private val param = (parameterId, parameterDisplayName, Gen.option(ImageList.imageGen)).mapN(Parameter.apply)
-    private val paramListId = Gen.uuid.map(ParameterListId.apply)
-    private val paramListDisplayName = Gen.alphaNumStr.map(ParamListDisplayName.apply)
-    private val params = Gen.listOfN(2, param)
-    private val paramList = (paramListId, paramListDisplayName, params).mapN(ParameterList.apply)
-    private val paramLists = Gen.listOfN(2, paramList)
     private val rMoney = Gen.posNum[Double].map(Money(_, USD)).map(ModelMinimalPrice.apply)
 
     def createGen(imListId: ImageListId, parameterListIds: List[ParameterListId]): Gen[CreateModel] =
@@ -129,7 +160,8 @@ object Generators {
         .mapN(model.CreateModel.apply)
 
     val gen: Gen[model.Model] =
-      (id, rId, catId, catRid, rDisplayName, rDescription, rMoney, paramLists, ImageList.gen()).mapN(model.Model.apply)
+      (id, rId, catId, catRid, rDisplayName, rDescription, rMoney, ParameterList.paramLists, ImageList.gen())
+        .mapN(model.Model.apply)
 
     def updateGen(imageListId: ImageListId, categoryId: CategoryUUID): Gen[model.UpdateModel] =
       (

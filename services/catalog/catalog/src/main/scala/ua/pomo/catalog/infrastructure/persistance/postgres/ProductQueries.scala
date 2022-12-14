@@ -14,8 +14,6 @@ import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.domain.repository
 import ua.pomo.common.infrastracture.persistance.postgres.{DbUpdaterPoly, Queries, QueriesHelpers}
 
-import java.util.UUID
-
 object ProductQueries extends Queries[ProductCrud] {
   override def create(req: CreateProduct): List[doobie.Update0] = List {
     import req._
@@ -102,6 +100,6 @@ object ProductQueries extends Queries[ProductCrud] {
   }
 
   override def update(req: UpdateProduct): List[doobie.Update0] = {
-    QueriesHelpers[ProductCrud]().updateQHelper(req, updaterPoly, "products", Generic[UpdateProduct]).toList
+    QueriesHelpers.updateQHelper(Generic[UpdateProduct].to(req), req.id, updaterPoly, "products").toList.map(_.update)
   }
 }

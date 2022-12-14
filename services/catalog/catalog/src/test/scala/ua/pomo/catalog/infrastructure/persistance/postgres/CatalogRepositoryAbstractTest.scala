@@ -1,11 +1,10 @@
 package ua.pomo.catalog.infrastructure.persistance.postgres
 
-import cats.effect.unsafe.IORuntime
-import cats.effect.{IO, MonadCancelThrow, Resource}
+import cats.effect.{IO, Resource}
 import cats.~>
 import doobie.ConnectionIO
 import ua.pomo.common.TestIORuntime
-import ua.pomo.common.domain.{EntityTest, UnsafeRun}
+import ua.pomo.common.domain.EntityTest
 import ua.pomo.common.domain.repository.{Crud, CrudOps}
 import ua.pomo.common.infrastructure.persistance.postgres.RepositoryAbstractTest
 import TestIORuntime.runtime

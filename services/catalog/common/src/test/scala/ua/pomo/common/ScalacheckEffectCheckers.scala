@@ -13,7 +13,7 @@ import org.scalactic.source
 trait ScalacheckEffectCheckers { self: AnyFunSuite =>
   protected def scalaCheckTestParameters: Test.Parameters = Test.Parameters.default
   protected def genParameters: Gen.Parameters = Gen.Parameters.default
-  protected def scalaCheckPrettyParameters: Pretty.Params = Pretty.defaultParams
+  protected def scalaCheckPrettyParameters: Pretty.Params = Pretty.Params(2)
   protected def scalaCheckInitialSeed: String = Seed.random().toBase64
 
   protected def checkProperty[F[_]: Monad](prop: PropF[F])(implicit pos: source.Position): F[Unit] = {
@@ -43,8 +43,8 @@ trait ScalacheckEffectCheckers { self: AnyFunSuite =>
     result.flatMap { res =>
       res.status match {
         case Passed | Proved(_) => Monad[F].pure(())
-        case _ => fail("\n" + renderResult(res))
-      } 
+        case _                  => fail("\n" + renderResult(res))
+      }
     }
   }
 }

@@ -8,8 +8,6 @@ import doobie.postgres.implicits._
 import shapeless.Generic
 import ua.pomo.common.domain.error.DbErr
 
-import java.util.UUID
-
 object CategoryQueries extends Queries[CategoryCrud] {
   override def create(cat: CreateCategory): List[doobie.Update0] = List({
     val id = cat.id.getOrElse(throw DbErr("No ID(("))
@@ -49,6 +47,6 @@ object CategoryQueries extends Queries[CategoryCrud] {
   }
 
   override def update(cat: UpdateCategory): List[doobie.Update0] = {
-    QueriesHelpers[CategoryCrud]().updateQHelper(cat, updaterObj, "categories", Generic[UpdateCategory]).toList
+    QueriesHelpers.updateQHelper(Generic[UpdateCategory].to(cat), cat.id, updaterObj, "categories").map(_.update).toList
   }
 }

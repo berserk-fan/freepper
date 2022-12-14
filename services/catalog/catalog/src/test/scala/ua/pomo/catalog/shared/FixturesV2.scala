@@ -25,7 +25,12 @@ import java.util.UUID
 
 object FixturesV2 {
   class ImageFixture[F[_]: Monad](imageRepository: ImageRepository[F]) {
-    case class Result(images: Seq[Image], imagesGen: Gen[List[Image]], imagesGenId: Gen[List[ImageId]])
+    case class Result(
+        images: Seq[Image],
+        imagesGen: Gen[List[Image]],
+        imagesGenId: Gen[List[ImageId]],
+        imageIdGen: Gen[ImageId]
+    )
 
     def init(): F[Result] = {
       for {
@@ -36,7 +41,7 @@ object FixturesV2 {
       } yield {
         val imagesGen: Gen[List[Image]] = Gen.someOf(images).map(_.toList)
         val imagesGenId: Gen[List[ImageId]] = Gen.someOf(images).map(_.toList).map(_.map(_.id))
-        Result(images, imagesGen, imagesGenId)
+        Result(images, imagesGen, imagesGenId, Gen.oneOf(images).map(_.id))
       }
     }
   }

@@ -1,17 +1,12 @@
 package ua.pomo.catalog.infrastructure.persistance.postgres
 
-import cats.MonadThrow
 import ua.pomo.catalog.domain.imageList.ImageListCrud
-import ua.pomo.common.infrastracture.persistance.postgres.AbstractPostgresRepository
 import cats.data.NonEmptyList
-import cats.effect.{Ref, Sync}
 import doobie._
-import ua.pomo.catalog.domain.imageList._
 import ua.pomo.common.infrastracture.persistance.postgres.AbstractPostgresRepository
 
 import cats.MonadThrow
 import cats.effect.{Ref, Sync}
-import cats.implicits.toFunctorOps
 import monocle.syntax.AppliedLens
 import monocle.syntax.all._
 import shapeless._
@@ -20,7 +15,6 @@ import ua.pomo.catalog.domain.imageList._
 import ua.pomo.common.infrastracture.persistance.inmemory.{AbstractInMemoryRepository, InMemoryUpdaterPoly}
 
 import java.util.UUID
-import cats.syntax.functor.toFunctorOps
 
 object ImageListRepository {
 
@@ -51,10 +45,7 @@ object ImageListRepository {
       )
     }
 
-    override def update(req: UpdateImageList): F[Int] = mapRef.modify { map =>
-      val updater = Generic[UpdateImageList].to(req).drop(Nat._1).map(updateObj).toList.flatten.reduce(_ andThen _)
-      (map.updatedWith(req.id)(_.map(updater)), if (map.contains(req.id)) 1 else 0)
-    }
+    override def update(req: UpdateImageList): F[Int] = updateHelper(req, updateObj, Generic[UpdateImageList])
   }
 
   def inmemory[F[_]: Sync]: F[ImageListRepository[F]] = {

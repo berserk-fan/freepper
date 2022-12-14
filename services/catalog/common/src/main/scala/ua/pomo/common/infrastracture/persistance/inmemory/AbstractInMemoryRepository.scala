@@ -7,6 +7,9 @@ import doobie.Update
 import shapeless._
 import shapeless.ops.hlist.{Drop, Mapper, ToTraversable}
 import ua.pomo.common.domain.repository.{CrudOps, _}
+import ua.pomo.common.domain.error.NotFound
+
+import scala.collection.immutable
 
 abstract class AbstractInMemoryRepository[F[_]: MonadThrow, T <: Crud](ref: Ref[F, Map[T#EntityId, T#Entity]])(implicit
     crudOps: CrudOps[T]
@@ -22,7 +25,7 @@ abstract class AbstractInMemoryRepository[F[_]: MonadThrow, T <: Crud](ref: Ref[
   }
 
   override def get(id: T#EntityId): F[T#Entity] = find(id).flatMap(
-    _.fold(new Exception(s"${crudOps.entityDisplayName} with id $id not found").raiseError[F, T#Entity])(_.pure[F])
+    _.fold(NotFound(crudOps.entityDisplayName.value, id).raiseError[F, T#Entity])(_.pure[F])
   )
 
   override def find(id: T#EntityId): F[Option[T#Entity]] = ref.get.map(_.get(id))
@@ -52,14 +55,18 @@ abstract class AbstractInMemoryRepository[F[_]: MonadThrow, T <: Crud](ref: Ref[
       toLister: ToTraversable.Aux[U3, List, Option[T#Entity => T#Entity]]
   ): F[Int] =
     ref.modify { map =>
-      val updaterF =
-        (generic
-          .to(command)
-          .drop(Nat._1)(drop)
-          .map(updater)(mapper)
-          .toList(toLister): List[Option[T#Entity => T#Entity]]).flatten
-          .reduce(_ andThen _)
-      val id = crudOps.getIdUpdate(command)
-      map.get(id).fold((map, 0))(x => (map + (id -> updaterF(x)), 1))
+      val updates = (generic
+        .to(command)
+        .drop(Nat._1)(drop)
+        .map(updater)(mapper)
+        .toList(toLister): List[Option[T#Entity => T#Entity]]).flatten
+
+      updates match {
+        case Nil => (map, 0)
+        case nonEmptyList =>
+          val updaterF = nonEmptyList.reduce(_ andThen _)
+          val id = crudOps.getIdUpdate(command)
+          map.get(id).fold((map, 0))(x => (map + (id -> updaterF(x)), 1))
+      }
     }
 }

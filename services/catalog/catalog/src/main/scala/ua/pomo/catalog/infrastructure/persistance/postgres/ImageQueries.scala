@@ -8,7 +8,6 @@ import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.domain.repository.Query
 import ua.pomo.common.infrastracture.persistance.postgres.Queries
 
-import java.util.UUID
 
 object ImageQueries extends Queries[ImageCrud] {
   private def compile(imageSelector: ImageSelector): Fragment = {
