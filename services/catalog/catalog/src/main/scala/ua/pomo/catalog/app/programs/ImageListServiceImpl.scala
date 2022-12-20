@@ -5,9 +5,9 @@ import cats.effect.{Async, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import cats.~>
 import doobie.{ConnectionIO, Transactor}
-import ua.pomo.common.domain.error.NotFound
 import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.infrastructure.persistance.postgres.ImageListRepository
+import ua.pomo.common.domain.error.NotFound
 
 class ImageListServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, repository: ImageListRepository[G])
     extends ImageListService[F] {

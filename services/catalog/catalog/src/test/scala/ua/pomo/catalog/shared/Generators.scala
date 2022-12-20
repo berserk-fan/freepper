@@ -6,12 +6,12 @@ import cats.syntax.apply._
 import org.scalacheck.Gen
 import squants.market.{Money, USD}
 import ua.pomo.catalog.domain.category._
-import ua.pomo.catalog.domain.{category, image, imageList, model, product, parameter}
-import ua.pomo.catalog.domain.model._
-import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.image._
-import ua.pomo.catalog.domain.product._
+import ua.pomo.catalog.domain.imageList._
+import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter._
+import ua.pomo.catalog.domain.product._
+import ua.pomo.catalog.domain.{category, image, imageList, model, parameter, product}
 import ua.pomo.common.domain.repository
 import ua.pomo.common.domain.repository.Query
 
@@ -27,36 +27,31 @@ object Generators {
   }
 
   object Category {
-    val catId: Gen[CategoryUUID] = Gen.uuid.map(CategoryUUID.apply)
+    val catId: Gen[CategoryId] = Gen.uuid.map(CategoryId.apply)
     private val readableId: Gen[CategoryReadableId] = Gen.alphaNumStr.map(CategoryReadableId.apply)
     private val displayName: Gen[CategoryDisplayName] = Gen.alphaNumStr.map(CategoryDisplayName.apply)
     private val description: Gen[CategoryDescription] = Gen.alphaNumStr.map(CategoryDescription.apply)
     private val selector: Gen[CategorySelector] = Gen.oneOf[CategorySelector](
       CategorySelector.All,
       readableId.flatMap(CategorySelector.RidIs.apply),
-      catId.flatMap((c: CategoryUUID) => CategorySelector.UidIs(c))
+      catId.flatMap((c: CategoryId) => CategorySelector.UidIs(c))
     )
 
-    val update: Gen[CategoryUUID => UpdateCategory] = for {
+    val update: Gen[CategoryId => UpdateCategory] = for {
       a <- Gen.option(readableId)
       b <- Gen.option(displayName)
       c <- Gen.option(description)
-    } yield (id: CategoryUUID) => UpdateCategory(id, a, b, c)
+    } yield (id: CategoryId) => UpdateCategory(id, a, b, c)
 
     val create: Gen[CreateCategory] =
       (catId.map(Option(_)), readableId, displayName, description).mapN(CreateCategory.apply)
     val gen: Gen[Category] = (catId, readableId, displayName, description).mapN(category.Category.apply)
 
-    val query: Gen[CategoryQuery] = {
-      for {
-        s <- selector
-        p <- PageToken.nonEmpty
-      } yield Query(s, p)
-    }
+    val query: Gen[CategoryQuery] = Query.gen(selector)
   }
 
   object Image {
-    val id = Gen.uuid.map(ImageId.apply)
+    val id: Gen[ImageId] = Gen.uuid.map(ImageId.apply)
     private val alt = Gen.alphaNumStr.map(ImageAlt.apply)
     private val src = Gen.alphaNumStr.map(ImageSrc.apply)
 
@@ -67,16 +62,13 @@ object Generators {
       Gen.const(ImageSelector.All),
       id.map(ImageSelector.IdIs.apply)
     )
-    val query: Gen[ImageQuery] = for {
-      s <- selector
-      p <- PageToken.nonEmpty
-    } yield Query(s, p)
+    val query: Gen[ImageQuery] = Query.gen(selector)
 
     def update: Gen[ImageId => BuzzImageUpdate] = Gen.const(id => BuzzImageUpdate(id))
   }
 
   object ImageList {
-    val id = Gen.uuid.map(ImageListId.apply)
+    val id: Gen[ImageListId] = Gen.uuid.map(ImageListId.apply)
     private val imageId = Gen.uuid.map(ImageId.apply)
     private val imageSrc = Gen.alphaNumStr.map(ImageSrc.apply)
     private val imageAlt = Gen.alphaNumStr.map(ImageAlt.apply)
@@ -101,10 +93,7 @@ object Generators {
       Gen.nonEmptyListOf(id).map(NonEmptyList.fromListUnsafe(_)).map(ImageListSelector.IdsIn(_))
     )
 
-    val query: Gen[ImageListQuery] = for {
-      s <- selector
-      p <- PageToken.nonEmpty
-    } yield Query(s, p)
+    val query: Gen[ImageListQuery] = Query.gen(selector)
   }
 
   object ParameterList {
@@ -118,7 +107,7 @@ object Generators {
       (Gen.some(parameterId), parameterDisplayName, Gen.option(imageId), parameterDescription)
         .mapN(CreateParameter.apply)
 
-    val paramListId = Gen.uuid.map(ParameterListId.apply)
+    val paramListId: Gen[ParameterListId] = Gen.uuid.map(ParameterListId.apply)
     private val paramListDisplayName = Gen.alphaNumStr.map(ParamListDisplayName.apply)
 
     val paramList: Gen[ParameterList] =
@@ -135,37 +124,57 @@ object Generators {
       params <- Gen.option(Gen.listOf(createParameter(imageIdGen)).filter(_.nonEmpty))
     } yield id => UpdateParameterList(id, dn, params)
 
-    val query: Gen[ParameterListQuery] = for {
-      s <- Gen.oneOf(
-        Gen.const[ParameterListSelector](ParameterListSelector.All),
-        paramListId.map(ParameterListSelector.IdIs)
-      )
-      p <- PageToken.nonEmpty
-    } yield Query(s, p)
+    private val selector: Gen[ParameterListSelector] = Gen.oneOf(
+      Gen.const[ParameterListSelector](ParameterListSelector.All),
+      paramListId.map(ParameterListSelector.IdIs)
+    )
+
+    val query: Gen[Query[ParameterListSelector]] = Query.gen(selector)
 
     val paramLists: Gen[List[ParameterList]] = Gen.listOf(paramList)
   }
 
   object Model {
-    private val id = Gen.const(ModelId(Gen.uuid.sample.get))
-    private val catId = Gen.const(CategoryUUID(Gen.uuid.sample.get))
+    val id: Gen[ModelId] = Gen.const(ModelId(Gen.uuid.sample.get))
+    private val catId = Gen.const(CategoryId(Gen.uuid.sample.get))
     private val catRid = Gen.alphaNumStr.map(CategoryReadableId.apply)
     private val rId = Gen.alphaNumStr.map(ModelReadableId.apply)
     private val rDisplayName = Gen.alphaNumStr.map(ModelDisplayName.apply)
     private val rDescription = Gen.alphaNumStr.map(ModelDescription.apply)
     private val rMoney = Gen.posNum[Double].map(Money(_, USD)).map(ModelMinimalPrice.apply)
 
-    def createGen(imListId: ImageListId, parameterListIds: List[ParameterListId]): Gen[CreateModel] =
-      (id.map(Option(_)), rId, catId, rDisplayName, rDescription, Gen.const(imListId), Gen.const(parameterListIds))
+    def createGen(
+        imListId: ImageListId,
+        parameterListIds: List[ParameterListId],
+        catId: Gen[CategoryId],
+        idOpt: Option[ModelId] = None
+    ): Gen[CreateModel] =
+      (
+        idOpt.fold[Gen[Option[ModelId]]](id.map(Option(_)))(id => Gen.const(Some(id))),
+        rId,
+        catId,
+        rDisplayName,
+        rDescription,
+        Gen.const(imListId),
+        Gen.const(parameterListIds)
+      )
         .mapN(model.CreateModel.apply)
 
     val gen: Gen[model.Model] =
       (id, rId, catId, catRid, rDisplayName, rDescription, rMoney, ParameterList.paramLists, ImageList.gen())
         .mapN(model.Model.apply)
 
-    def updateGen(imageListId: ImageListId, categoryId: CategoryUUID): Gen[model.UpdateModel] =
+    private val selector: Gen[ModelSelector] = Gen.oneOf(
+      Gen.const(ModelSelector.All),
+      id.map(ModelSelector.IdIs),
+      catId.map(ModelSelector.CategoryIdIs)
+    )
+
+    val query: Gen[Query[ModelSelector]] = Query.gen(selector)
+
+    def updateGen(imageListId: ImageListId, categoryId: CategoryId): Gen[ModelId => model.UpdateModel] =
       (
-        id,
+        Gen.const(id.sample.get),
         Gen.option(rId),
         Gen.option(Gen.const(categoryId)),
         Gen.option(rDisplayName),
@@ -173,22 +182,34 @@ object Generators {
         Gen.option(Gen.const(imageListId))
       )
         .mapN(model.UpdateModel.apply)
+        .map(um => (m: ModelId) => um.copy(id = m))
   }
 
   object PageToken {
-    val nonEmpty = (Gen.posNum[Long], Gen.posNum[Long]).mapN(repository.PageToken.NonEmpty.apply)
+    val nonEmpty: Gen[repository.PageToken.NonEmpty] =
+      (Gen.posNum[Long], Gen.posNum[Long]).mapN(repository.PageToken.NonEmpty.apply)
     val gen: Gen[repository.PageToken] = Gen.oneOf(Gen.const(repository.PageToken.Empty), nonEmpty)
   }
 
+  object Query {
+    def gen[T](s: Gen[T]): Gen[repository.Query[T]] = {
+      for {
+        si <- s
+        p <- PageToken.nonEmpty
+      } yield repository.Query(si, p)
+    }
+  }
+
   object Product {
-    private val id = Gen.uuid.map(ProductId.apply)
+    val id: Gen[ProductId] = Gen.uuid.map(ProductId.apply)
     private val modelId = Gen.uuid.map(ModelId.apply)
     private val displayName = Gen.alphaNumStr.map(ProductDisplayName.apply)
-    private val categoryId = Gen.uuid.map(CategoryUUID.apply)
+    private val categoryId = Gen.uuid.map(CategoryId.apply)
     private val parameterId = Gen.uuid.map(ParameterId.apply)
     private val paramIds = Gen.listOfN(2, parameterId)
     private val standardPrice: Gen[ProductStandardPrice] = Gen.posNum[Double].map(ProductStandardPrice.apply)
     private val promoPrice: Gen[Option[ProductPromoPrice]] = Gen.option(Gen.posNum[Double].map(ProductPromoPrice.apply))
+
     private val price =
       (standardPrice, promoPrice)
         .mapN(ProductPrice.apply)
@@ -196,7 +217,15 @@ object Generators {
       (id, modelId, displayName, categoryId, ImageList.gen(), price, paramIds)
         .mapN(product.Product.apply)
 
-    private val imageListId = Gen.uuid.map(ImageListId.apply)
+    private val s: Gen[ProductSelector] = Gen.oneOf(
+      Gen.const(ProductSelector.All),
+      id.map(ProductSelector.IdIs),
+      Gen.nonEmptyListOf(id).map(NonEmptyList.fromListUnsafe).map(ProductSelector.IdIn),
+      modelId.map(ProductSelector.ModelIs)
+    )
+
+    val query: Gen[Query[ProductSelector]] = Query.gen(s)
+
     def create(imageListId1: ImageListId, modelId1: ModelId, paramIds: List[ParameterId]): Gen[CreateProduct] =
       (
         id.map(Option(_)),
@@ -208,15 +237,9 @@ object Generators {
       )
         .mapN(CreateProduct.apply)
 
-    val update: Gen[UpdateProduct] =
-      (id, Gen.option(imageListId), Gen.option(standardPrice), Gen.option(promoPrice))
+    def update(imageListId1: ImageListId): Gen[ProductId => UpdateProduct] =
+      (Gen.const(id.sample.get), Gen.option(imageListId1), Gen.option(standardPrice), Gen.option(promoPrice))
         .mapN(UpdateProduct.apply)
-        .filter(
-          _.productIterator
-            .collect { case x: Option[_] =>
-              x
-            }
-            .exists(_.isDefined)
-        )
+        .map((x: UpdateProduct) => (id: ProductId) => x.copy(id = id))
   }
 }

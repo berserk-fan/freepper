@@ -10,7 +10,8 @@ select par.*,
                'description', par.description,
                'image', ip.json
            ) as json
-from parameters par left join images_prebuilt ip on par.image_id = ip.id;
+from parameters par
+         left join images_prebuilt ip on par.image_id = ip.id;
 
 CREATE OR REPLACE VIEW parameter_lists_prebuilt AS
 select pl.*,
@@ -20,8 +21,7 @@ select pl.*,
                'parameters',
                COALESCE((select json_agg(pp.json order by pp.list_order)
                          from parameters_prebuilt pp
-                         where pp.parameter_list_id = pl.id
-                         ), '[]'::json)
+                         where pp.parameter_list_id = pl.id), '[]'::json)
            ) as json
 from parameter_lists pl;
 
@@ -30,11 +30,13 @@ SELECT il.*,
        json_build_object(
                'id', il.id,
                'displayName', il.display_name,
-               'images', json_agg(ip.json)
+               'images', COALESCE((select json_agg(ip.json order by ilm.list_order)
+                                   from images_prebuilt ip
+                                            join image_list_member ilm on ip.id = ilm.image_id
+                                   where ilm.image_list_id = il.id), '[]'::json)
            ) as json
 FROM image_lists il
          left join image_list_member ilm on il.id = ilm.image_list_id
-         join images_prebuilt ip on ip.id = ilm.image_id
 GROUP BY il.id
 ;
 
@@ -54,7 +56,7 @@ select m.*,
                                   from model_parameter_lists mpl
                                            left join parameter_lists_prebuilt plp on mpl.parameter_list_id = plp.id
                                   where mpl.model_id = m.id),
-               'imageList', il.json)
+               'imageList', il.json) as json
 from models m
          left join categories c on c.id = m.category_id
          left join image_lists_prebuilt il on il.id = m.image_list_id;

@@ -1,9 +1,9 @@
 package ua.pomo.common.infrastracture.persistance.postgres
 
-import doobie.{Fragment, Fragments, Put, Update0}
 import doobie.implicits.toSqlInterpolator
-import shapeless.{Generic, HList, Nat}
+import doobie.{Fragment, Fragments, Put}
 import shapeless.ops.hlist.{Drop, Mapper, ToTraversable}
+import shapeless.{HList, Nat}
 
 object QueriesHelpers {
   def updateQHelper[TT, U <: HList, U2 <: HList, U3 <: HList](

@@ -50,4 +50,8 @@ object repository {
     def update(req: T#Update): F[Int]
     def delete(id: T#EntityId): F[Int]
   }
+
+  object Repository {
+    type Registry[F[_]] = registry.Registry[Lambda[`T <: Crud` => Repository[F, T]]]
+  }
 }

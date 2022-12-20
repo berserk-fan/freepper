@@ -2,46 +2,47 @@ package ua.pomo.catalog.domain
 
 import cats.data.NonEmptyList
 import derevo.cats.{eqv, show}
+import derevo.circe.magnolia.decoder
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import ua.pomo.catalog.domain.category.CategoryUUID
-import ua.pomo.catalog.domain.parameter._
+import ua.pomo.catalog.domain.category.CategoryId
 import ua.pomo.catalog.domain.imageList.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
+import ua.pomo.catalog.domain.parameter._
 import ua.pomo.common.domain.repository
-import ua.pomo.common.domain.repository.{Crud, CrudOps, EntityDisplayName, PageToken, Query, Repository}
+import ua.pomo.common.domain.repository.{Crud, CrudOps, PageToken, Query, Repository}
 
 import java.util.UUID
 
 object product {
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   @newtype
   case class ProductId(value: UUID)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   @newtype
   case class ProductStandardPrice(value: Double)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   @newtype
   case class ProductPromoPrice(value: Double)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   @newtype
   case class ProductDisplayName(value: String)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   case class ProductPrice(standard: ProductStandardPrice, promo: Option[ProductPromoPrice])
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   case class ProductParameter(standard: ProductStandardPrice, promo: Option[ProductPromoPrice])
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   case class Product(
       id: ProductId,
       modelId: ModelId,
       displayName: ProductDisplayName,
-      categoryId: CategoryUUID,
+      categoryId: CategoryId,
       imageList: ImageList,
       price: ProductPrice,
       parameterIds: List[ParameterId]
@@ -87,7 +88,7 @@ object product {
   @derive(eqv, show)
   case class UpdateProduct(
       id: ProductId,
-      imageList: Option[ImageListId],
+      imageListId: Option[ImageListId],
       price: Option[ProductStandardPrice],
       promoPrice: Option[Option[ProductPromoPrice]]
   )
@@ -106,7 +107,7 @@ object product {
 
       override def getIdEntity(entity: Product): ProductId = entity.id
 
-      override def entityDisplayName: repository.EntityDisplayName = EntityDisplayName("product")
+      override def entityDisplayName: repository.EntityDisplayName = Entity.Product.name
 
       override def getIdCreate(update: CreateProduct): Option[ProductId] = update.id
     }

@@ -2,14 +2,15 @@ package ua.pomo.catalog.infrastructure.persistance.s3
 
 import cats.effect.Async
 import cats.implicits._
+import org.typelevel.log4cats._
 import software.amazon.awssdk.auth.credentials.{AwsBasicCredentials, StaticCredentialsProvider}
 import software.amazon.awssdk.core.async.AsyncRequestBody
 import software.amazon.awssdk.regions.Region
-import software.amazon.awssdk.services.s3.model.{DeleteObjectRequest, ListObjectsV2Request, PutObjectRequest}
 import software.amazon.awssdk.services.s3.S3AsyncClient
+import software.amazon.awssdk.services.s3.model.{DeleteObjectRequest, ListObjectsV2Request, PutObjectRequest}
 import ua.pomo.catalog.AwsConfig
 import ua.pomo.catalog.domain.image._
-import org.typelevel.log4cats._
+
 import scala.jdk.CollectionConverters._
 
 class S3ImageDataRepository[F[_]: Async: LoggerFactory] private (s3: S3AsyncClient, bucketName: String)

@@ -97,11 +97,20 @@ lazy val commonLibs = Seq(
   )
 )
 
+addCommandAlias("fix", "; all compile:scalafix test:scalafix; all scalafmtSbt scalafmtAll")
+
 lazy val grpcServiceSettings = commonLibs ++ Seq(
   // CODE
   runLinter := {
     scalafixAll.toTask(" --rules RemoveUnused").value
   },
+  semanticdbEnabled := true,
+  semanticdbVersion := scalafixSemanticdb.revision,
+  ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaVersion.value),
+  ThisBuild / scalafixDependencies ++= List(
+    "com.github.liancheng" %% "organize-imports" % "0.6.0",
+    "com.github.vovapolu" %% "scaluzzi" % "0.1.23"
+  ),
 
   // RESOURCES
   Runtime / unmanagedResourceDirectories += globalResources,

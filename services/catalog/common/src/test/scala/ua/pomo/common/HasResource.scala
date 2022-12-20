@@ -2,8 +2,8 @@ package ua.pomo.common
 
 import cats.effect.{MonadCancelThrow, Resource}
 import org.scalactic.source
-import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.BeforeAndAfter
+import org.scalatest.funsuite.AnyFunSuite
 
 trait HasResource[F[_]] extends BeforeAndAfter {
   this: AnyFunSuite =>

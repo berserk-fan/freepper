@@ -5,10 +5,9 @@ import derevo.circe.magnolia.decoder
 import derevo.derive
 import io.estatico.newtype.macros.newtype
 import ua.pomo.catalog.domain.image.{Image, ImageId}
+import ua.pomo.common.domain.repository._
 
 import java.util.UUID
-
-import ua.pomo.common.domain.repository._
 
 object parameter {
   @derive(eqv, show, decoder)
@@ -80,7 +79,7 @@ object parameter {
     override type Entity = ParameterList
     override type EntityId = ParameterListId
     override type Selector = ParameterListSelector
-    
+
     implicit val co: CrudOps[ParameterListCrud] = new CrudOps[ParameterListCrud] {
       override def getIdUpdate(update: UpdateParameterList): ParameterListId = update.id
 
@@ -88,7 +87,7 @@ object parameter {
 
       override def getIdEntity(entity: ParameterList): ParameterListId = entity.id
 
-      override def entityDisplayName: EntityDisplayName = EntityDisplayName("parameter-list")
+      override def entityDisplayName: EntityDisplayName = Entity.ParameterList.name
     }
   }
 }

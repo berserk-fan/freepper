@@ -20,15 +20,15 @@ class ApiNameTest extends AnyFunSuite with EitherValues with Matchers {
 
   test("parser") {
     ApiName.category(s"categories/$Uuid").value should equal(
-      CategoryName(CategoryRefId.Uid(CategoryUUID(Uuid)))
+      CategoryName(CategoryRefId.Uid(CategoryId(Uuid)))
     )
 
     ApiName.category(s"categories/$Uuid").value should equal(
-      CategoryName(CategoryRefId.Uid(CategoryUUID(Uuid)))
+      CategoryName(CategoryRefId.Uid(CategoryId(Uuid)))
     )
 
     ApiName.models(s"categories/$Uuid/models").value should equal(
-      ModelsName(CategoryRefId.Uid(CategoryUUID(Uuid)))
+      ModelsName(CategoryRefId.Uid(CategoryId(Uuid)))
     )
 
     ApiName.models(s"categories/$rId/models").value should equal(
@@ -40,7 +40,7 @@ class ApiNameTest extends AnyFunSuite with EitherValues with Matchers {
     )
 
     ApiName.model(s"categories/$Uuid/models/$Uuid2").value should equal(
-      ModelName(CategoryRefId.Uid(CategoryUUID(Uuid)), ModelId(Uuid2))
+      ModelName(CategoryRefId.Uid(CategoryId(Uuid)), ModelId(Uuid2))
     )
 
     ApiName.imageList(s"imageLists/$Uuid").value should equal(
@@ -48,11 +48,11 @@ class ApiNameTest extends AnyFunSuite with EitherValues with Matchers {
     )
 
     ApiName.products(s"categories/$Uuid/models/$Uuid2/products").value should equal(
-      ProductsName(CategoryRefId.Uid(CategoryUUID(Uuid)), ModelId(Uuid2))
+      ProductsName(CategoryRefId.Uid(CategoryId(Uuid)), ModelId(Uuid2))
     )
 
     ApiName.product(s"categories/$Uuid/models/$Uuid2/products/$Uuid3").value should equal(
-      ProductName(CategoryRefId.Uid(CategoryUUID(Uuid)), ModelId(Uuid2), ProductId(Uuid3))
+      ProductName(CategoryRefId.Uid(CategoryId(Uuid)), ModelId(Uuid2), ProductId(Uuid3))
     )
 
     ApiName.image(s"images/$Uuid").value should equal(

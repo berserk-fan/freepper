@@ -13,12 +13,4 @@ object DeprecatedMethods {
         ), '[]'::json))
       """
   }
-
-  def json(imageId: String): Fragment = {
-    sql"""
-           (select json_build_object('id', img.id, 'src', img.src, 'alt', img.alt)
-            from images img
-            where img.id = ${Fragment.const0(imageId)})
-      """
-  }
 }

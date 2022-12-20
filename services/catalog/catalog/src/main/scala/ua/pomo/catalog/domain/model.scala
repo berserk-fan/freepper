@@ -1,10 +1,11 @@
 package ua.pomo.catalog.domain
 
 import derevo.cats._
+import derevo.circe.magnolia.decoder
 import derevo.derive
 import io.estatico.newtype.macros.newtype
 import squants.market.Money
-import ua.pomo.catalog.domain.category.{CategoryReadableId, CategoryUUID}
+import ua.pomo.catalog.domain.category.{CategoryId, CategoryReadableId}
 import ua.pomo.catalog.domain.imageList.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.parameter.{ParameterList, ParameterListId}
 import ua.pomo.common.domain.repository._
@@ -12,35 +13,35 @@ import ua.pomo.common.domain.repository._
 import java.util.UUID
 
 object model {
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   @newtype
   case class ModelId(value: UUID)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   @newtype
   case class ModelReadableId(value: String)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   @newtype
   case class ModelDisplayName(value: String)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   @newtype
   case class ModelDescription(value: String)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   @newtype
   case class ModelImageList(value: ImageList)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   @newtype
   case class ModelMinimalPrice(value: Money)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   case class Model(
       id: ModelId,
       readableId: ModelReadableId,
-      categoryUid: CategoryUUID,
+      categoryUid: CategoryId,
       categoryRid: CategoryReadableId,
       displayName: ModelDisplayName,
       description: ModelDescription,
@@ -53,7 +54,7 @@ object model {
   case class CreateModel(
       id: Option[ModelId],
       readableId: ModelReadableId,
-      categoryId: CategoryUUID,
+      categoryId: CategoryId,
       displayName: ModelDisplayName,
       description: ModelDescription,
       imageListId: ImageListId,
@@ -64,7 +65,7 @@ object model {
   case class UpdateModel(
       id: ModelId,
       readableId: Option[ModelReadableId],
-      categoryId: Option[CategoryUUID],
+      categoryId: Option[CategoryId],
       displayName: Option[ModelDisplayName],
       description: Option[ModelDescription],
       imageListId: Option[ImageListId]
@@ -80,7 +81,7 @@ object model {
   object ModelSelector {
     case object All extends ModelSelector
     case class IdIs(id: ModelId) extends ModelSelector
-    case class CategoryIdIs(id: CategoryUUID) extends ModelSelector
+    case class CategoryIdIs(id: CategoryId) extends ModelSelector
   }
 
   type ModelRepository[F[_]] = Repository[F, Crud.type]
@@ -109,7 +110,7 @@ object model {
 
       override def getIdEntity(entity: Model): ModelId = entity.id
 
-      override def entityDisplayName: EntityDisplayName = EntityDisplayName("model")
+      override def entityDisplayName: EntityDisplayName = Entity.Model.name
 
       override def getIdCreate(update: CreateModel): Option[ModelId] = update.id
     }

@@ -7,9 +7,9 @@ import cats.effect.kernel.Async
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import cats.~>
 import doobie.{ConnectionIO, Transactor}
-import ua.pomo.common.domain.error.NotFound
 import ua.pomo.catalog.domain.product._
-import ua.pomo.catalog.infrastructure.persistance.postgres.ProductInMemoryRepositoryImpl
+import ua.pomo.catalog.infrastructure.persistance.postgres.ProductRepository
+import ua.pomo.common.domain.error.NotFound
 
 private class ProductServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, repository: ProductRepository[G])
     extends ProductService[F] {
@@ -59,7 +59,8 @@ private class ProductServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, reposito
 
 object ProductServiceImpl {
   def makeInMemory[F[_]: Sync]: F[ProductService[F]] = {
-    ProductInMemoryRepositoryImpl[F]
+    ProductRepository
+      .inmemory[F]
       .map(new ProductServiceImpl[F, F](FunctionK.id[F], _))
   }
 

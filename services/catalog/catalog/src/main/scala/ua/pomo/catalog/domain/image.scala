@@ -61,7 +61,7 @@ object image {
 
       override def getIdEntity(entity: Image): ImageId = entity.id
 
-      override def entityDisplayName: EntityDisplayName = EntityDisplayName("image")
+      override def entityDisplayName: EntityDisplayName = Entity.Image.name
 
       override def getIdCreate(update: CreateImageMetadata): Option[ImageId] = update.id
     }

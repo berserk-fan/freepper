@@ -1,7 +1,7 @@
 package ua.pomo.common.infrastracture.persistance.postgres
 
-import ua.pomo.common.domain.repository.{Query, Crud}
 import doobie._
+import ua.pomo.common.domain.repository.{Crud, Query}
 
 trait Queries[T <: Crud] {
   def create(req: T#Create): List[Update0]

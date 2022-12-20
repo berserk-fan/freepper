@@ -1,15 +1,15 @@
 package ua.pomo.catalog
 
-import cats.effect.kernel.Resource
 import cats.effect.IO
+import cats.effect.kernel.Resource
 import cats.kernel.Monoid
-import io.grpc.ServerServiceDefinition
 import fs2.grpc.syntax.all.fs2GrpcSyntaxServerBuilder
+import io.grpc.ServerServiceDefinition
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder
 import org.typelevel.log4cats.LoggerFactory
 import ua.pomo.catalog.api.CatalogFs2Grpc
-import ua.pomo.catalog.app.programs.modifiers.{MessageModifier, PageDefaultsApplier, ReadableIdInNamesResolver}
 import ua.pomo.catalog.app.CatalogImpl
+import ua.pomo.catalog.app.programs.modifiers.{MessageModifier, PageDefaultsApplier, ReadableIdInNamesResolver}
 import ua.pomo.catalog.app.programs.{
   CategoryServiceImpl,
   ImageListServiceImpl,
@@ -21,6 +21,7 @@ import ua.pomo.catalog.domain.image.ImageDataRepository
 import ua.pomo.catalog.infrastructure.persistance.postgres._
 import ua.pomo.catalog.infrastructure.persistance.s3.S3ImageDataRepository
 import ua.pomo.common.TransactorHelpers
+import ua.pomo.common.infrastracture.persistance.RepositoryK
 
 object Server {
   private def serviceResource(
@@ -34,11 +35,11 @@ object Server {
       categoryRepo = CategoryRepository.postgres
       categoryService = CategoryServiceImpl(transactor, categoryRepo)
       imageListService = ImageListServiceImpl(transactor, ImageListRepository.postgres)
-      modelService = ModelServiceImpl(transactor, ModelRepositoryImpl())
-      productService = ProductServiceImpl(transactor, ProductRepositoryImpl())
+      modelService = ModelServiceImpl(transactor, ModelRepository.postgres)
+      productService = ProductServiceImpl(transactor, ProductRepository.postgres)
       imageDataRepository <- imageDataRepositoryLifted
-      imageService = ImageServiceImpl(ImageRepositoryImpl, imageDataRepository, transactor.trans)
-      resolver = ReadableIdInNamesResolver[IO](CategoryRepository.withEffect[IO](transactor.trans))
+      imageService = ImageServiceImpl(ImageRepository.postgres, imageDataRepository, transactor.trans)
+      resolver = ReadableIdInNamesResolver[IO](RepositoryK(CategoryRepository.postgres, transactor.trans))
       pageDefaultsApplier = PageDefaultsApplier[IO](config.api.defaultPageSize)
       modifier = Monoid[MessageModifier[IO]].combineAll(List(resolver, pageDefaultsApplier))
       catalogService = CatalogFs2Grpc.bindServiceResource[IO](

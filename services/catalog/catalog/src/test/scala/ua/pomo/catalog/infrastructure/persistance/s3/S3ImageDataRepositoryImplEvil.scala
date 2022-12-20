@@ -8,7 +8,7 @@ import org.typelevel.log4cats.LoggerFactory
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import ua.pomo.catalog.domain.image.{CreateImageData, ImageData, ImageDataRepository, ImageSrc}
 import ua.pomo.catalog.shared.{ForEachImpl, Resources}
-import ua.pomo.common.{TestIORuntime, HasResource}
+import ua.pomo.common.{HasResource, TestIORuntime}
 
 class S3ImageDataRepositoryImplEvil
     extends AnyFunSuite
@@ -22,7 +22,7 @@ class S3ImageDataRepositoryImplEvil
   override def getImpls(resources: TestRes): Seq[(String, Impl)] = resources.impls
   override def names: Seq[String] = Seq("s3", "inmemory")
 
-   override def runResource[T](r: cats.effect.IO[T]): T = r.unsafeRunSync()(runtime)
+  override def runResource[T](r: cats.effect.IO[T]): T = r.unsafeRunSync()(runtime)
 
   override protected def resource: Resource[IO, TestRes] = for {
     appConfig <- Resources.config
@@ -47,7 +47,7 @@ class S3ImageDataRepositoryImplEvil
     impl.list("").unsafeRunSync() shouldBe empty
   })
 
-  def monadCancelThrow: cats.effect.MonadCancelThrow[cats.effect.IO] = implicitly 
+  def monadCancelThrow: cats.effect.MonadCancelThrow[cats.effect.IO] = implicitly
   def unsafeRun: UnsafeRun[cats.effect.IO] = new UnsafeRun[IO] {
     override def unsafeRunSync[A](fa: IO[A]): A = fa.unsafeRunSync()
   }

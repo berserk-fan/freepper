@@ -8,12 +8,12 @@ import io.grpc.Metadata
 import io.grpc.netty.NettyChannelBuilder
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
-import ua.pomo.catalog.{AppConfig, ServerConfig}
-import ua.pomo.catalog.api.CatalogFs2Grpc
-import ua.pomo.common.config.JdbcDatabaseConfig
-import ua.pomo.common.{AppConfigLoader, DBMigrations, DbResources, TransactorHelpers}
 import pureconfig.generic.auto._
+import ua.pomo.catalog.api.CatalogFs2Grpc
+import ua.pomo.catalog.{AppConfig, ServerConfig}
+import ua.pomo.common.config.JdbcDatabaseConfig
 import ua.pomo.common.domain.Schema
+import ua.pomo.common.{AppConfigLoader, DBMigrations, DbResources, TransactorHelpers}
 
 import java.util.UUID
 

@@ -1,9 +1,9 @@
 package ua.pomo.common
 
 import cats.effect.{MonadCancelThrow, Resource}
+import org.scalactic.source
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalactic.source
 import ua.pomo.common.domain.UnsafeRun
 
 trait HasSuiteResource[F[_]] extends BeforeAndAfterAll {
@@ -13,7 +13,7 @@ trait HasSuiteResource[F[_]] extends BeforeAndAfterAll {
   protected def unsafeRun: UnsafeRun[F]
 
   private implicit lazy val m: MonadCancelThrow[F] = monadCancelThrow
-  private implicit lazy val u: UnsafeRun[F] = unsafeRun
+  unsafeRun
 
   protected type SuiteResource
 

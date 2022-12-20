@@ -1,18 +1,17 @@
 package ua.pomo.catalog.app
 
 import cats.Show
-
-import java.util.UUID
 import cats.implicits.toShow
 import derevo.cats.eqv
 import derevo.derive
 import ua.pomo.catalog.domain.category._
-import ua.pomo.common.domain.error.ValidationErr
 import ua.pomo.catalog.domain.image.ImageId
 import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.product.ProductId
+import ua.pomo.common.domain.error.ValidationErr
 
+import java.util.UUID
 import scala.util.parsing.combinator._
 
 sealed trait ApiName
@@ -23,13 +22,13 @@ object ApiName {
 
   @derive(eqv)
   sealed trait CategoryRefId {
-    def uid: CategoryUUID
+    def uid: CategoryId
   }
   object CategoryRefId {
     case class Readable(rid: CategoryReadableId) extends CategoryRefId {
-      override def uid: CategoryUUID = throw new UnsupportedOperationException(s"CategoryRefId was $this, not Uid.")
+      override def uid: CategoryId = throw new UnsupportedOperationException(s"CategoryRefId was $this, not Uid.")
     }
-    case class Uid(uid: CategoryUUID) extends CategoryRefId
+    case class Uid(uid: CategoryId) extends CategoryRefId
 
     implicit val show: Show[CategoryRefId] = {
       case Readable(value) => value.value.show
@@ -96,7 +95,7 @@ object ApiName {
 
     private def readableId: Parser[String] = "[a-zA-Z-]+".r
     private def categoryRid: Parser[CategoryReadableId] = readableId ^^ CategoryReadableId.apply
-    private def categoryUid: Parser[CategoryUUID] = uuid ^^ CategoryUUID.apply
+    private def categoryUid: Parser[CategoryId] = uuid ^^ CategoryId.apply
     private def categoryId: Parser[CategoryRefId] =
       (categoryUid ^^ CategoryRefId.Uid.apply) | (categoryRid ^^ CategoryRefId.Readable.apply)
 

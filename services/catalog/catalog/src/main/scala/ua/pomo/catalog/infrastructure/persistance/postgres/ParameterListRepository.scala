@@ -1,12 +1,10 @@
 package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import cats.data.NonEmptyList
-import doobie.Fragment
 import doobie.implicits.toSqlInterpolator
 import doobie.postgres.implicits.UuidType
 import doobie.util.Get
-import doobie.ConnectionIO
-import io.circe.Json
+import doobie.{ConnectionIO, Fragment}
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.domain.repository
@@ -18,26 +16,6 @@ import ua.pomo.common.infrastracture.persistance.postgres.{
 }
 
 object ParameterListRepository {
-  object Queries {
-    def jsonList(modelId: String): Fragment = {
-      val imagesQuery = DeprecatedMethods.json("par.image_id")
-
-      fr"""COALESCE( (
-             select json_agg(json_build_object(
-                 'id', pl.id, 
-                 'displayName', pl.display_name, 
-                 'parameters', COALESCE( (
-                     select json_agg(json_build_object(
-                         'id', par.id,
-                         'displayName', par.display_name ,
-                         'image', $imagesQuery) ORDER BY par.list_order)
-                     from parameters par where par.parameter_list_id = pl.id), '[]'))
-                 )
-             from parameter_lists pl join model_parameter_lists mpl on pl.id = mpl.parameter_list_id 
-             WHERE mpl.model_id = ${Fragment.const0(modelId)}
-        ), '[]')"""
-    }
-  }
 
   object ParameterListQueries extends Queries[ParameterListCrud] {
     private def createParameters(p: NonEmptyList[CreateParameter], parameterListId: ParameterListId): Fragment = {
@@ -80,7 +58,7 @@ object ParameterListRepository {
         case ParameterListSelector.All      => fr"""1 = 1"""
         case ParameterListSelector.IdIs(id) => fr"""id = $id"""
       }
-      implicit val getPL: Get[ParameterList] = doobie.Get[Json].temap(_.as[ParameterList].left.map(_.getMessage()))
+      implicit val getPL: Get[ParameterList] = readJsonFromView[ParameterList]
       sql"""
         select json
         from parameter_lists_prebuilt

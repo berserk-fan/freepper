@@ -16,11 +16,11 @@ object imageList {
   @newtype
   case class ImageListId(uuid: UUID)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   @newtype
   case class ImageListDisplayName(value: String)
 
-  @derive(eqv, show)
+  @derive(eqv, show, decoder)
   case class ImageList(id: ImageListId, displayName: ImageListDisplayName, images: List[Image])
 
   @derive(eqv, show)
@@ -49,7 +49,7 @@ object imageList {
     override type EntityId = ImageListId
     override type Selector = ImageListSelector
     implicit val ops: CrudOps[ImageListCrud] = new CrudOps[ImageListCrud] {
-      override val entityDisplayName: EntityDisplayName = EntityDisplayName("imageList")
+      override val entityDisplayName: EntityDisplayName = Entity.ImageList.name
 
       override def getIdUpdate(update: UpdateImageList): ImageListId = update.id
 

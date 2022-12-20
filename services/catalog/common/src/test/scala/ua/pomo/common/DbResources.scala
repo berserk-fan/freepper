@@ -1,6 +1,5 @@
 package ua.pomo.common
 
-import cats.effect.IO
 import doobie.Transactor
 import ua.pomo.common.domain.Schema
 

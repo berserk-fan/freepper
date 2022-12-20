@@ -39,12 +39,12 @@ import ua.pomo.catalog.api.{
 }
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.domain.category._
-import ua.pomo.common.domain.error.ValidationErr
+import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.product._
-import ua.pomo.catalog.domain.image._
+import ua.pomo.common.domain.error.ValidationErr
 import ua.pomo.common.domain.repository.{PageToken, Query}
 
 import java.nio.charset.StandardCharsets
@@ -169,7 +169,7 @@ object Converters {
 
   def toDomain(category: api.Category): Category = {
     Category(
-      CategoryUUID(UUID.randomUUID()),
+      CategoryId(UUID.randomUUID()),
       CategoryReadableId(category.readableId),
       CategoryDisplayName(category.displayName),
       CategoryDescription(category.description)
@@ -180,7 +180,7 @@ object Converters {
     ApiName.image(request.name).toTry.get.id
   }
 
-  def toDomain(request: GetCategoryRequest): CategoryUUID = {
+  def toDomain(request: GetCategoryRequest): CategoryId = {
     ApiName.category(request.name).toTry.get.categoryId.uid
   }
 
@@ -188,7 +188,7 @@ object Converters {
     ApiName.image(request.name).toTry.get.id
   }
 
-  def toDomain(request: DeleteCategoryRequest): CategoryUUID = {
+  def toDomain(request: DeleteCategoryRequest): CategoryId = {
     ApiName.category(request.name).toTry.get.categoryId.uid
   }
 

@@ -7,6 +7,7 @@ import org.flywaydb.core.api.Location
 import org.flywaydb.core.api.configuration.FluentConfiguration
 import org.typelevel.log4cats.Logger
 import ua.pomo.common.config.JdbcDatabaseConfig
+
 import scala.jdk.CollectionConverters._
 object DBMigrations {
 

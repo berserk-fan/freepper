@@ -4,15 +4,15 @@ import cats.arrow.FunctionK
 import cats.effect.{MonadCancelThrow, Sync}
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import cats.~>
-import doobie.{ConnectionIO, Transactor}
 import doobie.implicits._
+import doobie.{ConnectionIO, Transactor}
 import ua.pomo.catalog.domain.category._
-import ua.pomo.common.domain.error.NotFound
 import ua.pomo.catalog.infrastructure.persistance.postgres.CategoryRepository
+import ua.pomo.common.domain.error.NotFound
 
 class CategoryServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, repository: CategoryRepository[G])
     extends CategoryService[F] {
-  override def get(id: CategoryUUID): F[Category] = {
+  override def get(id: CategoryId): F[Category] = {
     repository
       .find(id)
       .flatMap(_.fold(NotFound("category", id).raiseError[G, Category])(_.pure[G]))
@@ -45,7 +45,7 @@ class CategoryServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, repository: Cat
       .mapK(xa)
   }
 
-  override def delete(id: CategoryUUID): F[Unit] = {
+  override def delete(id: CategoryId): F[Unit] = {
     repository.delete(id).as(()).mapK(xa)
   }
 

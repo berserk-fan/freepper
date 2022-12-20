@@ -4,16 +4,16 @@ import cats.effect.kernel.Async
 import cats.implicits._
 import com.google.protobuf.empty.Empty
 import io.grpc.{Metadata, Status}
-import scalapb.validate.{Failure, Success, Validator}
-import ua.pomo.catalog.domain.{category, model, product}
-import ua.pomo.catalog.api._
-import ua.pomo.common.domain.error._
-import ua.pomo.catalog.domain.imageList.ImageListService
-
-import scala.util.Try
 import org.typelevel.log4cats.LoggerFactory
+import scalapb.validate.{Failure, Success, Validator}
+import ua.pomo.catalog.api._
 import ua.pomo.catalog.app.programs.modifiers.MessageModifier
 import ua.pomo.catalog.domain.image.ImageService
+import ua.pomo.catalog.domain.imageList.ImageListService
+import ua.pomo.catalog.domain.{category, model, product}
+import ua.pomo.common.domain.error._
+
+import scala.util.Try
 
 case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     productService: product.ProductService[F],

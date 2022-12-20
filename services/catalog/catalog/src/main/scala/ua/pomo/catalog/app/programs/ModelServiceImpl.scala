@@ -7,9 +7,9 @@ import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, to
 import cats.~>
 import doobie.ConnectionIO
 import doobie.util.transactor.Transactor
-import ua.pomo.common.domain.error.NotFound
 import ua.pomo.catalog.domain.model._
-import ua.pomo.catalog.infrastructure.persistance.postgres.ModelRepositoryImpl
+import ua.pomo.catalog.infrastructure.persistance.postgres.ModelRepository
+import ua.pomo.common.domain.error.NotFound
 
 private class ModelServiceImpl[F[_], G[_]: Sync] private (xa: G ~> F, repository: ModelRepository[G])
     extends ModelService[F] {
@@ -59,8 +59,8 @@ object ModelServiceImpl {
     new ModelServiceImpl[F, ConnectionIO](transactor.trans, repository)
   }
   def makeInMemory[F[_]: Sync]: F[ModelService[F]] =
-    ModelRepositoryImpl
-      .makeInMemory[F]
+    ModelRepository
+      .inmemory[F]
       .map(
         new ModelServiceImpl[F, F](FunctionK.id[F], _)
       )

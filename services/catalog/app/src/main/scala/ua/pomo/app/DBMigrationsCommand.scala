@@ -1,7 +1,7 @@
 package ua.pomo.app
 
-import cats.implicits.{catsSyntaxApplicativeErrorId, toFlatMapOps, toFunctorOps, catsSyntaxApplicativeId}
 import cats.effect.{Async, ExitCode, IO, IOApp}
+import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import org.typelevel.log4cats.{Logger, SelfAwareStructuredLogger}
 import ua.pomo.common.DBMigrations

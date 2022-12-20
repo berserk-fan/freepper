@@ -1,14 +1,14 @@
 package ua.pomo.common
 
 import cats.Monad
-import org.scalacheck.{Gen, Test}
+import cats.syntax.flatMap.toFlatMapOps
 import org.scalacheck.Test.{Passed, Proved, Result}
 import org.scalacheck.effect.PropF
 import org.scalacheck.rng.Seed
 import org.scalacheck.util.Pretty
-import org.scalatest.funsuite.AnyFunSuite
-import cats.syntax.flatMap.toFlatMapOps
+import org.scalacheck.{Gen, Test}
 import org.scalactic.source
+import org.scalatest.funsuite.AnyFunSuite
 
 trait ScalacheckEffectCheckers { self: AnyFunSuite =>
   protected def scalaCheckTestParameters: Test.Parameters = Test.Parameters.default

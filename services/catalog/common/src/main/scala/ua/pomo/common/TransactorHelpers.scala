@@ -1,8 +1,8 @@
 package ua.pomo.common
 
 import cats.effect.Async
-import ua.pomo.common.config.JdbcDatabaseConfig
 import doobie.Transactor
+import ua.pomo.common.config.JdbcDatabaseConfig
 
 import java.util.Properties
 

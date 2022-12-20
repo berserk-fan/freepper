@@ -3,13 +3,9 @@ package ua.pomo.common.infrastracture.persistance.postgres
 import cats.data.OptionT
 import cats.effect.Sync
 import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
-import doobie.implicits.toSqlInterpolator
-import doobie.{ConnectionIO, Fragment, Fragments, Update0}
-import shapeless.{Generic, HList, Nat}
-import shapeless.ops.hlist.{Drop, Mapper, ToTraversable}
-import ua.pomo.common.domain.error.NotFound
+import doobie.{ConnectionIO, Update0}
+import ua.pomo.common.domain.error.{DbErr, NotFound}
 import ua.pomo.common.domain.repository._
-import ua.pomo.common.domain.error.DbErr
 
 abstract class AbstractPostgresRepository[T <: Crud: CrudOps](val queries: Queries[T])
     extends Repository[ConnectionIO, T] {

@@ -3,13 +3,10 @@ package ua.pomo.common.infrastracture.persistance.inmemory
 import cats.MonadThrow
 import cats.effect.Ref
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
-import doobie.Update
 import shapeless._
 import shapeless.ops.hlist.{Drop, Mapper, ToTraversable}
-import ua.pomo.common.domain.repository.{CrudOps, _}
 import ua.pomo.common.domain.error.NotFound
-
-import scala.collection.immutable
+import ua.pomo.common.domain.repository.{CrudOps, _}
 
 abstract class AbstractInMemoryRepository[F[_]: MonadThrow, T <: Crud](ref: Ref[F, Map[T#EntityId, T#Entity]])(implicit
     crudOps: CrudOps[T]
@@ -42,7 +39,7 @@ abstract class AbstractInMemoryRepository[F[_]: MonadThrow, T <: Crud](ref: Ref[
 
   override def delete(id: T#EntityId): F[Int] = ref.modify { map =>
     // qq
-    map.get(id).fold((map, 0))(x => (map - id, 1))
+    map.get(id).fold((map, 0))(_ => (map - id, 1))
   }
 
   protected def updateHelper[U <: HList, U2 <: HList, U3 <: HList, V <: Poly1](
