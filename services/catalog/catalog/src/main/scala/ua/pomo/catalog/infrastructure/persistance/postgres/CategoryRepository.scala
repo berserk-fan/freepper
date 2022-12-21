@@ -8,8 +8,8 @@ import doobie.postgres.implicits._
 import monocle.syntax.all._
 import shapeless.Generic
 import ua.pomo.catalog.domain.category.{CategoryCrud, CategoryDescription, CategoryId, CategorySelector, _}
-import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.domain.crud
+import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.infrastracture.persistance.inmemory.{AbstractInMemoryRepository, InMemoryUpdaterPoly}
 import ua.pomo.common.infrastracture.persistance.postgres.{
   AbstractPostgresRepository,

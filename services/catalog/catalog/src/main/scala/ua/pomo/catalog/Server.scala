@@ -1,15 +1,12 @@
 package ua.pomo.catalog
 
-import cats.effect
 import cats.effect.IO
 import cats.effect.kernel.Resource
 import cats.kernel.Monoid
 import fs2.grpc.syntax.all.fs2GrpcSyntaxServerBuilder
 import io.grpc.ServerServiceDefinition
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder
-import io.netty.util.internal.logging.Slf4JLoggerFactory
 import org.typelevel.log4cats.LoggerFactory
-import org.typelevel.log4cats.slf4j.Slf4jLogger
 import ua.pomo.catalog.api.CatalogFs2Grpc
 import ua.pomo.catalog.app.CatalogImpl
 import ua.pomo.catalog.app.programs.modifiers.{MessageModifier, PageDefaultsApplier, ReadableIdInNamesResolver}

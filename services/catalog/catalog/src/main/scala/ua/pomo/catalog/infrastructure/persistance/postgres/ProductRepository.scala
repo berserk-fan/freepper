@@ -11,8 +11,8 @@ import ua.pomo.catalog.domain.category.CategoryId
 import ua.pomo.catalog.domain.imageList.{ImageList, ImageListDisplayName, ImageListId}
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 import ua.pomo.catalog.domain.product.{Product, ProductId, ProductRepository, ProductSelector, _}
-import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.domain.crud
+import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.infrastracture.persistance.inmemory.{AbstractInMemoryRepository, InMemoryUpdaterPoly}
 import ua.pomo.common.infrastracture.persistance.postgres.{
   AbstractPostgresRepository,

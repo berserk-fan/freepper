@@ -99,19 +99,17 @@ lazy val commonLibs = Seq(
 
 addCommandAlias("fix", "; all compile:scalafix test:scalafix; all scalafmtSbt scalafmtAll")
 
-lazy val grpcServiceSettings = commonLibs ++ Seq(
-  // CODE
-  runLinter := {
-    scalafixAll.toTask(" --rules RemoveUnused").value
-  },
+lazy val scalaFixSettings = Seq(
   semanticdbEnabled := true,
   semanticdbVersion := scalafixSemanticdb.revision,
   ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaVersion.value),
   ThisBuild / scalafixDependencies ++= List(
     "com.github.liancheng" %% "organize-imports" % "0.6.0",
     "com.github.vovapolu" %% "scaluzzi" % "0.1.23"
-  ),
+  )
+)
 
+lazy val grpcServiceSettings = commonLibs ++ scalaFixSettings ++ Seq(
   // RESOURCES
   Runtime / unmanagedResourceDirectories += globalResources,
   Test / unmanagedResourceDirectories += globalResources,
@@ -166,6 +164,7 @@ lazy val catalog = commonServiceSettings(project in file("catalog"))
 
 lazy val app = (project in file("app"))
   .settings(
+    scalaFixSettings,
     name := "app"
   )
   .dependsOn(catalog, common)
@@ -174,8 +173,11 @@ lazy val app = (project in file("app"))
 lazy val runMigrate = inputKey[Unit]("Migrates the database schema.")
 
 lazy val runServer = taskKey[Unit]("Run sbt server")
+
 lazy val root = (project in file("."))
   .settings(
+    // CODE
+    scalaFixSettings,
     name := "pomo",
     // migration
     fullRunInputTask(runMigrate, Compile, "ua.pomo.app.DBMigrationsCommand"),

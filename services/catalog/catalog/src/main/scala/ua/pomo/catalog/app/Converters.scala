@@ -44,8 +44,8 @@ import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.product._
-import ua.pomo.common.domain.error.ValidationErr
 import ua.pomo.common.domain.crud.{PageToken, Query}
+import ua.pomo.common.domain.error.ValidationErr
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}

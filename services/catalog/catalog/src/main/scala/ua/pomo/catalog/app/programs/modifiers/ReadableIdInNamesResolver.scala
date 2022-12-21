@@ -6,8 +6,8 @@ import scalapb.descriptors.{FieldDescriptor, PString, PValue}
 import ua.pomo.catalog.app.ApiName
 import ua.pomo.catalog.app.ApiName.CategoryRefId
 import ua.pomo.catalog.domain.category.{CategoryRepository, CategorySelector}
-import ua.pomo.common.domain.error.NotFound
 import ua.pomo.common.domain.crud.{PageToken, Query}
+import ua.pomo.common.domain.error.NotFound
 
 case class ReadableIdInNamesResolver[F[_]: Sync](categoryRepository: CategoryRepository[F]) extends MessageModifier[F] {
   private def resolve(categoryId: CategoryRefId): F[CategoryRefId] = categoryId match {

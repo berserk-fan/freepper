@@ -6,8 +6,8 @@ import doobie.postgres.implicits.UuidType
 import doobie.util.Get
 import doobie.{ConnectionIO, Fragment}
 import ua.pomo.catalog.domain.parameter._
-import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.domain.crud
+import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.infrastracture.persistance.postgres.{
   AbstractPostgresRepository,
   DbUpdaterPoly,

@@ -1,6 +1,7 @@
 package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import org.scalacheck.Gen
+import ua.pomo.catalog.domain._
 import ua.pomo.catalog.domain.category.{
   Category,
   CategoryCrud,
@@ -14,7 +15,6 @@ import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model.ModelCrud
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.product.ProductCrud
-import ua.pomo.catalog.domain._
 import ua.pomo.catalog.shared.FixturesV2._
 import ua.pomo.catalog.shared.Generators
 import ua.pomo.common.domain.{Generators, crud}

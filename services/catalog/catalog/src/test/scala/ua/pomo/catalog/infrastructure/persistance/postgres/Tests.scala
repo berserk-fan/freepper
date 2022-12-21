@@ -1,7 +1,11 @@
 package ua.pomo.catalog.infrastructure.persistance.postgres
 
-import cats.effect.IO
+import cats.effect.{IO, Sync}
+import cats.syntax.monadError.catsSyntaxMonadError
 import doobie.ConnectionIO
+import doobie.implicits.toSqlInterpolator
+import doobie.postgres.implicits.UuidType
+import org.scalatest.Assertion
 import org.typelevel.log4cats.slf4j.loggerFactoryforSync
 import ua.pomo.catalog.domain.category.CategoryCrud
 import ua.pomo.catalog.domain.image.ImageCrud
@@ -11,12 +15,6 @@ import ua.pomo.catalog.domain.parameter.ParameterListCrud
 import ua.pomo.catalog.domain.product.ProductCrud
 import ua.pomo.catalog.shared.FixturesV2.ModelFixture
 import ua.pomo.common.infrastructure.persistance.postgres.AbstractRepositoryTest
-import cats.effect.Sync
-import cats.syntax.monadError.catsSyntaxMonadError
-import doobie.implicits.toSqlInterpolator
-import doobie.postgres.implicits.UuidType
-
-import org.scalatest.Assertion
 
 class CategoryPostgresRepositoryTest
     extends CatalogAbstractRepositoryTest[ConnectionIO, CategoryCrud](CatalogEntityTests.postgres[CategoryCrud])

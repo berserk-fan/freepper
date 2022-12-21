@@ -6,7 +6,7 @@ import derevo.circe.magnolia.decoder
 import derevo.derive
 import io.estatico.newtype.macros.newtype
 import ua.pomo.catalog.domain.image._
-import ua.pomo.common.domain.crud.{Crud, RepoOps, EntityDisplayName, PageToken, Query, Repository}
+import ua.pomo.common.domain.crud.{Crud, EntityDisplayName, PageToken, Query, RepoOps, Repository}
 
 import java.util.UUID
 
