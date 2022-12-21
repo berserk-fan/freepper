@@ -1,12 +1,15 @@
 package ua.pomo.catalog
 
+import cats.effect
 import cats.effect.IO
 import cats.effect.kernel.Resource
 import cats.kernel.Monoid
 import fs2.grpc.syntax.all.fs2GrpcSyntaxServerBuilder
 import io.grpc.ServerServiceDefinition
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder
+import io.netty.util.internal.logging.Slf4JLoggerFactory
 import org.typelevel.log4cats.LoggerFactory
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 import ua.pomo.catalog.api.CatalogFs2Grpc
 import ua.pomo.catalog.app.CatalogImpl
 import ua.pomo.catalog.app.programs.modifiers.{MessageModifier, PageDefaultsApplier, ReadableIdInNamesResolver}
@@ -23,51 +26,53 @@ import ua.pomo.catalog.infrastructure.persistance.s3.S3ImageDataRepository
 import ua.pomo.common.TransactorHelpers
 import ua.pomo.common.infrastracture.persistance.RepositoryK
 
-object Server {
-  private def serviceResource(
-      config: AppConfig,
-      imageDataRepositoryLifted: IO[ImageDataRepository[IO]]
-  )(implicit e: LoggerFactory[IO]): IO[Resource[IO, ServerServiceDefinition]] = {
+abstract class Server {
+
+  def imageDataRepositoryResource(config: AppConfig)(implicit
+      lf: LoggerFactory[IO]
+  ): Resource[IO, ImageDataRepository[IO]]
+
+  def serviceResource(
+      config: AppConfig
+  )(implicit e: LoggerFactory[IO]): Resource[IO, ServerServiceDefinition] = {
     for {
-      logger <- LoggerFactory[IO].create
-      _ <- logger.info("Creating catalog service...")
+      logger <- Resource.eval(LoggerFactory[IO].create)
+      _ <- Resource.eval(logger.info("Creating catalog service..."))
       transactor = TransactorHelpers.fromConfig[IO](config.jdbc)
       categoryRepo = CategoryRepository.postgres
       categoryService = CategoryServiceImpl(transactor, categoryRepo)
       imageListService = ImageListServiceImpl(transactor, ImageListRepository.postgres)
       modelService = ModelServiceImpl(transactor, ModelRepository.postgres)
       productService = ProductServiceImpl(transactor, ProductRepository.postgres)
-      imageDataRepository <- imageDataRepositoryLifted
+      imageDataRepository <- imageDataRepositoryResource(config)
       imageService = ImageServiceImpl(ImageRepository.postgres, imageDataRepository, transactor.trans)
       resolver = ReadableIdInNamesResolver[IO](RepositoryK(CategoryRepository.postgres, transactor.trans))
       pageDefaultsApplier = PageDefaultsApplier[IO](config.api.defaultPageSize)
       modifier = Monoid[MessageModifier[IO]].combineAll(List(resolver, pageDefaultsApplier))
-      catalogService = CatalogFs2Grpc.bindServiceResource[IO](
+      catalogService <- CatalogFs2Grpc.bindServiceResource[IO](
         CatalogImpl(productService, categoryService, modelService, imageListService, imageService, modifier)
       )
     } yield catalogService
   }
 
-  def serverResource(
-      config: AppConfig,
-      imageDataRepositoryLifted: IO[ImageDataRepository[IO]]
-  )(implicit e: LoggerFactory[IO]): IO[Resource[IO, io.grpc.Server]] = {
+  def serverResource(config: AppConfig)(implicit e: LoggerFactory[IO]): Resource[IO, io.grpc.Server] = {
     for {
-      service <- serviceResource(config, imageDataRepositoryLifted)
-    } yield service.flatMap { s =>
-      NettyServerBuilder
+      service <- serviceResource(config)
+      res <- NettyServerBuilder
         .forPort(config.server.serverPort)
-        .addService(s)
+        .addService(service)
         .resource[IO]
         .evalMap(server => IO(server.start()))
-    }
+    } yield res
   }
+}
 
-  def prodService(
-      config: AppConfig
-  )(implicit e: LoggerFactory[IO]): IO[Resource[IO, io.grpc.ServerServiceDefinition]] = {
-    for {
-      service <- Server.serviceResource(config, S3ImageDataRepository[IO](config.aws))
-    } yield service
+object Server {
+  def production: Server = new Server {
+    override def imageDataRepositoryResource(
+        config: AppConfig
+    )(implicit lf: LoggerFactory[IO]): Resource[IO, ImageDataRepository[IO]] = {
+      Resource.eval { S3ImageDataRepository[IO](config.aws) }
+    }
   }
 }

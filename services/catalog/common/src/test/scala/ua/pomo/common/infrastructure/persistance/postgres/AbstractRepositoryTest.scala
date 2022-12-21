@@ -12,8 +12,8 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.{Assertion, EitherValues}
 import org.typelevel.log4cats.LoggerFactory
+import ua.pomo.common.domain.crud.Crud
 import ua.pomo.common.domain.error.NotFound
-import ua.pomo.common.domain.repository.Crud
 import ua.pomo.common.domain.{EntityTest, UnsafeRun}
 import ua.pomo.common.infrastructure.persistance.postgres.AbstractRepositoryTest.TestContract
 import ua.pomo.common.{HasSuiteResource, ScalacheckEffectCheckers}

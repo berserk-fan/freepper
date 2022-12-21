@@ -1,8 +1,8 @@
 package ua.pomo.common.infrastracture.persistance
 
 import cats.arrow.FunctionK
-import ua.pomo.common.domain.repository
-import ua.pomo.common.domain.repository.{Crud, Repository}
+import ua.pomo.common.domain.crud
+import ua.pomo.common.domain.crud.{Crud, Repository}
 
 case class RepositoryK[F[_], G[_], T <: Crud] private (r: Repository[F, T], xa: FunctionK[F, G])
     extends Repository[G, T] {
@@ -12,7 +12,7 @@ case class RepositoryK[F[_], G[_], T <: Crud] private (r: Repository[F, T], xa: 
 
   override def find(id: T#EntityId): G[Option[T#Entity]] = xa(r.find(id))
 
-  override def findAll(req: repository.Query[T#Selector]): G[List[T#Entity]] = xa(r.findAll(req))
+  override def findAll(req: crud.Query[T#Selector]): G[List[T#Entity]] = xa(r.findAll(req))
 
   override def update(req: T#Update): G[Int] = xa(r.update(req))
 

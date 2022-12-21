@@ -4,7 +4,7 @@ import cats.implicits.{catsSyntaxApplicativeError, toFlatMapOps, toFunctorOps}
 import cats.{Monad, MonadThrow, ~>}
 import org.typelevel.log4cats.LoggerFactory
 import ua.pomo.catalog.domain.image._
-import ua.pomo.common.domain.repository.Query
+import ua.pomo.common.domain.crud.Query
 
 case class ImageServiceImpl[DBIO[_]: Monad, F[_]: MonadThrow: LoggerFactory] private (
     repo: ImageRepository[DBIO],

@@ -10,26 +10,27 @@ import org.typelevel.log4cats.slf4j.Slf4jFactory
 import ua.pomo.catalog
 
 object Server extends IOApp.Simple {
-  def prodServer: IO[Resource[IO, io.grpc.Server]] = {
+  private def prodServer: Resource[IO, io.grpc.Server] = {
     implicit val loggerFactory: LoggerFactory[IO] = Slf4jFactory[IO]
 
     for {
-      logger <- LoggerFactory[IO].create
-      _ <- logger.info("Starting up app. And yees I start catalog service and maybe other services... )))")
-      config <- ConfigLoader.load[IO](Service.MainService)
-      catalogConfig <- ConfigLoader.load[IO](Service.Catalog)
-      catalogService <- catalog.Server.prodService(catalogConfig)
-    } yield catalogService.flatMap { s =>
-      NettyServerBuilder
+      logger <- Resource.eval(LoggerFactory[IO].create)
+      _ <- Resource.eval(
+        logger.info("Starting up an app. And yees I start catalog service and maybe other services... )))")
+      )
+      config <- Resource.eval(ConfigLoader.load[IO](Service.MainService))
+      catalogConfig <- Resource.eval(ConfigLoader.load[IO](Service.Catalog))
+      catalogService <- catalog.Server.production.serviceResource(catalogConfig)
+      res <- NettyServerBuilder
         .forPort(config.serverPort)
-        .addService(s)
+        .addService(catalogService)
         .addService(ProtoReflectionService.newInstance())
         .resource[IO]
         .evalMap(server => IO(server.start()))
-    }
+    } yield res
   }
 
   override def run: IO[Nothing] = {
-    prodServer.flatMap(_.useForever)
+    prodServer.useForever
   }
 }

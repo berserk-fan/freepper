@@ -12,7 +12,7 @@ import ua.pomo.catalog.domain.imageList.{ImageList, ImageListDisplayName, ImageL
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 import ua.pomo.catalog.domain.product.{Product, ProductId, ProductRepository, ProductSelector, _}
 import ua.pomo.common.domain.error.DbErr
-import ua.pomo.common.domain.repository
+import ua.pomo.common.domain.crud
 import ua.pomo.common.infrastracture.persistance.inmemory.{AbstractInMemoryRepository, InMemoryUpdaterPoly}
 import ua.pomo.common.infrastracture.persistance.postgres.{
   AbstractPostgresRepository,
@@ -77,7 +77,7 @@ object ProductRepository {
         promoPrice: Option[ProductPromoPrice]
     )
 
-    override def find(query: repository.Query[ProductSelector]): doobie.Query0[Product] = {
+    override def find(query: crud.Query[ProductSelector]): doobie.Query0[Product] = {
       implicit val readListImage: Get[Product] = readJsonFromView[Product]
       val limitOffset = compileToken(query.page)
       val sql1 =

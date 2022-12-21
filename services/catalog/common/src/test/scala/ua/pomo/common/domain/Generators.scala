@@ -1,7 +1,7 @@
 package ua.pomo.common.domain
 
 import org.scalacheck.Gen
-import ua.pomo.common.domain.repository.{Crud, Query}
+import ua.pomo.common.domain.crud.{Crud, Query}
 
 trait Generators[T <: Crud] {
   def create: Gen[T#Create]

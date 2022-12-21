@@ -1,6 +1,6 @@
 package ua.pomo.catalog.domain
 
-import ua.pomo.common.domain.repository.EntityDisplayName
+import ua.pomo.common.domain.crud.EntityDisplayName
 
 sealed abstract class Entity(val name: EntityDisplayName)
 object Entity {

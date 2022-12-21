@@ -7,7 +7,7 @@ import ua.pomo.catalog.domain.model.ModelCrud
 import ua.pomo.catalog.domain.parameter.ParameterListCrud
 import ua.pomo.catalog.domain.product.ProductCrud
 import ua.pomo.common.domain.registry
-import ua.pomo.common.domain.repository.Crud
+import ua.pomo.common.domain.crud.Crud
 
 import scala.ValueOf
 

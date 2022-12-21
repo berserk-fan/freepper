@@ -9,8 +9,8 @@ import ua.pomo.catalog.domain.category.CategoryId
 import ua.pomo.catalog.domain.imageList.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 import ua.pomo.catalog.domain.parameter._
-import ua.pomo.common.domain.repository
-import ua.pomo.common.domain.repository.{Crud, CrudOps, PageToken, Query, Repository}
+import ua.pomo.common.domain.crud
+import ua.pomo.common.domain.crud.{Crud, RepoOps, PageToken, Query, Repository}
 
 import java.util.UUID
 
@@ -102,12 +102,12 @@ object product {
     override type Entity = Product
     override type EntityId = ProductId
     override type Selector = ProductSelector
-    implicit val ops: CrudOps[ProductCrud] = new CrudOps[ProductCrud] {
+    implicit val ops: RepoOps[ProductCrud] = new RepoOps[ProductCrud] {
       override def getIdUpdate(update: UpdateProduct): ProductId = update.id
 
       override def getIdEntity(entity: Product): ProductId = entity.id
 
-      override def entityDisplayName: repository.EntityDisplayName = Entity.Product.name
+      override def entityDisplayName: crud.EntityDisplayName = Entity.Product.name
 
       override def getIdCreate(update: CreateProduct): Option[ProductId] = update.id
     }

@@ -9,7 +9,7 @@ import ua.pomo.catalog.api.{ListModelsRequest, UpdateCategoryRequest}
 import ua.pomo.catalog.app.ApiName.{CategoryName, CategoryRefId}
 import ua.pomo.catalog.domain.category.CategoryId
 import ua.pomo.catalog.domain.model.ModelSelector
-import ua.pomo.common.domain.repository.{PageToken, Query}
+import ua.pomo.common.domain.crud.{PageToken, Query}
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}

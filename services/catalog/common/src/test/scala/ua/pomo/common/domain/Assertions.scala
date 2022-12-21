@@ -1,6 +1,6 @@
 package ua.pomo.common.domain
 
-import ua.pomo.common.domain.repository.Crud
+import ua.pomo.common.domain.crud.Crud
 
 trait Assertions[T <: Crud] {
   def update(c: T#Update, v: T#Entity): Any

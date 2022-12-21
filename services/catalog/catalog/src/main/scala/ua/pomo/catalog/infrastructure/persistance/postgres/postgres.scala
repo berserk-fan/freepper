@@ -19,7 +19,7 @@ import ua.pomo.catalog.domain.imageList.ImageListCrud
 import ua.pomo.catalog.domain.model.ModelCrud
 import ua.pomo.catalog.domain.parameter.ParameterListCrud
 import ua.pomo.catalog.domain.product.ProductCrud
-import ua.pomo.common.domain.repository.{Crud, PageToken, Repository}
+import ua.pomo.common.domain.crud.{Crud, PageToken, Repository}
 
 package object postgres {
   implicit def newTypePut[B, A](implicit ev: Coercible[B, A], evp: Put[A]): Put[B] = evp.contramap[B](ev(_))

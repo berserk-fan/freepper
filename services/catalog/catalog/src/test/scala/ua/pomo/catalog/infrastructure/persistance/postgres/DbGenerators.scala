@@ -14,10 +14,10 @@ import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model.ModelCrud
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.product.ProductCrud
-import ua.pomo.catalog.domain.{product, _}
+import ua.pomo.catalog.domain._
 import ua.pomo.catalog.shared.FixturesV2._
 import ua.pomo.catalog.shared.Generators
-import ua.pomo.common.domain.{Generators, repository}
+import ua.pomo.common.domain.{Generators, crud}
 
 object DbGenerators {
 
@@ -68,7 +68,7 @@ object DbGenerators {
     override def create: Gen[CreateImageList] =
       Generators.ImageList.genCreate(Gen.someOf(ImageFixture.images.map(_.id.get)).map(_.toList))
 
-    override def query: Gen[repository.Query[ImageListSelector]] = Generators.ImageList.query
+    override def query: Gen[crud.Query[ImageListSelector]] = Generators.ImageList.query
 
     override def id: Gen[ImageListId] = Generators.ImageList.id
   }
@@ -99,7 +99,7 @@ object DbGenerators {
 
     override def id: Gen[model.ModelId] = Generators.Model.id
 
-    override def query: Gen[repository.Query[model.ModelSelector]] = Generators.Model.query
+    override def query: Gen[crud.Query[model.ModelSelector]] = Generators.Model.query
   }
 
   private case object ProductGenerators extends Generators[ProductCrud] {
@@ -111,7 +111,7 @@ object DbGenerators {
 
     override def id: Gen[product.ProductId] = Generators.Product.id
 
-    override def query: Gen[repository.Query[product.ProductSelector]] = Generators.Product.query
+    override def query: Gen[crud.Query[product.ProductSelector]] = Generators.Product.query
 
     override def create: Gen[product.CreateProduct] = {
       Generators.Product.create(

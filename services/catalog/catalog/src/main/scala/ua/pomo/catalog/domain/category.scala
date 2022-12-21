@@ -4,8 +4,8 @@ import derevo.cats._
 import derevo.circe.magnolia.decoder
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import ua.pomo.common.domain.repository
-import ua.pomo.common.domain.repository.{Crud, CrudOps, EntityDisplayName, PageToken, Query, Repository}
+import ua.pomo.common.domain.crud
+import ua.pomo.common.domain.crud.{Crud, RepoOps, EntityDisplayName, PageToken, Query, Repository}
 
 import java.util.UUID
 
@@ -83,7 +83,7 @@ object category {
     override type Entity = Category
     override type EntityId = CategoryId
     override type Selector = CategorySelector
-    implicit val ops: repository.CrudOps[CategoryCrud] = new CrudOps[CategoryCrud] {
+    implicit val ops: crud.RepoOps[CategoryCrud] = new RepoOps[CategoryCrud] {
       override def getIdUpdate(update: UpdateCategory): CategoryId = update.id
 
       override def getIdEntity(entity: Category): CategoryId = entity.id

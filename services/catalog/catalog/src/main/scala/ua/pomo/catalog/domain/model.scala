@@ -8,7 +8,7 @@ import squants.market.Money
 import ua.pomo.catalog.domain.category.{CategoryId, CategoryReadableId}
 import ua.pomo.catalog.domain.imageList.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.parameter.{ParameterList, ParameterListId}
-import ua.pomo.common.domain.repository._
+import ua.pomo.common.domain.crud._
 
 import java.util.UUID
 
@@ -105,7 +105,7 @@ object model {
     override type Entity = Model
     override type EntityId = ModelId
     override type Selector = ModelSelector
-    implicit val ops: CrudOps[ModelCrud] = new CrudOps[ModelCrud] {
+    implicit val ops: RepoOps[ModelCrud] = new RepoOps[ModelCrud] {
       override def getIdUpdate(update: UpdateModel): ModelId = update.id
 
       override def getIdEntity(entity: Model): ModelId = entity.id

@@ -17,7 +17,7 @@ import ua.pomo.catalog.domain.model.ModelCrud
 import ua.pomo.catalog.domain.parameter.ParameterListCrud
 import ua.pomo.catalog.domain.product.ProductCrud
 import ua.pomo.catalog.shared.FixturesV2
-import ua.pomo.common.domain.repository.{Crud, CrudOps}
+import ua.pomo.common.domain.crud.{Crud, RepoOps}
 import ua.pomo.common.domain.{EntityTest, Schema}
 import ua.pomo.common.{AppConfigLoader, DBMigrations, TransactorHelpers}
 
@@ -26,13 +26,13 @@ object CatalogEntityTests {
     Sync[IO].blocking(println("Shutting down dbModuleTest"))
   )
 
-  private val crudOps = new Registry[CrudOps] {
-    override def category: CrudOps[CategoryCrud] = implicitly
-    override def image: CrudOps[ImageCrud] = implicitly
-    override def imageList: CrudOps[ImageListCrud] = implicitly
-    override def model: CrudOps[ModelCrud] = implicitly
-    override def product: CrudOps[ProductCrud] = implicitly
-    override def parameterList: CrudOps[ParameterListCrud] = implicitly
+  private val crudOps = new Registry[RepoOps] {
+    override def category: RepoOps[CategoryCrud] = implicitly
+    override def image: RepoOps[ImageCrud] = implicitly
+    override def imageList: RepoOps[ImageListCrud] = implicitly
+    override def model: RepoOps[ModelCrud] = implicitly
+    override def product: RepoOps[ProductCrud] = implicitly
+    override def parameterList: RepoOps[ParameterListCrud] = implicitly
   }
 
   def inmemory[T <: Crud: ValueOf]: Resource[IO, EntityTest[IO, IO, T]] = {
@@ -53,10 +53,10 @@ object CatalogEntityTests {
     } yield inMemoryET
   }
 
-  def postgres[T <: Crud: ValueOf: CrudOps]: Resource[IO, EntityTest[ConnectionIO, IO, T]] = {
+  def postgres[T <: Crud: ValueOf: RepoOps]: Resource[IO, EntityTest[ConnectionIO, IO, T]] = {
     for {
       _ <- welcomeResource
-      crudName = CrudOps[T].entityDisplayName
+      crudName = RepoOps[T].entityDisplayName
       config <- Resource.eval(AppConfigLoader.loadDefault[IO, AppConfig]("catalog")).map { cfg =>
         cfg.copy(jdbc = cfg.jdbc.copy(schema = s"${crudName.value}-postgres-test-schema".toLowerCase))
       }

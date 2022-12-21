@@ -9,7 +9,7 @@ import monocle.syntax.all._
 import shapeless.Generic
 import ua.pomo.catalog.domain.category.{CategoryCrud, CategoryDescription, CategoryId, CategorySelector, _}
 import ua.pomo.common.domain.error.DbErr
-import ua.pomo.common.domain.repository
+import ua.pomo.common.domain.crud
 import ua.pomo.common.infrastracture.persistance.inmemory.{AbstractInMemoryRepository, InMemoryUpdaterPoly}
 import ua.pomo.common.infrastracture.persistance.postgres.{
   AbstractPostgresRepository,
@@ -45,7 +45,7 @@ object CategoryRepository {
               where id=$id""".update
     })
 
-    override def find(req: repository.Query[CategorySelector]): doobie.Query0[Category] = {
+    override def find(req: crud.Query[CategorySelector]): doobie.Query0[Category] = {
       val where = req.selector match {
         case CategorySelector.RidIs(rid) => fr"readable_id = $rid"
         case CategorySelector.UidIs(uid) => fr"id = $uid"

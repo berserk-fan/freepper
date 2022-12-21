@@ -4,10 +4,10 @@ import cats.data.OptionT
 import cats.effect.Sync
 import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
 import doobie.{ConnectionIO, Update0}
+import ua.pomo.common.domain.crud._
 import ua.pomo.common.domain.error.{DbErr, NotFound}
-import ua.pomo.common.domain.repository._
 
-abstract class AbstractPostgresRepository[T <: Crud: CrudOps](val queries: Queries[T])
+abstract class AbstractPostgresRepository[T <: Crud: RepoOps](val queries: Queries[T])
     extends Repository[ConnectionIO, T] {
   protected def idSelector: T#EntityId => T#Selector
 
@@ -16,7 +16,7 @@ abstract class AbstractPostgresRepository[T <: Crud: CrudOps](val queries: Queri
   }
 
   override def create(model: T#Create): ConnectionIO[T#EntityId] = {
-    CrudOps[T]
+    RepoOps[T]
       .getIdCreate(model)
       .fold(Sync[ConnectionIO].raiseError[T#EntityId](DbErr(s"Can't create entity. No id provided. command: $model"))) {
         id =>
@@ -25,7 +25,7 @@ abstract class AbstractPostgresRepository[T <: Crud: CrudOps](val queries: Queri
   }
 
   override def get(id: T#EntityId): ConnectionIO[T#Entity] = {
-    OptionT(find(id)).getOrElseF(NotFound(CrudOps[T].entityDisplayName.value, id).raiseError[ConnectionIO, T#Entity])
+    OptionT(find(id)).getOrElseF(NotFound(RepoOps[T].entityDisplayName.value, id).raiseError[ConnectionIO, T#Entity])
   }
 
   override def find(id: T#EntityId): ConnectionIO[Option[T#Entity]] = {

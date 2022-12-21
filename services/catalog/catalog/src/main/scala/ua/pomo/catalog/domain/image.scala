@@ -4,7 +4,7 @@ import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.decoder
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import ua.pomo.common.domain.repository.{Crud, CrudOps, EntityDisplayName, PageToken, Query, Repository}
+import ua.pomo.common.domain.crud.{Crud, RepoOps, EntityDisplayName, PageToken, Query, Repository}
 
 import java.util.UUID
 
@@ -56,7 +56,7 @@ object image {
     override type Entity = Image
     override type EntityId = ImageId
     override type Selector = ImageSelector
-    implicit val ops: CrudOps[ImageCrud] = new CrudOps[ImageCrud] {
+    implicit val ops: RepoOps[ImageCrud] = new RepoOps[ImageCrud] {
       override def getIdUpdate(update: BuzzImageUpdate): ImageId = update.id
 
       override def getIdEntity(entity: Image): ImageId = entity.id

@@ -36,7 +36,7 @@ import ua.pomo.catalog.domain.parameter.{
 import ua.pomo.catalog.domain.product.ProductCrud
 import ua.pomo.catalog.domain.{Registry, image, imageList, parameter, product}
 import ua.pomo.common.domain.Fixture
-import ua.pomo.common.domain.repository.{Crud, Repository}
+import ua.pomo.common.domain.crud.{Crud, Repository}
 
 import java.util.UUID
 

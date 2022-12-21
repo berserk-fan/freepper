@@ -12,8 +12,8 @@ import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.product._
 import ua.pomo.catalog.domain.{category, image, imageList, model, parameter, product}
-import ua.pomo.common.domain.repository
-import ua.pomo.common.domain.repository.Query
+import ua.pomo.common.domain.crud
+import ua.pomo.common.domain.crud.Query
 
 object Generators {
   implicit class ToLazyListOps[T](g: Gen[T]) {
@@ -186,17 +186,17 @@ object Generators {
   }
 
   object PageToken {
-    val nonEmpty: Gen[repository.PageToken.NonEmpty] =
-      (Gen.posNum[Long], Gen.posNum[Long]).mapN(repository.PageToken.NonEmpty.apply)
-    val gen: Gen[repository.PageToken] = Gen.oneOf(Gen.const(repository.PageToken.Empty), nonEmpty)
+    val nonEmpty: Gen[crud.PageToken.NonEmpty] =
+      (Gen.posNum[Long], Gen.posNum[Long]).mapN(crud.PageToken.NonEmpty.apply)
+    val gen: Gen[crud.PageToken] = Gen.oneOf(Gen.const(crud.PageToken.Empty), nonEmpty)
   }
 
   object Query {
-    def gen[T](s: Gen[T]): Gen[repository.Query[T]] = {
+    def gen[T](s: Gen[T]): Gen[crud.Query[T]] = {
       for {
         si <- s
         p <- PageToken.nonEmpty
-      } yield repository.Query(si, p)
+      } yield crud.Query(si, p)
     }
   }
 

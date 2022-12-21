@@ -5,8 +5,10 @@ import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import io.estatico.newtype.macros.newtype
 
-object repository {
+object crud {
   case class Query[T](selector: T, page: PageToken.NonEmpty)
+  case class ListResponse[T](entities: List[T], page: PageToken)
+
   @derive(eqv, show)
   sealed trait PageToken
   object PageToken {
@@ -31,15 +33,15 @@ object repository {
     type Selector
   }
 
-  trait CrudOps[T <: Crud] {
+  trait RepoOps[T <: Crud] {
     def getIdUpdate(update: T#Update): T#EntityId
     def getIdCreate(update: T#Create): Option[T#EntityId]
     def getIdEntity(entity: T#Entity): T#EntityId
     def entityDisplayName: EntityDisplayName
   }
 
-  object CrudOps {
-    def apply[T <: Crud: CrudOps]: CrudOps[T] = implicitly[CrudOps[T]]
+  object RepoOps {
+    def apply[T <: Crud: RepoOps]: RepoOps[T] = implicitly[RepoOps[T]]
   }
 
   trait Repository[F[_], T <: Crud] {
@@ -54,4 +56,26 @@ object repository {
   object Repository {
     type Registry[F[_]] = registry.Registry[Lambda[`T <: Crud` => Repository[F, T]]]
   }
+
+  trait ServiceOps[T <: Crud] {
+    def getIdUpdate(update: T#Update): T#EntityId
+    def entityDisplayName: EntityDisplayName
+  }
+
+  object ServiceOps {
+    def apply[T <: Crud: ServiceOps]: ServiceOps[T] = implicitly[ServiceOps[T]]
+  }
+
+  trait Service[F[_], T <: Crud] {
+    def create(createCommand: T#Create): F[T#Entity]
+
+    def get(id: T#EntityId): F[T#Entity]
+
+    def findAll(req: Query[T#Selector]): F[ListResponse[T#Entity]]
+
+    def update(updateCommand: T#Update): F[T#Entity]
+
+    def delete(id: T#EntityId): F[Unit]
+  }
+
 }

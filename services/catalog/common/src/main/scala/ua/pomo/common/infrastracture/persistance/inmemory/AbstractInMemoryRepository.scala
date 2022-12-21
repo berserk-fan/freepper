@@ -5,11 +5,11 @@ import cats.effect.Ref
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import shapeless._
 import shapeless.ops.hlist.{Drop, Mapper, ToTraversable}
+import ua.pomo.common.domain.crud._
 import ua.pomo.common.domain.error.NotFound
-import ua.pomo.common.domain.repository.{CrudOps, _}
 
 abstract class AbstractInMemoryRepository[F[_]: MonadThrow, T <: Crud](ref: Ref[F, Map[T#EntityId, T#Entity]])(implicit
-    crudOps: CrudOps[T]
+    crudOps: RepoOps[T]
 ) extends Repository[F, T] {
   protected def creator: T#Create => T#Entity
   protected def filter: T#Selector => T#Entity => Boolean

@@ -1,6 +1,6 @@
 package ua.pomo.common.domain.registry
 
-import ua.pomo.common.domain.repository.{Crud, CrudOps}
+import ua.pomo.common.domain.crud.Crud
 
 trait RegistryMapper[F[_], G[_]] {
   def apply[T <: Crud](f: F[T]): G[T]

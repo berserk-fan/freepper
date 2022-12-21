@@ -1,14 +1,12 @@
 package ua.pomo.common.domain.registry
 
-import ua.pomo.common.domain.repository.{Crud, CrudOps}
+import ua.pomo.common.domain.crud.Crud
 
 trait Registry[F[_ <: Crud]] {
   def apply[T <: Crud: ValueOf]: F[T]
 }
 
 object Registry {
-  type Const[T] = Registry[Lambda[U => T]]
-
   def const[U](t: U): Registry[Lambda[`X <: Crud` => U]] = new Registry[Lambda[`X <: Crud` => U]] {
     override def apply[T <: Crud: ValueOf]: U = t
   }

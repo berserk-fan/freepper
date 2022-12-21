@@ -2,6 +2,10 @@ package ua.pomo.common.domain
 
 import cats.effect.{IO, unsafe}
 
+import scala.annotation.implicitNotFound
+@implicitNotFound(
+  "Could not find an implicit UnsafeRun[${F}]. If T is IO make sure you have implicit IORuntime in scope"
+)
 trait UnsafeRun[F[_]] {
   def unsafeRunSync[T](f: F[T]): T
 }
