@@ -42,4 +42,27 @@ object Registry {
       }
     }
   }
+
+  def usingImplicits[F[_ <: Crud]](implicit
+      f1: F[CategoryCrud],
+      f2: F[ImageCrud],
+      f3: F[ImageListCrud],
+      f4: F[ModelCrud],
+      f5: F[ProductCrud],
+      f6: F[ParameterListCrud]
+  ): Registry[F] = {
+    new Registry[F] {
+      override def category: F[CategoryCrud] = f1
+
+      override def image: F[ImageCrud] = f2
+
+      override def imageList: F[ImageListCrud] = f3
+
+      override def model: F[ModelCrud] = f4
+
+      override def product: F[ProductCrud] = f5
+
+      override def parameterList: F[ParameterListCrud] = f6
+    }
+  }
 }
