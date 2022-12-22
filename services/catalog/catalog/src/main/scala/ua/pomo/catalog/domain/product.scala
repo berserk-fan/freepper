@@ -10,7 +10,7 @@ import ua.pomo.catalog.domain.imageList.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.common.domain.crud
-import ua.pomo.common.domain.crud.{Crud, PageToken, Query, RepoOps, Repository, ServiceOps}
+import ua.pomo.common.domain.crud.{Crud, Query, RepoOps, Repository}
 
 import java.util.UUID
 

@@ -1,22 +1,22 @@
 package ua.pomo.catalog
 
 import cats.effect.IO
-import doobie.ConnectionIO
 import cats.effect.kernel.Resource
 import cats.kernel.Monoid
+import doobie.ConnectionIO
 import fs2.grpc.syntax.all.fs2GrpcSyntaxServerBuilder
 import io.grpc.ServerServiceDefinition
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder
 import org.typelevel.log4cats.LoggerFactory
 import ua.pomo.catalog.api.CatalogFs2Grpc
-import ua.pomo.catalog.app.{CatalogImpl, programs}
 import ua.pomo.catalog.app.programs.modifiers.{MessageModifier, PageDefaultsApplier, ReadableIdInNamesResolver}
+import ua.pomo.catalog.app.{CatalogImpl, programs}
 import ua.pomo.catalog.domain.Registry
 import ua.pomo.catalog.domain.image.ImageDataRepository
 import ua.pomo.catalog.infrastructure.persistance.postgres._
 import ua.pomo.catalog.infrastructure.persistance.s3.S3ImageDataRepository
 import ua.pomo.common.TransactorHelpers
-import ua.pomo.common.domain.crud.{Service, Crud}
+import ua.pomo.common.domain.crud.{Crud, Service}
 import ua.pomo.common.infrastracture.persistance.RepositoryK
 
 abstract class Server {

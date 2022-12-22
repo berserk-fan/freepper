@@ -4,7 +4,7 @@ import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.decoder
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import ua.pomo.common.domain.crud.{Crud, EntityDisplayName, PageToken, Query, RepoOps, Repository}
+import ua.pomo.common.domain.crud.{Crud, EntityDisplayName, Query, RepoOps, Repository}
 
 import java.util.UUID
 

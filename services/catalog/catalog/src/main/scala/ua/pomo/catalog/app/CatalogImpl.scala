@@ -8,9 +8,9 @@ import org.typelevel.log4cats.LoggerFactory
 import scalapb.validate.{Failure, Success, Validator}
 import ua.pomo.catalog.api._
 import ua.pomo.catalog.app.programs.modifiers.MessageModifier
-import ua.pomo.common.domain.crud.{Service, Crud}
-import ua.pomo.common.domain.error._
 import ua.pomo.catalog.domain.Registry
+import ua.pomo.common.domain.crud.{Crud, Service}
+import ua.pomo.common.domain.error._
 
 import scala.util.Try
 

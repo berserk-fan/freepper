@@ -10,12 +10,6 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import ua.pomo.catalog.AppConfig
 import ua.pomo.catalog.domain.Registry
 import ua.pomo.catalog.domain.Registry._
-import ua.pomo.catalog.domain.category._
-import ua.pomo.catalog.domain.image.ImageCrud
-import ua.pomo.catalog.domain.imageList.ImageListCrud
-import ua.pomo.catalog.domain.model.ModelCrud
-import ua.pomo.catalog.domain.parameter.ParameterListCrud
-import ua.pomo.catalog.domain.product.ProductCrud
 import ua.pomo.catalog.shared.FixturesV2
 import ua.pomo.common.domain.crud.{Crud, RepoOps}
 import ua.pomo.common.domain.{EntityTest, Schema}
