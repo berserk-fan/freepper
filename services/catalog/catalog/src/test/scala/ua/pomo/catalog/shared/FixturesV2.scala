@@ -77,9 +77,9 @@ object FixturesV2 {
     }
 
   object ImageFixture extends Fixture[ImageCrud] {
-    val images: List[image.CreateImageMetadata] = Generators.Image.createListOf5.sample.get
+    val images: List[image.CreateImage] = Generators.Image.createListOf5.sample.get
 
-    override def entities: List[image.CreateImageMetadata] = images
+    override def entities: List[image.CreateImage] = images
   }
 
   object ImageListFixture extends Fixture[ImageListCrud] {

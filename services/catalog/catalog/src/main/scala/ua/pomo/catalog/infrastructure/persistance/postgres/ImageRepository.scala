@@ -20,7 +20,7 @@ object ImageRepository {
       }
     }
 
-    override def create(image: CreateImageMetadata): List[doobie.Update0] = List({
+    override def create(image: CreateImage): List[doobie.Update0] = List({
       val id = image.id.getOrElse(throw DbErr("No Id(("))
       sql"""
           insert into images (id, src, alt) values ($id, ${image.src}, ${image.alt})

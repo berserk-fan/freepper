@@ -10,7 +10,7 @@ import ua.pomo.catalog.domain.category.{
   CreateCategory,
   UpdateCategory
 }
-import ua.pomo.catalog.domain.image.{BuzzImageUpdate, CreateImageMetadata, Image, ImageCrud, ImageId, ImageQuery}
+import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model.ModelCrud
 import ua.pomo.catalog.domain.parameter._
@@ -48,7 +48,7 @@ object DbGenerators {
   }
 
   private case object ImageGenerators extends Generators[ImageCrud] {
-    override def create: Gen[CreateImageMetadata] = Generators.Image.create
+    override def create: Gen[CreateImage] = Generators.Image.create
 
     override def update: Gen[ImageId => BuzzImageUpdate] = Generators.Image.update
 

@@ -11,7 +11,7 @@ trait HasSuiteResource[F[_]] extends BeforeAndAfterAll {
 
   protected def monadCancelThrow: MonadCancelThrow[F]
   protected def unsafeRun: UnsafeRun[F]
- 
+
   private implicit lazy val m: MonadCancelThrow[F] = monadCancelThrow
   unsafeRun
 

@@ -44,7 +44,7 @@ import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.product._
-import ua.pomo.common.domain.crud.{PageToken, Query}
+import ua.pomo.common.domain.crud.{ListResponse, PageToken, Query}
 import ua.pomo.common.domain.error.ValidationErr
 
 import java.nio.charset.StandardCharsets
@@ -101,20 +101,20 @@ object Converters {
     Query(ImageListSelector.All, parseToken(listImages.pageToken, listImages.pageSize))
   }
 
-  def toApi(listImages: FindImageListResponse): ListImageListsResponse = {
-    ListImageListsResponse(listImages.imageLists.map(toApi), toApi(listImages.nextPageToken))
+  def toApi(listImages: ListResponse[ImageList]): ListImageListsResponse = {
+    ListImageListsResponse(listImages.entities.map(toApi), toApi(listImages.nextPageToken))
   }
 
-  def toApi(findModelResponse: FindModelResponse): ListModelsResponse = {
-    ListModelsResponse(findModelResponse.models.map(toApi), toApi(findModelResponse.nextPageToken))
+  def toApi(findModelResponse: ListResponse[Model]): ListModelsResponse = {
+    ListModelsResponse(findModelResponse.entities.map(toApi), toApi(findModelResponse.nextPageToken))
   }
 
-  def toApi(products: FindProductResponse): ListProductsResponse = {
-    ListProductsResponse(products.products.map(toApi), toApi(products.nextPageToken))
+  def toApi(products: ListResponse[Product]): ListProductsResponse = {
+    ListProductsResponse(products.entities.map(toApi), toApi(products.nextPageToken))
   }
 
-  def toApi(resp: FindImagesResponse): ListImagesResponse = {
-    ListImagesResponse(resp.images.map(toApi), toApi(resp.nextPageToken))
+  def toApi(resp: ListResponse[Image]): ListImagesResponse = {
+    ListImagesResponse(resp.entities.map(toApi), toApi(resp.nextPageToken))
   }
 
   def toApi(money: Money): api.Money = {
@@ -130,8 +130,8 @@ object Converters {
     api.ParameterList(parameterList.id.show, parameterList.displayName.show, parameters)
   }
 
-  def toApi(resp: QueryCategoriesResponse): ListCategoriesResponse = {
-    ListCategoriesResponse(resp.categories.map(toApi), toApi(resp.nextToken))
+  def toApi(resp: ListResponse[Category]): ListCategoriesResponse = {
+    ListCategoriesResponse(resp.entities.map(toApi), toApi(resp.nextPageToken))
   }
   def toApi(model: Model): api.Model = {
     api.Model(
@@ -315,7 +315,7 @@ object Converters {
 
   def toDomain(req: CreateImageRequest): CreateImage = {
     val im = req.image.get
-    CreateImage(ImageSrc(im.src), ImageAlt(im.alt), ImageData(im.data.toByteArray))
+    CreateImage(None, ImageSrc(im.src), ImageAlt(im.alt), ImageData(im.data.toByteArray))
   }
 
   def toApi(image: Image): api.Image = {

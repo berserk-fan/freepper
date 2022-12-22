@@ -8,19 +8,14 @@ import org.typelevel.log4cats.LoggerFactory
 import scalapb.validate.{Failure, Success, Validator}
 import ua.pomo.catalog.api._
 import ua.pomo.catalog.app.programs.modifiers.MessageModifier
-import ua.pomo.catalog.domain.image.ImageService
-import ua.pomo.catalog.domain.imageList.ImageListService
-import ua.pomo.catalog.domain.{category, model, product}
+import ua.pomo.common.domain.crud.{Service, Crud}
 import ua.pomo.common.domain.error._
+import ua.pomo.catalog.domain.Registry
 
 import scala.util.Try
 
 case class CatalogImpl[F[_]: Async: LoggerFactory] private (
-    productService: product.ProductService[F],
-    categoryService: category.CategoryService[F],
-    modelService: model.ModelService[F],
-    imageListService: ImageListService[F],
-    imageService: ImageService[F],
+    services: Registry[Lambda[`T <: Crud` => Service[F, T]]],
     modifications: MessageModifier[F]
 ) extends CatalogFs2Grpc[F, Metadata] {
 
@@ -30,7 +25,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(categoryService.get)
+      .flatMap(services.category.get)
       .map(Converters.toApi)
   }
 
@@ -38,7 +33,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(categoryService.create)
+      .flatMap(services.category.create)
       .map(Converters.toApi)
   }
 
@@ -46,7 +41,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(categoryService.delete)
+      .flatMap(services.category.delete)
       .as(Empty())
   }
 
@@ -54,7 +49,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(categoryService.update)
+      .flatMap(services.category.update)
       .map(Converters.toApi)
   }
 
@@ -62,7 +57,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(categoryService.query)
+      .flatMap(services.category.findAll)
       .map(Converters.toApi)
   }
 
@@ -72,7 +67,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(modelService.get)
+      .flatMap(services.model.get)
       .map(Converters.toApi)
   }
 
@@ -80,7 +75,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(modelService.create)
+      .flatMap(services.model.create)
       .map(Converters.toApi)
   }
 
@@ -88,7 +83,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(modelService.findAll)
+      .flatMap(services.model.findAll)
       .map(Converters.toApi)
   }
 
@@ -96,7 +91,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(modelService.delete)
+      .flatMap(services.model.delete)
       .as(Empty())
   }
 
@@ -104,7 +99,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(modelService.update)
+      .flatMap(services.model.update)
       .map(Converters.toApi)
   }
 
@@ -114,7 +109,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(productService.get)
+      .flatMap(services.product.get)
       .map(Converters.toApi)
   }
 
@@ -122,7 +117,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(productService.create)
+      .flatMap(services.product.create)
       .map(Converters.toApi)
   }
 
@@ -130,7 +125,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(productService.query)
+      .flatMap(services.product.findAll)
       .map(Converters.toApi)
   }
 
@@ -138,7 +133,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(productService.delete)
+      .flatMap(services.product.delete)
       .as(Empty())
   }
 
@@ -148,7 +143,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(imageListService.create)
+      .flatMap(services.imageList.create)
       .map(Converters.toApi)
   }
 
@@ -156,7 +151,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(imageListService.get)
+      .flatMap(services.imageList.get)
       .map(Converters.toApi)
   }
 
@@ -164,7 +159,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(imageListService.update)
+      .flatMap(services.imageList.update)
       .map(Converters.toApi)
   }
 
@@ -172,7 +167,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(imageListService.delete)
+      .flatMap(services.imageList.delete)
       .as(Empty())
   }
 
@@ -180,7 +175,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(imageListService.find)
+      .flatMap(services.imageList.findAll)
       .map(Converters.toApi)
   }
 
@@ -188,7 +183,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(imageService.create)
+      .flatMap(services.image.create)
       .map(Converters.toApi)
   }
 
@@ -196,7 +191,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(imageService.delete)
+      .flatMap(services.image.delete)
       .as(Empty())
   }
 
@@ -204,7 +199,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(imageService.get)
+      .flatMap(services.image.get)
       .map(Converters.toApi)
   }
 
@@ -212,7 +207,7 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .map(Converters.toDomain)
-      .flatMap(imageService.query)
+      .flatMap(services.image.findAll)
       .map(Converters.toApi)
   }
 

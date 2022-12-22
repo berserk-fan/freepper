@@ -10,7 +10,7 @@ import ua.pomo.catalog.domain.imageList.{ImageList, ImageListId}
 import ua.pomo.catalog.domain.model.{ModelDisplayName, ModelId}
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.common.domain.crud
-import ua.pomo.common.domain.crud.{Crud, PageToken, Query, RepoOps, Repository}
+import ua.pomo.common.domain.crud.{Crud, PageToken, Query, RepoOps, Repository, ServiceOps}
 
 import java.util.UUID
 
@@ -67,10 +67,6 @@ object product {
       promoPriceUsd: Option[ProductPromoPrice],
       parameterIds: List[ParameterId]
   )
-
-  @derive(eqv, show)
-  case class FindProductResponse(products: List[Product], nextPageToken: PageToken)
-
   type ProductQuery = Query[ProductSelector]
 
   sealed trait ProductSelector
@@ -113,15 +109,4 @@ object product {
     }
   }
 
-  trait ProductService[F[_]] {
-    def create(command: CreateProduct): F[Product]
-
-    def get(id: ProductId): F[Product]
-
-    def query(query: ProductQuery): F[FindProductResponse]
-
-    def update(command: UpdateProduct): F[Product]
-
-    def delete(id: ProductId): F[Unit]
-  }
 }

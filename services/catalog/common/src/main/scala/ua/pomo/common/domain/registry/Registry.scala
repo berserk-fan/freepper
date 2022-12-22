@@ -20,7 +20,7 @@ object Registry {
     }
   }
 
-  def map2[F1[_], F2[_], G[_]](r1: Registry[F1], r2: Registry[F2])(
+  def map2[F1[_ <: Crud], F2[_ <: Crud], G[_ <: Crud]](r1: Registry[F1], r2: Registry[F2])(
       f: RegistryMapper2[F1, F2, G]
   ): Registry[G] = {
     new Registry[G] {

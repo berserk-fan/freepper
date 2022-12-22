@@ -54,10 +54,11 @@ object Generators {
     val id: Gen[ImageId] = Gen.uuid.map(ImageId.apply)
     private val alt = Gen.alphaNumStr.map(ImageAlt.apply)
     private val src = Gen.alphaNumStr.map(ImageSrc.apply)
+    private val imageData = Gen.const(Array[Byte]()).map(ImageData.apply)
 
     val gen: Gen[Image] = (id, src, alt).mapN(image.Image.apply)
-    val create: Gen[CreateImageMetadata] = (id.map(Option(_)), src, alt).mapN(CreateImageMetadata.apply)
-    val createListOf5: Gen[List[CreateImageMetadata]] = Gen.listOfN(5, create)
+    val create: Gen[CreateImage] = (id.map(Option(_)), src, alt, imageData).mapN(CreateImage.apply)
+    val createListOf5: Gen[List[CreateImage]] = Gen.listOfN(5, create)
     val selector: Gen[ImageSelector] = Gen.oneOf(
       Gen.const(ImageSelector.All),
       id.map(ImageSelector.IdIs.apply)

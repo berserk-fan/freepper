@@ -31,9 +31,6 @@ object imageList {
 
   type ImageListQuery = Query[ImageListSelector]
 
-  @derive(eqv, show)
-  case class FindImageListResponse(imageLists: List[ImageList], nextPageToken: PageToken)
-
   sealed trait ImageListSelector
   object ImageListSelector {
     final case object All extends ImageListSelector
@@ -60,12 +57,4 @@ object imageList {
   }
 
   type ImageListRepository[F[_]] = Repository[F, ImageListCrud]
-
-  trait ImageListService[F[_]] {
-    def create(imageList: CreateImageList): F[ImageList]
-    def get(id: ImageListId): F[ImageList]
-    def update(imageList: UpdateImageList): F[ImageList]
-    def delete(imageListId: ImageListId): F[Unit]
-    def find(query: ImageListQuery): F[FindImageListResponse]
-  }
 }

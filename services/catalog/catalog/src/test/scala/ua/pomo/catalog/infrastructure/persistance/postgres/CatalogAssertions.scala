@@ -42,7 +42,7 @@ object CatalogAssertions extends Matchers {
   private val imageAssertions: Assertions[ImageCrud] = new Assertions[ImageCrud] {
     def update(c: BuzzImageUpdate, v: Image): Any = succeed
 
-    def create(c: CreateImageMetadata, v: Image): Any = {
+    def create(c: CreateImage, v: Image): Any = {
       c.src should ===(v.src)
       c.alt should ===(v.alt)
     }

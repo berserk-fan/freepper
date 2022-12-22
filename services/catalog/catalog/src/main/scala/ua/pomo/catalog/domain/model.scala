@@ -74,9 +74,6 @@ object model {
   type ModelQuery = Query[ModelSelector]
 
   @derive(eqv, show)
-  case class FindModelResponse(models: List[Model], nextPageToken: PageToken)
-
-  @derive(eqv, show)
   sealed trait ModelSelector
   object ModelSelector {
     case object All extends ModelSelector
@@ -85,18 +82,6 @@ object model {
   }
 
   type ModelRepository[F[_]] = Repository[F, Crud.type]
-
-  trait ModelService[F[_]] {
-    def create(category: CreateModel): F[Model]
-
-    def get(id: ModelId): F[Model]
-
-    def findAll(req: ModelQuery): F[FindModelResponse]
-
-    def update(req: UpdateModel): F[Model]
-
-    def delete(id: ModelId): F[Unit]
-  }
 
   type ModelCrud = Crud.type
   object Crud extends Crud {

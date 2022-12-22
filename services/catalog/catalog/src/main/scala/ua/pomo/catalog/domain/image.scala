@@ -26,8 +26,7 @@ object image {
 
   case class ImageData(value: Array[Byte])
 
-  case class CreateImage(src: ImageSrc, alt: ImageAlt, data: ImageData)
-  case class CreateImageMetadata(id: Option[ImageId], src: ImageSrc, alt: ImageAlt)
+  case class CreateImage(id: Option[ImageId], src: ImageSrc, alt: ImageAlt, data: ImageData)
   case class CreateImageData(src: ImageSrc, data: ImageData)
   case class BuzzImageUpdate(id: ImageId)
 
@@ -37,9 +36,6 @@ object image {
     case object All extends ImageSelector
     case class IdIs(id: ImageId) extends ImageSelector
   }
-
-  @derive(eqv, show)
-  case class FindImagesResponse(images: List[Image], nextPageToken: PageToken)
 
   trait ImageDataRepository[F[_]] {
     def create(image: CreateImageData): F[Unit]
@@ -51,11 +47,12 @@ object image {
   type ImageCrud = Crud.type
 
   object Crud extends Crud {
-    override type Create = CreateImageMetadata
+    override type Create = CreateImage
     override type Update = BuzzImageUpdate
     override type Entity = Image
     override type EntityId = ImageId
     override type Selector = ImageSelector
+
     implicit val ops: RepoOps[ImageCrud] = new RepoOps[ImageCrud] {
       override def getIdUpdate(update: BuzzImageUpdate): ImageId = update.id
 
@@ -63,14 +60,7 @@ object image {
 
       override def entityDisplayName: EntityDisplayName = Entity.Image.name
 
-      override def getIdCreate(update: CreateImageMetadata): Option[ImageId] = update.id
+      override def getIdCreate(update: CreateImage): Option[ImageId] = update.id
     }
-  }
-
-  trait ImageService[F[_]] {
-    def create(image: CreateImage): F[Image]
-    def get(id: ImageId): F[Image]
-    def delete(imageId: ImageId): F[Unit]
-    def query(query: ImageQuery): F[FindImagesResponse]
   }
 }

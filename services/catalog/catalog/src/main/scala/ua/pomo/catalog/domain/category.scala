@@ -51,9 +51,6 @@ object category {
       description: Option[CategoryDescription]
   )
 
-  @derive(eqv, show)
-  case class QueryCategoriesResponse(categories: List[Category], nextToken: PageToken)
-
   type CategoryQuery = Query[CategorySelector]
   sealed trait CategorySelector
   object CategorySelector {
@@ -63,18 +60,6 @@ object category {
   }
 
   type CategoryRepository[F[_]] = Repository[F, CategoryCrud]
-
-  trait CategoryService[F[_]] {
-    def create(category: CreateCategory): F[Category]
-
-    def get(id: CategoryId): F[Category]
-
-    def query(req: CategoryQuery): F[QueryCategoriesResponse]
-
-    def update(req: UpdateCategory): F[Category]
-
-    def delete(id: CategoryId): F[Unit]
-  }
 
   type CategoryCrud = Crud.type
   object Crud extends Crud {

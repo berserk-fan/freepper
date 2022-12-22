@@ -26,14 +26,7 @@ object CatalogEntityTests {
     Sync[IO].blocking(println("Shutting down dbModuleTest"))
   )
 
-  private val crudOps = new Registry[RepoOps] {
-    override def category: RepoOps[CategoryCrud] = implicitly
-    override def image: RepoOps[ImageCrud] = implicitly
-    override def imageList: RepoOps[ImageListCrud] = implicitly
-    override def model: RepoOps[ModelCrud] = implicitly
-    override def product: RepoOps[ProductCrud] = implicitly
-    override def parameterList: RepoOps[ParameterListCrud] = implicitly
-  }
+  private val crudOps = Registry.usingImplicits[RepoOps]
 
   def inmemory[T <: Crud: ValueOf]: Resource[IO, EntityTest[IO, IO, T]] = {
     for {

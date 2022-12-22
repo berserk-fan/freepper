@@ -6,8 +6,7 @@ import cats.syntax.functor.toFunctorOps
 import ua.pomo.common.domain.crud.{Crud, ListResponse, PageToken, Query, Repository, Service, ServiceOps}
 import ua.pomo.common.domain.error.NotFound
 
-class AbstractService[G[_]: MonadThrow, T <: Crud: ServiceOps] private (repository: Repository[G, T])
-    extends Service[G, T] {
+case class BasicService[G[_]: MonadThrow, T <: Crud: ServiceOps](repository: Repository[G, T]) extends Service[G, T] {
 
   def create(command: T#Create): G[T#Entity] = repository.create(command).flatMap(repository.get)
 

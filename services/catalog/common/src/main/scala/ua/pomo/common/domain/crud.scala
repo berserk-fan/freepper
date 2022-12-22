@@ -7,7 +7,7 @@ import io.estatico.newtype.macros.newtype
 
 object crud {
   case class Query[T](selector: T, page: PageToken.NonEmpty)
-  case class ListResponse[T](entities: List[T], page: PageToken)
+  case class ListResponse[T](entities: List[T], nextPageToken: PageToken)
 
   @derive(eqv, show)
   sealed trait PageToken
@@ -60,10 +60,16 @@ object crud {
   trait ServiceOps[T <: Crud] {
     def getIdUpdate(update: T#Update): T#EntityId
     def entityDisplayName: EntityDisplayName
+
   }
 
   object ServiceOps {
     def apply[T <: Crud: ServiceOps]: ServiceOps[T] = implicitly[ServiceOps[T]]
+    implicit def fromRepoOps[T <: Crud](implicit repoOps: RepoOps[T]): ServiceOps[T] = new ServiceOps[T] {
+      override def getIdUpdate(update: T#Update): T#EntityId = repoOps.getIdUpdate(update)
+
+      override def entityDisplayName: EntityDisplayName = repoOps.entityDisplayName
+    }
   }
 
   trait Service[F[_], T <: Crud] {

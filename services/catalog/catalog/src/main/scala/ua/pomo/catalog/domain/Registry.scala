@@ -9,8 +9,6 @@ import ua.pomo.catalog.domain.product.ProductCrud
 import ua.pomo.common.domain.crud.Crud
 import ua.pomo.common.domain.registry
 
-import scala.ValueOf
-
 trait Registry[F[_ <: Crud]] {
   def category: F[CategoryCrud]
 
@@ -26,21 +24,18 @@ trait Registry[F[_ <: Crud]] {
 }
 
 object Registry {
-  implicit class RegistryOps[F[_ <: Crud]](r: Registry[F]) {
-    def toUntyped: registry.Registry[F] = new registry.Registry[F] {
-      override def apply[T <: Crud: ValueOf]: F[T] = {
-        val res = implicitly[ValueOf[T]].value match {
-          case category.Crud  => r.category
-          case image.Crud     => r.image
-          case imageList.Crud => r.imageList
-          case model.Crud     => r.model
-          case product.Crud   => r.product
-          case parameter.Crud => r.parameterList
-          case _              => throw new IllegalArgumentException("Unknown crud. Pls add this case to Registry type")
-        }
-        res.asInstanceOf[F[T]]
-      }
-    }
+  def fromUntyped[F[_ <: Crud]](r: registry.Registry[F]): Registry[F] = new Registry[F] {
+    override def category: F[CategoryCrud] = r.apply[CategoryCrud]
+
+    override def image: F[ImageCrud] = r.apply[ImageCrud]
+
+    override def imageList: F[ImageListCrud] = r.apply[ImageListCrud]
+
+    override def model: F[ModelCrud] = r.apply[ModelCrud]
+
+    override def product: F[ProductCrud] = r.apply[ProductCrud]
+
+    override def parameterList: F[ParameterListCrud] = r.apply[ParameterListCrud]
   }
 
   def usingImplicits[F[_ <: Crud]](implicit
@@ -63,6 +58,23 @@ object Registry {
       override def product: F[ProductCrud] = f5
 
       override def parameterList: F[ParameterListCrud] = f6
+    }
+  }
+
+  implicit class RegistryOps[F[_ <: Crud]](r: Registry[F]) {
+    def toUntyped: registry.Registry[F] = new registry.Registry[F] {
+      override def apply[T <: Crud: ValueOf]: F[T] = {
+        val res = implicitly[ValueOf[T]].value match {
+          case category.Crud  => r.category
+          case image.Crud     => r.image
+          case imageList.Crud => r.imageList
+          case model.Crud     => r.model
+          case product.Crud   => r.product
+          case parameter.Crud => r.parameterList
+          case _              => throw new IllegalArgumentException("Unknown crud. Pls add this case to Registry type")
+        }
+        res.asInstanceOf[F[T]]
+      }
     }
   }
 }
