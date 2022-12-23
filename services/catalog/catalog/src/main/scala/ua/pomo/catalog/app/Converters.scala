@@ -323,7 +323,7 @@ class Converters[F[_]: MonadThrow](uuidGenerator: UUIDGenerator[F], idResolver: 
   }
 
   def toDomain(request: DeleteModelRequest): F[ModelId] = {
-    MonadThrow[F].fromEither(ApiName.product(request.name)).map(_.modelId).flatMap(idResolver.resolveModelId)
+    MonadThrow[F].fromEither(ApiName.model(request.name)).map(_.modelId).flatMap(idResolver.resolveModelId)
   }
 
   def toDomain(request: CreateModelRequest): F[CreateModel] = for {
