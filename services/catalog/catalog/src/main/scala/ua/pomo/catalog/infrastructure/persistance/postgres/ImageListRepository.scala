@@ -83,7 +83,7 @@ object ImageListRepository {
     }
 
     override def create(req: CreateImageList): List[doobie.Update0] = List({
-      val id = req.id.getOrElse(ImageListId(UUID.randomUUID()))
+      val id = req.id
 
       val vals = fr"VALUES ($id, ${req.displayName})"
       val insert = fr"""insert into image_lists $vals"""

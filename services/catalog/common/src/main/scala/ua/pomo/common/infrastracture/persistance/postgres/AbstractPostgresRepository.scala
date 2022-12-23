@@ -16,12 +16,8 @@ abstract class AbstractPostgresRepository[T <: Crud: RepoOps](val queries: Queri
   }
 
   override def create(model: T#Create): ConnectionIO[T#EntityId] = {
-    RepoOps[T]
-      .getIdCreate(model)
-      .fold(Sync[ConnectionIO].raiseError[T#EntityId](DbErr(s"Can't create entity. No id provided. command: $model"))) {
-        id =>
-          sequenceUpdate(queries.create(model)).as(id)
-      }
+    val id = RepoOps[T].getIdCreate(model)
+    sequenceUpdate(queries.create(model)).as(id)
   }
 
   override def get(id: T#EntityId): ConnectionIO[T#Entity] = {

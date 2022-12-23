@@ -31,7 +31,7 @@ object CategoryRepository {
 
   object CategoryQueries extends Queries[CategoryCrud] {
     override def create(cat: CreateCategory): List[doobie.Update0] = List({
-      val id = cat.id.getOrElse(throw DbErr("No ID(("))
+      val id = cat.id
 
       sql"""
            insert into categories (id, readable_id, display_name, description)

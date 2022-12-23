@@ -65,10 +65,10 @@ object CatalogAssertions extends Matchers {
       c.displayName.foreach(_ should equal(v.displayName))
 
       c.parameters.foreach { parametersUpdate =>
-        parametersUpdate.map(_.id.get) should equal(v.parameters.map(_.id))
+        parametersUpdate.map(_.id) should equal(v.parameters.map(_.id))
 
         parametersUpdate.foreach { paramUpdate =>
-          val updated = v.parameters.find(_.id == paramUpdate.id.get).get
+          val updated = v.parameters.find(_.id == paramUpdate.id).get
           paramUpdate.displayName should equal(updated.displayName)
           paramUpdate.image should equal(updated.image.map(_.id))
           paramUpdate.description should equal(updated.description)

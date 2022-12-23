@@ -47,7 +47,7 @@ class ProductPostgresRepositoryTest
     extends CatalogAbstractRepositoryTest[ConnectionIO, ProductCrud](CatalogEntityTests.postgres[ProductCrud]) {
   testA("insert wrong parameter list should throw exception") { res =>
     val create =
-      res.generators.create.sample.get.copy(modelId = ModelFixture.modelWithParameterList.id.get, parameterIds = List())
+      res.generators.create.sample.get.copy(modelId = ModelFixture.modelWithParameterList.id, parameterIds = List())
 
     res.repository
       .create(create)

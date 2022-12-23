@@ -46,7 +46,7 @@ object ModelRepository {
     Read[Double].map(x => ModelMinimalPrice(Money(x, USD)))
 
     override def create(req: CreateModel): List[doobie.Update0] = List({
-      val modelId = req.id.getOrElse(throw DbErr("No Id(")).value
+      val modelId = req.id.value
       val modelsInsert =
         sql"""
             INSERT INTO models (id, readable_id, display_name, description, category_id, image_list_id)
@@ -84,6 +84,7 @@ object ModelRepository {
         case ModelSelector.All              => fr"1 = 1"
         case ModelSelector.IdIs(id)         => fr"m.id = $id"
         case ModelSelector.CategoryIdIs(id) => fr"m.category_id = $id"
+        case ModelSelector.RidIs(id)        => fr"readable_id = $id"
       }
     }
 
@@ -133,6 +134,7 @@ object ModelRepository {
         _ => true
       case ModelSelector.IdIs(id)         => _.id == id
       case ModelSelector.CategoryIdIs(id) => _.categoryUid == id
+      case ModelSelector.RidIs(id)        => _.readableId == id
     }
 
     object updateObj extends InMemoryUpdaterPoly[Model] {

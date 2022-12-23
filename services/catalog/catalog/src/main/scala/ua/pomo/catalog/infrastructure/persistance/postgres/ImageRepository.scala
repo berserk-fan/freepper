@@ -7,6 +7,8 @@ import ua.pomo.catalog.domain.image._
 import ua.pomo.common.domain.error.DbErr
 import ua.pomo.common.infrastracture.persistance.postgres.{AbstractPostgresRepository, Queries}
 
+import java.util.UUID
+
 object ImageRepository {
   private object ImageRepositoryImpl extends AbstractPostgresRepository[ImageCrud](ImageQueries) {
     override def idSelector: ImageId => ImageSelector = (id: ImageId) => ImageSelector.IdIs(id)
@@ -21,7 +23,7 @@ object ImageRepository {
     }
 
     override def create(image: CreateImage): List[doobie.Update0] = List({
-      val id = image.id.getOrElse(throw DbErr("No Id(("))
+      val id = image.id
       sql"""
           insert into images (id, src, alt) values ($id, ${image.src}, ${image.alt})
         """.update

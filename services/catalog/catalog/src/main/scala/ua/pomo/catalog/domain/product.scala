@@ -60,7 +60,7 @@ object product {
 
   @derive(eqv, show)
   case class CreateProduct(
-      id: Option[ProductId],
+      id: ProductId,
       modelId: ModelId,
       imageListId: ImageListId,
       priceUsd: ProductStandardPrice,
@@ -105,7 +105,7 @@ object product {
 
       override def entityDisplayName: crud.EntityDisplayName = Entity.Product.name
 
-      override def getIdCreate(update: CreateProduct): Option[ProductId] = update.id
+      override def getIdCreate(create: CreateProduct): ProductId = create.id
     }
   }
 

@@ -83,7 +83,7 @@ object FixturesV2 {
   }
 
   object ImageListFixture extends Fixture[ImageListCrud] {
-    private val imageIdsGen: Gen[List[ImageId]] = Gen.someOf(ImageFixture.images.map(_.id.get)).map(_.toList)
+    private val imageIdsGen: Gen[List[ImageId]] = Gen.someOf(ImageFixture.images.map(_.id)).map(_.toList)
     val imageList1: imageList.CreateImageList =
       Generators.ImageList.genCreate(genImages = imageIdsGen).sample.get
     val imageList2: imageList.CreateImageList =
@@ -94,13 +94,13 @@ object FixturesV2 {
 
   object CategoryFixture extends Fixture[CategoryCrud] {
     val category1: CreateCategory = CreateCategory(
-      Some(CategoryId(UUID.randomUUID())),
+      CategoryId(UUID.randomUUID()),
       CategoryReadableId("category1"),
       CategoryDisplayName("Category 1"),
       CategoryDescription("Some category 1 description")
     )
     val category2: CreateCategory = CreateCategory(
-      Some(CategoryId(UUID.randomUUID())),
+      CategoryId(UUID.randomUUID()),
       CategoryReadableId("category2"),
       CategoryDisplayName("Category 2"),
       CategoryDescription("Some category 2 description")
@@ -111,14 +111,14 @@ object FixturesV2 {
 
   object ParameterListFixture extends Fixture[ParameterListCrud] {
     val pl: parameter.CreateParameterList = CreateParameterList(
-      Some(ParameterListId(UUID.randomUUID())),
+      ParameterListId(UUID.randomUUID()),
       ParamListDisplayName("Parameter list 1"),
       List(
         CreateParameter(
-          Some(ParameterId(UUID.randomUUID())),
+          ParameterId(UUID.randomUUID()),
           ParameterDisplayName("Parameter 1"),
-          Some(ImageFixture.images.head.id.get),
-          ParameterDescription("Parameter 1 description")
+          Some(ImageFixture.images.head.id),
+          Some(ParameterDescription("Parameter 1 description"))
         )
       )
     )
@@ -129,23 +129,23 @@ object FixturesV2 {
 
   object ModelFixture extends Fixture[ModelCrud] {
     val modelWithoutParameterList: CreateModel = CreateModel(
-      Some(ModelId(UUID.randomUUID())),
+      ModelId(UUID.randomUUID()),
       ModelReadableId("model_1_id"),
-      CategoryFixture.category1.id.get,
+      CategoryFixture.category1.id,
       ModelDisplayName("model 1 id"),
       ModelDescription("Model 1 description"),
-      ImageListFixture.imageList1.id.get,
-      List(ParameterListFixture.pl.id.get)
+      ImageListFixture.imageList1.id,
+      List(ParameterListFixture.pl.id)
     )
 
     val modelWithParameterList: CreateModel = CreateModel(
-      Some(ModelId(UUID.randomUUID())),
+      ModelId(UUID.randomUUID()),
       ModelReadableId("model_2_id"),
-      CategoryFixture.category1.id.get,
+      CategoryFixture.category1.id,
       ModelDisplayName("model 2 id"),
       ModelDescription("Model 2 description"),
-      ImageListFixture.imageList1.id.get,
-      List(ParameterListFixture.pl.id.get)
+      ImageListFixture.imageList1.id,
+      List(ParameterListFixture.pl.id)
     )
 
     override def entities: List[CreateModel] = List(modelWithParameterList, modelWithoutParameterList)

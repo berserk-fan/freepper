@@ -38,6 +38,11 @@ message DeleteImageListRequest {
 message CreateImageListRequest {
   string parent = 1;
   ImageList image_list = 2;
+  // The ID to use for the image list, which will become the final component of
+  // the book's resource name.
+  //
+  // This value should be UUID_V4
+  string image_list_id = 3;
 }
 
 message ListImageListsRequest {

@@ -24,7 +24,7 @@ import ua.pomo.catalog.api.{
 }
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.app.programs.modifiers.PageDefaultsApplier
-import ua.pomo.catalog.app.{CatalogImpl, Converters, programs}
+import ua.pomo.catalog.app.{CatalogImpl, Converters, ReadableIdsResolver, UUIDGenerator, programs}
 import ua.pomo.catalog.domain.category._
 import ua.pomo.catalog.domain.imageList.ImageListId
 import ua.pomo.catalog.domain.model._
@@ -46,7 +46,8 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
   case class TestResources(
       categoryService: Service[IO, ModelCrud],
       modelService: Service[IO, ModelCrud],
-      service: CatalogFs2Grpc[IO, Metadata]
+      service: CatalogFs2Grpc[IO, Metadata],
+      converters: Converters[IO]
   )
 
   override protected type TestResource = TestResources
@@ -58,14 +59,18 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
       repoReg <- inMemoryRepoRegistry[IO]
       services = programs.serviceRegistry[IO, IO](repoReg, FunctionK.id[IO], idr)
       defaultsApplier = PageDefaultsApplier[IO](config.defaultPageSize)
-      catalogImpl = CatalogImpl[IO](services, defaultsApplier)
-    } yield TestResources(services.model, services.model, catalogImpl)
+      converter = new Converters[IO](
+        UUIDGenerator.fromApplicativeError[IO],
+        ReadableIdsResolver.RepoBasedResolver(repoReg.category, repoReg.model)
+      )
+      catalogImpl = CatalogImpl[IO](services, defaultsApplier, converter)
+    } yield TestResources(services.model, services.model, catalogImpl, converter)
 
     Resource.eval(res)
   }
 
   private val config = CatalogApiConfig(5)
-  testR("list models") { case TestResources(_, modelService, impl) =>
+  testR("list models") { case TestResources(_, modelService, impl, _) =>
     val categoryId = CategoryId(UUID.randomUUID())
     val totalModels = 10
     Generators.Model
@@ -77,7 +82,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
       .traverse(modelService.create(_))
       .unsafeRunSync()
 
-    val parent = ModelsName(CategoryRefId.Uid(categoryId))
+    val parent = ModelsName(Left(categoryId))
 
     val modelsCol = parent.toNameString
     noException should be thrownBy impl.listModels(ListModelsRequest(modelsCol, 0, ""), null).unsafeRunSync()
@@ -98,9 +103,10 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
     ex.getStatus.getCode should equal(Status.Code.INVALID_ARGUMENT)
   }
 
-  testR("get model") { case TestResources(_, modelService, impl) =>
+  testR("get model") { case TestResources(_, modelService, impl, _) =>
     val ex = intercept[StatusException] {
-      val name = ModelName(CategoryRefId.Uid(CategoryId(UUID.randomUUID())), ModelId(UUID.randomUUID())).toNameString
+      val name =
+        ModelName(Left(CategoryId(UUID.randomUUID())), Left(ModelId(UUID.randomUUID()))).toNameString
       impl.getModel(GetModelRequest(name), null).unsafeRunSync()
     }
     ex.getStatus.getCode should equal(Status.Code.NOT_FOUND)
@@ -112,11 +118,11 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
         )
         .unsafeRunSync()
     noException should be thrownBy impl
-      .getModel(GetModelRequest(ModelName(CategoryRefId.Uid(model.categoryUid), model.id).toNameString), null)
+      .getModel(GetModelRequest(ModelName(Left(model.categoryUid), Left(model.id)).toNameString), null)
       .unsafeRunSync()
   }
 
-  testR("create model") { case TestResources(_, _, impl) =>
+  testR("create model") { case TestResources(_, _, impl, _) =>
     val paramList = Seq(ParameterList(uid = UUID.randomUUID().toString))
     val imageList = Some(ImageList(name = ImageListName(ImageListId(UUID.randomUUID())).toNameString))
     val modelReq = api.Model(
@@ -131,7 +137,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
     )
 
     val req =
-      CreateModelRequest(ModelsName(CategoryRefId.Uid(CategoryId(UUID.randomUUID()))).toNameString, Some(modelReq))
+      CreateModelRequest(ModelsName(Left(CategoryId(UUID.randomUUID()))).toNameString, Some(modelReq))
     val model = impl.createModel(req, null).unsafeRunSync()
     model.copy(parameterLists = paramList, imageList = imageList) should equal(
       modelReq.copy(name = model.name, uid = model.uid)
@@ -148,13 +154,13 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
       paramList
     )
     val req2 =
-      CreateModelRequest(ModelsName(CategoryRefId.Uid(CategoryId(UUID.randomUUID()))).toNameString, Some(modelReq2))
+      CreateModelRequest(ModelsName(Left(CategoryId(UUID.randomUUID()))).toNameString, Some(modelReq2))
     noException should be thrownBy impl.createModel(req2, null).unsafeRunSync()
   }
 
-  testR("delete model") { case TestResources(_, models, impl) =>
+  testR("delete model") { case TestResources(_, models, impl, _) =>
     DeleteModelRequest(
-      ModelName(CategoryRefId.Uid(CategoryId(UUID.randomUUID())), ModelId(UUID.randomUUID())).toNameString
+      ModelName(Left(CategoryId(UUID.randomUUID())), Left(ModelId(UUID.randomUUID()))).toNameString
     )
     val mod1 =
       models
@@ -163,7 +169,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
         )
         .unsafeRunSync()
     noException should be thrownBy impl
-      .deleteModel(DeleteModelRequest(ModelName(CategoryRefId.Uid(mod1.categoryUid), mod1.id).toNameString), null)
+      .deleteModel(DeleteModelRequest(ModelName(Left(mod1.categoryUid), Left(mod1.id)).toNameString), null)
       .unsafeRunSync()
 
     intercept[NotFound] {
@@ -171,7 +177,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
     }
   }
 
-  testR("create category description not empty") { case TestResources(_, _, impl) =>
+  testR("create category description not empty") { case TestResources(_, _, impl, _) =>
     val response = impl
       .createCategory(
         CreateCategoryRequest("categories", Some(api.Category(displayName = "a", description = "c", readableId = "d"))),
@@ -182,14 +188,17 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
     response.description should equal("c")
   }
 
-  testR("update model must support *") { case TestResources(_, modelService, impl) =>
+  testR("update model must support *") { case TestResources(_, modelService, impl, converter) =>
     val model =
       Generators.Model.createGen(ImageListId(UUID.randomUUID()), List(), Generators.Category.catId, None).sample.get
     val res = modelService.create(model).unsafeRunSync()
     val newDescr = ModelDescription("hello world")
     val updated = res.copy(description = newDescr)
     noException should be thrownBy impl
-      .updateModel(UpdateModelRequest(Some(Converters.toApi(updated)), Some(FieldMask.of(Seq("*")))), null)
+      .updateModel(
+        UpdateModelRequest(Some(converter.toApi(updated).unsafeRunSync()), Some(FieldMask.of(Seq("*")))),
+        null
+      )
       .unsafeRunSync()
     modelService.get(updated.id).unsafeRunSync().description should equal(newDescr)
   }

@@ -38,7 +38,7 @@ object ProductRepository {
   object ProductQueries extends Queries[ProductCrud] {
     override def create(req: CreateProduct): List[doobie.Update0] = List {
       import req._
-      val id = req.id.getOrElse(throw DbErr("No id("))
+      val id = req.id
 
       val sql =
         sql"""

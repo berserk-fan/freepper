@@ -37,7 +37,7 @@ object category {
 
   @derive(eqv, show)
   case class CreateCategory(
-      id: Option[CategoryId],
+      id: CategoryId,
       readableId: CategoryReadableId,
       displayName: CategoryDisplayName,
       description: CategoryDescription
@@ -75,7 +75,7 @@ object category {
 
       override def entityDisplayName: EntityDisplayName = Entity.Category.name
 
-      override def getIdCreate(update: CreateCategory): Option[CategoryId] = update.id
+      override def getIdCreate(create: CreateCategory): CategoryId = create.id
     }
   }
 }

@@ -24,7 +24,7 @@ object imageList {
   case class ImageList(id: ImageListId, displayName: ImageListDisplayName, images: List[Image])
 
   @derive(eqv, show)
-  case class CreateImageList(id: Option[ImageListId], displayName: ImageListDisplayName, images: List[ImageId])
+  case class CreateImageList(id: ImageListId, displayName: ImageListDisplayName, images: List[ImageId])
 
   @derive(eqv, show)
   case class UpdateImageList(id: ImageListId, displayName: Option[ImageListDisplayName], images: Option[List[ImageId]])
@@ -46,13 +46,14 @@ object imageList {
     override type EntityId = ImageListId
     override type Selector = ImageListSelector
     implicit val ops: RepoOps[ImageListCrud] = new RepoOps[ImageListCrud] {
+
       override val entityDisplayName: EntityDisplayName = Entity.ImageList.name
 
       override def getIdUpdate(update: UpdateImageList): ImageListId = update.id
 
       override def getIdEntity(entity: ImageList): ImageListId = entity.id
 
-      override def getIdCreate(update: CreateImageList): Option[ImageListId] = update.id
+      override def getIdCreate(create: CreateImageList): ImageListId = create.id
     }
   }
 

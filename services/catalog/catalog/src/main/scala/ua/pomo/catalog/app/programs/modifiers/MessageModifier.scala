@@ -1,12 +1,13 @@
 package ua.pomo.catalog.app.programs.modifiers
 
+import cats.{Applicative, Monad}
 import cats.effect.Sync
 import cats.implicits.{toFunctorOps, toTraverseOps}
 import cats.kernel.Monoid
 import scalapb.descriptors.{FieldDescriptor, PMessage, PValue}
 import scalapb.{GeneratedMessage, GeneratedMessageCompanion}
 
-abstract class MessageModifier[F[_]: Sync]() {
+abstract class MessageModifier[F[_]: Applicative]() {
   // names to which we should apply transformation, applying defaults, resolving names
   def names: List[String]
   def transformation[T <: PValue](field: FieldDescriptor, v: T): F[T]
@@ -23,7 +24,7 @@ abstract class MessageModifier[F[_]: Sync]() {
           case nested: PMessage => modifyHelper(nested).map((descriptor, _))
           case _ if names.contains(descriptor.name) =>
             transformation(descriptor, value).map((descriptor, _))
-          case x => Sync[F].pure((descriptor, x))
+          case x => Applicative[F].pure((descriptor, x))
         }
       }
       .toSeq
@@ -33,7 +34,7 @@ abstract class MessageModifier[F[_]: Sync]() {
 }
 
 object MessageModifier {
-  implicit def monoidInstanse[F[_]: Sync]: Monoid[MessageModifier[F]] = new Monoid[MessageModifier[F]] {
+  implicit def monoidInstanse[F[_]: Applicative]: Monoid[MessageModifier[F]] = new Monoid[MessageModifier[F]] {
     override def empty: MessageModifier[F] = new MessageModifier[F] {
       override def names: List[String] = List()
       override def transformation[T <: PValue](field: FieldDescriptor, v: T): F[T] = ???

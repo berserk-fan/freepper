@@ -9,54 +9,72 @@ import ua.pomo.catalog.api.{ListModelsRequest, UpdateCategoryRequest}
 import ua.pomo.catalog.app.ApiName.{CategoryName, CategoryRefId}
 import ua.pomo.catalog.domain.category.CategoryId
 import ua.pomo.catalog.domain.model.ModelSelector
+import ua.pomo.common.{HasResource, TestIORuntime}
 import ua.pomo.common.domain.crud.{PageToken, Query}
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}
+import cats.effect.{IO, MonadCancelThrow, Resource}
+import ua.pomo.catalog.infrastructure.persistance.postgres
 
-class ConvertersTest extends AnyFunSuite with Matchers with EitherValues {
+class convertersTest extends AnyFunSuite with Matchers with EitherValues with HasResource[IO] with TestIORuntime {
   private val Uuid = UUID.randomUUID()
+
+  override protected def runResource[T](r: IO[T]): T = r.unsafeRunSync()
+  override def monadCancelThrow: MonadCancelThrow[IO] = implicitly
+
+  override protected type TestResource = Converters[IO]
+
+  override protected def resource: Resource[IO, Converters[IO]] = for {
+    repos <- Resource.eval(postgres.inMemoryRepoRegistry[IO])
+    converters = new Converters[IO](
+      UUIDGenerator.fromApplicativeError,
+      ReadableIdsResolver.RepoBasedResolver(repos.category, repos.model)
+    )
+  } yield converters
+
   private def encode(s: String): String = Base64.getEncoder.encodeToString(s.getBytes(StandardCharsets.UTF_8))
 
-  test("list models request") {
+  testR("list models request") { converters =>
     val listModelsRequest = ListModelsRequest(s"categories/$Uuid/models", 10, "")
-    Converters.toDomain(listModelsRequest) should equal(
+    converters.toDomain(listModelsRequest).unsafeRunSync() should equal(
       Query(ModelSelector.CategoryIdIs(CategoryId(Uuid)), PageToken.NonEmpty(10, 0))
     )
 
     val listModelsRequest2 = ListModelsRequest(s"categories/$Uuid/models", 10, encode("""{"size": 10, "offset": 20}"""))
-    Converters.toDomain(listModelsRequest2) should equal(
+    converters.toDomain(listModelsRequest2).unsafeRunSync() should equal(
       Query(ModelSelector.CategoryIdIs(CategoryId(Uuid)), PageToken.NonEmpty(10, 20))
     )
   }
 
-  test("update category should get description") {
+  testR("update category should get description") { converters =>
     val catId = CategoryId(UUID.randomUUID())
     val category = api.Category(
-      CategoryName(CategoryRefId.Uid(catId)).toNameString,
+      CategoryName(Left(catId)).toNameString,
       catId.value.toString,
       "some-id",
       "somename",
       "descr"
     )
     val res =
-      Converters.toDomain(UpdateCategoryRequest(Some(category), Some(FieldMask.of(Seq("description", "readable_id")))))
+      converters
+        .toDomain(UpdateCategoryRequest(Some(category), Some(FieldMask.of(Seq("description", "readable_id")))))
+        .unsafeRunSync()
     res.description shouldBe defined
     res.displayName should equal(None)
     res.readableId shouldBe defined
   }
 
-  test("field mask should support *") {
+  testR("field mask should support *") { converters =>
     val catId = CategoryId(UUID.randomUUID())
     val category = api.Category(
-      CategoryName(CategoryRefId.Uid(catId)).toNameString,
+      CategoryName(Left(catId)).toNameString,
       catId.value.toString,
       "some-id",
       "somename",
       "descr"
     )
-    val res =
-      Converters.toDomain(UpdateCategoryRequest(Some(category), Some(FieldMask.of(Seq("*")))))
+    val res = converters.toDomain(UpdateCategoryRequest(Some(category), Some(FieldMask.of(Seq("*"))))).unsafeRunSync()
     res.description shouldBe defined
     res.readableId shouldBe defined
   }

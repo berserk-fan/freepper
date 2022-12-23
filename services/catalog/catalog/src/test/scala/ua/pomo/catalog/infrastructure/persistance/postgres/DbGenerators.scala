@@ -61,12 +61,12 @@ object DbGenerators {
 
   private case object ImageListGenerators extends Generators[ImageListCrud] {
     override def update: Gen[ImageListId => UpdateImageList] =
-      Generators.ImageList.update(Gen.someOf(ImageFixture.images.map(_.id.get)).map(_.toList))
+      Generators.ImageList.update(Gen.someOf(ImageFixture.images.map(_.id)).map(_.toList))
 
     override def genE: Gen[ImageList] = Generators.ImageList.gen(Gen.listOf(Generators.Image.gen).map(_.toList))
 
     override def create: Gen[CreateImageList] =
-      Generators.ImageList.genCreate(Gen.someOf(ImageFixture.images.map(_.id.get)).map(_.toList))
+      Generators.ImageList.genCreate(Gen.someOf(ImageFixture.images.map(_.id)).map(_.toList))
 
     override def query: Gen[crud.Query[ImageListSelector]] = Generators.ImageList.query
 
@@ -75,10 +75,10 @@ object DbGenerators {
 
   private case object ParameterListGenerators extends Generators[ParameterListCrud] {
     override def create: Gen[CreateParameterList] =
-      Generators.ParameterList.create(Gen.oneOf(ImageFixture.images.map(_.id.get)))
+      Generators.ParameterList.create(Gen.oneOf(ImageFixture.images.map(_.id)))
 
     override def update: Gen[ParameterListId => UpdateParameterList] =
-      Generators.ParameterList.update(Gen.oneOf(ImageFixture.images.map(_.id.get)))
+      Generators.ParameterList.update(Gen.oneOf(ImageFixture.images.map(_.id)))
     override def genE: Gen[parameter.ParameterList] = Generators.ParameterList.paramList
     override def id: Gen[ParameterListId] = Generators.ParameterList.paramListId
     override def query: Gen[ParameterListQuery] = Generators.ParameterList.query
@@ -87,13 +87,13 @@ object DbGenerators {
   private case object ModelGenerators extends Generators[ModelCrud] {
     override def create: Gen[model.CreateModel] =
       Generators.Model.createGen(
-        ImageListFixture.imageList1.id.get,
-        List(ParameterListFixture.pl.id.get),
-        Gen.const(CategoryFixture.category1.id.get)
+        ImageListFixture.imageList1.id,
+        List(ParameterListFixture.pl.id),
+        Gen.const(CategoryFixture.category1.id)
       )
 
     override def update: Gen[model.ModelId => model.UpdateModel] =
-      Generators.Model.updateGen(ImageListFixture.imageList1.id.get, CategoryFixture.category1.id.get)
+      Generators.Model.updateGen(ImageListFixture.imageList1.id, CategoryFixture.category1.id)
 
     override def genE: Gen[model.Model] = Generators.Model.gen
 
@@ -105,7 +105,7 @@ object DbGenerators {
   private case object ProductGenerators extends Generators[ProductCrud] {
 
     override def update: Gen[product.ProductId => product.UpdateProduct] =
-      Generators.Product.update(ImageListFixture.imageList2.id.get)
+      Generators.Product.update(ImageListFixture.imageList2.id)
 
     override def genE: Gen[product.Product] = Generators.Product.gen
 
@@ -115,9 +115,9 @@ object DbGenerators {
 
     override def create: Gen[product.CreateProduct] = {
       Generators.Product.create(
-        ImageListFixture.imageList1.id.get,
-        ModelFixture.modelWithParameterList.id.get,
-        List(ParameterListFixture.pl.parameters.head.id.get)
+        ImageListFixture.imageList1.id,
+        ModelFixture.modelWithParameterList.id,
+        List(ParameterListFixture.pl.parameters.head.id)
       )
     }
   }

@@ -26,7 +26,7 @@ object image {
 
   case class ImageData(value: Array[Byte])
 
-  case class CreateImage(id: Option[ImageId], src: ImageSrc, alt: ImageAlt, data: ImageData)
+  case class CreateImage(id: ImageId, src: ImageSrc, alt: ImageAlt, data: ImageData)
   case class CreateImageData(src: ImageSrc, data: ImageData)
   case class BuzzImageUpdate(id: ImageId)
 
@@ -60,7 +60,7 @@ object image {
 
       override def entityDisplayName: EntityDisplayName = Entity.Image.name
 
-      override def getIdCreate(update: CreateImage): Option[ImageId] = update.id
+      override def getIdCreate(create: CreateImage): ImageId = create.id
     }
   }
 }

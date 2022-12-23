@@ -35,7 +35,7 @@ object crud {
 
   trait RepoOps[T <: Crud] {
     def getIdUpdate(update: T#Update): T#EntityId
-    def getIdCreate(update: T#Create): Option[T#EntityId]
+    def getIdCreate(create: T#Create): T#EntityId
     def getIdEntity(entity: T#Entity): T#EntityId
     def entityDisplayName: EntityDisplayName
   }

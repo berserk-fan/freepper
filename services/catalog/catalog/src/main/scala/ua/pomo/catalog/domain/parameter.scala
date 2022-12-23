@@ -27,15 +27,15 @@ object parameter {
       id: ParameterId,
       displayName: ParameterDisplayName,
       image: Option[Image],
-      description: ParameterDescription
+      description: Option[ParameterDescription]
   )
 
   @derive(eqv, show, decoder)
   case class CreateParameter(
-      id: Option[ParameterId],
+      id: ParameterId,
       displayName: ParameterDisplayName,
       image: Option[ImageId],
-      description: ParameterDescription
+      description: Option[ParameterDescription]
   )
 
   @derive(eqv, show, decoder)
@@ -51,7 +51,7 @@ object parameter {
 
   @derive(eqv, show)
   case class CreateParameterList(
-      id: Option[ParameterListId],
+      id: ParameterListId,
       displayName: ParamListDisplayName,
       parameters: List[CreateParameter]
   )
@@ -83,7 +83,7 @@ object parameter {
     implicit val co: RepoOps[ParameterListCrud] = new RepoOps[ParameterListCrud] {
       override def getIdUpdate(update: UpdateParameterList): ParameterListId = update.id
 
-      override def getIdCreate(update: CreateParameterList): Option[ParameterListId] = update.id
+      override def getIdCreate(create: CreateParameterList): ParameterListId = create.id
 
       override def getIdEntity(entity: ParameterList): ParameterListId = entity.id
 

@@ -36,6 +36,12 @@ message CreateModelRequest {
   Model model = 2 [
     (validate.rules).message.required = true
   ];
+
+  // The ID to use for the model, which will become the final component of
+  // the book's resource name.
+  //
+  // This value should be UUID_V4
+  string model_id = 3;
 }
 
 message GetModelRequest {

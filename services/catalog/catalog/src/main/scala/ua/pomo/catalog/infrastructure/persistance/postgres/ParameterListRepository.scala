@@ -15,13 +15,15 @@ import ua.pomo.common.infrastracture.persistance.postgres.{
   QueriesHelpers
 }
 
+import java.util.UUID
+
 object ParameterListRepository {
 
   object ParameterListQueries extends Queries[ParameterListCrud] {
     private def createParameters(p: NonEmptyList[CreateParameter], parameterListId: ParameterListId): Fragment = {
       val res = p.zipWithIndex
         .map { case (p, idx) =>
-          val id = p.id.getOrElse(throw DbErr("No parameter id in create"))
+          val id = p.id
           fr"""($id, ${p.displayName}, ${p.description}, ${p.image}, $idx, $parameterListId)"""
         }
         .reduceLeft((a, b) => a ++ fr", " ++ b)
@@ -31,7 +33,7 @@ object ParameterListRepository {
     }
 
     override def create(req: CreateParameterList): List[doobie.Update0] = {
-      val id = req.id.getOrElse(throw DbErr("No Id found."))
+      val id = req.id
       val createParameterList = sql"""insert into parameter_lists (id,display_name) values ($id, ${req.displayName})"""
       NonEmptyList
         .fromList(req.parameters)

@@ -30,6 +30,12 @@ message Product {
 message CreateProductRequest {
   string parent = 1;
   Product product = 2;
+
+  // The ID to use for the product, which will become the final component of
+  // the book's resource name.
+  //
+  // This value should be UUID_V4
+  string product_id = 3;
 }
 
 

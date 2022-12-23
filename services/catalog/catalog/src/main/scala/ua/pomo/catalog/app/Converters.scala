@@ -1,6 +1,7 @@
 package ua.pomo.catalog.app
 
-import cats.implicits.toShow
+import cats.{ApplicativeError, Monad, MonadError, MonadThrow, Traverse}
+import cats.implicits.{catsSyntaxApplicativeError, toShow}
 import com.google.protobuf.ByteString
 import com.google.protobuf.field_mask.FieldMask
 import io.circe.{Decoder, Encoder, parser}
@@ -45,16 +46,24 @@ import ua.pomo.catalog.domain.model._
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.product._
 import ua.pomo.common.domain.crud.{ListResponse, PageToken, Query}
-import ua.pomo.common.domain.error.ValidationErr
+import ua.pomo.common.domain.error.{ValidationErr, NotFound}
+import cats.syntax.flatMap.toFlatMapOps
+import cats.syntax.functor.toFunctorOps
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}
-import scala.util.{Failure, Try}
 
-object Converters {
-  def toApi(cat: Category): api.Category = {
+
+class Converters[F[_]: MonadThrow](uuidGenerator: UUIDGenerator[F], idResolver: ReadableIdsResolver[F]) {
+  private def fromStringOrRandomIfEmpty(s: String): F[UUID] = if (s == "") {
+    uuidGenerator.gen
+  } else {
+    uuidGenerator.fromString(s)
+  }
+
+  def toApi(cat: Category): F[api.Category] = Monad[F].pure {
     api.Category(
-      CategoryName(CategoryRefId.Readable(cat.readableId)).toNameString,
+      CategoryName(Right(cat.readableId)).toNameString,
       cat.id.value.toString,
       cat.readableId.value,
       cat.displayName.value,
@@ -63,7 +72,7 @@ object Converters {
   }
 
   private val utf8 = StandardCharsets.UTF_8
-  private def toApi(pageToken: PageToken): String = {
+  private def toApi(pageToken: PageToken): F[String] = Monad[F].pure {
     Base64.getEncoder.encodeToString {
       val res = pageToken match {
         case PageToken.Empty              => ""
@@ -73,234 +82,269 @@ object Converters {
     }
   }
 
-  def toDomain(request: GetImageListRequest): ImageListId = {
-    ApiName.imageList(request.name).toTry.get.id
+  def toDomain(request: GetImageListRequest): F[ImageListId] = {
+    MonadThrow[F].fromEither(ApiName.imageList(request.name)).map(_.id)
   }
 
-  def toDomain(deleteImageListRequest: DeleteImageListRequest): ImageListId = {
-    ApiName.imageList(deleteImageListRequest.name).toTry.get.id
+  def toDomain(deleteImageListRequest: DeleteImageListRequest): F[ImageListId] = {
+    MonadThrow[F].fromEither(ApiName.imageList(deleteImageListRequest.name)).map(_.id)
   }
 
-  private def parseToken(pageToken: String, pageSize: Int): PageToken.NonEmpty = {
-    val pageTokenDecoded = new String(Base64.getDecoder.decode(pageToken), utf8)
-    pageTokenDecoded match {
-      case "" => PageToken.NonEmpty(pageSize.toLong, 0L)
+  private def parseToken(pageToken: String, pageSize: Int): F[PageToken.NonEmpty] = for {
+    pageTokenDecoded <- MonadThrow[F].catchNonFatal(new String(Base64.getDecoder.decode(pageToken), utf8))
+    res <- pageTokenDecoded match {
+      case "" => MonadThrow[F].pure(PageToken.NonEmpty(pageSize.toLong, 0L))
       case s =>
-        val x = parser.parse(s).toTry.get
-        Decoder[PageToken.NonEmpty].decodeJson(x).toTry.get
+        for {
+          parsed <- MonadThrow[F].fromEither(parser.parse(s))
+          pageTokenJson <- MonadThrow[F].fromEither(Decoder[PageToken.NonEmpty].decodeJson(parsed))
+        } yield pageTokenJson
     }
-  }
+  } yield res
 
-  def toDomain(listModels: ListModelsRequest): ModelQuery = {
-    val categoryId = ApiName.models(listModels.parent).toTry.get.categoryId.uid
-    Query(ModelSelector.CategoryIdIs(categoryId), parseToken(listModels.pageToken, listModels.pageSize))
-  }
+  def toDomain(listModels: ListModelsRequest): F[ModelQuery] = for {
+    modelsName <- MonadThrow[F].fromEither(ApiName.models(listModels.parent))
+    categoryId <- idResolver.resolveCategoryId(modelsName.categoryId)
+    token <- parseToken(listModels.pageToken, listModels.pageSize)
+  } yield Query(ModelSelector.CategoryIdIs(categoryId), token)
 
-  def toDomain(listImages: ListImageListsRequest): ImageListQuery = {
-    ApiName.imageLists(listImages.parent).toTry.get
-    Query(ImageListSelector.All, parseToken(listImages.pageToken, listImages.pageSize))
-  }
+  def toDomain(listImages: ListImageListsRequest): F[ImageListQuery] = for {
+    _ <- MonadThrow[F].fromEither(ApiName.imageLists(listImages.parent))
+    token <- parseToken(listImages.pageToken, listImages.pageSize)
+  } yield Query(ImageListSelector.All, token)
 
-  def toApi(listImages: ListResponse[ImageList]): ListImageListsResponse = {
-    ListImageListsResponse(listImages.entities.map(toApi), toApi(listImages.nextPageToken))
-  }
+  def toApiListImageLists(listImageLists: ListResponse[ImageList]): F[ListImageListsResponse] = for {
+    imageLists <- Traverse[List].traverse(listImageLists.entities)(toApi)
+    token <- toApi(listImageLists.nextPageToken)
+  } yield ListImageListsResponse(imageLists, token)
 
-  def toApi(findModelResponse: ListResponse[Model]): ListModelsResponse = {
-    ListModelsResponse(findModelResponse.entities.map(toApi), toApi(findModelResponse.nextPageToken))
-  }
+  def toApiListModels(findModelResponse: ListResponse[Model]): F[ListModelsResponse] = for {
+    models <- Traverse[List].traverse(findModelResponse.entities)(toApi)
+    token <- toApi(findModelResponse.nextPageToken)
+  } yield ListModelsResponse(models, token)
 
-  def toApi(products: ListResponse[Product]): ListProductsResponse = {
-    ListProductsResponse(products.entities.map(toApi), toApi(products.nextPageToken))
-  }
+  def toApiListProducts(products: ListResponse[Product]): F[ListProductsResponse] = for {
+    productss <- Traverse[List].traverse(products.entities)(toApi)
+    token <- toApi(products.nextPageToken)
+  } yield ListProductsResponse(productss, token)
 
-  def toApi(resp: ListResponse[Image]): ListImagesResponse = {
-    ListImagesResponse(resp.entities.map(toApi), toApi(resp.nextPageToken))
-  }
+  def toApiListImages(resp: ListResponse[Image]): F[ListImagesResponse] = for {
+    images <- Traverse[List].traverse(resp.entities)(toApi)
+    token <- toApi(resp.nextPageToken)
+  } yield ListImagesResponse(images, token)
 
-  def toApi(money: Money): api.Money = {
+  def toApi(money: Money): F[api.Money] = Monad[F].pure {
     api.Money(money.amount.toFloat)
   }
 
-  def toApi(parameter: Parameter): api.Parameter = {
-    api.Parameter(parameter.id.show, parameter.displayName.show, parameter.image.map(toApi))
+  def toApi(parameter: Parameter): F[api.Parameter] = for {
+    images <- Traverse[Option].traverse(parameter.image)(toApi)
+  } yield api.Parameter(parameter.id.show, parameter.displayName.show, images)
+
+  def toApi(parameterList: ParameterList): F[api.ParameterList] = for {
+    parameters <- Traverse[List].traverse(parameterList.parameters)(toApi)
+  } yield api.ParameterList(parameterList.id.show, parameterList.displayName.show, parameters)
+
+  def toApi(resp: ListResponse[Category]): F[ListCategoriesResponse] = for {
+    x <- Traverse[List].traverse(resp.entities)(toApi)
+    token <- toApi(resp.nextPageToken)
+  } yield ListCategoriesResponse(x, token)
+
+  def toApi(model: Model): F[api.Model] = for {
+    imageList <- toApi(model.imageList)
+    minPrice <- toApi(model.minimalPrice.value)
+    parameterLists <- Traverse[List].traverse(model.parameterLists)(toApi)
+  } yield api.Model(
+    ModelName(Right(model.categoryRid), Left(model.id)).toNameString,
+    model.id.show,
+    model.readableId.show,
+    model.displayName.show,
+    model.description.value,
+    Some(imageList),
+    Some(minPrice),
+    parameterLists
+  )
+
+  def toApi(imageList: ImageList): F[api.ImageList] = for {
+    images <- Traverse[List].traverse(imageList.images)(toApi)
+  } yield api.ImageList(
+    ImageListName(imageList.id).toNameString,
+    imageList.id.show,
+    imageList.displayName.show,
+    images
+  )
+
+  def toApi(p: Product): F[api.Product] = for {
+    il <- toApi(p.imageList)
+  } yield api.Product(
+    ProductName(Left(p.categoryId), Left(p.modelId), p.id).toNameString,
+    p.id.show,
+    p.displayName.show,
+    p.modelId.show,
+    Some(il),
+    Some(api.Product.Price(Some(api.Money(p.price.standard.value.toFloat)))),
+    p.parameterIds.map(_.show)
+  )
+
+  def toDomain(category: api.Category): F[Category] = for {
+    id <- uuidGenerator.gen
+  } yield Category(
+    CategoryId(id),
+    CategoryReadableId(category.readableId),
+    CategoryDisplayName(category.displayName),
+    CategoryDescription(category.description)
+  )
+
+  def toDomain(request: GetImageRequest): F[ImageId] = {
+    MonadThrow[F].fromEither(ApiName.image(request.name)).map(_.id)
   }
 
-  def toApi(parameterList: ParameterList): api.ParameterList = {
-    val parameters = parameterList.parameters.map(toApi)
-    api.ParameterList(parameterList.id.show, parameterList.displayName.show, parameters)
+  def toDomain(request: GetCategoryRequest): F[CategoryId] = {
+    MonadThrow[F]
+      .fromEither(ApiName.category(request.name))
+      .map(_.categoryId)
+      .flatMap(idResolver.resolveCategoryId)
   }
 
-  def toApi(resp: ListResponse[Category]): ListCategoriesResponse = {
-    ListCategoriesResponse(resp.entities.map(toApi), toApi(resp.nextPageToken))
+  def toDomain(request: DeleteImageRequest): F[ImageId] = {
+    MonadThrow[F].fromEither(ApiName.image(request.name)).map(_.id)
   }
-  def toApi(model: Model): api.Model = {
-    api.Model(
-      ModelName(CategoryRefId.Readable(model.categoryRid), model.id).toNameString,
-      model.id.show,
-      model.readableId.show,
-      model.displayName.show,
-      model.description.value,
-      Some(toApi(model.imageList)),
-      Some(toApi(model.minimalPrice.value)),
-      model.parameterLists.map(toApi).toList
+
+  def toDomain(request: DeleteCategoryRequest): F[CategoryId] = {
+    MonadThrow[F]
+      .fromEither(ApiName.category(request.name))
+      .map(_.categoryId)
+      .flatMap(idResolver.resolveCategoryId)
+  }
+
+  def toDomain(request: GetModelRequest): F[ModelId] = {
+    MonadThrow[F].fromEither(ApiName.model(request.name)).map(_.modelId).flatMap(idResolver.resolveModelId)
+  }
+
+  def toDomain(request: CreateCategoryRequest): F[CreateCategory] = for {
+    category <- MonadThrow[F].fromOption(request.category, ValidationErr("category is missing"))
+    id <- fromStringOrRandomIfEmpty(category.uid)
+  } yield CreateCategory(
+    CategoryId(id),
+    CategoryReadableId(category.readableId),
+    CategoryDisplayName(category.displayName),
+    CategoryDescription(category.description)
+  )
+
+  def toDomain(req: ListCategoriesRequest): F[CategoryQuery] = for {
+    token <- parseToken(req.pageToken, req.pageSize)
+  } yield Query(CategorySelector.All, token)
+
+  def toDomain(request: UpdateImageListRequest): F[UpdateImageList] = for {
+    imageList <- MonadThrow[F].fromOption(
+      request.imageList,
+      ValidationErr("image list should be present on the request")
     )
-  }
+    id <- MonadThrow[F].fromEither(ApiName.imageList(imageList.name)).map(_.id)
+    obj = applyFieldMask(request.imageList.get, request.updateMask.get)
+    images <- Traverse[List].traverse(obj.images.toList)(w => MonadThrow[F].fromEither(ApiName.image(w.name)))
+    imageIds = images.map(_.id)
+  } yield UpdateImageList(
+    id,
+    nonEmptyString(obj.displayName).map(ImageListDisplayName.apply),
+    nonEmptyList(imageIds)
+  )
 
-  def toApi(imageList: ImageList): api.ImageList = {
-    api.ImageList(
-      ImageListName(imageList.id).toNameString,
-      imageList.id.show,
-      imageList.displayName.show,
-      imageList.images.map(toApi)
+  def toDomain(request: ListProductsRequest): F[ProductQuery] = for {
+    modelId <- MonadThrow[F]
+      .fromEither(ApiName.products(request.parent))
+      .map(_.modelId)
+      .flatMap(idResolver.resolveModelId)
+    token <- parseToken(request.pageToken, request.pageSize)
+  } yield Query(ProductSelector.ModelIs(modelId), token)
+
+  def toDomain(request: ListImagesRequest): F[ImageQuery] = for {
+    token <- parseToken(request.pageToken, request.pageSize)
+  } yield Query(ImageSelector.All, token)
+
+  def toDomain(request: UpdateModelRequest): F[UpdateModel] = for {
+    model <- MonadThrow[F].fromOption(request.model, ValidationErr("not found model on the request"))
+    modelName <- MonadThrow[F].fromEither(ApiName.model(model.name))
+    updateMask <- MonadThrow[F].fromOption(request.updateMask, ValidationErr("not found field_mask on the request"))
+    model2 = applyFieldMask(model, updateMask)
+    imageListIdOpt <- Traverse[Option].traverse(model2.imageList)(imageList =>
+      MonadThrow[F].fromEither(ApiName.imageList(imageList.name)).map(_.id)
     )
+    modelIdResolved <- idResolver.resolveModelId(modelName.modelId)
+  } yield UpdateModel(
+    modelIdResolved,
+    nonEmptyString(model2.readableId).map(ModelReadableId.apply),
+    None,
+    nonEmptyString(model2.displayName).map(ModelDisplayName.apply),
+    nonEmptyString(model2.description).map(ModelDescription.apply),
+    imageListIdOpt
+  )
+
+  def toDomain(request: GetProductRequest): F[ProductId] = {
+    MonadThrow[F].fromEither(ApiName.product(request.name)).map(_.productId)
   }
 
-  def toApi(p: Product): api.Product = {
-    api.Product(
-      ProductName(CategoryRefId.Uid(p.categoryId), p.modelId, p.id).toNameString,
-      p.id.show,
-      p.displayName.show,
-      p.modelId.show,
-      Some(toApi(p.imageList)),
-      Some(api.Product.Price(Some(api.Money(p.price.standard.value.toFloat)))),
-      p.parameterIds.map(_.show)
-    )
-  }
-
-  def toDomain(category: api.Category): Category = {
-    Category(
-      CategoryId(UUID.randomUUID()),
-      CategoryReadableId(category.readableId),
-      CategoryDisplayName(category.displayName),
-      CategoryDescription(category.description)
-    )
-  }
-
-  def toDomain(request: GetImageRequest): ImageId = {
-    ApiName.image(request.name).toTry.get.id
-  }
-
-  def toDomain(request: GetCategoryRequest): CategoryId = {
-    ApiName.category(request.name).toTry.get.categoryId.uid
-  }
-
-  def toDomain(request: DeleteImageRequest): ImageId = {
-    ApiName.image(request.name).toTry.get.id
-  }
-
-  def toDomain(request: DeleteCategoryRequest): CategoryId = {
-    ApiName.category(request.name).toTry.get.categoryId.uid
-  }
-
-  def toDomain(request: GetModelRequest): ModelId = {
-    ApiName.model(request.name).toTry.get.modelId
-  }
-
-  def toDomain(request: CreateCategoryRequest): CreateCategory = {
-    val category = request.category.get
-    CreateCategory(
-      None,
-      CategoryReadableId(category.readableId),
-      CategoryDisplayName(category.displayName),
-      CategoryDescription(category.description)
-    )
-  }
-
-  def toDomain(req: ListCategoriesRequest): CategoryQuery = {
-    val token = parseToken(req.pageToken, req.pageSize)
-    Query(CategorySelector.All, token)
-  }
-
-  def toDomain(request: UpdateImageListRequest): UpdateImageList = {
-    val id = ApiName.imageList(request.imageList.get.name).toTry.get.id
-    val obj = applyFieldMask(request.imageList.get, request.updateMask.get)
-    UpdateImageList(
-      id,
-      nonEmptyString(obj.displayName).map(ImageListDisplayName.apply),
-      nonEmptyList(obj.images.toList.map(image => ApiName.image(image.name).toTry.get.id))
-    )
-  }
-
-  def toDomain(request: ListProductsRequest): ProductQuery = {
-    val modelId = ApiName.products(request.parent).toTry.get.modelId
-    Query(ProductSelector.ModelIs(modelId), parseToken(request.pageToken, request.pageSize))
-  }
-
-  def toDomain(request: ListImagesRequest): ImageQuery = {
-    Query(ImageSelector.All, parseToken(request.pageToken, request.pageSize))
-  }
-
-  def toDomain(request: UpdateModelRequest): UpdateModel = {
-    val model = request.model.get
-    val modelName = ApiName.model(model.name).toTry.get
-    val model2 = applyFieldMask(model, request.updateMask.get)
-    val imageListId = model2.imageList.map(_.name).map(ApiName.imageList).map(_.toTry.get.id)
-    UpdateModel(
-      modelName.modelId,
-      nonEmptyString(model2.readableId).map(ModelReadableId.apply),
-      None,
-      nonEmptyString(model2.displayName).map(ModelDisplayName.apply),
-      nonEmptyString(model2.description).map(ModelDescription.apply),
-      imageListId
-    )
-  }
-
-  def toDomain(request: GetProductRequest): ProductId = {
-    ApiName.product(request.name).toTry.get.productId
-  }
-
-  def toDomain(request: CreateProductRequest): CreateProduct = {
-    val productsName = ApiName.products(request.parent).toTry.get
-    val product = request.product.get
-    val imageListId = Try(UUID.fromString(product.imageList.get.uid))
-      .recoverWith { case e: Throwable => Failure(ValidationErr(s"bad imageList id $product.imageList", Some(e))) }
+  def toDomain(request: CreateProductRequest): F[CreateProduct] = for {
+    productsName <- MonadThrow[F].fromEither(ApiName.products(request.parent))
+    product <- MonadThrow[F].fromOption(request.product, ValidationErr("product should be present on the request"))
+    imageListId <- uuidGenerator
+      .fromString(product.imageList.get.uid)
+      .recoverWith { case e: Throwable =>
+        MonadThrow[F].raiseError(ValidationErr(s"bad imageList id $product.imageList", Some(e)))
+      }
       .map(ImageListId.apply)
-      .get
+    id <- fromStringOrRandomIfEmpty(request.productId)
+    parameterIdsRaw <- Traverse[List].traverse(product.parameterIds.toList)(uuidGenerator.fromString)
+    parameterIds = parameterIdsRaw.map(ParameterId.apply)
+    resolvedModelId <- idResolver.resolveModelId(productsName.modelId)
+  } yield CreateProduct(
+    ProductId(id),
+    resolvedModelId,
+    imageListId,
+    ProductStandardPrice(product.price.get.standard.get.amount.toDouble),
+    None,
+    parameterIds
+  )
 
-    val res = CreateProduct(
-      None,
-      productsName.modelId,
-      imageListId,
-      ProductStandardPrice(product.price.get.standard.get.amount.toDouble),
-      None,
-      product.parameterIds.map(UUID.fromString).map(ParameterId.apply).toList
+  def toDomain(request: CreateImageListRequest): F[CreateImageList] = for {
+    il <- MonadThrow[F].fromOption(request.imageList, ValidationErr("imageList is should be present on the request"))
+    images <- Traverse[List].traverse(il.images.toList) { im =>
+      MonadThrow[F].fromEither(ApiName.image(im.name)).map(_.id)
+    }
+    id <- fromStringOrRandomIfEmpty(request.imageListId)
+  } yield CreateImageList(
+    ImageListId(id),
+    ImageListDisplayName(il.displayName),
+    images
+  )
+
+  def toDomain(request: DeleteProductRequest): F[ProductId] = {
+    MonadThrow[F].fromEither(ApiName.product(request.name)).map(_.productId)
+  }
+
+  def toDomain(request: DeleteModelRequest): F[ModelId] = {
+    MonadThrow[F].fromEither(ApiName.product(request.name)).map(_.modelId).flatMap(idResolver.resolveModelId)
+  }
+
+  def toDomain(request: CreateModelRequest): F[CreateModel] = for {
+    categoryId <- MonadThrow[F]
+      .fromEither(ApiName.models(request.parent))
+      .flatMap(name => idResolver.resolveCategoryId(name.categoryId))
+    model <- MonadThrow[F].fromOption(request.model, ValidationErr("model should be present on the request"))
+    imageListId <- MonadThrow[F].fromEither(ApiName.imageList(model.imageList.get.name)).map(_.id)
+    id <- fromStringOrRandomIfEmpty(request.modelId)
+    parameterListIds <- Traverse[List].traverse(model.parameterLists.map(_.uid).toList)(uidRaw =>
+      uuidGenerator.fromString(uidRaw).map(ParameterListId.apply)
     )
-
-    res
-  }
-
-  def toDomain(request: CreateImageListRequest): CreateImageList = {
-    val il = request.imageList.get
-    CreateImageList(
-      None,
-      ImageListDisplayName(il.displayName),
-      il.images.map(im => ApiName.image(im.name).toTry.get.id).toList
-    )
-  }
-
-  def toDomain(request: DeleteProductRequest): ProductId = {
-    ApiName.product(request.name).toTry.get.productId
-  }
-
-  def toDomain(request: DeleteModelRequest): ModelId = {
-    ApiName.model(request.name).toTry.get.modelId
-  }
-
-  def toDomain(request: CreateModelRequest): CreateModel = {
-    val models = ApiName.models(request.parent).toTry.get.categoryId.uid
-    val model = request.model.get
-    val imageListId = ApiName.imageList(model.imageList.get.name).toTry.get.id
-
-    CreateModel(
-      None,
-      ModelReadableId(model.readableId),
-      models,
-      ModelDisplayName(model.displayName),
-      ModelDescription(model.description),
-      imageListId,
-      model.parameterLists.map(_.uid).map(UUID.fromString).map(ParameterListId.apply).toList
-    )
-  }
+  } yield CreateModel(
+    ModelId(id),
+    ModelReadableId(model.readableId),
+    categoryId,
+    ModelDisplayName(model.displayName),
+    ModelDescription(model.description),
+    imageListId,
+    parameterListIds
+  )
 
   private def nonEmptyString(s: String): Option[String] = Option.when(s.nonEmpty)(s)
   private def nonEmptyList[T](l: List[T]): Option[List[T]] = Option.when(l.nonEmpty)(l)
@@ -313,12 +357,12 @@ object Converters {
     }
   }
 
-  def toDomain(req: CreateImageRequest): CreateImage = {
-    val im = req.image.get
-    CreateImage(None, ImageSrc(im.src), ImageAlt(im.alt), ImageData(im.data.toByteArray))
-  }
+  def toDomain(req: CreateImageRequest): F[CreateImage] = for {
+    im <- MonadThrow[F].fromOption(req.image, ValidationErr("image should be present on the request"))
+    id <- fromStringOrRandomIfEmpty(req.imageId)
+  } yield CreateImage(ImageId(id), ImageSrc(im.src), ImageAlt(im.alt), ImageData(im.data.toByteArray))
 
-  def toApi(image: Image): api.Image = {
+  def toApi(image: Image): F[api.Image] = Monad[F].pure {
     api.Image(
       ApiName.ImageName(image.id).toNameString,
       image.id.show,
@@ -328,16 +372,20 @@ object Converters {
     )
   }
 
-  def toDomain(request: UpdateCategoryRequest): UpdateCategory = {
-    val category1 = request.category.get
-    val categoryId = ApiName.category(category1.name).map(_.categoryId).toTry.get.uid
-    val fieldMask = request.updateMask.get
-    val category = applyFieldMask(category1, fieldMask)
-    UpdateCategory(
-      categoryId,
-      nonEmptyString(category.readableId).map(CategoryReadableId.apply),
-      nonEmptyString(category.displayName).map(CategoryDisplayName.apply),
-      nonEmptyString(category.description).map(CategoryDescription.apply)
+  def toDomain(request: UpdateCategoryRequest): F[UpdateCategory] = for {
+    category1 <- MonadThrow[F].fromOption(request.category, ValidationErr("category should be present on the request"))
+    categoryId <- MonadThrow[F]
+      .fromEither(ApiName.category(category1.name).map(_.categoryId))
+      .flatMap(idResolver.resolveCategoryId)
+    fieldMask <- MonadThrow[F].fromOption(
+      request.updateMask,
+      ValidationErr("field_mask should be present on the request")
     )
-  }
+    category = applyFieldMask(category1, fieldMask)
+  } yield UpdateCategory(
+    categoryId,
+    nonEmptyString(category.readableId).map(CategoryReadableId.apply),
+    nonEmptyString(category.displayName).map(CategoryDisplayName.apply),
+    nonEmptyString(category.description).map(CategoryDescription.apply)
+  )
 }

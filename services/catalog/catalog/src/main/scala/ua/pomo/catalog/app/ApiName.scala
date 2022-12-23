@@ -20,32 +20,19 @@ object ApiName {
   import Parsers.parseAllToEither
   type NameParseResult[T] = Either[ValidationErr, T]
 
-  @derive(eqv)
-  sealed trait CategoryRefId {
-    def uid: CategoryId
-  }
-  object CategoryRefId {
-    case class Readable(rid: CategoryReadableId) extends CategoryRefId {
-      override def uid: CategoryId = throw new UnsupportedOperationException(s"CategoryRefId was $this, not Uid.")
-    }
-    case class Uid(uid: CategoryId) extends CategoryRefId
-
-    implicit val show: Show[CategoryRefId] = {
-      case Readable(value) => value.value.show
-      case Uid(value)      => value.value.show
-    }
-  }
+  type CategoryRefId = Either[CategoryId, CategoryReadableId]
+  type ModelRefId = Either[ModelId, ModelReadableId]
 
   case object CategoriesName extends ApiName
   case class CategoryName(categoryId: CategoryRefId) extends ApiName
   case class ModelsName(categoryId: CategoryRefId) extends ApiName
-  case class ModelName(categoryId: CategoryRefId, modelId: ModelId) extends ApiName
+  case class ModelName(categoryId: CategoryRefId, modelId: ModelRefId) extends ApiName
   case object ImageListsName extends ApiName
   case object ImagesName extends ApiName
   case class ImageListName(id: ImageListId) extends ApiName
   case class ImageName(id: ImageId) extends ApiName
-  case class ProductsName(categoryId: CategoryRefId, modelId: ModelId) extends ApiName
-  case class ProductName(categoryId: CategoryRefId, modelId: ModelId, productId: ProductId) extends ApiName
+  case class ProductsName(categoryId: CategoryRefId, modelId: ModelRefId) extends ApiName
+  case class ProductName(categoryId: CategoryRefId, modelId: ModelRefId, productId: ProductId) extends ApiName
 
   implicit class ToNameString(n: ApiName) {
     def toNameString: String = Parsers.Show.value.show(n)
@@ -76,7 +63,7 @@ object ApiName {
       category <~ s"/$Models" ^^ (_.categoryId) ^^ ModelsName.apply
     }
     def model: Parser[ModelName] = {
-      (models <~ "/") ~ modelUUID ^^ { case col ~ id => ModelName(col.categoryId, id) }
+      (models <~ "/") ~ modelUUID ^^ { case col ~ id => ModelName(col.categoryId, Left(id)) }
     }
     def imageLists: Parser[ImageListsName.type] = s"^$ImageLists$$".r ^^ (_ => ImageListsName)
     def images: Parser[ImagesName.type] = s"^$Images$$".r ^^ (_ => ImagesName)
@@ -96,8 +83,7 @@ object ApiName {
     private def readableId: Parser[String] = "[a-zA-Z-]+".r
     private def categoryRid: Parser[CategoryReadableId] = readableId ^^ CategoryReadableId.apply
     private def categoryUid: Parser[CategoryId] = uuid ^^ CategoryId.apply
-    private def categoryId: Parser[CategoryRefId] =
-      (categoryUid ^^ CategoryRefId.Uid.apply) | (categoryRid ^^ CategoryRefId.Readable.apply)
+    private def categoryId: Parser[CategoryRefId] = (categoryUid ^^ Left.apply) | (categoryRid ^^ Right.apply)
 
     private def modelUUID = uuid ^^ ModelId.apply
     private def imageListId = uuid ^^ ImageListId.apply
@@ -110,12 +96,17 @@ object ApiName {
     private val Products: String = "products"
 
     object Show {
+      def showEither[T: Show, U: Show](s: Either[T, U]): String = s match {
+        case Left(value)  => value.show
+        case Right(value) => value.show
+      }
+
       private implicit val image: Show[ImageName] = t => s"$Images/${t.id.show}"
-      private implicit val category: Show[CategoryName] = t => s"$Categories/${t.categoryId.show}"
+      private implicit val category: Show[CategoryName] = t => s"$Categories/${showEither(t.categoryId)}"
       private implicit val models: Show[ModelsName] = t => {
         s"${CategoryName(t.categoryId).show}/$Models"
       }
-      private implicit val model: Show[ModelName] = t => s"${ModelsName(t.categoryId).show}/${t.modelId.show}"
+      private implicit val model: Show[ModelName] = t => s"${ModelsName(t.categoryId).show}/${showEither(t.modelId)}"
       private implicit val imageList: Show[ImageListName] = t => s"$ImageLists/${t.id.show}"
       private implicit val products: Show[ProductsName] = t => s"${ModelName(t.categoryId, t.modelId).show}/$Products"
       private implicit val product: Show[ProductName] = t =>

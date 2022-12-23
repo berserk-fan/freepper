@@ -52,7 +52,7 @@ object model {
 
   @derive(eqv, show)
   case class CreateModel(
-      id: Option[ModelId],
+      id: ModelId,
       readableId: ModelReadableId,
       categoryId: CategoryId,
       displayName: ModelDisplayName,
@@ -79,6 +79,7 @@ object model {
     case object All extends ModelSelector
     case class IdIs(id: ModelId) extends ModelSelector
     case class CategoryIdIs(id: CategoryId) extends ModelSelector
+    case class RidIs(id: ModelReadableId) extends ModelSelector
   }
 
   type ModelRepository[F[_]] = Repository[F, Crud.type]
@@ -91,13 +92,14 @@ object model {
     override type EntityId = ModelId
     override type Selector = ModelSelector
     implicit val ops: RepoOps[ModelCrud] = new RepoOps[ModelCrud] {
+
       override def getIdUpdate(update: UpdateModel): ModelId = update.id
 
       override def getIdEntity(entity: Model): ModelId = entity.id
 
       override def entityDisplayName: EntityDisplayName = Entity.Model.name
 
-      override def getIdCreate(update: CreateModel): Option[ModelId] = update.id
+      override def getIdCreate(create: CreateModel): ModelId = create.id
     }
   }
 }
