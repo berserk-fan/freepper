@@ -11,7 +11,7 @@ export default function ButtonWithDetail({
   return (
     <ButtonGroup>
       <Button {...otherProps}>{children}</Button>
-      <Detail text={detailText} />
+      <Detail title={detailText} />
     </ButtonGroup>
   );
 }

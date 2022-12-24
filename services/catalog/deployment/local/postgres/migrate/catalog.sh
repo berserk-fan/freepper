@@ -1,0 +1,1 @@
+sbt "runMain ua.pomo.app.DBMigrationsCommand catalog"

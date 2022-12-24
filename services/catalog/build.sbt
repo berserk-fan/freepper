@@ -1,44 +1,15 @@
 import Dependencies._
 import scalapb.GeneratorOption
 
+lazy val globalResources = file("app/src/main/resources")
+
 ThisBuild / scalaVersion := "2.13.6"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "ua.pomo"
 ThisBuild / organizationName := "Pomo"
 
-//Env File
-ThisBuild / envFileName := ".env.local"
-Test / envFileName := ".env.local"
-Test / envVars := (Test / envFromFile).value
-
-//ScalaTest
-
-Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-P32")
-Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-h", "test-results", "-o")
-
-//grpc plugins
-
-enablePlugins(Fs2Grpc)
-scalapbCodeGeneratorOptions += CodeGeneratorOption.Fs2Grpc
-scalapbCodeGeneratorOptions += CodeGeneratorOption.FlatPackage
-
-//output into src_managed/main for intellij to see generated code
-
-Compile / managedSourceDirectories -= baseDirectory.value / "target" / "scala-2.13" / "src_managed" / "main"
-Compile / managedSourceDirectories += baseDirectory.value / "target" / "scala-2.13" / "src_managed" / "main" / "scala"
-
-Compile / PB.targets := scalapbCodeGenerators.value
-  .map(_.copy(outputPath = (Compile / sourceManaged).value / "scala"))
-  .:+(
-    scalapb.validate.gen(GeneratorOption.FlatPackage) -> (Compile / sourceManaged).value / "scala": protocbridge.Target
-  )
-
-//docker
-enablePlugins(DockerPlugin)
-
-//enable the Ash plugin, which tells our package manager to generate our binary using Ash instead of Bash
-//???
-enablePlugins(AshScriptPlugin)
+// set the prompt (for this build) to include the project id.
+ThisBuild / shellPrompt := { state => Project.extract(state).currentRef.project + "> " }
 
 //packaging
 enablePlugins(JavaAppPackaging)
@@ -62,73 +33,158 @@ Universal / javaOptions ++= Seq(
   "-J-Xmx900m"
 )
 
-//migration task
-lazy val runMigrate = taskKey[Unit]("Migrates the database schema.")
-addCommandAlias("run-db-migrations", "runMigrate")
+lazy val runLinter = taskKey[Unit]("Run linter")
+
+lazy val test = taskKey[Unit]("Test unit and it tests")
+lazy val testEvil = taskKey[Unit]("Test external services like communication to S3")
+
+ThisBuild / envFileName := (baseDirectory.value / ".env.local").toString
+
+lazy val commonLibs = Seq(
+  scalacOptions ++= List(
+    "-Ymacro-annotations",
+    "-Yrangepos",
+    "-Wconf:cat=unused:info",
+    "-Ywarn-macros:after"
+  ),
+  libraryDependencies ++= Seq(
+    Libraries.scalaTest,
+    Libraries.scalaTestHtml,
+    Libraries.scalaCheck,
+    Libraries.scalaTestScalaCheck,
+    Libraries.scalaCheckEffect,
+    Libraries.doobieCore,
+    Libraries.doobiePostgres,
+    Libraries.doobieScalaTest,
+    Libraries.typesafeConfig,
+    Libraries.pureConfig,
+    Libraries.scalaLogging,
+    Libraries.flyway,
+    Libraries.logbackClassic,
+    Libraries.cats,
+    Libraries.catsEffect,
+    Libraries.catsRetry,
+    Libraries.circeCore,
+    Libraries.circeGeneric,
+    Libraries.circeParser,
+    Libraries.circeRefined,
+    Libraries.derevoCore,
+    Libraries.derevoCats,
+    Libraries.derevoCirce,
+    Libraries.newtype,
+    Libraries.refinedCore,
+    Libraries.refinedCats,
+    Libraries.squants,
+    Libraries.monocleCore,
+    Libraries.monocleMacro,
+    Libraries.postgresJdbcDriver,
+    Libraries.parserCombinators,
+    Libraries.log4CatsSlf4j,
+    Libraries.log4Cats,
+
+    // plugins
+    CompilerPlugin.kindProjector,
+    CompilerPlugin.betterMonadicFor,
+    CompilerPlugin.semanticDB,
+
+    // grpc
+    Libraries.grpcNetty,
+    Libraries.grpcNettyShaded,
+    Libraries.scalaPbCommonProtosProtobuf,
+    Libraries.scalaPbCommonProtosScala,
+    Libraries.scalaPbValidation,
+    Libraries.gprcServerReflection
+  )
+)
+
+addCommandAlias("fix", "; all compile:scalafix test:scalafix; all scalafmtSbt scalafmtAll")
+
+lazy val scalaFixSettings = Seq(
+  semanticdbEnabled := true,
+  semanticdbVersion := scalafixSemanticdb.revision,
+  ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaVersion.value),
+  ThisBuild / scalafixDependencies ++= List(
+    "com.github.liancheng" %% "organize-imports" % "0.6.0",
+    "com.github.vovapolu" %% "scaluzzi" % "0.1.23"
+  )
+)
+
+lazy val grpcServiceSettings = commonLibs ++ scalaFixSettings ++ Seq(
+  // RESOURCES
+  Runtime / unmanagedResourceDirectories += globalResources,
+  Test / unmanagedResourceDirectories += globalResources,
+
+  // COMMANDS
+  Test / test := (Test / testOnly).toTask(" *Test *IT").value,
+  Test / testEvil := (Test / testOnly).toTask(" *Evil").value,
+
+  // SCALA TEST
+  Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-P32"),
+  Test / testOptions += Tests.Argument(
+    TestFrameworks.ScalaTest,
+    "-h",
+    (baseDirectory.value.toPath / "test-results").toString,
+    "-o"
+  ),
+
+  // GRPC
+  scalapbCodeGeneratorOptions += CodeGeneratorOption.Fs2Grpc,
+  scalapbCodeGeneratorOptions += CodeGeneratorOption.FlatPackage,
+  // output into src_managed/main for intellij to see generated code
+  Compile / managedSourceDirectories := List(
+    (Compile / sourceManaged).value / "scala"
+  ),
+  Compile / PB.targets := scalapbCodeGenerators.value
+    .map(_.copy(outputPath = (Compile / sourceManaged).value / "scala"))
+    .:+(
+      scalapb.validate
+        .gen(GeneratorOption.FlatPackage) -> (Compile / sourceManaged).value / "scala": protocbridge.Target
+    )
+)
+
+val commonServiceSettings = (p: Project) => p.enablePlugins(Fs2Grpc)
 
 //main project
-lazy val root = (project in file("."))
+
+lazy val common = (project in file("common"))
   .settings(
-    name := "catalog",
-    Docker / packageName := "catalog",
-    scalacOptions ++= List(
-      "-Ymacro-annotations",
-      "-Yrangepos",
-      "-Wconf:cat=unused:info",
-      "-Ywarn-macros:after"
-    ),
-    dockerExposedPorts ++= Seq(9090),
-    dockerUpdateLatest := true,
-    dockerBaseImage := "openjdk:17",
-    dockerUpdateLatest := true,
-    fullRunTask(runMigrate, Compile, "ua.pomo.catalog.DBMigrationsCommand"),
-    runMigrate / fork := true,
-    libraryDependencies ++= Seq(
-      Libraries.scalaTest,
-      Libraries.scalaTestHtml,
-      Libraries.scalaCheck,
-      Libraries.scalaTestScalaCheck,
-      Libraries.grpcNetty,
-      Libraries.grpcNettyShaded,
-      Libraries.scalaPbCommonProtosProtobuf,
-      Libraries.scalaPbCommonProtosScala,
-      Libraries.scalaPbValidation,
-      Libraries.gprcServerReflection,
-      Libraries.doobieCore,
-      Libraries.doobiePostgres,
-      Libraries.doobieScalaTest,
-      Libraries.typesafeConfig,
-      Libraries.pureConfig,
-      Libraries.scalaLogging,
-      Libraries.flyway,
-      Libraries.logbackClassic,
-      Libraries.cats,
-      Libraries.catsEffect,
-      Libraries.catsRetry,
-      Libraries.circeCore,
-      Libraries.circeGeneric,
-      Libraries.circeParser,
-      Libraries.circeRefined,
-      Libraries.derevoCore,
-      Libraries.derevoCats,
-      Libraries.derevoCirce,
-      Libraries.newtype,
-      Libraries.refinedCore,
-      Libraries.refinedCats,
-      Libraries.squants,
-      Libraries.monocleCore,
-      Libraries.monocleMacro,
-      Libraries.postgresJdbcDriver,
-      Libraries.parserCombinators,
-      Libraries.log4CatsSlf4j,
-      Libraries.log4Cats,
-      Libraries.awsS3Sdk,
-      CompilerPlugin.kindProjector,
-      CompilerPlugin.betterMonadicFor,
-      CompilerPlugin.semanticDB
-    )
+    commonLibs,
+    name := "common"
   )
 
-addCommandAlias("test", ";testOnly *Test *IT")
-addCommandAlias("testEvil", ";testOnly *Evil")
-addCommandAlias("runLinter", ";scalafixAll --rules RemoveUnused")
+lazy val catalog = commonServiceSettings(project in file("catalog"))
+  .settings(
+    grpcServiceSettings,
+    name := "catalog",
+    libraryDependencies ++= Seq(
+      Libraries.awsS3Sdk
+    )
+  )
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val app = (project in file("app"))
+  .settings(
+    scalaFixSettings,
+    name := "app"
+  )
+  .dependsOn(catalog, common)
+
+//migration task
+lazy val runMigrate = inputKey[Unit]("Migrates the database schema.")
+
+lazy val runServer = taskKey[Unit]("Run sbt server")
+
+lazy val root = (project in file("."))
+  .settings(
+    // CODE
+    scalaFixSettings,
+    name := "pomo",
+    // migration
+    fullRunInputTask(runMigrate, Compile, "ua.pomo.app.DBMigrationsCommand"),
+    runMigrate / fork := true,
+    // server
+    fullRunTask(runServer, Compile, "ua.pomo.app.Server"),
+    runServer / fork := true
+  )
+  .dependsOn(app)
+  .aggregate(app, common, catalog)

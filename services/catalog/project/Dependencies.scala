@@ -28,13 +28,15 @@ object Dependencies {
     val scalaLogging = "3.9.4"
     val pureConfig = "0.17.1"
     val scalaTest = "3.2.9"
+    val scalacheckEffectVersion = "1.0.4"
+    val scalaCheck = "1.15.4"
+    val scalaTestScalaCheck = "3.2.9.0"
+
     val scalaPb = "2.5.0-2"
     val doobie = "1.0.0-RC1"
     val flyway = "7.2.0"
     val typeSafeConfig = "1.4.1"
     val postgresJdbcDriver = "42.3.1"
-    val scalaCheck = "1.15.4"
-    val scalaTestScalaCheck = "3.2.9.0"
 
     val parserCombinators = "2.1.0"
     val flexMark = "0.35.10"
@@ -49,6 +51,7 @@ object Dependencies {
     lazy val scalaCheck = "org.scalacheck" %% "scalacheck" % V.scalaCheck % Test
     lazy val scalaTestHtml = "com.vladsch.flexmark" % "flexmark-all" % V.flexMark % Test
     lazy val scalaTestScalaCheck = "org.scalatestplus" %% "scalacheck-1-15" % V.scalaTestScalaCheck % Test
+    lazy val scalaCheckEffect = "org.typelevel" %% "scalacheck-effect-munit" % V.scalacheckEffectVersion % Test
 
     lazy val grpcNetty = "io.grpc" % "grpc-netty" % scalapb.compiler.Version.grpcJavaVersion
     lazy val grpcNettyShaded = "io.grpc" % "grpc-netty-shaded" % scalapb.compiler.Version.grpcJavaVersion

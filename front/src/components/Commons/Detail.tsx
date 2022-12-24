@@ -3,23 +3,22 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import CloseIcon from "@mui/icons-material/CancelOutlined";
 import makeStyles from "@mui/styles/makeStyles";
 import ClickAwayListener from "@mui/base/ClickAwayListener";
-import Tooltip from "@mui/material/Tooltip";
+import Tooltip, {TooltipProps} from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 
 const useStyles = makeStyles({
   tooltip: {
     backgroundColor: "#FFFFFF",
-    color: "kr_black",
+    color: "black",
     maxWidth: 220,
     border: "1px solid #dadde9",
-    padding: 4,
+    padding: 10,
     margin: 0,
   },
 });
 
-export default function Detail(props: { text: string } & any) {
+export default function Detail(props: Omit<TooltipProps, "children">) {
   const classes = useStyles();
-  const { text, ...rest } = props;
   const [open, setOpen] = React.useState(false);
   const handleTooltipClose = () => {
     setOpen(false);
@@ -32,17 +31,16 @@ export default function Detail(props: { text: string } & any) {
   return (
     <ClickAwayListener onClickAway={handleTooltipClose}>
       <Tooltip
+        {...props}
         classes={classes}
         onClose={handleTooltipClose}
         open={open}
         disableFocusListener
         disableHoverListener
         disableTouchListener
-        title={text}
         placement="bottom"
-        {...rest}
       >
-        <Button size="small" onClick={handleTooltipClicked}>
+        <Button color="secondary" size="small" onClick={handleTooltipClicked}>
           {open ? (
             <CloseIcon fontSize="small" />
           ) : (

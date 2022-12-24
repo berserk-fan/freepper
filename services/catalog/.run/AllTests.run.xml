@@ -1,15 +1,13 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="AllTests" type="ScalaTestRunConfiguration" factoryName="ScalaTest" singleton="false" show_console_on_std_err="false" show_console_on_std_out="false">
-    <module name="catalog" />
     <extension name="net.ashald.envfile">
-      <option name="IS_ENABLED" value="true" />
+      <option name="IS_ENABLED" value="false" />
       <option name="IS_SUBST" value="false" />
       <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
       <option name="IS_IGNORE_MISSING_FILES" value="false" />
       <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
       <ENTRIES>
         <ENTRY IS_ENABLED="true" PARSER="runconfig" />
-        <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env.local" />
       </ENTRIES>
     </extension>
     <option name="allowRunningInParallel" value="true" />
@@ -18,21 +16,6 @@
       <list />
     </option>
     <option name="testKind" value="All in package" />
-    <option name="classBuf">
-      <list>
-        <option value="ua.pomo.catalog.AppConfigTest" />
-        <option value="ua.pomo.catalog.CatalogImplIT" />
-        <option value="ua.pomo.catalog.CatalogImplTest" />
-        <option value="ua.pomo.catalog.domain.CommonsTest" />
-        <option value="ua.pomo.catalog.infrastructure.persistance.postgres.ModelRepositoryImplTest" />
-        <option value="ua.pomo.catalog.infrastructure.persistance.postgres.ProductRepositoryImplTest" />
-        <option value="ua.pomo.catalog.infrastructure.persistance.postgres.CategoryRepositoryImplTest" />
-        <option value="ua.pomo.catalog.infrastructure.persistance.postgres.ImageListRepositoryImplTest" />
-        <option value="ua.pomo.catalog.app.ApiNameTest" />
-        <option value="ua.pomo.catalog.app.ConvertersTest" />
-        <option value="ua.pomo.catalog.app.programs.CategoryServiceImplTest" />
-      </list>
-    </option>
     <option name="programParameters" value="-P32" />
     <option name="shortenClasspath" value="NONE" />
     <option name="testArgs" value="-P32" />

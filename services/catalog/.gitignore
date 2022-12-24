@@ -4,4 +4,5 @@ project/project
 /deployment/local/envoy/envoy.yaml
 /deployment/local/postgres/volume/
 test-results
-.env.local
+**/.env.local
+**/init.sql

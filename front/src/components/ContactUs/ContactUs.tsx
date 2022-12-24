@@ -13,6 +13,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import ButtonWithDetail from "../Commons/ButtonWithDetail";
 import PhoneNumber from "./PhoneNumber";
+import constants from "../../commons/contants";
 
 const useStyles = makeStyles((theme) => ({
   nested: {
@@ -27,7 +28,7 @@ export default function ContactUs() {
   const telToggle = () => {
     setTelOpen(!telOpen);
   };
-  const telegramChat = "https://t.me/pogladit_mozhno";
+  const telegramChat = `https://t.me/${constants.channels.telegram}`;
   return (
     <Box>
       <Typography variant="caption">Нажмите на интересующий вариант</Typography>
@@ -49,11 +50,7 @@ export default function ContactUs() {
           <ListItemIcon>
             <TelegramIcon />
           </ListItemIcon>
-          <ListItemText>
-            <Typography component="span" display="inline">
-              Telegram
-            </Typography>
-          </ListItemText>
+          <ListItemText primary="Telegram" />
           {telegramToggle ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={telegramToggle}>
@@ -64,7 +61,8 @@ export default function ContactUs() {
                 href={telegramChat}
                 target="_blank"
                 rel="noopener"
-                detailText="Логин: pogladit_mozhno"
+                detailText={`Логин: ${constants.channels.telegram}`}
+                color="secondary"
               >
                 Начать Telegram чат
               </ButtonWithDetail>

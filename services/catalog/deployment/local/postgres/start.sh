@@ -2,6 +2,11 @@
 set -e -x
 
 DIR_NAME="$(dirname "$0")"
+ENV_FILE=".env.local"
+
 mkdir -p $DIR_NAME/volume/data
-docker-compose -f $DIR_NAME/docker-compose.yaml -p catalog --env-file ./.env.local down || echo "already down"
-docker-compose -f $DIR_NAME/docker-compose.yaml -p catalog --env-file ./.env.local up -d
+
+find "$DIR_NAME/init" -type f -name '*.sql' -exec cat {} + >> "$DIR_NAME/init.sql"
+
+docker-compose -f $DIR_NAME/docker-compose.yaml -p catalog --env-file "$ENV_FILE" down || echo "already down"
+docker-compose -f $DIR_NAME/docker-compose.yaml -p catalog --env-file "$ENV_FILE" up -d

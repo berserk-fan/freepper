@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package ua.pomo.catalog.api;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "image_list.proto";
+import "google/protobuf/wrappers.proto";
+import "validate/validate.proto";
+import "money.proto";
+import "parameter.proto";
+
+message Product {
+  message Price {
+   Money standard = 1;
+  }
+  option (google.api.resource) = {
+    type: "api.pomo.ua/Product"
+    pattern: "categories/{category}/models/{model}/products/{product}"
+  };
+  string name = 1;
+  string uid = 2;
+  string display_name = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string model_id = 4;
+  ImageList image_list = 5;
+  Price price = 6;
+  repeated string parameter_ids = 7;
+}
+
+message CreateProductRequest {
+  string parent = 1;
+  Product product = 2;
+
+  // The ID to use for the product, which will become the final component of
+  // the book's resource name.
+  //
+  // This value should be UUID_V4
+  string product_id = 3;
+}
+
+
+message ListProductsRequest {
+  // The parent resource name, for example, "categories/category1/model/modelId"
+  string parent = 1 [(google.api.resource_reference) = {
+    type: "api.pomo.ua/Model"
+  }];
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+}
+
+message ListProductsResponse {
+  //There will be a maximum number of items returned based on the page_size field
+  // in the request.
+  repeated Product products = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no
+  // more results in the list.
+  string next_page_token = 2;
+}
+
+
+message GetProductRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.pomo.ua/Product"
+    }];
+}
+
+message DeleteProductRequest {
+  string name = 1;
+}
