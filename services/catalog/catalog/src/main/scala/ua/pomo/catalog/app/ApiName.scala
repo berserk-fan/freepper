@@ -80,7 +80,7 @@ object ApiName {
     private def uuidStr: Parser[String] = "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b".r
     private def uuid: Parser[UUID] = uuidStr ^^ UUID.fromString
 
-    private def readableId: Parser[String] = "[a-zA-Z-]+".r
+    private def readableId: Parser[String] = "[a-zA-Z0-9-_]+".r
     private def categoryRid: Parser[CategoryReadableId] = readableId ^^ CategoryReadableId.apply
     private def categoryUid: Parser[CategoryId] = uuid ^^ CategoryId.apply
     private def categoryId: Parser[CategoryRefId] = (categoryUid ^^ Left.apply) | (categoryRid ^^ Right.apply)

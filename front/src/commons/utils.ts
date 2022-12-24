@@ -1,7 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Product, Product_Price } from "apis/product.pb";
 import { Money } from "apis/money.pb";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function checkExhaustive(_: never): never {
   throw new Error("Not exhaustive switch case");
 }

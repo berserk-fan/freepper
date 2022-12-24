@@ -3,7 +3,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import CloseIcon from "@mui/icons-material/CancelOutlined";
 import makeStyles from "@mui/styles/makeStyles";
 import ClickAwayListener from "@mui/base/ClickAwayListener";
-import Tooltip, {TooltipProps} from "@mui/material/Tooltip";
+import Tooltip, { TooltipProps } from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 
 const useStyles = makeStyles({

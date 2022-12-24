@@ -1,4 +1,4 @@
-import useSWR, { useSWRConfig } from "swr";
+import useSWR from "swr";
 import { hash } from "immutable";
 import { ImageList } from "apis/image_list.pb";
 import { Model } from "apis/model.pb";

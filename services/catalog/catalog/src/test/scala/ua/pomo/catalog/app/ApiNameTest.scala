@@ -23,6 +23,12 @@ class ApiNameTest extends AnyFunSuite with EitherValues with Matchers {
       ModelName(Right(CategoryReadableId("some-category-id")), Left(ModelId(UUID.fromString("d97f36a7-1482-423f-a7b7-1bcc58cd1b7b"))))
     )
   }
+  
+  test("qq") {
+    ApiName.models("categories/FdD6JWbScl9vChutM6O9VjW7rMEijlL/models").value should ===(
+      ModelsName(Right(CategoryReadableId("FdD6JWbScl9vChutM6O9VjW7rMEijlL")))
+    )
+  }
 
   test("parser") {
     ApiName.category(s"categories/$Uuid").value should equal(
