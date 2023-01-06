@@ -137,14 +137,14 @@ export function Home({
               component="h1"
               className={classes.mainText}
             >
-              Лучшие лежанки в интернете
+              Привет. Я свободен
             </Typography>
             <Box
               className={`flex justify-center items-center ${classes.chooseButtonConteiner}`}
             >
               <Link href={allBedsHref}>
                 <ColorButton color="secondary" size="large" variant="contained">
-                  Выбрать лежанку
+                  В Магазин
                 </ColorButton>
               </Link>
             </Box>

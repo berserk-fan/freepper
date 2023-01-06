@@ -8,10 +8,10 @@ function HeaderLogo({ className = "" }: { className?: string }) {
     <Box className={className}>
       <Link href="/">
         <Box
-          width={200}
+          width={100}
           height={100}
           className="flex justify-center items-center overflow-hidden"
-          fontSize={240}
+          padding={1}
         >
           <Logo />
         </Box>

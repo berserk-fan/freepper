@@ -24,16 +24,17 @@ const Footer = React.memo(() => {
               <Box
                 marginRight="auto"
                 mt={-3}
-                width="100%"
+                width={120}
                 height={120}
                 borderRadius="12px"
                 className="center overflow-hidden"
-                fontSize={400}
               >
                 <Logo />
               </Box>
-              <Typography className={classes.info}>ZooHugge, Dnipro</Typography>
-              <Typography className={classes.info}>lika@pomo.in.ua</Typography>
+              <Typography className={classes.info}>Freepper, Dnipro</Typography>
+              <Typography className={classes.info}>
+                dima@freepper.com
+              </Typography>
             </Grid>
             <Grid item xs={12} md={8} lg={6}>
               <Grid container spacing={2}>
@@ -144,7 +145,7 @@ const Footer = React.memo(() => {
                   </span>{" "}
                   in Dnipro and Kyiv. © Dimas Home Studio
                   <br />
-                  2021 All rights reserved
+                  2023 All rights reserved
                 </Box>
               </Typography>
             </Box>
