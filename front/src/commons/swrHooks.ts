@@ -5,7 +5,6 @@ import { Model } from "apis/model.pb";
 import { Category } from "apis/category.pb";
 import { Product } from "apis/product.pb";
 import { Image } from "apis/image.pb";
-import { useSession } from "next-auth/react";
 import grpcClient from "./shopClient";
 
 type Named = { name: string };
@@ -14,11 +13,6 @@ function compareArr(x?: Named[], y?: Named[]) {
     return x === y;
   }
   return hash(x.map((x1) => x1.name)) === hash(y.map((x1) => x1.name));
-}
-
-export function useToken() {
-  const session = useSession().data;
-  return session.token;
 }
 
 export function useImages() {

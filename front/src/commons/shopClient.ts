@@ -1,6 +1,7 @@
 import { CatalogClientImpl, GrpcWebImpl } from "apis/catalog.pb";
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
 import { grpc } from "@improbable-eng/grpc-web";
+import Metadata = grpc.Metadata;
 
 const debug = false;
 
@@ -9,11 +10,12 @@ const withCredsTransport = grpc.CrossBrowserHttpTransport({
   withCredentials: true,
 });
 
-const shopNode1 = (address: string) =>
+const shopNode1 = (address: string, metadata?: Metadata) =>
   new CatalogClientImpl(
     new GrpcWebImpl(address, {
       transport: NodeHttpTransport(),
       debug,
+      metadata,
     }),
   );
 
@@ -29,16 +31,19 @@ function getWebClient() {
   return shopWeb1(process.env.NEXT_PUBLIC_API_HOST);
 }
 
-function getNodeClient() {
+function getNodeClient(nextToken?: string) {
   if (typeof window === "undefined") {
-    return shopNode1(process.env.NEXT_PUBLIC_API_HOST);
+    const m = new Metadata();
+    m.set("authorization", nextToken);
+    const m2 = nextToken ? m : undefined;
+    return shopNode1(process.env.NEXT_PUBLIC_API_HOST, m2);
   }
   throw new Error("Can't create web client in web environment");
 }
 
-export default function getClient() {
+export default function getClient(nextToken?: string) {
   if (typeof window === "undefined") {
-    return getNodeClient();
+    return getNodeClient(nextToken);
   }
   return getWebClient();
 }

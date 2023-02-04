@@ -1,4 +1,4 @@
-import NextAuth, { Account, AuthOptions, Profile } from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 
 export const authOptions: AuthOptions = {
