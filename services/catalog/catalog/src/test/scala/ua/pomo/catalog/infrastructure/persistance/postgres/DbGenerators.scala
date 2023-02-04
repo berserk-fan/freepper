@@ -2,14 +2,7 @@ package ua.pomo.catalog.infrastructure.persistance.postgres
 
 import org.scalacheck.Gen
 import ua.pomo.catalog.domain._
-import ua.pomo.catalog.domain.category.{
-  Category,
-  CategoryCrud,
-  CategoryId,
-  CategoryQuery,
-  CreateCategory,
-  UpdateCategory
-}
+import ua.pomo.catalog.domain.category.{Category, CategoryCrud, CategoryId, CategoryQuery, CreateCategory, UpdateCategory}
 import ua.pomo.catalog.domain.image._
 import ua.pomo.catalog.domain.imageList._
 import ua.pomo.catalog.domain.model.ModelCrud
@@ -17,23 +10,20 @@ import ua.pomo.catalog.domain.parameter._
 import ua.pomo.catalog.domain.product.ProductCrud
 import ua.pomo.catalog.shared.FixturesV2._
 import ua.pomo.catalog.shared.Generators
+import ua.pomo.common.domain.registry.Registry
 import ua.pomo.common.domain.{Generators, crud}
+import RegistryHelper.implicits._
 
 object DbGenerators {
 
-  val generatorRegistry: Registry[Generators] = new Registry[Generators] {
-    override def category: Generators[CategoryCrud] = CategoryGenerators
-
-    override def image: Generators[ImageCrud] = ImageGenerators
-
-    override def imageList: Generators[ImageListCrud] = ImageListGenerators
-
-    override def model: Generators[ModelCrud] = ModelGenerators
-
-    override def product: Generators[ProductCrud] = ProductGenerators
-
-    override def parameterList: Generators[ParameterListCrud] = ParameterListGenerators
-  }
+  val generatorRegistry: Registry[Generators] = RegistryHelper.createRegistry(
+    CategoryGenerators,
+    ImageGenerators,
+    ImageListGenerators,
+    ModelGenerators,
+    ProductGenerators,
+    ParameterListGenerators
+  )
 
   private case object CategoryGenerators extends Generators[CategoryCrud] {
     override def create: Gen[CreateCategory] = Generators.Category.create

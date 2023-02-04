@@ -2,11 +2,13 @@ import React from "react";
 import Toolbar from "@mui/material/Toolbar";
 import Box from "@mui/material/Box";
 import makeStyles from "@mui/styles/makeStyles";
+import { useSession } from "next-auth/react";
 import HeaderMenu from "./HeaderMenu";
 import HeaderCart from "./HeaderCart";
 import HeaderLogo from "./HeaderLogo";
 import HeaderActions from "./HeaderActions";
 import { CustomAppBar } from "./CustomAppBar";
+import {getToken} from "next-auth/jwt";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -30,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Header() {
   const classes = useStyles();
+
   return (
     <CustomAppBar>
       <Toolbar className={classes.toolbar}>

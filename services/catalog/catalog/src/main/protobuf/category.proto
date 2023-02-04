@@ -20,12 +20,7 @@ message Category {
 }
 
 message CreateCategoryRequest {
-  string parent = 1 [
-    (google.api.field_behavior) = REQUIRED,
-    (google.api.resource_reference) = {
-      type: "api.pomo.ua/Category"
-    }
-  ];
+  string parent = 1;
   Category category = 2 [
     (validate.rules).message.required = true
   ];

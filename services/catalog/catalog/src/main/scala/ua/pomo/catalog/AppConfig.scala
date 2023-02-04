@@ -2,6 +2,7 @@ package ua.pomo.catalog
 
 import pureconfig.ConfigReader
 import ua.pomo.common.config.JdbcDatabaseConfig
+import ua.pomo.common.domain.auth.AuthConfig
 
 final case class ServerConfig(serverPort: Int)
 
@@ -27,10 +28,11 @@ final case class AppConfig(
     jdbc: JdbcDatabaseConfig,
     api: CatalogApiConfig,
     aws: AwsConfig,
-    server: ServerConfig
+    server: ServerConfig,
+    auth: AuthConfig
 )
 
 object AppConfig {
   implicit val reader: ConfigReader[AppConfig] =
-    ConfigReader.forProduct4("jdbc", "api", "aws", "server")(AppConfig.apply)
+    ConfigReader.forProduct5("jdbc", "api", "aws", "server", "auth")(AppConfig.apply)
 }

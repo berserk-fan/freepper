@@ -10,18 +10,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import org.typelevel.log4cats.LoggerFactory
 import org.typelevel.log4cats.slf4j.Slf4jFactory
-import ua.pomo.catalog.api.{
-  CatalogFs2Grpc,
-  CreateCategoryRequest,
-  CreateModelRequest,
-  DeleteModelRequest,
-  GetModelRequest,
-  ImageList,
-  ListModelsRequest,
-  Money,
-  ParameterList,
-  UpdateModelRequest
-}
+import ua.pomo.catalog.api.{CatalogFs2Grpc, CreateCategoryRequest, CreateModelRequest, DeleteModelRequest, GetModelRequest, ImageList, ListModelsRequest, Money, ParameterList, UpdateModelRequest}
 import ua.pomo.catalog.app.ApiName._
 import ua.pomo.catalog.app.programs.modifiers.PageDefaultsApplier
 import ua.pomo.catalog.app.{CatalogImpl, Converters, ReadableIdsResolver, UUIDGenerator, programs}
@@ -35,6 +24,8 @@ import ua.pomo.catalog.shared.Generators.ToLazyListOps
 import ua.pomo.common.domain.crud.Service
 import ua.pomo.common.domain.error.NotFound
 import ua.pomo.common.{HasResource, TestIORuntime}
+import ua.pomo.catalog.domain.RegistryHelper.implicits._
+import ua.pomo.common.domain.auth.{CallContext, User, UserEmail, UserRole}
 
 import java.util.UUID
 
@@ -46,9 +37,11 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
   case class TestResources(
       categoryService: Service[IO, ModelCrud],
       modelService: Service[IO, ModelCrud],
-      service: CatalogFs2Grpc[IO, Metadata],
+      service: CatalogFs2Grpc[IO, CallContext],
       converters: Converters[IO]
   )
+  
+  private val callContext = CallContext(Some(User(UserEmail("someemail@qq.com"), UserRole.Admin)))
 
   override protected type TestResource = TestResources
 
@@ -57,6 +50,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
     val res = for {
       idr <- InMemoryImageDataRepository()
       repoReg <- inMemoryRepoRegistry[IO]
+      basicServices = programs.basicServiceRegistry[IO, IO](repoReg, FunctionK.id[IO], idr)
       services = programs.serviceRegistry[IO, IO](repoReg, FunctionK.id[IO], idr)
       defaultsApplier = PageDefaultsApplier[IO](config.defaultPageSize)
       converter = new Converters[IO](
@@ -64,7 +58,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
         ReadableIdsResolver.RepoBasedResolver(repoReg.category, repoReg.model)
       )
       catalogImpl = CatalogImpl[IO](services, defaultsApplier, converter)
-    } yield TestResources(services.model, services.model, catalogImpl, converter)
+    } yield TestResources(basicServices.model, basicServices.model, catalogImpl, converter)
 
     Resource.eval(res)
   }
@@ -85,20 +79,20 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
     val parent = ModelsName(Left(categoryId))
 
     val modelsCol = parent.toNameString
-    noException should be thrownBy impl.listModels(ListModelsRequest(modelsCol, 0, ""), null).unsafeRunSync()
+    noException should be thrownBy impl.listModels(ListModelsRequest(modelsCol, 0, ""), callContext).unsafeRunSync()
     val pageLength = 4
-    val page1 = impl.listModels(ListModelsRequest(modelsCol, pageLength, ""), null).unsafeRunSync()
+    val page1 = impl.listModels(ListModelsRequest(modelsCol, pageLength, ""), callContext).unsafeRunSync()
     page1.models.length should equal(pageLength)
-    val page2 = impl.listModels(ListModelsRequest(modelsCol, pageLength, page1.nextPageToken), null).unsafeRunSync()
+    val page2 = impl.listModels(ListModelsRequest(modelsCol, pageLength, page1.nextPageToken), callContext).unsafeRunSync()
     page2.models.length should equal(pageLength)
-    val page3 = impl.listModels(ListModelsRequest(modelsCol, pageLength, page2.nextPageToken), null).unsafeRunSync()
+    val page3 = impl.listModels(ListModelsRequest(modelsCol, pageLength, page2.nextPageToken), callContext).unsafeRunSync()
     page3.models.length should equal(2)
-    impl.listModels(ListModelsRequest(modelsCol), null).unsafeRunSync().models.length should equal(
+    impl.listModels(ListModelsRequest(modelsCol), callContext).unsafeRunSync().models.length should equal(
       config.defaultPageSize
     )
 
     val ex = intercept[StatusException] {
-      impl.listModels(ListModelsRequest(modelsCol, -1), null).unsafeRunSync()
+      impl.listModels(ListModelsRequest(modelsCol, -1), callContext).unsafeRunSync()
     }
     ex.getStatus.getCode should equal(Status.Code.INVALID_ARGUMENT)
   }
@@ -107,7 +101,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
     val ex = intercept[StatusException] {
       val name =
         ModelName(Left(CategoryId(UUID.randomUUID())), Left(ModelId(UUID.randomUUID()))).toNameString
-      impl.getModel(GetModelRequest(name), null).unsafeRunSync()
+      impl.getModel(GetModelRequest(name), callContext).unsafeRunSync()
     }
     ex.getStatus.getCode should equal(Status.Code.NOT_FOUND)
 
@@ -118,7 +112,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
         )
         .unsafeRunSync()
     noException should be thrownBy impl
-      .getModel(GetModelRequest(ModelName(Left(model.categoryUid), Left(model.id)).toNameString), null)
+      .getModel(GetModelRequest(ModelName(Left(model.categoryUid), Left(model.id)).toNameString), callContext)
       .unsafeRunSync()
   }
 
@@ -138,7 +132,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
 
     val req =
       CreateModelRequest(ModelsName(Left(CategoryId(UUID.randomUUID()))).toNameString, Some(modelReq))
-    val model = impl.createModel(req, null).unsafeRunSync()
+    val model = impl.createModel(req, callContext).unsafeRunSync()
     model.copy(parameterLists = paramList, imageList = imageList) should equal(
       modelReq.copy(name = model.name, uid = model.uid)
     )
@@ -155,7 +149,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
     )
     val req2 =
       CreateModelRequest(ModelsName(Left(CategoryId(UUID.randomUUID()))).toNameString, Some(modelReq2))
-    noException should be thrownBy impl.createModel(req2, null).unsafeRunSync()
+    noException should be thrownBy impl.createModel(req2, callContext).unsafeRunSync()
   }
 
   testR("delete model") { case TestResources(_, models, impl, _) =>
@@ -169,7 +163,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
         )
         .unsafeRunSync()
     noException should be thrownBy impl
-      .deleteModel(DeleteModelRequest(ModelName(Left(mod1.categoryUid), Left(mod1.id)).toNameString), null)
+      .deleteModel(DeleteModelRequest(ModelName(Left(mod1.categoryUid), Left(mod1.id)).toNameString), callContext)
       .unsafeRunSync()
 
     intercept[NotFound] {
@@ -181,7 +175,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
     val response = impl
       .createCategory(
         CreateCategoryRequest("categories", Some(api.Category(displayName = "a", description = "c", readableId = "d"))),
-        null
+        callContext
       )
       .unsafeRunSync()
 
@@ -197,7 +191,7 @@ class CatalogImplTest extends AnyFunSuite with HasResource[IO] with Matchers {
     noException should be thrownBy impl
       .updateModel(
         UpdateModelRequest(Some(converter.toApi(updated).unsafeRunSync()), Some(FieldMask.of(Seq("*")))),
-        null
+        callContext
       )
       .unsafeRunSync()
     modelService.get(updated.id).unsafeRunSync().description should equal(newDescr)

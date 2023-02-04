@@ -8,8 +8,8 @@ import doobie.{ConnectionIO, Fragment}
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import ua.pomo.catalog.AppConfig
-import ua.pomo.catalog.domain.Registry
-import ua.pomo.catalog.domain.Registry._
+import ua.pomo.catalog.domain.RegistryHelper
+import ua.pomo.catalog.domain.RegistryHelper._
 import ua.pomo.catalog.shared.FixturesV2
 import ua.pomo.common.domain.crud.{Crud, RepoOps}
 import ua.pomo.common.domain.{EntityTest, Schema}
@@ -20,7 +20,7 @@ object CatalogEntityTests {
     Sync[IO].blocking(println("Shutting down dbModuleTest"))
   )
 
-  private val crudOps = Registry.usingImplicits[RepoOps]
+  private val crudOps = RegistryHelper.usingImplicits[RepoOps]
 
   def inmemory[T <: Crud: ValueOf]: Resource[IO, EntityTest[IO, IO, T]] = {
     for {
@@ -30,10 +30,10 @@ object CatalogEntityTests {
 
       inMemoryET = EntityTest
         .ofRegistries[IO, IO](
-          inMemoryRepos.toUntyped,
-          generatorsRegistry.toUntyped,
-          CatalogAssertions.registry.toUntyped,
-          crudOps.toUntyped,
+          inMemoryRepos,
+          generatorsRegistry,
+          CatalogAssertions.registry,
+          crudOps,
           FunctionK.id[IO]
         )
         .apply[T]
@@ -66,10 +66,10 @@ object CatalogEntityTests {
 
           postgresET = EntityTest
             .ofRegistries[ConnectionIO, IO](
-              postgresRepos.toUntyped,
-              generatorsRegistry.toUntyped,
-              CatalogAssertions.registry.toUntyped,
-              crudOps.toUntyped,
+              postgresRepos,
+              generatorsRegistry,
+              CatalogAssertions.registry,
+              crudOps,
               trans
             )
             .apply[T]

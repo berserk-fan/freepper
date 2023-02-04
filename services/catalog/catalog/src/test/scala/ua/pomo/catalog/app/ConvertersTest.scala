@@ -11,6 +11,7 @@ import ua.pomo.catalog.domain.category.CategoryId
 import ua.pomo.catalog.domain.model.ModelSelector
 import ua.pomo.common.{HasResource, TestIORuntime}
 import ua.pomo.common.domain.crud.{PageToken, Query}
+import ua.pomo.catalog.domain.RegistryHelper.implicits._
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}

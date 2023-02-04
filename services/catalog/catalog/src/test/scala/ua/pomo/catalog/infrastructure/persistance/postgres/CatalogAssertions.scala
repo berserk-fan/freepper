@@ -9,22 +9,9 @@ import ua.pomo.catalog.domain.parameter.ParameterListCrud
 import ua.pomo.catalog.domain.product.ProductCrud
 import ua.pomo.catalog.domain.{model, _}
 import ua.pomo.common.domain.Assertions
+import ua.pomo.common.domain.registry.Registry
 
 object CatalogAssertions extends Matchers {
-  val registry: Registry[Assertions] = new Registry[Assertions] {
-    override def category: Assertions[CategoryCrud] = catCheckers
-
-    override def image: Assertions[ImageCrud] = imageAssertions
-
-    override def imageList: Assertions[ImageListCrud] = imageListAssertions
-
-    override def model: Assertions[ModelCrud] = modelAssertions
-
-    override def product: Assertions[ProductCrud] = productAssertions
-
-    override def parameterList: Assertions[ParameterListCrud] = plAssertions
-  }
-
   private val catCheckers: Assertions[CategoryCrud] = new Assertions[CategoryCrud] {
     def update(c: UpdateCategory, v: Category): Any = {
       c.readableId.foreach(_ should ===(v.readableId))
@@ -119,4 +106,13 @@ object CatalogAssertions extends Matchers {
       c.parameterIds should ===(v.parameterIds)
     }
   }
+
+  val registry: Registry[Assertions] = RegistryHelper.createRegistry(
+    catCheckers,
+    imageAssertions,
+    imageListAssertions,
+    modelAssertions,
+    productAssertions,
+    plAssertions
+  )
 }

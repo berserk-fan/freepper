@@ -1,13 +1,18 @@
 package ua.pomo.catalog.infrastructure.persistance.postgres
 
+import cats.MonadThrow
 import doobie.implicits.toSqlInterpolator
 import doobie.postgres.implicits.UuidType
 import doobie.{ConnectionIO, _}
 import ua.pomo.catalog.domain.image._
 import ua.pomo.common.domain.error.DbErr
+import ua.pomo.common.infrastracture.persistance.inmemory.AbstractInMemoryRepository
 import ua.pomo.common.infrastracture.persistance.postgres.{AbstractPostgresRepository, Queries}
+import cats.syntax.functor.toFunctorOps
 
 import java.util.UUID
+import cats.effect.{Ref, Sync}
+import ua.pomo.common.domain.crud.{Crud, RepoOps}
 
 object ImageRepository {
   private object ImageRepositoryImpl extends AbstractPostgresRepository[ImageCrud](ImageQueries) {
@@ -48,6 +53,19 @@ object ImageRepository {
     override def update(req: BuzzImageUpdate): List[doobie.Update0] = ???
   }
 
+  private class ImageInMemoryRepository[F[_]: MonadThrow](ref: Ref[F, Map[ImageId, Image]])
+      extends AbstractInMemoryRepository[F, ImageCrud](ref) {
+    override protected def creator: CreateImage => Image = c => Image(c.id, c.src, c.alt)
+
+    override protected def filter: ImageSelector => Image => Boolean = {
+      case ImageSelector.All      => _ => true
+      case ImageSelector.IdIs(id) => (x: Image) => x.id == id
+    }
+
+    override def update(req: BuzzImageUpdate): F[Int] = ???
+  }
+
   def postgres: ImageRepository[ConnectionIO] = ImageRepositoryImpl
+  def inmemory[F[_]: Sync]: F[ImageRepository[F]] = Ref[F].of(Map[ImageId, Image]()).map(new ImageInMemoryRepository[F](_))
 
 }

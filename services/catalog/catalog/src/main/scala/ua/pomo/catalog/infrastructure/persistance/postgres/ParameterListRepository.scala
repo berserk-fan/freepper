@@ -1,19 +1,25 @@
 package ua.pomo.catalog.infrastructure.persistance.postgres
 
+import cats.{MonadThrow, effect}
 import cats.data.NonEmptyList
+import cats.effect.Ref
+import cats.effect.kernel.Sync
 import doobie.implicits.toSqlInterpolator
 import doobie.postgres.implicits.UuidType
 import doobie.util.Get
 import doobie.{ConnectionIO, Fragment}
+import ua.pomo.catalog.domain.image.{Image, ImageAlt, ImageSrc}
 import ua.pomo.catalog.domain.parameter._
 import ua.pomo.common.domain.crud
 import ua.pomo.common.domain.error.DbErr
+import ua.pomo.common.infrastracture.persistance.inmemory.AbstractInMemoryRepository
 import ua.pomo.common.infrastracture.persistance.postgres.{
   AbstractPostgresRepository,
   DbUpdaterPoly,
   Queries,
   QueriesHelpers
 }
+import cats.syntax.functor.toFunctorOps
 
 import java.util.UUID
 
@@ -95,5 +101,26 @@ object ParameterListRepository {
     override protected def idSelector: ParameterListId => ParameterListSelector = id => ParameterListSelector.IdIs(id)
   }
 
+  private class ParameterListInMemory[F[_]: MonadThrow](ref: Ref[F, Map[ParameterListId, ParameterList]])
+      extends AbstractInMemoryRepository[F, ParameterListCrud](ref) {
+    override protected def creator: CreateParameterList => ParameterList = cpl =>
+      ParameterList(
+        cpl.id,
+        cpl.displayName,
+        cpl.parameters.map(cp =>
+          Parameter(cp.id, cp.displayName, cp.image.map(Image(_, ImageSrc(""), ImageAlt(""))), cp.description)
+        )
+      )
+
+    override protected def filter: ParameterListSelector => ParameterList => Boolean = {
+      case ParameterListSelector.All      => _ => true
+      case ParameterListSelector.IdIs(id) => x => x.id == id
+    }
+
+    override def update(req: UpdateParameterList): F[Int] = ???
+  }
+
   def postgres: ParameterListRepository[ConnectionIO] = ParameterListPostgresRepository
+  def inmemory[F[_]: Sync]: F[ParameterListRepository[F]] =
+    Ref[F].of(Map[ParameterListId, ParameterList]()).map(new ParameterListInMemory[F](_))
 }

@@ -11,7 +11,7 @@ object Registry {
     override def apply[T <: Crud: ValueOf]: U = t
   }
 
-  def map1[F1[_], G[_]](r1: Registry[F1])(f: RegistryMapper[F1, G]): Registry[G] = {
+  def map1[F1[_ <: Crud], G[_ <: Crud]](r1: Registry[F1])(f: RegistryMapper[F1, G]): Registry[G] = {
     new Registry[G] {
       override def apply[T <: Crud: ValueOf]: G[T] = {
         val a1 = r1.apply[T]

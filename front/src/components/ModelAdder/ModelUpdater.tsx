@@ -6,19 +6,9 @@ import { Model } from "apis/model.pb";
 import Dialog from "@mui/material/Dialog";
 import { useSWRConfig } from "swr";
 import grpcClient from "../../commons/shopClient";
-import { useModel } from "../../commons/swrHooks";
+import { useModel, useToken } from "../../commons/swrHooks";
 import ModelForm from "./ModelForm";
 import SwrFallback from "../Swr/SwrFallback";
-
-function onSubmit1(m: Model) {
-  grpcClient()
-    .updateModel({
-      model: m,
-      updateMask: ["*"],
-    })
-    .then((res) => alert(`model updated:${JSON.stringify(res)}`))
-    .catch((err) => alert(`model update failed: ${err}`));
-}
 
 interface DeleteDialogProps {
   displayName: string;
@@ -51,10 +41,24 @@ export default function ModelUpdater1({ modelName }: { modelName: string }) {
   const model = useModel(modelName);
   const { mutate } = useSWRConfig();
   const [deleteDialog, setDeleteDialog] = React.useState(false);
+  const token = useToken();
+
+  const onSubmit1 = React.useCallback(
+    (m: Model) => {
+      grpcClient(token)
+        .updateModel({
+          model: m,
+          updateMask: ["*"],
+        })
+        .then((res) => alert(`model updated:${JSON.stringify(res)}`))
+        .catch((err) => alert(`model update failed: ${err}`));
+    },
+    [token],
+  );
 
   const deleteModel = React.useCallback(async () => {
     try {
-      await grpcClient().deleteModel({ name: model.data.name });
+      await grpcClient(token).deleteModel({ name: model.data.name });
       await mutate(modelName.slice(0, modelName.lastIndexOf("/")));
     } catch (e) {
       alert(

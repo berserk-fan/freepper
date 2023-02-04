@@ -12,14 +12,10 @@ import io.circe.{Decoder, Json, parser}
 import io.estatico.newtype.Coercible
 import io.estatico.newtype.ops.toCoercibleIdOps
 import org.postgresql.util.PGobject
-import ua.pomo.catalog.domain.Registry
-import ua.pomo.catalog.domain.category.CategoryCrud
-import ua.pomo.catalog.domain.image.ImageCrud
-import ua.pomo.catalog.domain.imageList.ImageListCrud
-import ua.pomo.catalog.domain.model.ModelCrud
-import ua.pomo.catalog.domain.parameter.ParameterListCrud
-import ua.pomo.catalog.domain.product.ProductCrud
-import ua.pomo.common.domain.crud.{Crud, PageToken, Repository}
+import ua.pomo.catalog.domain.RegistryHelper
+import ua.pomo.common.domain.registry.Registry
+import ua.pomo.common.domain.crud.Crud
+import ua.pomo.common.domain.crud.{PageToken, Repository}
 
 package object postgres {
   implicit def newTypePut[B, A](implicit ev: Coercible[B, A], evp: Put[A]): Put[B] = evp.contramap[B](ev(_))
@@ -52,37 +48,21 @@ package object postgres {
   }
 
   def postgresRepoRegistry: Registry[Lambda[`T <: Crud` => Repository[ConnectionIO, T]]] =
-    new Registry[Lambda[`T <: Crud` => Repository[ConnectionIO, T]]] {
-      override def category: Repository[ConnectionIO, CategoryCrud] = CategoryRepository.postgres
-
-      override def image: Repository[ConnectionIO, ImageCrud] = ImageRepository.postgres
-
-      override def imageList: Repository[ConnectionIO, ImageListCrud] = ImageListRepository.postgres
-
-      override def model: Repository[ConnectionIO, ModelCrud] = ModelRepository.postgres
-
-      override def product: Repository[ConnectionIO, ProductCrud] = ProductRepository.postgres
-
-      override def parameterList: Repository[ConnectionIO, ParameterListCrud] = ParameterListRepository.postgres
-    }
+    RegistryHelper.createRegistry[Lambda[`T <: Crud` => Repository[ConnectionIO, T]]](
+      CategoryRepository.postgres,
+      ImageRepository.postgres,
+      ImageListRepository.postgres,
+      ModelRepository.postgres,
+      ProductRepository.postgres,
+      ParameterListRepository.postgres
+    )
 
   def inMemoryRepoRegistry[F[_]: Sync]: F[Registry[Lambda[`T <: Crud` => Repository[F, T]]]] = for {
     cr <- CategoryRepository.inmemory[F]
+    ir <- ImageRepository.inmemory[F]
     ilr <- ImageListRepository.inmemory[F]
     mr <- ModelRepository.inmemory[F]
     pr <- ProductRepository.inmemory[F]
-  } yield new Registry[Lambda[`T <: Crud` => Repository[F, T]]] {
-    override def category: Repository[F, CategoryCrud] = cr
-
-    override def image: Repository[F, ImageCrud] = ???
-
-    override def imageList: Repository[F, ImageListCrud] = ilr
-
-    override def model: Repository[F, ModelCrud] = mr
-
-    override def product: Repository[F, ProductCrud] = pr
-
-    override def parameterList: Repository[F, ParameterListCrud] = ???
-  }
-
+    plr <- ParameterListRepository.inmemory[F]
+  } yield RegistryHelper.createRegistry[Lambda[`T <: Crud` => Repository[F, T]]](cr, ir, ilr, mr, pr, plr)
 }

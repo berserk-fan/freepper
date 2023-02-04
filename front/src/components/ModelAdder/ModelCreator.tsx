@@ -2,8 +2,9 @@ import { Model } from "apis/model.pb";
 import React from "react";
 import grpcClient from "../../commons/shopClient";
 import ModelForm from "./ModelForm";
+import { useToken } from "../../commons/swrHooks";
 
-function onSubmit(categoryName: string, m: Model) {
+function onSubmit(categoryName: string, m: Model, token: string) {
   return grpcClient()
     .createModel({
       model: m,
@@ -20,5 +21,11 @@ export default function ModelCreator({
 }: {
   categoryName: string;
 }) {
-  return <ModelForm model={null} onSubmit={(m) => onSubmit(categoryName, m)} />;
+  const token = useToken();
+  return (
+    <ModelForm
+      model={null}
+      onSubmit={(m) => onSubmit(categoryName, m, token)}
+    />
+  );
 }

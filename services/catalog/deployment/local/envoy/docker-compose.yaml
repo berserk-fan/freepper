@@ -7,7 +7,7 @@ services:
   envoy:
     networks:
       - catalog
-    image: envoyproxy/envoy-dev:b136310d14ceb5ce66c96ac6b3b2f445aac943e7
+    image: envoyproxy/envoy-dev:51b4927d215df821bff04d35969eb54cd53d3b31
     ports:
       - "${ENVOY_GRPC_WEB_PORT}:${ENVOY_GRPC_WEB_PORT}"
       - "${ENVOY_GRPC_PORT}:${ENVOY_GRPC_PORT}"

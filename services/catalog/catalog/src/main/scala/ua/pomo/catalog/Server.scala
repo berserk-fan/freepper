@@ -11,16 +11,17 @@ import org.typelevel.log4cats.LoggerFactory
 import ua.pomo.catalog.api.CatalogFs2Grpc
 import ua.pomo.catalog.app.programs.modifiers.{MessageModifier, PageDefaultsApplier}
 import ua.pomo.catalog.app.{CatalogImpl, Converters, ReadableIdsResolver, UUIDGenerator, programs}
-import ua.pomo.catalog.domain.Registry
+import ua.pomo.catalog.domain.RegistryHelper.implicits._
 import ua.pomo.catalog.domain.image.ImageDataRepository
 import ua.pomo.catalog.infrastructure.persistance.postgres._
 import ua.pomo.catalog.infrastructure.persistance.s3.S3ImageDataRepository
 import ua.pomo.common.TransactorHelpers
-import ua.pomo.common.domain.crud.{Crud, Service}
+import ua.pomo.common.app.programs.{CookieParser, GrpcMetadataParser, GrpcMetadataTransformer}
+import ua.pomo.common.domain.auth.{CallContext, CookieName}
+import ua.pomo.common.domain.crud.{Crud, Repository, Service}
 import ua.pomo.common.infrastracture.persistance.RepositoryK
 
 abstract class Server {
-
   def imageDataRepositoryResource(config: AppConfig)(implicit
       lf: LoggerFactory[IO]
   ): Resource[IO, ImageDataRepository[IO]]
@@ -34,7 +35,7 @@ abstract class Server {
       transactor = TransactorHelpers.fromConfig[IO](config.jdbc)
       imageDataRepository <- imageDataRepositoryResource(config)
       repos = postgresRepoRegistry
-      services: Registry[Lambda[`T <: Crud` => Service[IO, T]]] = programs.serviceRegistry[ConnectionIO, IO](
+      services = programs.serviceRegistry[ConnectionIO, IO](
         repos,
         transactor.trans,
         imageDataRepository
@@ -48,8 +49,15 @@ abstract class Server {
           RepositoryK(repos.model, transactor.trans)
         )
       )
-      catalogService <- CatalogFs2Grpc.bindServiceResource[IO](
-        CatalogImpl(services, modifier, converters)
+      cookieAuthExtractor <- Resource.eval(
+        GrpcMetadataTransformer.cookieAuthExtractor[IO](config.auth.sessionCookieName)
+      )
+      catalogService <- CatalogFs2Grpc.serviceResource[IO, CallContext](
+        CatalogImpl(services, modifier, converters),
+        metadata =>
+          cookieAuthExtractor.transform(metadata).flatMap {
+            new GrpcMetadataParser[IO](config.auth).extractCallContext(_)
+          }
       )
     } yield catalogService
   }

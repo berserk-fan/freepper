@@ -17,9 +17,9 @@ static_resources:
                       domains: ["*"]
                       cors:
                         allow_origin_string_match:
-                          - suffix: pomo.in.ua
                           - suffix: mamat2.vercel.app
                           - suffix: pogladit-mozhno.vercel.app
+                          - suffix: freepper.com
                         allow_methods: POST
                         allow_headers: keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout
                         expose_headers: grpc-status,grpc-message,x-envoy-upstream-service-time
@@ -29,8 +29,14 @@ static_resources:
                           route: { cluster: catalog_service }
                 http_filters:
                   - name: envoy.filters.http.cors
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors
                   - name: envoy.filters.http.grpc_web
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
                   - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
     - name: grpc-listener
       address:
@@ -52,6 +58,8 @@ static_resources:
                           route: { cluster: catalog_service }
                 http_filters:
                   - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
   clusters:
     - name: catalog_service
       connect_timeout: 0.25s

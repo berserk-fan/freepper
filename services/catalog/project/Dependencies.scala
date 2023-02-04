@@ -41,6 +41,7 @@ object Dependencies {
     val parserCombinators = "2.1.0"
     val flexMark = "0.35.10"
     val awsS3Sdk = "2.17.214"
+    val jose4J = "0.9.2"
   }
 
   object Libraries {
@@ -79,33 +80,33 @@ object Dependencies {
     lazy val log4CatsSlf4j = "org.typelevel" %% "log4cats-slf4j" % V.log4cats
     lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % V.logback
 
-    val cats = "org.typelevel" %% "cats-core" % V.cats
-    val catsEffect = "org.typelevel" %% "cats-effect" % V.catsEffect
-    val catsRetry = "com.github.cb372" %% "cats-retry" % V.catsRetry
-    val squants = "org.typelevel" %% "squants" % V.squants
-    val fs2 = "co.fs2" %% "fs2-core" % V.fs2
+    lazy val cats = "org.typelevel" %% "cats-core" % V.cats
+    lazy val catsEffect = "org.typelevel" %% "cats-effect" % V.catsEffect
+    lazy val catsRetry = "com.github.cb372" %% "cats-retry" % V.catsRetry
+    lazy val squants = "org.typelevel" %% "squants" % V.squants
+    lazy val fs2 = "co.fs2" %% "fs2-core" % V.fs2
 
-    val refinedCore = "eu.timepit" %% "refined" % V.refined
-    val refinedCats = "eu.timepit" %% "refined-cats" % V.refined
+    lazy val refinedCore = "eu.timepit" %% "refined" % V.refined
+    lazy val refinedCats = "eu.timepit" %% "refined-cats" % V.refined
 
-    val newtype = "io.estatico" %% "newtype" % V.newtype
+    lazy val newtype = "io.estatico" %% "newtype" % V.newtype
 
-    val monocleCore = "com.github.julien-truffaut" %% "monocle-core" % V.monocle
-    val monocleMacro = "com.github.julien-truffaut" %% "monocle-macro" % V.monocle
+    lazy val monocleCore = "com.github.julien-truffaut" %% "monocle-core" % V.monocle
+    lazy val monocleMacro = "com.github.julien-truffaut" %% "monocle-macro" % V.monocle
 
-    val parserCombinators = "org.scala-lang.modules" %% "scala-parser-combinators" % V.parserCombinators
+    lazy val parserCombinators = "org.scala-lang.modules" %% "scala-parser-combinators" % V.parserCombinators
 
-    val circeCore = circe("core")
-    val circeGeneric = circe("generic")
-    val circeParser = circe("parser")
-    val circeRefined = circe("refined")
+    lazy val circeCore = circe("core")
+    lazy val circeGeneric = circe("generic")
+    lazy val circeParser = circe("parser")
+    lazy val circeRefined = circe("refined")
 
-    val derevoCore = derevo("core")
-    val derevoCats = derevo("cats")
-    val derevoCirce = derevo("circe-magnolia")
+    lazy val derevoCore = derevo("core")
+    lazy val derevoCats = derevo("cats")
+    lazy val derevoCirce = derevo("circe-magnolia")
 
-    val awsS3Sdk = "software.amazon.awssdk" % "s3" % V.awsS3Sdk
-
+    lazy val awsS3Sdk = "software.amazon.awssdk" % "s3" % V.awsS3Sdk
+    lazy val jose4JJwt = "org.bitbucket.b_c" % "jose4j" % V.jose4J
   }
 
   object CompilerPlugin {

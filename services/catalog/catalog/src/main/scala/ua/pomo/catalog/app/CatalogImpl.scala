@@ -7,208 +7,211 @@ import io.grpc.{Metadata, Status}
 import org.typelevel.log4cats.LoggerFactory
 import scalapb.validate.{Failure, Success, Validator}
 import ua.pomo.catalog.api._
+import ua.pomo.catalog.app.programs.ServiceMonad
 import ua.pomo.catalog.app.programs.modifiers.MessageModifier
-import ua.pomo.catalog.domain.Registry
+import ua.pomo.common.domain.registry.Registry
 import ua.pomo.common.domain.crud.{Crud, Service}
 import ua.pomo.common.domain.error._
+import ua.pomo.catalog.domain.RegistryHelper.implicits._
+import ua.pomo.common.domain.auth.CallContext
 
 import scala.util.Try
 
 case class CatalogImpl[F[_]: Async: LoggerFactory] private (
-    services: Registry[Lambda[`T <: Crud` => Service[F, T]]],
+    services: Registry[Lambda[`T <: Crud` => Service[ServiceMonad[F, *], T]]],
     modifications: MessageModifier[F],
     converters: Converters[F]
-) extends CatalogFs2Grpc[F, Metadata] {
+) extends CatalogFs2Grpc[F, CallContext] {
 
   // categories
 
-  override def getCategory(request: GetCategoryRequest, ctx: Metadata): F[Category] = adaptError {
+  override def getCategory(request: GetCategoryRequest, ctx: CallContext): F[Category] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.category.get)
+      .flatMap(services.category.get(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
-  override def createCategory(request: CreateCategoryRequest, ctx: Metadata): F[Category] = adaptError {
+  override def createCategory(request: CreateCategoryRequest, ctx: CallContext): F[Category] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.category.create)
+      .flatMap(services.category.create(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
-  override def deleteCategory(request: DeleteCategoryRequest, ctx: Metadata): F[Empty] = adaptError {
+  override def deleteCategory(request: DeleteCategoryRequest, ctx: CallContext): F[Empty] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.category.delete)
+      .flatMap(services.category.delete(_).apply(ctx))
       .as(Empty())
   }
 
-  override def updateCategory(request: UpdateCategoryRequest, ctx: Metadata): F[Category] = adaptError {
+  override def updateCategory(request: UpdateCategoryRequest, ctx: CallContext): F[Category] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.category.update)
+      .flatMap(services.category.update(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
-  def listCategories(request: ListCategoriesRequest, ctx: Metadata): F[ListCategoriesResponse] = adaptError {
+  def listCategories(request: ListCategoriesRequest, ctx: CallContext): F[ListCategoriesResponse] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.category.findAll)
+      .flatMap(services.category.findAll(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
   // models
 
-  override def getModel(request: GetModelRequest, ctx: Metadata): F[Model] = adaptError {
+  override def getModel(request: GetModelRequest, ctx: CallContext): F[Model] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.model.get)
+      .flatMap(services.model.get(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
-  override def createModel(request: CreateModelRequest, ctx: Metadata): F[Model] = adaptError {
+  override def createModel(request: CreateModelRequest, ctx: CallContext): F[Model] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.model.create)
+      .flatMap(services.model.create(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
-  override def listModels(request: ListModelsRequest, ctx: Metadata): F[ListModelsResponse] = adaptError {
+  override def listModels(request: ListModelsRequest, ctx: CallContext): F[ListModelsResponse] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.model.findAll)
+      .flatMap(services.model.findAll(_).apply(ctx))
       .flatMap(converters.toApiListModels)
   }
 
-  override def deleteModel(request: DeleteModelRequest, ctx: Metadata): F[Empty] = adaptError {
+  override def deleteModel(request: DeleteModelRequest, ctx: CallContext): F[Empty] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.model.delete)
+      .flatMap(services.model.delete(_).apply(ctx))
       .as(Empty())
   }
 
-  override def updateModel(request: UpdateModelRequest, ctx: Metadata): F[Model] = adaptError {
+  override def updateModel(request: UpdateModelRequest, ctx: CallContext): F[Model] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.model.update)
+      .flatMap(services.model.update(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
   // products
 
-  override def getProduct(request: GetProductRequest, ctx: Metadata): F[Product] = adaptError {
+  override def getProduct(request: GetProductRequest, ctx: CallContext): F[Product] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.product.get)
+      .flatMap(services.product.get(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
-  override def createProduct(request: CreateProductRequest, ctx: Metadata): F[Product] = adaptError {
+  override def createProduct(request: CreateProductRequest, ctx: CallContext): F[Product] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.product.create)
+      .flatMap(services.product.create(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
-  override def listProducts(request: ListProductsRequest, ctx: Metadata): F[ListProductsResponse] = adaptError {
+  override def listProducts(request: ListProductsRequest, ctx: CallContext): F[ListProductsResponse] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.product.findAll)
+      .flatMap(services.product.findAll(_).apply(ctx))
       .flatMap(converters.toApiListProducts)
   }
 
-  override def deleteProduct(request: DeleteProductRequest, ctx: Metadata): F[Empty] = adaptError {
+  override def deleteProduct(request: DeleteProductRequest, ctx: CallContext): F[Empty] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.product.delete)
+      .flatMap(services.product.delete(_).apply(ctx))
       .as(Empty())
   }
 
   // imagelists
 
-  override def createImageList(request: CreateImageListRequest, ctx: Metadata): F[ImageList] = adaptError {
+  override def createImageList(request: CreateImageListRequest, ctx: CallContext): F[ImageList] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.imageList.create)
+      .flatMap(services.imageList.create(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
-  override def getImageList(request: GetImageListRequest, ctx: Metadata): F[ImageList] = adaptError {
+  override def getImageList(request: GetImageListRequest, ctx: CallContext): F[ImageList] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.imageList.get)
+      .flatMap(services.imageList.get(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
-  override def updateImageList(request: UpdateImageListRequest, ctx: Metadata): F[ImageList] = adaptError {
+  override def updateImageList(request: UpdateImageListRequest, ctx: CallContext): F[ImageList] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.imageList.update)
+      .flatMap(services.imageList.update(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
-  override def deleteImageList(request: DeleteImageListRequest, ctx: Metadata): F[Empty] = adaptError {
+  override def deleteImageList(request: DeleteImageListRequest, ctx: CallContext): F[Empty] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.imageList.delete)
+      .flatMap(services.imageList.delete(_).apply(ctx))
       .as(Empty())
   }
 
-  override def listImageLists(request: ListImageListsRequest, ctx: Metadata): F[ListImageListsResponse] = adaptError {
+  override def listImageLists(request: ListImageListsRequest, ctx: CallContext): F[ListImageListsResponse] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.imageList.findAll)
+      .flatMap(services.imageList.findAll(_).apply(ctx))
       .flatMap(converters.toApiListImageLists)
   }
 
-  def createImage(request: CreateImageRequest, ctx: Metadata): F[Image] = adaptError {
+  def createImage(request: CreateImageRequest, ctx: CallContext): F[Image] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.image.create)
+      .flatMap(services.image.create(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
-  def deleteImage(request: DeleteImageRequest, ctx: Metadata): F[Empty] = adaptError {
+  def deleteImage(request: DeleteImageRequest, ctx: CallContext): F[Empty] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.image.delete)
+      .flatMap(services.image.delete(_).apply(ctx))
       .as(Empty())
   }
 
-  def getImage(request: GetImageRequest, ctx: Metadata): F[Image] = adaptError {
+  def getImage(request: GetImageRequest, ctx: CallContext): F[Image] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.image.get)
+      .flatMap(services.image.get(_).apply(ctx))
       .flatMap(converters.toApi)
   }
 
-  def listImages(request: ListImagesRequest, ctx: Metadata): F[ListImagesResponse] = adaptError {
+  def listImages(request: ListImagesRequest, ctx: CallContext): F[ListImagesResponse] = adaptError {
     validate(request)
       .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
-      .flatMap(services.image.findAll)
+      .flatMap(services.image.findAll(_).apply(ctx))
       .flatMap(converters.toApiListImages)
   }
 

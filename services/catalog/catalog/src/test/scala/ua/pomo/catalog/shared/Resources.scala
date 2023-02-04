@@ -11,8 +11,10 @@ import org.typelevel.log4cats.slf4j.Slf4jFactory
 import pureconfig.generic.auto._
 import ua.pomo.catalog.api.CatalogFs2Grpc
 import ua.pomo.catalog.{AppConfig, ServerConfig}
+import ua.pomo.common.app.programs.GrpcMetadataParser
 import ua.pomo.common.config.JdbcDatabaseConfig
 import ua.pomo.common.domain.Schema
+import ua.pomo.common.domain.auth.{AuthConfig, CallContext}
 import ua.pomo.common.{AppConfigLoader, DBMigrations, DbResources, TransactorHelpers}
 
 import java.util.UUID
@@ -42,13 +44,13 @@ object Resources {
     }
   }
 
-  def catalogClient(config: ServerConfig): Resource[IO, CatalogFs2Grpc[IO, Metadata]] = {
+  def catalogClient(config: ServerConfig, authConfig: AuthConfig): Resource[IO, CatalogFs2Grpc[IO, CallContext]] = {
     NettyChannelBuilder
       .forAddress("127.0.0.1", config.serverPort)
       .usePlaintext()
       .resource[IO]
       .flatMap {
-        CatalogFs2Grpc.stubResource[IO](_)
+        CatalogFs2Grpc.mkClientResource(_, new GrpcMetadataParser[IO](authConfig).extractMetadata(_))
       }
   }
 

@@ -30,7 +30,9 @@ Universal / mappings ++= {
 Universal / javaOptions ++= Seq(
   // -J params will be added as jvm parameters
   "-J-Xms512m",
-  "-J-Xmx900m"
+  "-J-Xmx900m",
+  "-Dcats.effect.stackTracingMode=full",
+  "-Dcats.effect.traceBufferSize=1024"
 )
 
 lazy val runLinter = taskKey[Unit]("Run linter")
@@ -93,7 +95,10 @@ lazy val commonLibs = Seq(
     Libraries.scalaPbCommonProtosProtobuf,
     Libraries.scalaPbCommonProtosScala,
     Libraries.scalaPbValidation,
-    Libraries.gprcServerReflection
+    Libraries.gprcServerReflection,
+
+    // crypto
+    Libraries.jose4JJwt
   )
 )
 

@@ -5,39 +5,17 @@ import cats.syntax.functor.toFunctorOps
 import cats.{Applicative, Monad, Traverse}
 import org.scalacheck.Gen
 import org.typelevel.log4cats.Logger
-import ua.pomo.catalog.domain.category.{
-  CategoryCrud,
-  CategoryDescription,
-  CategoryDisplayName,
-  CategoryId,
-  CategoryReadableId,
-  CreateCategory
-}
+import ua.pomo.catalog.domain.category.{CategoryCrud, CategoryDescription, CategoryDisplayName, CategoryId, CategoryReadableId, CreateCategory}
 import ua.pomo.catalog.domain.image.{ImageCrud, ImageId}
 import ua.pomo.catalog.domain.imageList.ImageListCrud
-import ua.pomo.catalog.domain.model.{
-  CreateModel,
-  ModelCrud,
-  ModelDescription,
-  ModelDisplayName,
-  ModelId,
-  ModelReadableId
-}
-import ua.pomo.catalog.domain.parameter.{
-  CreateParameter,
-  CreateParameterList,
-  ParamListDisplayName,
-  ParameterDescription,
-  ParameterDisplayName,
-  ParameterId,
-  ParameterListCrud,
-  ParameterListId
-}
+import ua.pomo.catalog.domain.model.{CreateModel, ModelCrud, ModelDescription, ModelDisplayName, ModelId, ModelReadableId}
+import ua.pomo.catalog.domain.parameter.{CreateParameter, CreateParameterList, ParamListDisplayName, ParameterDescription, ParameterDisplayName, ParameterId, ParameterListCrud, ParameterListId}
 import ua.pomo.catalog.domain.product.ProductCrud
-import ua.pomo.catalog.domain.{Registry, image, imageList, parameter, product}
+import ua.pomo.catalog.domain.{RegistryHelper, image, imageList, parameter, product}
 import ua.pomo.common.domain.Fixture
 import ua.pomo.common.domain.crud.{Crud, Repository}
-
+import ua.pomo.common.domain.registry.Registry
+import RegistryHelper.implicits._
 import java.util.UUID
 
 object FixturesV2 {
@@ -60,21 +38,14 @@ object FixturesV2 {
       _ <- init[F, ProductCrud](registry.product, ProductFixture.entities)
       _ <- Logger[F].info("Finished to execute fixture object creation")
 
-    } yield {
-      new Registry[Fixture] {
-        override def category: Fixture[CategoryCrud] = CategoryFixture
-
-        override def image: Fixture[ImageCrud] = ImageFixture
-
-        override def model: Fixture[ModelCrud] = ModelFixture
-
-        override def product: Fixture[ProductCrud] = ProductFixture
-
-        override def imageList: Fixture[ImageListCrud] = ImageListFixture
-
-        override def parameterList: Fixture[ParameterListCrud] = ParameterListFixture
-      }
-    }
+    } yield RegistryHelper.createRegistry[Fixture](
+      CategoryFixture,
+      ImageFixture,
+      ImageListFixture,
+      ModelFixture,
+      ProductFixture,
+      ParameterListFixture
+    )
 
   object ImageFixture extends Fixture[ImageCrud] {
     val images: List[image.CreateImage] = Generators.Image.createListOf5.sample.get

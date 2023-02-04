@@ -2,7 +2,7 @@ package ua.pomo.common.domain.registry
 
 import ua.pomo.common.domain.crud.Crud
 
-trait RegistryMapper[F[_], G[_]] {
+trait RegistryMapper[F[_ <: Crud], G[_<: Crud]] {
   def apply[T <: Crud](f: F[T]): G[T]
 }
 

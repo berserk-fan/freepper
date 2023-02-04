@@ -10,6 +10,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import dynamic from "next/dynamic";
 import { store } from "store";
 
+import { SessionProvider } from "next-auth/react";
 import theme from "../theme";
 
 dynamic(() => import("abortcontroller-polyfill/dist/polyfill-patch-fetch"));
@@ -22,10 +23,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <StyledEngineProvider>
         <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Provider store={store}>
-            <Component {...pageProps} />
-          </Provider>
+          <SessionProvider>
+            <CssBaseline />
+            <Provider store={store}>
+              <Component {...pageProps} />
+            </Provider>
+          </SessionProvider>
         </ThemeProvider>
       </StyledEngineProvider>
     </>
