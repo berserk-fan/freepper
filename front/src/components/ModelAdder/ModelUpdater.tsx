@@ -48,7 +48,7 @@ export default function ModelUpdater1({ modelName }: { modelName: string }) {
         model: m,
         updateMask: ["*"],
       })
-      .then((res) => alert(`model updated:${JSON.stringify(res)}`))
+      .then((res) => alert(`model updated buzz:${JSON.stringify(res)}`))
       .catch((err) => alert(`model update failed: ${err}`));
   }, []);
 
