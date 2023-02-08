@@ -12,7 +12,7 @@ function onSubmit(categoryName: string, m: Model) {
     .then((res) => {
       alert(`model created: ${JSON.stringify(res)}`);
     })
-    .catch((err) => alert(`model create failed: ${err}`));
+    .catch((err) => alert(`model create failed:${err}`));
 }
 
 export default function ModelCreator({
