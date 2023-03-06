@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package ua.pomo.catalog.api;
+package com.freepper.catalog.api;
 
 import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
@@ -12,7 +12,7 @@ import "google/protobuf/field_mask.proto";
 
 message Model {
   option (google.api.resource) = {
-    type: "api.pomo.ua/Model"
+    type: "api.freepper.com/Model"
     pattern: "categories/{category}/models/{model}"
   };
   string name = 1;
@@ -29,7 +29,7 @@ message CreateModelRequest {
   string parent = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-      type: "api.pomo.ua/Category"
+      type: "api.freepper.com/Category"
     }
   ];
 
@@ -48,7 +48,7 @@ message GetModelRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-      type: "api.pomo.ua/Model"
+      type: "api.freepper.com/Model"
     }
   ];
 }
@@ -57,7 +57,7 @@ message DeleteModelRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-      type: "api.pomo.ua/Model"
+      type: "api.freepper.com/Model"
     }
   ];
 }
@@ -75,7 +75,7 @@ message ListModelsRequest {
   string parent = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-      child_type: "api.pomo.ua/Model"
+      child_type: "api.freepper.com/Model"
     }];
 
   // The maximum number of items to return.

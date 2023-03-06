@@ -1,13 +1,13 @@
-package ua.pomo.app
+package com.freepper.app
 
 import cats.effect.kernel.Resource
 import cats.effect.{IO, IOApp}
+import com.freepper
 import fs2.grpc.syntax.all.fs2GrpcSyntaxServerBuilder
 import io.grpc.netty.NettyServerBuilder
 import io.grpc.protobuf.services.ProtoReflectionService
 import org.typelevel.log4cats.LoggerFactory
 import org.typelevel.log4cats.slf4j.Slf4jFactory
-import ua.pomo.catalog
 
 object Server extends IOApp.Simple {
   private def prodServer: Resource[IO, io.grpc.Server] = {
@@ -20,7 +20,7 @@ object Server extends IOApp.Simple {
       )
       config <- Resource.eval(ConfigLoader.load[IO](Service.MainService))
       catalogConfig <- Resource.eval(ConfigLoader.load[IO](Service.Catalog))
-      catalogService <- catalog.Server.production.serviceResource(catalogConfig)
+      catalogService <- freepper.catalog.Server.production.serviceResource(catalogConfig)
       res <- NettyServerBuilder
         .forPort(config.serverPort)
         .addService(catalogService)

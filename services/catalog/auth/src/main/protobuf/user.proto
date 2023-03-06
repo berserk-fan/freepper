@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package com.freepper.auth.api;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "validate/validate.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+message User {
+  option (google.api.resource) = {
+    type: "api.freepper.com/User"
+    pattern: "users/{user}"
+  };
+  string name = 1;
+  string uid = 2;
+  string user_id = 3;
+  string display_name = 4;
+  string email = 5;
+  google.protobuf.Timestamp email_verification_time = 6;
+  string image = 7;
+}
+
+message CreateUserRequest {
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/User"
+    }
+  ];
+  User user = 2 [
+    (validate.rules).message.required = true
+  ];
+
+  // The ID to use for the User, which will become the final component of
+  // the user's resource name.
+  //
+  // This value should be UUID_V4
+  string user_id = 3;
+}
+
+message GetUserRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/User"
+    }];
+}
+
+message UpdateUserRequest {
+  User User = 1 [
+    (validate.rules).message.required = true
+  ];
+
+  // The list of fields to update.
+  google.protobuf.FieldMask update_mask = 2 [
+    (validate.rules).message.required = true
+  ];
+}
+
+message DeleteUserRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/User"
+    }
+  ];
+}
+
+message ListUsersRequest {
+  // The parent resource name, for example, "categories/User1".
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      child_type: "api.freepper.com/User"
+    }
+  ];
+
+  // The maximum number of items to return.
+  int32 page_size = 2 [
+    (validate.rules).int32.gte = 0
+  ];
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+}
+
+message ListUsersResponse {
+  //There will be a maximum number of items returned based on the page_size field
+  // in the request.
+  repeated User users = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no
+  // more results in the list.
+  string next_page_token = 2;
+}

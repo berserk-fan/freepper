@@ -5,8 +5,8 @@ lazy val globalResources = file("app/src/main/resources")
 
 ThisBuild / scalaVersion := "2.13.6"
 ThisBuild / version := "0.1.0-SNAPSHOT"
-ThisBuild / organization := "ua.pomo"
-ThisBuild / organizationName := "Pomo"
+ThisBuild / organization := "com.freepper"
+ThisBuild / organizationName := "Freepper"
 
 // set the prompt (for this build) to include the project id.
 ThisBuild / shellPrompt := { state => Project.extract(state).currentRef.project + "> " }
@@ -31,6 +31,7 @@ Universal / javaOptions ++= Seq(
   // -J params will be added as jvm parameters
   "-J-Xms512m",
   "-J-Xmx900m",
+  // add cats effect tracing
   "-Dcats.effect.stackTracingMode=full",
   "-Dcats.effect.traceBufferSize=1024"
 )
@@ -94,7 +95,8 @@ lazy val commonLibs = Seq(
     Libraries.grpcNettyShaded,
     Libraries.scalaPbCommonProtosProtobuf,
     Libraries.scalaPbCommonProtosScala,
-    Libraries.scalaPbValidation,
+    Libraries.scalaPbValidationProto,
+    Libraries.scalaPbValidationScala,
     Libraries.gprcServerReflection,
 
     // crypto
@@ -167,12 +169,19 @@ lazy val catalog = commonServiceSettings(project in file("catalog"))
   )
   .dependsOn(common % "test->test;compile->compile")
 
+lazy val auth = commonServiceSettings(project in file("auth"))
+  .settings(
+    grpcServiceSettings,
+    name := "auth"
+  )
+  .dependsOn(common % "test->test;compile->compile")
+
 lazy val app = (project in file("app"))
   .settings(
     scalaFixSettings,
     name := "app"
   )
-  .dependsOn(catalog, common)
+  .dependsOn(catalog, common, auth)
 
 //migration task
 lazy val runMigrate = inputKey[Unit]("Migrates the database schema.")
@@ -183,13 +192,13 @@ lazy val root = (project in file("."))
   .settings(
     // CODE
     scalaFixSettings,
-    name := "pomo",
+    name := "freepper",
     // migration
-    fullRunInputTask(runMigrate, Compile, "ua.pomo.app.DBMigrationsCommand"),
+    fullRunInputTask(runMigrate, Compile, "ua.freepper.app.DBMigrationsCommand"),
     runMigrate / fork := true,
     // server
-    fullRunTask(runServer, Compile, "ua.pomo.app.Server"),
+    fullRunTask(runServer, Compile, "ua.freepper.app.Server"),
     runServer / fork := true
   )
   .dependsOn(app)
-  .aggregate(app, common, catalog)
+  .aggregate(app, common, catalog, auth)

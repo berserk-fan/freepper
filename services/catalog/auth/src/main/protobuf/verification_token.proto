@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package com.freepper.auth.api;
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "validate/validate.proto";
+
+message VerificationToken {
+  option (google.api.resource) = {
+    type: "api.freepper.com/Session"
+    pattern: "verificationTokens/{verificationToken}"
+  };
+  string name = 1;
+  string uid = 2;
+  string verification_token_id = 3;
+  google.protobuf.Timestamp expire_time = 4;
+}
+
+message CreateVerificationTokenRequest {
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/VerificationToken"
+    }
+  ];
+  VerificationToken verification_token = 2 [
+    (validate.rules).message.required = true
+  ];
+
+  // The ID to use for the session, which will become the final component of
+  // the verification token's resource name.
+  //
+  // This value should be UUID_V4
+  string verification_token_id = 3;
+}
+
+message GetVerificationTokenRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/VerificationToken"
+    }];
+}
+
+message DeleteVerificationTokenRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/VerificationToken"
+    }
+  ];
+}

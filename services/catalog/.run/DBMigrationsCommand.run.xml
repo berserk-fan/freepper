@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="DBMigrationsCommand" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="ua.pomo.catalog.DBMigrationsCommand" />
+    <option name="MAIN_CLASS_NAME" value="com.pomo.catalog.DBMigrationsCommand" />
     <module name="catalog" />
     <extension name="coverage">
       <pattern>

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package ua.pomo.catalog.api;
+package com.freepper.catalog.api;
 
 import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
@@ -15,7 +15,7 @@ message Product {
    Money standard = 1;
   }
   option (google.api.resource) = {
-    type: "api.pomo.ua/Product"
+    type: "api.freepper.com/Product"
     pattern: "categories/{category}/models/{model}/products/{product}"
   };
   string name = 1;
@@ -42,7 +42,7 @@ message CreateProductRequest {
 message ListProductsRequest {
   // The parent resource name, for example, "categories/category1/model/modelId"
   string parent = 1 [(google.api.resource_reference) = {
-    type: "api.pomo.ua/Model"
+    type: "api.freepper.com/Model"
   }];
 
   // The maximum number of items to return.
@@ -67,7 +67,7 @@ message GetProductRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-      type: "api.pomo.ua/Product"
+      type: "api.freepper.com/Product"
     }];
 }
 

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package ua.pomo.catalog.api;
+package com.freepper.catalog.api;
 
 message Money {
   float amount = 1;

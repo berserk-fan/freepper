@@ -15,6 +15,10 @@ import theme from "../theme";
 
 dynamic(() => import("abortcontroller-polyfill/dist/polyfill-patch-fetch"));
 
+function isPreview() {
+  return process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
+}
+
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>

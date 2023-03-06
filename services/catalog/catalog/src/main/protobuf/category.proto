@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package ua.pomo.catalog.api;
+package com.freepper.catalog.api;
 
 import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
@@ -9,7 +9,7 @@ import "google/protobuf/field_mask.proto";
 
 message Category {
   option (google.api.resource) = {
-    type: "api.pomo.ua/Category"
+    type: "api.freepper.com/Category"
     pattern: "categories/{category}"
   };
   string name = 1;
@@ -20,7 +20,12 @@ message Category {
 }
 
 message CreateCategoryRequest {
-  string parent = 1;
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/Category"
+    }
+  ];
   Category category = 2 [
     (validate.rules).message.required = true
   ];
@@ -36,7 +41,7 @@ message GetCategoryRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-      type: "api.pomo.ua/Category"
+      type: "api.freepper.com/Category"
     }];
 }
 
@@ -55,7 +60,7 @@ message DeleteCategoryRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-      type: "api.pomo.ua/Category"
+      type: "api.freepper.com/Category"
     }
   ];
 }
@@ -65,7 +70,7 @@ message ListCategoriesRequest {
   string parent = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-      child_type: "api.pomo.ua/Category"
+      child_type: "api.freepper.com/Category"
     }
   ];
 

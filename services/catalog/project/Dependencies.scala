@@ -33,6 +33,7 @@ object Dependencies {
     val scalaTestScalaCheck = "3.2.9.0"
 
     val scalaPb = "2.5.0-2"
+    val scalaPbValidation = scalapb.validate.compiler.BuildInfo.version
     val doobie = "1.0.0-RC1"
     val flyway = "7.2.0"
     val typeSafeConfig = "1.4.1"
@@ -64,8 +65,10 @@ object Dependencies {
       "com.thesamet.scalapb.common-protos" %% "proto-google-common-protos-scalapb_0.11" % V.scalaPb % "protobuf"
     lazy val scalaPbCommonProtosScala =
       "com.thesamet.scalapb.common-protos" %% "proto-google-common-protos-scalapb_0.11" % V.scalaPb
-    lazy val scalaPbValidation =
-      "com.thesamet.scalapb" %% "scalapb-validate-core" % scalapb.validate.compiler.BuildInfo.version % "protobuf"
+    lazy val scalaPbValidationProto =
+      "com.thesamet.scalapb" %% "scalapb-validate-core" % V.scalaPbValidation % "protobuf"
+    lazy val scalaPbValidationScala =
+      "com.thesamet.scalapb" %% "scalapb-validate-core" % V.scalaPbValidation
 
     lazy val doobieCore = "org.tpolecat" %% "doobie-core" % V.doobie
     lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % V.doobie

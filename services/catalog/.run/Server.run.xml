@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Server" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="17" />
-    <option name="MAIN_CLASS_NAME" value="ua.pomo.catalog.Server" />
+    <option name="MAIN_CLASS_NAME" value="com.freepper.catalog.Server" />
     <module name="catalog" />
     <extension name="coverage">
       <pattern>
