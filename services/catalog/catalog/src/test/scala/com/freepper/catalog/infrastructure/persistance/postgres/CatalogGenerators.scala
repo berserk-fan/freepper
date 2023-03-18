@@ -13,9 +13,9 @@ import com.freepper.catalog.shared.FixturesV2._
 import com.freepper.common.domain.registry.Registry
 import com.freepper.common.domain.{Generators, crud}
 
-object DbGenerators {
+object CatalogGenerators {
 
-  val generatorRegistry: Registry[Generators] = RegistryHelper.createRegistry(
+  val registry: Registry[Generators] = RegistryHelper.createRegistry(
     CategoryGenerators,
     ImageGenerators,
     ImageListGenerators,

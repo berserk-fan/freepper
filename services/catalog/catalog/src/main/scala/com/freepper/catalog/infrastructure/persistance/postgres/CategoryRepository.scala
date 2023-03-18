@@ -15,7 +15,7 @@ import com.freepper.common.infrastracture.persistance.postgres.{
   AbstractPostgresRepository,
   DbUpdaterPoly,
   Queries,
-  QueriesHelpers
+  QueryHelpers
 }
 
 import java.util.UUID
@@ -68,8 +68,8 @@ object CategoryRepository {
     }
 
     override def update(cat: UpdateCategory): List[doobie.Update0] = {
-      QueriesHelpers
-        .updateQHelper(Generic[UpdateCategory].to(cat), cat.id, updaterObj, "categories")
+      QueryHelpers
+        .defaultUpdateRaw(Generic[UpdateCategory].to(cat), cat.id, updaterObj, "categories")
         .map(_.update)
         .toList
     }

@@ -4,7 +4,7 @@ import cats.syntax.flatMap.toFlatMapOps
 import cats.syntax.functor.toFunctorOps
 import cats.{Applicative, Monad, Traverse}
 import org.scalacheck.Gen
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.{Logger, LoggerFactory}
 import com.freepper.catalog.domain.category.{CategoryCrud, CategoryDescription, CategoryDisplayName, CategoryId, CategoryReadableId, CreateCategory}
 import com.freepper.catalog.domain.image.{ImageCrud, ImageId}
 import com.freepper.catalog.domain.imageList.ImageListCrud
@@ -16,6 +16,7 @@ import com.freepper.common.domain.Fixture
 import com.freepper.common.domain.crud.{Crud, Repository}
 import com.freepper.common.domain.registry.Registry
 import RegistryHelper.implicits._
+
 import java.util.UUID
 
 object FixturesV2 {
@@ -24,19 +25,20 @@ object FixturesV2 {
     Traverse[List].traverse(e)(repo.create).as(())
   }
 
-  def fixtureRegistry[F[_]: Monad: Logger](
+  def fixtureRegistry[F[_]: Monad: LoggerFactory](
       registry: Registry[Lambda[`T <: Crud` => Repository[F, T]]]
   ): F[Registry[Fixture]] =
     for {
-      _ <- Logger[F].info("Started to execute fixture object creation")
+      logger <- LoggerFactory[F].create
+      _ <- logger.info("Started to execute fixture object creation")
       _ <- init[F, CategoryCrud](registry.category, CategoryFixture.entities)
-      _ <- Logger[F].info("Category migration executed")
+      _ <- logger.info("Category migration executed")
       _ <- init[F, ImageCrud](registry.image, ImageFixture.entities)
       _ <- init[F, ImageListCrud](registry.imageList, ImageListFixture.entities)
       _ <- init[F, ParameterListCrud](registry.parameterList, ParameterListFixture.entities)
       _ <- init[F, ModelCrud](registry.model, ModelFixture.entities)
       _ <- init[F, ProductCrud](registry.product, ProductFixture.entities)
-      _ <- Logger[F].info("Finished to execute fixture object creation")
+      _ <- logger.info("Finished to execute fixture object creation")
 
     } yield RegistryHelper.createRegistry[Fixture](
       CategoryFixture,
@@ -50,7 +52,7 @@ object FixturesV2 {
   object ImageFixture extends Fixture[ImageCrud] {
     val images: List[image.CreateImage] = Generators.Image.createListOf5.sample.get
 
-    override def entities: List[image.CreateImage] = images
+    override val entities: List[image.CreateImage] = images
   }
 
   object ImageListFixture extends Fixture[ImageListCrud] {

@@ -1,4 +1,4 @@
-package сom.freepper.auth.app
+package com.freepper.auth.app
 
 import com.freepper.auth.api.{Account, AuthServiceFs2Grpc, CreateAccountRequest, CreateSessionRequest, CreateUserRequest, CreateVerificationTokenRequest, DeleteAccountRequest, DeleteSessionRequest, DeleteUserRequest, DeleteVerificationTokenRequest, GetAccountRequest, GetSessionRequest, GetUserRequest, GetVerificationTokenRequest, ListUsersRequest, ListUsersResponse, Session, UpdateAccountRequest, UpdateSessionRequest, UpdateUserRequest, User, VerificationToken}
 import com.freepper.common.domain.auth.CallContext

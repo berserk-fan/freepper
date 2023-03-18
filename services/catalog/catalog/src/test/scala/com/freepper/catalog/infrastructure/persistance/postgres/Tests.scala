@@ -14,38 +14,37 @@ import com.freepper.catalog.domain.imageList.ImageListCrud
 import com.freepper.catalog.domain.model.ModelCrud
 import com.freepper.catalog.domain.parameter.ParameterListCrud
 import com.freepper.catalog.domain.product.ProductCrud
-import com.freepper.catalog.shared.FixturesV2.ModelFixture
-import com.freepper.common.infrastructure.persistance.postgres.AbstractRepositoryTest
+import com.freepper.common.infrastructure.persistance.postgres.{AbstractIORepositoryTest, AbstractRepositoryTest}
 
 class CategoryPostgresRepositoryTest
-    extends CatalogAbstractRepositoryTest[ConnectionIO, CategoryCrud](CatalogEntityTests.postgres[CategoryCrud])
+    extends AbstractIORepositoryTest[ConnectionIO, CategoryCrud](CatalogEntityTests.postgres[CategoryCrud])
 class CategoryInMemoryRepositoryTest
-    extends CatalogAbstractRepositoryTest[IO, CategoryCrud](CatalogEntityTests.inmemory[CategoryCrud])
+    extends AbstractIORepositoryTest[IO, CategoryCrud](CatalogEntityTests.inmemory[CategoryCrud])
 
 class ImagePostgresRepositoryTest
-    extends CatalogAbstractRepositoryTest[ConnectionIO, ImageCrud](CatalogEntityTests.postgres[ImageCrud]) {
+    extends AbstractIORepositoryTest[ConnectionIO, ImageCrud](CatalogEntityTests.postgres[ImageCrud]) {
   override def ignoredContracts: Set[AbstractRepositoryTest.TestContract] = Set(
     AbstractRepositoryTest.TestContract.UpdateContract
   )
 }
 class ImageListPostgresRepositoryTest
-    extends CatalogAbstractRepositoryTest[ConnectionIO, ImageListCrud](CatalogEntityTests.postgres[ImageListCrud])
+    extends AbstractIORepositoryTest[ConnectionIO, ImageListCrud](CatalogEntityTests.postgres[ImageListCrud])
 
 class ImageListInMemoryRepositoryTest
-    extends CatalogAbstractRepositoryTest[IO, ImageListCrud](CatalogEntityTests.inmemory[ImageListCrud])
+    extends AbstractIORepositoryTest[IO, ImageListCrud](CatalogEntityTests.inmemory[ImageListCrud])
 
 class ParameterListPostgresRepositoryTest
-    extends CatalogAbstractRepositoryTest[ConnectionIO, ParameterListCrud](
+    extends AbstractIORepositoryTest[ConnectionIO, ParameterListCrud](
       CatalogEntityTests.postgres[ParameterListCrud]
     )
 
 class ModelPostgresRepositoryTest
-    extends CatalogAbstractRepositoryTest[ConnectionIO, ModelCrud](CatalogEntityTests.postgres[ModelCrud])
+    extends AbstractIORepositoryTest[ConnectionIO, ModelCrud](CatalogEntityTests.postgres[ModelCrud])
 class ModelInMemoryRepositoryTest
-    extends CatalogAbstractRepositoryTest[IO, ModelCrud](CatalogEntityTests.inmemory[ModelCrud])
+    extends AbstractIORepositoryTest[IO, ModelCrud](CatalogEntityTests.inmemory[ModelCrud])
 
 class ProductPostgresRepositoryTest
-    extends CatalogAbstractRepositoryTest[ConnectionIO, ProductCrud](CatalogEntityTests.postgres[ProductCrud]) {
+    extends AbstractIORepositoryTest[ConnectionIO, ProductCrud](CatalogEntityTests.postgres[ProductCrud]) {
   testA("insert wrong parameter list should throw exception") { res =>
     val create =
       res.generators.create.sample.get.copy(modelId = ModelFixture.modelWithParameterList.id, parameterIds = List())
@@ -74,4 +73,4 @@ class ProductPostgresRepositoryTest
 }
 
 class ProductInMemoryRepositoryTest
-    extends CatalogAbstractRepositoryTest[IO, ProductCrud](CatalogEntityTests.inmemory[ProductCrud])
+    extends AbstractIORepositoryTest[IO, ProductCrud](CatalogEntityTests.inmemory[ProductCrud])

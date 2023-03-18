@@ -19,7 +19,7 @@ import com.freepper.common.infrastracture.persistance.postgres.{
   AbstractPostgresRepository,
   DbUpdaterPoly,
   Queries,
-  QueriesHelpers
+  QueryHelpers
 }
 
 import java.util.UUID
@@ -101,7 +101,7 @@ object ProductRepository {
     }
 
     override def update(req: UpdateProduct): List[doobie.Update0] = {
-      QueriesHelpers.updateQHelper(Generic[UpdateProduct].to(req), req.id, updaterPoly, "products").toList.map(_.update)
+      QueryHelpers.defaultUpdateRaw(Generic[UpdateProduct].to(req), req.id, updaterPoly, "products").toList.map(_.update)
     }
   }
 

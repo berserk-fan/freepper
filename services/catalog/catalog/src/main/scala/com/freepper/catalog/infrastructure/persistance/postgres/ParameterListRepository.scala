@@ -17,7 +17,7 @@ import com.freepper.common.infrastracture.persistance.postgres.{
   AbstractPostgresRepository,
   DbUpdaterPoly,
   Queries,
-  QueriesHelpers
+  QueryHelpers
 }
 import cats.syntax.functor.toFunctorOps
 
@@ -81,7 +81,7 @@ object ParameterListRepository {
     def updateParameterList(update: UpdateParameterList): Option[Fragment] = {
       import shapeless._
       val fullUpd = Generic[UpdateParameterList].to(update).reverse.tail.reverse
-      QueriesHelpers.updateQHelper(fullUpd, update.id, updateParamList, "parameter_lists")
+      QueryHelpers.defaultUpdateRaw(fullUpd, update.id, updateParamList, "parameter_lists")
     }
 
     override def update(req: UpdateParameterList): List[doobie.Update0] = {

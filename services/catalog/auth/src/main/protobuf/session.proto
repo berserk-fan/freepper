@@ -37,7 +37,6 @@ message CreateSessionRequest {
   // The ID to use for the session, which will become the final component of
   // the book's resource name.
   //
-  // This value should be UUID_V4
   string session_id = 3;
 }
 

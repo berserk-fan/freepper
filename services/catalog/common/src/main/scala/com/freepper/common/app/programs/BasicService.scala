@@ -1,12 +1,18 @@
 package com.freepper.common.app.programs
 
-import cats.MonadThrow
+import cats.{MonadThrow, Show}
 import cats.syntax.flatMap.toFlatMapOps
 import cats.syntax.functor.toFunctorOps
-import com.freepper.common.domain.crud.{Crud, ListResponse, PageToken, Query, Repository, Service, ServiceOps}
+import com.freepper.common.domain.crud.{Crud, ListResponse, PageToken, Query, Repository, Service}
 import com.freepper.common.domain.error.NotFound
+import monocle.Getter
 
-case class BasicService[G[_]: MonadThrow, T <: Crud: ServiceOps](repository: Repository[G, T]) extends Service[G, T] {
+case class BasicService[G[_]: MonadThrow, T <: Crud: ValueOf](repository: Repository[G, T])(implicit
+    updateToId: Getter[T#Update, T#EntityId],
+    crudShow: Show[T]
+) extends Service[G, T] {
+
+  private val entityDisplayName: String = crudShow.show(implicitly[ValueOf[T]].value)
 
   def create(command: T#Create): G[T#Entity] = repository.create(command).flatMap(repository.get)
 
@@ -15,7 +21,7 @@ case class BasicService[G[_]: MonadThrow, T <: Crud: ServiceOps](repository: Rep
       .delete(id)
       .flatMap { deleted =>
         if (deleted == 0) {
-          MonadThrow[G].raiseError(NotFound(ServiceOps[T].entityDisplayName.value, id))
+          MonadThrow[G].raiseError(NotFound(entityDisplayName, id))
         } else {
           MonadThrow[G].unit
         }
@@ -31,7 +37,8 @@ case class BasicService[G[_]: MonadThrow, T <: Crud: ServiceOps](repository: Rep
       .find(id)
       .flatMap {
         case Some(value) => MonadThrow[G].pure(value)
-        case None        => MonadThrow[G].raiseError[T#Entity](NotFound(ServiceOps[T].entityDisplayName.value, id))
+        case None =>
+          MonadThrow[G].raiseError[T#Entity](NotFound(entityDisplayName, id))
       }
 
   def update(command: T#Update): G[T#Entity] =
@@ -40,10 +47,10 @@ case class BasicService[G[_]: MonadThrow, T <: Crud: ServiceOps](repository: Rep
       .flatMap { updated =>
         if (updated == 0) {
           MonadThrow[G].raiseError[T#Entity](
-            NotFound(ServiceOps[T].entityDisplayName.value, ServiceOps[T].getIdUpdate(command))
+            NotFound(entityDisplayName, updateToId.get(command))
           )
         } else {
-          repository.get(ServiceOps[T].getIdUpdate(command))
+          repository.get(updateToId.get(command))
         }
       }
 

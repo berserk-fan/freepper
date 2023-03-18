@@ -36,7 +36,6 @@ message CreateUserRequest {
   // The ID to use for the User, which will become the final component of
   // the user's resource name.
   //
-  // This value should be UUID_V4
   string user_id = 3;
 }
 

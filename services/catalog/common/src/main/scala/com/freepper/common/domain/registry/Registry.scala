@@ -1,12 +1,14 @@
 package com.freepper.common.domain.registry
 
-import com.freepper.common.domain.crud.Crud
+import com.freepper.common.domain.crud.{Crud, Repository}
 
 trait Registry[F[_ <: Crud]] {
   def apply[T <: Crud: ValueOf]: F[T]
 }
 
 object Registry {
+  type Aux[F[U[_], _ <: Crud], K[_]] = Registry[Lambda[`T <: Crud` => F[K, T]]]
+
   def const[U](t: U): Registry[Lambda[`X <: Crud` => U]] = new Registry[Lambda[`X <: Crud` => U]] {
     override def apply[T <: Crud: ValueOf]: U = t
   }

@@ -17,13 +17,13 @@ case class EntityTest[F[_], G[_], T <: Crud](
 
 object EntityTest {
   def ofRegistries[F[_], G[_]](
-      r1: Repository.Registry[F],
+      r1: Registry.Aux[Repository, F],
       r2: Registry[Generators],
       r3: Registry[Assertions],
       r4: Registry[RepoOps],
       r5: F ~> G
   ): Registry[Lambda[`T <: Crud` => EntityTest[F, G, T]]] = {
-    Registry.map5(r1, r2, r3, r4, Registry.const[F ~> G](r5)) {
+    Registry.map5(r1, r2, r3, r4, Registry.const(r5)) {
       new RegistryMapper5[
         Lambda[`T <: Crud` => Repository[F, T]],
         Generators,

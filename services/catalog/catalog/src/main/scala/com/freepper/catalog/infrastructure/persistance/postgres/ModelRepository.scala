@@ -10,7 +10,7 @@ import monocle.syntax.all._
 import shapeless.Generic
 import squants.market.{Money, USD}
 import com.freepper.catalog.domain.category.{CategoryId, CategoryReadableId}
-import com.freepper.catalog.domain.imageList.{ImageListId, _}
+import com.freepper.catalog.domain.imageList._
 import com.freepper.catalog.domain.model
 import com.freepper.catalog.domain.model._
 import com.freepper.catalog.domain.parameter.{ParamListDisplayName, ParameterList}
@@ -20,7 +20,7 @@ import com.freepper.common.infrastracture.persistance.postgres.{
   AbstractPostgresRepository,
   DbUpdaterPoly,
   Queries,
-  QueriesHelpers
+  QueryHelpers
 }
 
 import java.util.UUID
@@ -110,7 +110,7 @@ object ModelRepository {
     }
 
     override def update(req: UpdateModel): List[doobie.Update0] = {
-      QueriesHelpers.updateQHelper(Generic[UpdateModel].to(req), req.id, updaterObj, "models").map(_.update).toList
+      QueryHelpers.defaultUpdateRaw(Generic[UpdateModel].to(req), req.id, updaterObj, "models").map(_.update).toList
     }
   }
 

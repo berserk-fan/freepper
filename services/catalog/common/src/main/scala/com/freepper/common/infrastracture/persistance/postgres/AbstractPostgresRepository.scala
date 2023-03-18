@@ -1,5 +1,6 @@
 package com.freepper.common.infrastracture.persistance.postgres
 
+import cats.Show
 import cats.data.OptionT
 import cats.effect.Sync
 import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
@@ -7,8 +8,11 @@ import doobie.{ConnectionIO, Update0}
 import com.freepper.common.domain.crud._
 import com.freepper.common.domain.error.{DbErr, NotFound}
 
-abstract class AbstractPostgresRepository[T <: Crud: RepoOps](val queries: Queries[T])
-    extends Repository[ConnectionIO, T] {
+abstract class AbstractPostgresRepository[T <: Crud: ValueOf](val queries: Queries[T])(implicit
+    createToId: monocle.Getter[T#Create, T#EntityId],
+    show: Show[T]
+) extends Repository[ConnectionIO, T] {
+
   protected def idSelector: T#EntityId => T#Selector
 
   private def sequenceUpdate(l: List[Update0]): ConnectionIO[Int] = {
@@ -16,12 +20,13 @@ abstract class AbstractPostgresRepository[T <: Crud: RepoOps](val queries: Queri
   }
 
   override def create(model: T#Create): ConnectionIO[T#EntityId] = {
-    val id = RepoOps[T].getIdCreate(model)
+    val id = createToId.get(model)
     sequenceUpdate(queries.create(model)).as(id)
   }
 
   override def get(id: T#EntityId): ConnectionIO[T#Entity] = {
-    OptionT(find(id)).getOrElseF(NotFound(RepoOps[T].entityDisplayName.value, id).raiseError[ConnectionIO, T#Entity])
+    val entityDisplayName: String = Show[T].show(implicitly[ValueOf[T]].value)
+    OptionT(find(id)).getOrElseF(NotFound(entityDisplayName, id).raiseError[ConnectionIO, T#Entity])
   }
 
   override def find(id: T#EntityId): ConnectionIO[Option[T#Entity]] = {

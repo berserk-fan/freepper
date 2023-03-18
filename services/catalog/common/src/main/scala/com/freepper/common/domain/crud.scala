@@ -33,17 +33,6 @@ object crud {
     type Selector
   }
 
-  trait RepoOps[T <: Crud] {
-    def getIdUpdate(update: T#Update): T#EntityId
-    def getIdCreate(create: T#Create): T#EntityId
-    def getIdEntity(entity: T#Entity): T#EntityId
-    def entityDisplayName: EntityDisplayName
-  }
-
-  object RepoOps {
-    def apply[T <: Crud: RepoOps]: RepoOps[T] = implicitly[RepoOps[T]]
-  }
-
   trait Repository[F[_], T <: Crud] {
     def create(createReq: T#Create): F[T#EntityId]
     def get(id: T#EntityId): F[T#Entity]
@@ -51,25 +40,6 @@ object crud {
     def findAll(req: Query[T#Selector]): F[List[T#Entity]]
     def update(req: T#Update): F[Int]
     def delete(id: T#EntityId): F[Int]
-  }
-
-  object Repository {
-    type Registry[F[_]] = registry.Registry[Lambda[`T <: Crud` => Repository[F, T]]]
-  }
-
-  trait ServiceOps[T <: Crud] {
-    def getIdUpdate(update: T#Update): T#EntityId
-    def entityDisplayName: EntityDisplayName
-
-  }
-
-  object ServiceOps {
-    def apply[T <: Crud: ServiceOps]: ServiceOps[T] = implicitly[ServiceOps[T]]
-    implicit def fromRepoOps[T <: Crud](implicit repoOps: RepoOps[T]): ServiceOps[T] = new ServiceOps[T] {
-      override def getIdUpdate(update: T#Update): T#EntityId = repoOps.getIdUpdate(update)
-
-      override def entityDisplayName: EntityDisplayName = repoOps.entityDisplayName
-    }
   }
 
   trait Service[F[_], T <: Crud] {
