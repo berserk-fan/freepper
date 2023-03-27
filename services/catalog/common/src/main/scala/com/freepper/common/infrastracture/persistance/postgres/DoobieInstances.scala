@@ -6,26 +6,14 @@ import doobie.util.meta.Meta.Basic
 import doobie.postgres.implicits.UuidType
 import doobie.Meta
 import io.circe.{Decoder, Json, parser}
-import io.estatico.newtype.Coercible
 import org.postgresql.util.PGobject
 
 import java.sql.Timestamp
 import java.time.{Instant, ZoneOffset}
 import java.util.Calendar
-import cats.Show
+
 import cats.syntax.show.toShow
-import cats.data.NonEmptyList
-import com.freepper.common.domain.crud.PageToken
-import doobie.implicits.toSqlInterpolator
 import doobie.{Fragment, Fragments, Put, Get, Read}
-import io.circe.{Decoder, Json, parser}
-import io.estatico.newtype.Coercible
-import org.postgresql.util.PGobject
-import shapeless.ops.hlist.{Drop, Mapper, ToTraversable}
-import shapeless.{HList, Nat}
-import io.estatico.newtype.Coercible
-import io.estatico.newtype.ops.toCoercibleIdOps
-import doobie.Write
 
 object DoobieInstances {
   object timeInstances {
@@ -46,9 +34,6 @@ object DoobieInstances {
   }
 
   object commonInstances {
-    implicit def newTypePut[B, A](implicit ev: Coercible[B, A], evp: Put[A]): Put[B] = evp.contramap[B](ev(_))
-    implicit def newTypeRead[N: Coercible[R, *], R: Read]: Read[N] = Read[R].map(_.coerce[N])
-
     val jsonGet: Get[Json] = {
       implicit val showPGobject: Show[PGobject] = Show.show(_.getValue.take(250))
 

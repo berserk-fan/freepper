@@ -34,20 +34,4 @@ object AuthReposFieldDefs {
 
   // verification token
   implicit val VerificationTokenIdFieldDef: DbFieldDef[VerificationTokenId] = gen("id", isId = true)
-
-  implicit def fieldDefForOption[T](implicit fd: DbFieldDef[T]): DbFieldDef[Option[T]] = {
-    new DbFieldDef[Option[T]] {
-      override def name: String = fd.name
-      override def read: doobie.Read[Option[T]] = fd.read.map(Option(_))
-      override def write: doobie.Write[Option[T]] = {
-        if (fd.write.puts.length != 1) {
-          throw new IllegalArgumentException("can't create Write[Option[T]] when T maps to more than one column")
-        }
-        val put = fd.write.puts.head._1.asInstanceOf[doobie.Put[T]]
-        doobie.Write.fromPutOption(put)
-      }
-
-      override def isId: Boolean = fd.isId
-    }
-  }
 }

@@ -17,8 +17,6 @@ object Dependencies {
     val skunk = "0.2.3"
     val squants = "1.8.3"
 
-    val betterMonadicFor = "0.3.1"
-    val kindProjector = "0.13.2"
     val logback = "1.2.10"
     val organizeImports = "0.6.0"
     val semanticDB = "4.4.31"
@@ -26,7 +24,7 @@ object Dependencies {
     val weaver = "0.7.6"
 
     val scalaLogging = "3.9.4"
-    val pureConfig = "0.17.1"
+    val pureConfig = "0.17.2"
     val scalaTest = "3.2.9"
     val scalacheckEffectVersion = "1.0.4"
     val scalaCheck = "1.15.4"
@@ -47,7 +45,6 @@ object Dependencies {
 
   object Libraries {
     def circe(artifact: String): ModuleID = "io.circe" %% s"circe-$artifact" % V.circe
-    def derevo(artifact: String): ModuleID = "tf.tofu" %% s"derevo-$artifact" % V.derevo
 
     lazy val scalaTest = "org.scalatest" %% "scalatest" % V.scalaTest % Test
     lazy val scalaCheck = "org.scalacheck" %% "scalacheck" % V.scalaCheck % Test
@@ -77,7 +74,7 @@ object Dependencies {
 
     lazy val flyway = "org.flywaydb" % "flyway-core" % V.flyway
     lazy val typesafeConfig = "com.typesafe" % "config" % V.typeSafeConfig
-    lazy val pureConfig = "com.github.pureconfig" %% "pureconfig" % V.pureConfig
+    lazy val pureConfig = "com.github.pureconfig" %% "pureconfig-core" % V.pureConfig
     lazy val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % V.scalaLogging
     lazy val log4Cats = "org.typelevel" %% "log4cats-core" % V.log4cats
     lazy val log4CatsSlf4j = "org.typelevel" %% "log4cats-slf4j" % V.log4cats
@@ -92,8 +89,6 @@ object Dependencies {
     lazy val refinedCore = "eu.timepit" %% "refined" % V.refined
     lazy val refinedCats = "eu.timepit" %% "refined-cats" % V.refined
 
-    lazy val newtype = "io.estatico" %% "newtype" % V.newtype
-
     lazy val monocleCore = "com.github.julien-truffaut" %% "monocle-core" % V.monocle
     lazy val monocleMacro = "com.github.julien-truffaut" %% "monocle-macro" % V.monocle
 
@@ -103,24 +98,7 @@ object Dependencies {
     lazy val circeGeneric = circe("generic")
     lazy val circeParser = circe("parser")
     lazy val circeRefined = circe("refined")
-
-    lazy val derevoCore = derevo("core")
-    lazy val derevoCats = derevo("cats")
-    lazy val derevoCirce = derevo("circe-magnolia")
-
     lazy val awsS3Sdk = "software.amazon.awssdk" % "s3" % V.awsS3Sdk
     lazy val jose4JJwt = "org.bitbucket.b_c" % "jose4j" % V.jose4J
-  }
-
-  object CompilerPlugin {
-    val betterMonadicFor = compilerPlugin(
-      "com.olegpy" %% "better-monadic-for" % V.betterMonadicFor
-    )
-    val kindProjector = compilerPlugin(
-      "org.typelevel" % "kind-projector" % V.kindProjector cross CrossVersion.full
-    )
-    val semanticDB = compilerPlugin(
-      "org.scalameta" % "semanticdb-scalac" % V.semanticDB cross CrossVersion.full
-    )
   }
 }

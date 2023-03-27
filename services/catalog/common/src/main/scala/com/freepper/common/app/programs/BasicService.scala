@@ -1,22 +1,24 @@
 package com.freepper.common.app.programs
 
-import cats.{MonadThrow, Show}
+import cats.MonadThrow
 import cats.syntax.flatMap.toFlatMapOps
 import cats.syntax.functor.toFunctorOps
-import com.freepper.common.domain.crud.{Crud, ListResponse, PageToken, Query, Repository, Service}
+import com.freepper.common.domain.crud.{Crud, ListResponse, PageToken, Repository, Service}
 import com.freepper.common.domain.error.NotFound
 import monocle.Getter
+import Crud.*
+import com.freepper.common.domain.TypeName
 
-case class BasicService[G[_]: MonadThrow, T <: Crud: ValueOf](repository: Repository[G, T])(implicit
-    updateToId: Getter[T#Update, T#EntityId],
-    crudShow: Show[T]
-) extends Service[G, T] {
+case class BasicService[G[_]: MonadThrow, C[_]](repository: Repository[G, C])(implicit
+    updateToId: Getter[C[Update], C[EntityId]],
+    crudShow: TypeName[C]
+) extends Service[G, C] {
 
-  private val entityDisplayName: String = crudShow.show(implicitly[ValueOf[T]].value)
+  private val entityDisplayName: String = crudShow.name
 
-  def create(command: T#Create): G[T#Entity] = repository.create(command).flatMap(repository.get)
+  def create(command: C[Create]): G[C[Entity]] = repository.create(command).flatMap(repository.get)
 
-  def delete(id: T#EntityId): G[Unit] =
+  def delete(id: C[EntityId]): G[Unit] =
     repository
       .delete(id)
       .flatMap { deleted =>
@@ -27,26 +29,26 @@ case class BasicService[G[_]: MonadThrow, T <: Crud: ValueOf](repository: Reposi
         }
       }
 
-  def findAll(req: Query[T#Selector]): G[ListResponse[T#Entity]] =
+  def findAll(req: C[Query]): G[ListResponse[C[Entity]]] =
     repository
       .findAll(req)
       .map(entities => ListResponse(entities, computeNextPageToken(req.page, entities)))
 
-  def get(id: T#EntityId): G[T#Entity] =
+  def get(id: C[EntityId]): G[C[Entity]] =
     repository
       .find(id)
       .flatMap {
         case Some(value) => MonadThrow[G].pure(value)
         case None =>
-          MonadThrow[G].raiseError[T#Entity](NotFound(entityDisplayName, id))
+          MonadThrow[G].raiseError[C[Entity]](NotFound(entityDisplayName, id))
       }
 
-  def update(command: T#Update): G[T#Entity] =
+  def update(command: C[Update]): G[C[Entity]] =
     repository
       .update(command)
       .flatMap { updated =>
         if (updated == 0) {
-          MonadThrow[G].raiseError[T#Entity](
+          MonadThrow[G].raiseError[C[Entity]](
             NotFound(entityDisplayName, updateToId.get(command))
           )
         } else {

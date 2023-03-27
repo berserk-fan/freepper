@@ -98,7 +98,7 @@ object ParameterListRepository {
 
   private object ParameterListPostgresRepository
       extends AbstractPostgresRepository[ParameterListCrud](ParameterListQueries) {
-    override protected def idSelector: ParameterListId => ParameterListSelector = id => ParameterListSelector.IdIs(id)
+    override protected def findQuery: ParameterListId => ParameterListSelector = id => ParameterListSelector.IdIs(id)
   }
 
   private class ParameterListInMemory[F[_]: MonadThrow](ref: Ref[F, Map[ParameterListId, ParameterList]])

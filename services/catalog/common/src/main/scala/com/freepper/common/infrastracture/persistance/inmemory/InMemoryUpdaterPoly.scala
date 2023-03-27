@@ -3,6 +3,7 @@ package com.freepper.common.infrastracture.persistance.inmemory
 import monocle.AppliedLens
 import shapeless.Poly1
 
+@Deprecated
 trait InMemoryUpdaterPoly[U] extends Poly1 {
   protected type Res[T] = Case.Aux[Option[T], Option[U => U]]
   // creates updater functon from path optinaly

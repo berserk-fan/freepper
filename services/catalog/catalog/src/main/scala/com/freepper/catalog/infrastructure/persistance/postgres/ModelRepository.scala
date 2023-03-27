@@ -39,7 +39,7 @@ object ModelRepository {
   }
 
   private class ModelRepositoryImpl() extends AbstractPostgresRepository[model.Crud.type](ModelQueries) {
-    override def idSelector: ModelId => ModelSelector = (id: ModelId) => ModelSelector.IdIs(id)
+    override def findQuery: ModelId => ModelSelector = (id: ModelId) => ModelSelector.IdIs(id)
   }
 
   object ModelQueries extends Queries[ModelCrud] {

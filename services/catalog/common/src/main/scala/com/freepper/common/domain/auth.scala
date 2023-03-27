@@ -2,14 +2,12 @@ package com.freepper.common.domain
 
 import cats.Traverse
 import com.typesafe.config.{ConfigValue, ConfigValueFactory}
-import io.estatico.newtype.macros.newtype
 import pureconfig.ConfigReader
 import pureconfig.error.{CannotConvert, ConfigReaderFailures, FailureReason}
 
 import java.util.UUID
 
 object auth {
-  @newtype
   case class UserEmail(value: String)
   object UserEmail {
     implicit val q: ConfigReader[UserEmail] = ConfigReader.fromString(s => Right(UserEmail(s)))
@@ -17,8 +15,8 @@ object auth {
 
   sealed trait UserRole
   object UserRole {
-    final case object Admin extends UserRole
-    final case object User extends UserRole
+    case object Admin extends UserRole
+    case object User extends UserRole
 
     implicit val q: ConfigReader[UserRole] = ConfigReader.fromString {
       case "admin" => Right(UserRole.Admin)
@@ -45,12 +43,11 @@ object auth {
 
   case class AuthConfig(admins: List[UserEmail], jweSecret: String, sessionCookieName: String)
   object AuthConfig {
-    implicit val r: ConfigReader[AuthConfig] = ConfigReader.forProduct3("admins", "jwe-secret", "session-cookie-name")(AuthConfig.apply)
+    implicit val r: ConfigReader[AuthConfig] =
+      ConfigReader.forProduct3("admins", "jwe-secret", "session-cookie-name")(AuthConfig.apply)
   }
 
-  @newtype
   case class CookieName(value: String)
-  @newtype
   case class CookieValue(value: String)
   case class Cookie(name: CookieName, value: CookieValue)
 }

@@ -1,11 +1,13 @@
 package com.freepper.common.infrastracture.persistance.postgres
 
-import doobie._
+import doobie.*
 import com.freepper.common.domain.crud.{Crud, Query}
 
-trait Queries[T <: Crud] {
-  def create(req: T#Create): List[Update0]
-  def delete(id: T#EntityId): List[Update0]
-  def find(query: Query[T#Selector]): Query0[T#Entity]
-  def update(req: T#Update): List[Update0]
+import Crud._
+
+trait Queries[C[_]] {
+  def create(req: C[Create]): List[Update0]
+  def delete(id: C[EntityId]): List[Update0]
+  def find(query: C[Crud.Query]): Query0[C[Entity]]
+  def update(req: C[Crud.Update]): List[Update0]
 }

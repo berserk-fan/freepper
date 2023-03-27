@@ -4,7 +4,7 @@ import com.freepper.common.domain.auth.AuthConfig
 import doobie.implicits.toSqlInterpolator
 import doobie.{Fragment, Write}
 import shapeless.{Poly0, Poly1}
-import shapeless._
+import shapeless.*
 
 trait DbUpdaterPoly extends Poly1 {
   type Res[T] = Case.Aux[Option[T], Option[Fragment]]

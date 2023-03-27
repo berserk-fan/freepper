@@ -106,7 +106,7 @@ object ProductRepository {
   }
 
   private class ProductRepositoryImpl extends AbstractPostgresRepository[ProductCrud](ProductQueries) {
-    override protected def idSelector: ProductId => ProductSelector = ProductSelector.IdIs.apply
+    override protected def findQuery: ProductId => ProductSelector = ProductSelector.IdIs.apply
   }
 
   private case class ProductInMemoryRepositoryImpl[F[_]: Sync](ref: Ref[F, Map[ProductId, product.Product]])

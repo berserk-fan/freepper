@@ -18,8 +18,9 @@ object CookieParser {
       cookieHeader.fold(List[Cookie]()) {
         _.split(";")
           .map(cookie => {
-            val name :: value :: Nil = cookie.trim.split("=").toList
-            Cookie(CookieName(name), CookieValue(value))
+            cookie.trim.split("=").toList match
+              case name :: value :: Nil => Cookie(CookieName(name), CookieValue(value))
+              case _ => throw new IllegalStateException()
           })
           .toList
       }

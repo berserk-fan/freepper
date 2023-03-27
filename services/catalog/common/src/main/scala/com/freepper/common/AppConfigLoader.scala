@@ -2,7 +2,7 @@ package com.freepper.common
 
 import cats.effect.Sync
 import cats.implicits.{toBifunctorOps, toFlatMapOps, toFunctorOps}
-import pureconfig._
+import pureconfig.*
 
 object AppConfigLoader {
   def loadDefault[F[_]: Sync, T: ConfigReader](namespace: String, subpath: Option[String] = None): F[T] = {

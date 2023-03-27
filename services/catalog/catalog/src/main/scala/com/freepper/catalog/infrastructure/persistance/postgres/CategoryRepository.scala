@@ -105,7 +105,7 @@ object CategoryRepository {
   }
 
   private case class CategoryPostgresRepository() extends AbstractPostgresRepository[CategoryCrud](CategoryQueries) {
-    override protected def idSelector: CategoryId => CategorySelector = CategorySelector.UidIs.apply
+    override protected def findQuery: CategoryId => CategorySelector = CategorySelector.UidIs.apply
   }
 
 }

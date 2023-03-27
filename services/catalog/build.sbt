@@ -3,7 +3,7 @@ import scalapb.GeneratorOption
 
 lazy val globalResources = file("app/src/main/resources")
 
-ThisBuild / scalaVersion := "2.13.6"
+ThisBuild / scalaVersion := "3.2.2"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "com.freepper"
 ThisBuild / organizationName := "Freepper"
@@ -44,12 +44,7 @@ lazy val testEvil = taskKey[Unit]("Test external services like communication to 
 ThisBuild / envFileName := (baseDirectory.value / ".env.local").toString
 
 lazy val commonLibs = Seq(
-  scalacOptions ++= List(
-    "-Ymacro-annotations",
-    "-Yrangepos",
-    "-Wconf:cat=unused:info",
-    "-Ywarn-macros:after"
-  ),
+  scalacOptions ++= List("-source:future"),
   libraryDependencies ++= Seq(
     Libraries.scalaTest,
     Libraries.scalaTestHtml,
@@ -71,10 +66,6 @@ lazy val commonLibs = Seq(
     Libraries.circeGeneric,
     Libraries.circeParser,
     Libraries.circeRefined,
-    Libraries.derevoCore,
-    Libraries.derevoCats,
-    Libraries.derevoCirce,
-    Libraries.newtype,
     Libraries.refinedCore,
     Libraries.refinedCats,
     Libraries.squants,
@@ -84,11 +75,6 @@ lazy val commonLibs = Seq(
     Libraries.parserCombinators,
     Libraries.log4CatsSlf4j,
     Libraries.log4Cats,
-
-    // plugins
-    CompilerPlugin.kindProjector,
-    CompilerPlugin.betterMonadicFor,
-    CompilerPlugin.semanticDB,
 
     // grpc
     Libraries.grpcNetty,

@@ -7,25 +7,27 @@ import com.freepper.common.domain.crud
 import com.freepper.common.domain.crud.{Crud, Service}
 import com.freepper.common.domain.error.NoPermission
 
-case class SecuredService[F[_]: MonadThrow, T <: Crud](delegate: Service[F, T])
-    extends Service[Kleisli[F, CallContext, *], T] {
-  override def create(createCommand: T#Create): Kleisli[F, CallContext, T#Entity] = {
+import Crud._
+
+case class SecuredService[F[_]: MonadThrow, C[_]](delegate: Service[F, C])
+    extends Service[Kleisli[F, CallContext, *], C] {
+  override def create(createCommand: C[Create]): Kleisli[F, CallContext, C[Entity]] = {
     forceAdmin(delegate.create(createCommand))
   }
 
-  override def get(id: T#EntityId): Kleisli[F, CallContext, T#Entity] = {
+  override def get(id: C[EntityId]): Kleisli[F, CallContext, C[Entity]] = {
     forceNothing(delegate.get(id))
   }
 
-  override def findAll(req: crud.Query[T#Selector]): Kleisli[F, CallContext, crud.ListResponse[T#Entity]] = {
+  override def findAll(req: C[Query]): Kleisli[F, CallContext, crud.ListResponse[C[Entity]]] = {
     forceNothing(delegate.findAll(req))
   }
 
-  override def update(updateCommand: T#Update): Kleisli[F, CallContext, T#Entity] = {
+  override def update(updateCommand: C[Update]): Kleisli[F, CallContext, C[Entity]] = {
     forceAdmin(delegate.update(updateCommand))
   }
 
-  override def delete(id: T#EntityId): Kleisli[F, CallContext, Unit] = {
+  override def delete(id: C[EntityId]): Kleisli[F, CallContext, Unit] = {
     forceAdmin(delegate.delete(id))
   }
 

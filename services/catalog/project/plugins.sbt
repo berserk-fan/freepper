@@ -7,6 +7,6 @@ addSbtPlugin("nl.gn0s1s" % "sbt-dotenv" % "3.0.0")
 
 addSbtPlugin("org.typelevel" % "sbt-fs2-grpc" % "2.4.2")
 libraryDependencies ++= Seq(
-  "com.thesamet.scalapb" %% "compilerplugin" % "0.11.1",
-  "com.thesamet.scalapb" %% "scalapb-validate-codegen" % "0.3.1"
+  "com.thesamet.scalapb" %% "compilerplugin" % "0.11.13",
+  "com.thesamet.scalapb" %% "scalapb-validate-codegen" % "0.3.4"
 )

@@ -1,7 +1,7 @@
 package com.freepper.common.infrastracture.persistance.postgres
 
 import com.freepper.common.domain.crud.{PageToken, Query}
-import com.freepper.common.infrastracture.persistance.GenericSelectorModule
+import com.freepper.common.infrastracture.persistance.GenericSelector
 import doobie.implicits.toSqlInterpolator
 import doobie.util.update.Update0
 import doobie.{Fragment, Fragments, Get, Put}
@@ -16,14 +16,14 @@ object QueryHelpers {
 
   def defaultDelete[T: DbFieldDef](tableName: String, id: T): List[Update0] = {
     val fd = implicitly[DbFieldDef[T]]
-    if (!fd.isId) {
+    if (!fd.isId(id)) {
       throw new IllegalArgumentException(s"Not an id passed. $id")
     }
-    implicit val q: Write[T] = fd.write
-    val idColName = Fragment.const0(fd.name)
+    val idFr = fd.write(id)
+    val idColName = Fragment.const0(fd.name(Some(id)))
     val tableNameFr = Fragment.const0(tableName)
 
-    List(sql"""delete from $tableNameFr t where t.$idColName=$id""".update)
+    List(sql"""delete from $tableNameFr t where t.$idColName=$idFr""".update)
   }
 
   def deleteEither[T: DbFieldDef, U: DbFieldDef](tableName: String, id: Either[T, U]): List[Update0] = {
@@ -48,7 +48,7 @@ object QueryHelpers {
     if (qq.forall(_.isEmpty)) {
       None
     } else {
-      val setFr = Fragments.setOpt(qq: _*)
+      val setFr = Fragments.setOpt(qq *)
       val res = sql"""
             update ${Fragment.const0(tableName)}
             $setFr
@@ -73,93 +73,45 @@ object QueryHelpers {
   }
 
   object UniversalUpdaterPoly extends Poly1 {
-
-    implicit def getFieldFragment[T](implicit fieldDescriptor: DbFieldDef[T]): Case.Aux[T, Option[Fragment]] = {
-      implicit val q: doobie.Write[T] = fieldDescriptor.write
-      val fieldNameFr = Fragment.const0(fieldDescriptor.name)
-      if (fieldDescriptor.isId) {
-        at(_ => None)
-      } else {
-        at(field => Some(fr0"$fieldNameFr = $field"))
-      }
-    }
-
-    implicit def getFieldFragmentForOption[T](implicit
-        fieldDescriptor: DbFieldDef[T]
-    ): Case.Aux[Option[T], Option[Fragment]] = {
-      implicit val q: doobie.Write[T] = fieldDescriptor.write
-      val fieldNameFr = Fragment.const0(fieldDescriptor.name)
-      at(x => x.map(res => fr0"$fieldNameFr = $res"))
-    }
-
-    implicit def getFieldFragmentForEither[T, U](implicit
-        fieldDescriptor: DbFieldDef[T],
-        fieldDescriptor2: DbFieldDef[U]
-    ): Case.Aux[Either[T, U], Option[Fragment]] = {
-      implicit val q: doobie.Write[T] = fieldDescriptor.write
-      implicit val q2: doobie.Write[U] = fieldDescriptor2.write
-      val fieldNameFr = Fragment.const0(fieldDescriptor.name)
-      val fieldNameFr2 = Fragment.const0(fieldDescriptor2.name)
-      at {
-        case Left(value)  => Option.when(!fieldDescriptor.isId)(fr0"$fieldNameFr = $value")
-        case Right(value) => Option.when(!fieldDescriptor2.isId)(fr0"$fieldNameFr2 = $value")
-      }
+    implicit def getFieldFragment[T](implicit fieldDescriptor: DbFieldDef[T]): Case.Aux[T, Option[Fragment]] = at {
+      field =>
+        if (fieldDescriptor.isId(field)) {
+          None
+        } else {
+          val fieldNameFr = Fragment.const0(fieldDescriptor.name(Some(field)))
+          val fieldFr = fieldDescriptor.write(field)
+          Some(fr0"$fieldNameFr = $fieldFr")
+        }
     }
   }
 
   object IdFragmentGetter extends Poly1 {
     implicit def getFieldFragment[T](implicit fieldDescriptor: DbFieldDef[T]): Case.Aux[T, Option[Fragment]] = {
-      implicit val q: doobie.Write[T] = fieldDescriptor.write
-      val fieldNameFr = Fragment.const0(fieldDescriptor.name)
-      at(field => Option.when(fieldDescriptor.isId)(fr0"$fieldNameFr = $field"))
-    }
-
-    implicit def getFieldFragmentForOption[T](implicit
-        fieldDescriptor: DbFieldDef[T]
-    ): Case.Aux[Option[T], Option[Fragment]] = {
-      implicit val q: doobie.Write[T] = fieldDescriptor.write
-      val fieldNameFr = Fragment.const0(fieldDescriptor.name)
-      at(_.flatMap(field => Option.when(fieldDescriptor.isId)(fr0"$fieldNameFr = $field")))
-    }
-
-    implicit def getFieldFragmentForEither[T, U](implicit
-        fieldDescriptor: DbFieldDef[T],
-        fieldDescriptor2: DbFieldDef[U]
-    ): Case.Aux[Either[T, U], Option[Fragment]] = {
-      implicit val q: doobie.Write[T] = fieldDescriptor.write
-      implicit val q2: doobie.Write[U] = fieldDescriptor2.write
-      val fieldNameFr = Fragment.const0(fieldDescriptor.name)
-      val fieldNameFr2 = Fragment.const0(fieldDescriptor2.name)
-      at { field =>
-        Option.when(fieldDescriptor.isId && fieldDescriptor2.isId) {
-          field match {
-            case Left(value)  => fr0"$fieldNameFr = $value"
-            case Right(value) => fr0"$fieldNameFr2 = $value"
-          }
-        }
-      }
+      at(field => {
+        val fieldNameFr = Fragment.const0(fieldDescriptor.name(Some(field)))
+        val fieldFr = fieldDescriptor.write(field)
+        Option.when(fieldDescriptor.isId(field))(fr0"$fieldNameFr = $fieldFr")
+      })
     }
   }
 
-  def queryForGenericSelector[T, U: Get](
-      comp: DoobieCompiler[T],
-      query: Query[T],
-      viewName: String
-  ): doobie.Query0[U] = {
-    val limitOffset = QueryHelpers.compileToken(query.page)
-    val where = comp.compile(viewName, query.selector)
-
-    val viewNameFr = Fragment.const0(viewName)
-    // val orderByFr = orderBy.fold(Fragment.empty)(colName => fr0"order by t.${Fragment.const0(colName)}")
-
-    sql"""
-        select t.json
-        from $viewNameFr t
-        where $where
-        $limitOffset
-        """
-      .query[U]
-  }
+//  def query[T, U: Get](query: Query[GenericSelector[T]], viewName: String)(implicit
+//      qq: DbFieldDef[T]
+//  ): doobie.Query0[U] = {
+//    val limitOffset = QueryHelpers.compileToken(query.page)
+//    val where = SelectorDoobieCompiler.compile(viewName, qq, query.selector)
+//
+//    val viewNameFr = Fragment.const0(viewName)
+//    // val orderByFr = orderBy.fold(Fragment.empty)(colName => fr0"order by t.${Fragment.const0(colName)}")
+//
+//    sql"""
+//        select t.json
+//        from $viewNameFr t
+//        where $where
+//        $limitOffset
+//        """
+//      .query[U]
+//  }
 
   def updateSql[U <: HList, U2 <: HList](
       fields: U,
@@ -181,7 +133,7 @@ object QueryHelpers {
     if (fieldFragments.forall(_.isEmpty)) {
       None
     } else {
-      val setFr = Fragments.setOpt(fieldFragments: _*)
+      val setFr = Fragments.setOpt(fieldFragments *)
       val res =
         sql"""
             update ${Fragment.const0(tableName)}
@@ -192,10 +144,11 @@ object QueryHelpers {
     }
   }
 
-  def update[U <: HList, U2 <: HList](
+  def update[T, U <: HList, U2 <: HList](
       fields: U,
       tableName: String
   )(implicit
+      g: shapeless.Generic.Aux[T, U],
       m: Mapper.Aux[UniversalUpdaterPoly.type, U, U2],
       m2: Mapper.Aux[IdFragmentGetter.type, U, U2],
       l: ToTraversable.Aux[U2, List, Option[Fragment]]

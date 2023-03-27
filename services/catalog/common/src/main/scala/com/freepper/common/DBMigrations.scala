@@ -8,7 +8,7 @@ import org.flywaydb.core.api.configuration.FluentConfiguration
 import org.typelevel.log4cats.Logger
 import com.freepper.common.config.JdbcDatabaseConfig
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 object DBMigrations {
 
   def migrate[F[_]: Sync: Logger](config: JdbcDatabaseConfig): F[Int] = for {
@@ -33,7 +33,7 @@ object DBMigrations {
       .table(config.migrationsTable)
       .locations(
         config.migrationsLocations
-          .map(new Location(_)): _*
+          .map(new Location(_)) *
       )
       .baselineOnMigrate(true)
       .schemas(config.schema)

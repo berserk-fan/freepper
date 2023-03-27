@@ -119,7 +119,7 @@ object ImageListRepository {
   }
 
   private class ImageListRepositoryImpl() extends AbstractPostgresRepository[ImageListCrud](ImageListQueries) {
-    override protected def idSelector: ImageListId => ImageListSelector = (id: ImageListId) =>
+    override protected def findQuery: ImageListId => ImageListSelector = (id: ImageListId) =>
       ImageListSelector.IdsIn(NonEmptyList.of(id))
   }
 

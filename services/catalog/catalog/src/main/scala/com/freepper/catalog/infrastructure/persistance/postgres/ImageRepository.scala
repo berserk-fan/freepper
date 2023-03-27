@@ -16,7 +16,7 @@ import com.freepper.common.domain.crud.{Crud, RepoOps}
 
 object ImageRepository {
   private object ImageRepositoryImpl extends AbstractPostgresRepository[ImageCrud](ImageQueries) {
-    override def idSelector: ImageId => ImageSelector = (id: ImageId) => ImageSelector.IdIs(id)
+    override def findQuery: ImageId => ImageSelector = (id: ImageId) => ImageSelector.IdIs(id)
   }
 
   object ImageQueries extends Queries[ImageCrud] {

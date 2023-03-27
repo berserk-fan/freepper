@@ -4,17 +4,18 @@ import cats.arrow.FunctionK
 import com.freepper.common.domain.crud
 import com.freepper.common.domain.crud.{Crud, Repository}
 
-case class RepositoryK[F[_], G[_], T <: Crud] private (r: Repository[F, T], xa: FunctionK[F, G])
-    extends Repository[G, T] {
-  override def create(createReq: T#Create): G[T#EntityId] = xa(r.create(createReq))
+import Crud._
 
-  override def get(id: T#EntityId): G[T#Entity] = xa(r.get(id))
+case class RepositoryK[F[_], G[_], C[_]] private (r: Repository[F, C], xa: FunctionK[F, G]) extends Repository[G, C] {
+  override def create(createReq: C[Create]): G[C[EntityId]] = xa(r.create(createReq))
 
-  override def find(id: T#EntityId): G[Option[T#Entity]] = xa(r.find(id))
+  override def get(id: C[EntityId]): G[C[Entity]] = xa(r.get(id))
 
-  override def findAll(req: crud.Query[T#Selector]): G[List[T#Entity]] = xa(r.findAll(req))
+  override def find(id: C[EntityId]): G[Option[C[Entity]]] = xa(r.find(id))
 
-  override def update(req: T#Update): G[Int] = xa(r.update(req))
+  override def findAll(req: C[Query]): G[List[C[Entity]]] = xa(r.findAll(req))
 
-  override def delete(id: T#EntityId): G[Int] = xa(r.delete(id))
+  override def update(req: C[Update]): G[Int] = xa(r.update(req))
+
+  override def delete(id: C[EntityId]): G[Int] = xa(r.delete(id))
 }
