@@ -44,8 +44,10 @@ lazy val testEvil = taskKey[Unit]("Test external services like communication to 
 ThisBuild / envFileName := (baseDirectory.value / ".env.local").toString
 
 lazy val commonLibs = Seq(
-  scalacOptions ++= List("-source:future"),
+  scalacOptions ~= (_.filterNot(Set("-explain", "-explain-types"))), // removes explain option
+  scalacOptions ++= List("-source:3.0-migration", "-language:adhocExtensions"),
   libraryDependencies ++= Seq(
+    Libraries.shapeless,
     Libraries.scalaTest,
     Libraries.scalaTestHtml,
     Libraries.scalaCheck,
@@ -66,8 +68,6 @@ lazy val commonLibs = Seq(
     Libraries.circeGeneric,
     Libraries.circeParser,
     Libraries.circeRefined,
-    Libraries.refinedCore,
-    Libraries.refinedCats,
     Libraries.squants,
     Libraries.monocleCore,
     Libraries.monocleMacro,

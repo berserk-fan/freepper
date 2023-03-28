@@ -7,7 +7,7 @@ import com.freepper.common.domain.crud
 import com.freepper.common.domain.crud.{Crud, Service}
 import com.freepper.common.domain.error.NoPermission
 
-import Crud._
+import Crud.*
 
 case class SecuredService[F[_]: MonadThrow, C[_]](delegate: Service[F, C])
     extends Service[Kleisli[F, CallContext, *], C] {

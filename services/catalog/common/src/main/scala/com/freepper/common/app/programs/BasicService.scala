@@ -11,6 +11,7 @@ import com.freepper.common.domain.TypeName
 
 case class BasicService[G[_]: MonadThrow, C[_]](repository: Repository[G, C])(implicit
     updateToId: Getter[C[Update], C[EntityId]],
+    queryToPage: Getter[C[Query], PageToken.NonEmpty],
     crudShow: TypeName[C]
 ) extends Service[G, C] {
 
@@ -29,10 +30,12 @@ case class BasicService[G[_]: MonadThrow, C[_]](repository: Repository[G, C])(im
         }
       }
 
-  def findAll(req: C[Query]): G[ListResponse[C[Entity]]] =
+  def findAll(req: C[Query]): G[ListResponse[C[Entity]]] = {
+    val page = queryToPage.get(req)
     repository
       .findAll(req)
-      .map(entities => ListResponse(entities, computeNextPageToken(req.page, entities)))
+      .map(entities => ListResponse(entities, computeNextPageToken(page, entities)))
+  }
 
   def get(id: C[EntityId]): G[C[Entity]] =
     repository

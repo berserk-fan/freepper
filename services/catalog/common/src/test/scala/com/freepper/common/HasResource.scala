@@ -4,6 +4,8 @@ import cats.effect.{MonadCancelThrow, Resource}
 import org.scalactic.source
 import org.scalatest.BeforeAndAfter
 import org.scalatest.funsuite.AnyFunSuite
+import scala.compiletime.uninitialized
+
 
 trait HasResource[F[_]] extends BeforeAndAfter {
   this: AnyFunSuite =>
@@ -15,7 +17,7 @@ trait HasResource[F[_]] extends BeforeAndAfter {
 
   protected def resource: Resource[F, TestResource]
 
-  private var resources: TestResource = _
+  private var resources: TestResource = uninitialized
 
   private var finalizers = monadCancelThrow.unit
 

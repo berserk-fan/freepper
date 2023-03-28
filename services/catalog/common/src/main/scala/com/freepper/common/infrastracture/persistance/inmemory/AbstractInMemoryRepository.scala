@@ -9,7 +9,7 @@ import shapeless.ops.hlist.{Drop, Mapper, ToTraversable}
 import com.freepper.common.domain.crud.*
 import com.freepper.common.domain.error.NotFound
 
-import Crud._
+import Crud.*
 
 @Deprecated
 abstract class AbstractInMemoryRepository[F[_]: MonadThrow, C[_]](ref: Ref[F, Map[C[EntityId], C[Entity]]])(implicit

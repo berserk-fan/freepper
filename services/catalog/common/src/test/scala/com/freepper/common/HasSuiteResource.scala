@@ -6,7 +6,7 @@ import org.scalactic.source
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 import com.freepper.common.domain.UnsafeRun
-
+import scala.compiletime.uninitialized
 trait HasSuiteResource[F[_]] extends BeforeAndAfterAll {
   this: AnyFunSuite =>
 
@@ -20,7 +20,7 @@ trait HasSuiteResource[F[_]] extends BeforeAndAfterAll {
 
   protected def suiteResource: Resource[F, SuiteResource]
 
-  private var suiteResources: SuiteResource = _
+  private var suiteResources: SuiteResource = uninitialized
   private var suiteFinalizers = monadCancelThrow.unit
 
   override def beforeAll(): Unit = {

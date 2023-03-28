@@ -5,7 +5,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import com.freepper.common.domain.auth.{Cookie, CookieName, CookieValue}
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 import scala.util.Try
 
 class GrpcMetadataTransformerTest extends AnyFunSuite with Matchers {
@@ -13,7 +13,7 @@ class GrpcMetadataTransformerTest extends AnyFunSuite with Matchers {
     val m = new Metadata()
     val t = GrpcMetadataTransformer.const[Try]
     val res = t.transform(m).get
-    res.keys().asScala should ===(Set())
+    res.keys().asScala.should(===(Set()))
   }
 
   test("extract header") {
@@ -31,7 +31,7 @@ class GrpcMetadataTransformerTest extends AnyFunSuite with Matchers {
     val metadataAuthKey = "authorization"
     val t = GrpcMetadataTransformer.cookieToMetadata[Try](cookieParser, CookieName(authCookie), metadataAuthKey).get
     val res = t.transform(new Metadata()).get
-    res.keys().asScala should ===(Set("authorization"))
-    res.get(Metadata.Key.of(metadataAuthKey, Metadata.ASCII_STRING_MARSHALLER)) should ===(authCookieValue)
+    res.keys().asScala.should(===(Set("authorization")))
+    res.get(Metadata.Key.of(metadataAuthKey, Metadata.ASCII_STRING_MARSHALLER)).should(===(authCookieValue))
   }
 }

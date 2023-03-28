@@ -1,16 +1,16 @@
 package com.freepper.common.domain
 
 import org.scalacheck.Gen
-import com.freepper.common.domain.crud.{Crud, Query}
+import com.freepper.common.domain.crud.Crud.*
 
-trait Generators[T <: Crud] {
-  def create: Gen[T#Create]
+trait Generators[C[_]] {
+  def create: Gen[C[Create]]
 
-  def update: Gen[T#EntityId => T#Update]
+  def update: Gen[C[EntityId] => C[Update]]
 
-  def genE: Gen[T#Entity]
+  def genE: Gen[C[Entity]]
 
-  def id: Gen[T#EntityId]
+  def id: Gen[C[EntityId]]
 
-  def query: Gen[Query[T#Selector]]
+  def query: Gen[C[Query]]
 }

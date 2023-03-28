@@ -12,7 +12,7 @@ import cats.syntax.functor.toFunctorOps
 
 import java.util.UUID
 import cats.effect.{Ref, Sync}
-import com.freepper.common.domain.crud.{Crud, RepoOps}
+import com.freepper.common.domain.crud.{Crud}
 
 object ImageRepository {
   private object ImageRepositoryImpl extends AbstractPostgresRepository[ImageCrud](ImageQueries) {
@@ -66,6 +66,7 @@ object ImageRepository {
   }
 
   def postgres: ImageRepository[ConnectionIO] = ImageRepositoryImpl
-  def inmemory[F[_]: Sync]: F[ImageRepository[F]] = Ref[F].of(Map[ImageId, Image]()).map(new ImageInMemoryRepository[F](_))
+  def inmemory[F[_]: Sync]: F[ImageRepository[F]] =
+    Ref[F].of(Map[ImageId, Image]()).map(new ImageInMemoryRepository[F](_))
 
 }

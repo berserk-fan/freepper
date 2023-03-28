@@ -16,10 +16,10 @@ object DBMigrations {
       "Running migrations from locations: " +
         config.migrationsLocations.mkString(", ")
     )
-    (errors, count) <- Sync[F].blocking { unsafeMigrate(config) }
-    _ <- errors.fold(Sync[F].unit)(Logger[F].error(_))
-    _ <- Logger[F].info(s"Executed $count migrations")
-  } yield count
+    res <- Sync[F].blocking { unsafeMigrate(config) }
+    _ <- res._1.fold(Sync[F].unit)(Logger[F].error(_))
+    _ <- Logger[F].info(s"Executed ${res._2} migrations")
+  } yield res._2
 
   private def unsafeMigrate(config: JdbcDatabaseConfig): (Option[String], Int) = {
     val m: FluentConfiguration = Flyway.configure

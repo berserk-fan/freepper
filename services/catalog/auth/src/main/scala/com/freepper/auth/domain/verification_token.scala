@@ -1,27 +1,27 @@
 package com.freepper.auth.domain
 
 import com.freepper.common.domain.crud.{Crud, Repository, Service}
-import derevo.circe.magnolia.decoder
-import derevo.derive
-import io.estatico.newtype.macros.newtype
+
+
+
 
 import java.time.Instant
 import java.util.UUID
 
 object verification_token {
-  @derive(decoder)
-  @newtype
+
+  Crud.*
   case class VerificationTokenUid(value: UUID)
 
-  @derive(decoder)
-  @newtype
+
+
   case class VerificationTokenId(value: String)
 
-  @derive(decoder)
-  @newtype
+
+
   case class VerificationTokenExpireTime(value: Instant)
 
-  @derive(decoder)
+
   case class VerificationToken(
       uid: VerificationTokenUid,
       id: VerificationTokenId,

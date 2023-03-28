@@ -11,17 +11,12 @@ object Dependencies {
     val fs2 = "3.1.3"
     val log4cats = "2.3.1"
     val monocle = "3.0.0-M6"
-    val newtype = "0.4.4"
-    val refined = "0.9.28"
     val redis4cats = "1.0.0"
     val skunk = "0.2.3"
     val squants = "1.8.3"
 
     val logback = "1.2.10"
     val organizeImports = "0.6.0"
-    val semanticDB = "4.4.31"
-
-    val weaver = "0.7.6"
 
     val scalaLogging = "3.9.4"
     val pureConfig = "0.17.2"
@@ -41,6 +36,8 @@ object Dependencies {
     val flexMark = "0.35.10"
     val awsS3Sdk = "2.17.214"
     val jose4J = "0.9.2"
+
+    val shapeless = "3.0.1"
   }
 
   object Libraries {
@@ -86,9 +83,6 @@ object Dependencies {
     lazy val squants = "org.typelevel" %% "squants" % V.squants
     lazy val fs2 = "co.fs2" %% "fs2-core" % V.fs2
 
-    lazy val refinedCore = "eu.timepit" %% "refined" % V.refined
-    lazy val refinedCats = "eu.timepit" %% "refined-cats" % V.refined
-
     lazy val monocleCore = "com.github.julien-truffaut" %% "monocle-core" % V.monocle
     lazy val monocleMacro = "com.github.julien-truffaut" %% "monocle-macro" % V.monocle
 
@@ -100,5 +94,6 @@ object Dependencies {
     lazy val circeRefined = circe("refined")
     lazy val awsS3Sdk = "software.amazon.awssdk" % "s3" % V.awsS3Sdk
     lazy val jose4JJwt = "org.bitbucket.b_c" % "jose4j" % V.jose4J
+    lazy val shapeless = "org.typelevel" %% "shapeless3-deriving" % "3.0.1"
   }
 }

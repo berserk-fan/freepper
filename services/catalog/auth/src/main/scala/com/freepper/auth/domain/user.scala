@@ -4,9 +4,9 @@ import cats.Id
 import com.freepper.common.domain.{TypeName, crud}
 import com.freepper.common.domain.crud.Crud
 import com.freepper.common.infrastracture.persistance.{GenericSelector, ValueK}
-import derevo.derive
-import io.estatico.newtype.macros.newtype
-import derevo.circe.magnolia.decoder
+
+
+
 import monocle.macros.Lenses
 
 import java.time.Instant
@@ -14,26 +14,26 @@ import java.util.UUID
 
 object user {
 
-  @derive(decoder)
-  @newtype
+
+
   case class UserUid(value: UUID)
-  @derive(decoder)
-  @newtype
+
+
   case class UserId(value: String)
-  @derive(decoder)
-  @newtype
+
+
   case class UserDisplayName(value: String)
-  @derive(decoder)
-  @newtype
+
+
   case class UserEmail(value: String)
-  @derive(decoder)
-  @newtype
+
+
   case class UserEmailVerificationTime(value: Instant)
-  @derive(decoder)
-  @newtype
+
+
   case class UserImageSrc(value: String)
 
-  @derive(decoder)
+
   @Lenses
   case class User(
       uid: UserUid,

@@ -18,9 +18,10 @@ object CookieParser {
       cookieHeader.fold(List[Cookie]()) {
         _.split(";")
           .map(cookie => {
-            cookie.trim.split("=").toList match
+            cookie.trim.split("=").toList match {
               case name :: value :: Nil => Cookie(CookieName(name), CookieValue(value))
-              case _ => throw new IllegalStateException()
+              case _                    => throw new IllegalStateException()
+            }
           })
           .toList
       }

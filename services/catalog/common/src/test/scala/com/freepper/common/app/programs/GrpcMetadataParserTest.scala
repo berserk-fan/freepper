@@ -5,7 +5,7 @@ import io.grpc.Metadata
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import com.freepper.common.TestIORuntime
-import com.freepper.common.domain.auth._
+import com.freepper.common.domain.auth.*
 
 class GrpcMetadataParserTest extends AnyFunSuite with Matchers with TestIORuntime {
   private val jweSecret = "k+Twz5BFK8s/Y728OHqPQzgUzadi+tdRVsjzY6wLDwk="
@@ -22,12 +22,12 @@ class GrpcMetadataParserTest extends AnyFunSuite with Matchers with TestIORuntim
     val res = new GrpcMetadataParser[IO](AuthConfig(List(UserEmail("fakedoe888@gmail.com")), jweSecret, ""))
       .extractCallContext(metadata)
       .unsafeRunSync()
-    res.user should ===(Some(User(UserEmail("fakedoe888@gmail.com"), UserRole.Admin)))
+    res.user.should(===(Some(User(UserEmail("fakedoe888@gmail.com"), UserRole.Admin))))
 
     val res2 = new GrpcMetadataParser[IO](AuthConfig(List(), jweSecret, ""))
       .extractCallContext(metadata)
       .unsafeRunSync()
-    res2.user should ===(Some(User(UserEmail("fakedoe888@gmail.com"), UserRole.User)))
+    res2.user.should(===(Some(User(UserEmail("fakedoe888@gmail.com"), UserRole.User))))
   }
 
   test("call context serialization") {
@@ -36,10 +36,10 @@ class GrpcMetadataParserTest extends AnyFunSuite with Matchers with TestIORuntim
     val md =
       mdp.extractMetadata(CallContext(Some(user))).unsafeRunSync()
     val cc = mdp.extractCallContext(md).unsafeRunSync()
-    cc.user should ===(Some(user))
+    cc.user.should(===(Some(user)))
 
     val md2 = mdp.extractMetadata(CallContext(None)).unsafeRunSync()
     val cc2 = mdp.extractCallContext(md2).unsafeRunSync()
-    cc2.user should ===(None)
+    cc2.user.should(===(None))
   }
 }

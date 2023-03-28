@@ -1,9 +1,8 @@
 package com.freepper.catalog.domain
 
-import derevo.cats._
-import derevo.circe.magnolia.decoder
-import derevo.derive
-import io.estatico.newtype.macros.newtype
+
+
+
 import squants.market.Money
 import com.freepper.catalog.domain.category.{CategoryId, CategoryReadableId}
 import com.freepper.catalog.domain.imageList.{ImageList, ImageListId}
@@ -13,31 +12,28 @@ import com.freepper.common.domain.crud._
 import java.util.UUID
 
 object model {
-  @derive(eqv, show, decoder)
-  @newtype
+
   case class ModelId(value: UUID)
 
-  @derive(eqv, show, decoder)
-  @newtype
+
   case class ModelReadableId(value: String)
 
-  @derive(eqv, show, decoder)
-  @newtype
+
   case class ModelDisplayName(value: String)
 
-  @derive(eqv, show, decoder)
-  @newtype
+
+
   case class ModelDescription(value: String)
 
-  @derive(eqv, show, decoder)
-  @newtype
+
+
   case class ModelImageList(value: ImageList)
 
-  @derive(eqv, show, decoder)
-  @newtype
+
+
   case class ModelMinimalPrice(value: Money)
 
-  @derive(eqv, show, decoder)
+
   case class Model(
       id: ModelId,
       readableId: ModelReadableId,
@@ -50,7 +46,7 @@ object model {
       imageList: ImageList
   )
 
-  @derive(eqv, show)
+
   case class CreateModel(
       id: ModelId,
       readableId: ModelReadableId,
@@ -61,7 +57,7 @@ object model {
       parameterListIds: List[ParameterListId]
   )
 
-  @derive(eqv, show)
+
   case class UpdateModel(
       id: ModelId,
       readableId: Option[ModelReadableId],
@@ -73,7 +69,7 @@ object model {
 
   type ModelQuery = Query[ModelSelector]
 
-  @derive(eqv, show)
+
   sealed trait ModelSelector
   object ModelSelector {
     case object All extends ModelSelector

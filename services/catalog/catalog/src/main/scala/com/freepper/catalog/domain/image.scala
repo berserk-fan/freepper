@@ -1,27 +1,27 @@
 package com.freepper.catalog.domain
 
-import derevo.cats.{eqv, show}
-import derevo.circe.magnolia.decoder
-import derevo.derive
-import io.estatico.newtype.macros.newtype
+
+
+
+
 import com.freepper.common.domain.crud.{Crud, EntityDisplayName, Query, RepoOps, Repository}
 
 import java.util.UUID
 
 object image {
-  @derive(eqv, show, decoder)
-  @newtype
+
+
   case class ImageId(value: UUID)
 
-  @derive(eqv, show, decoder)
-  @newtype
+
+
   case class ImageSrc(value: String)
 
-  @derive(eqv, show, decoder)
-  @newtype
+
+
   case class ImageAlt(value: String)
 
-  @derive(eqv, show, decoder)
+
   case class Image(id: ImageId, src: ImageSrc, alt: ImageAlt)
 
   case class ImageData(value: Array[Byte])

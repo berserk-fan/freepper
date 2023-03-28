@@ -3,7 +3,7 @@ package com.freepper.common.infrastracture.persistance.postgres
 import doobie.*
 import com.freepper.common.domain.crud.{Crud, Query}
 
-import Crud._
+import Crud.*
 
 trait Queries[C[_]] {
   def create(req: C[Create]): List[Update0]

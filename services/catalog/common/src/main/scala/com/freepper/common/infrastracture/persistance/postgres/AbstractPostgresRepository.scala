@@ -9,7 +9,7 @@ import doobie.{ConnectionIO, Update0}
 import com.freepper.common.domain.crud.*
 import com.freepper.common.domain.error.NotFound
 
-import Crud._
+import Crud.*
 
 abstract class AbstractPostgresRepository[C[_]](val queries: Queries[C])(implicit
     createToId: monocle.Getter[C[Create], C[EntityId]],

@@ -1,10 +1,10 @@
 package com.freepper.catalog.domain
 
 import cats.data.NonEmptyList
-import derevo.cats.{eqv, show}
-import derevo.circe.magnolia.decoder
-import derevo.derive
-import io.estatico.newtype.macros.newtype
+
+
+
+
 import com.freepper.common.domain.crud
 import com.freepper.common.domain.crud.{Crud, Query, RepoOps, Repository}
 import com.freepper.catalog.domain.category.CategoryId
@@ -15,29 +15,29 @@ import com.freepper.catalog.domain.parameter._
 import java.util.UUID
 
 object product {
-  @derive(eqv, show, decoder)
-  @newtype
+
+
   case class ProductId(value: UUID)
 
-  @derive(eqv, show, decoder)
-  @newtype
+
+
   case class ProductStandardPrice(value: Double)
 
-  @derive(eqv, show, decoder)
-  @newtype
+
+
   case class ProductPromoPrice(value: Double)
 
-  @derive(eqv, show, decoder)
-  @newtype
+
+
   case class ProductDisplayName(value: String)
 
-  @derive(eqv, show, decoder)
+
   case class ProductPrice(standard: ProductStandardPrice, promo: Option[ProductPromoPrice])
 
-  @derive(eqv, show, decoder)
+
   case class ProductParameter(standard: ProductStandardPrice, promo: Option[ProductPromoPrice])
 
-  @derive(eqv, show, decoder)
+
   case class Product(
       id: ProductId,
       modelId: ModelId,
@@ -58,7 +58,7 @@ object product {
     }
   }
 
-  @derive(eqv, show)
+
   case class CreateProduct(
       id: ProductId,
       modelId: ModelId,
@@ -81,7 +81,7 @@ object product {
     final case class ModelIs(modelId: ModelId) extends ProductSelector
   }
 
-  @derive(eqv, show)
+
   case class UpdateProduct(
       id: ProductId,
       imageListId: Option[ImageListId],

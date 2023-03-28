@@ -5,8 +5,8 @@ import cats.implicits.toShow
 import com.freepper.catalog.domain.category.{CategoryId, CategoryReadableId}
 import com.freepper.catalog.domain.imageList.ImageListId
 import com.freepper.catalog.domain.product.ProductId
-import derevo.cats.eqv
-import derevo.derive
+
+
 import com.freepper.catalog.domain.category._
 import com.freepper.catalog.domain.image.ImageId
 import com.freepper.catalog.domain.imageList._

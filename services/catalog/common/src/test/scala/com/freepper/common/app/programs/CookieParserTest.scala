@@ -10,9 +10,15 @@ import scala.util.Try
 class CookieParserTest extends AnyFunSuite with Matchers {
 
   test("const") {
-    CookieParser.const[Try](Cookie(CookieName("hello"), CookieValue("world"))).parse(new Metadata()).get should ===(
-      List(Cookie(CookieName("hello"), CookieValue("world")))
-    )
+    CookieParser
+      .const[Try](Cookie(CookieName("hello"), CookieValue("world")))
+      .parse(new Metadata())
+      .get
+      .should(
+        ===(
+          List(Cookie(CookieName("hello"), CookieValue("world")))
+        )
+      )
   }
 
   test("fromKey") {
@@ -23,7 +29,7 @@ class CookieParserTest extends AnyFunSuite with Matchers {
 
     val m = new Metadata()
     m.put(Metadata.Key.of("cookie", Metadata.ASCII_STRING_MARSHALLER), cookie)
-    CookieParser.fromKey[Try]("cookie").parse(m).get.size should ===(3)
+    CookieParser.fromKey[Try]("cookie").parse(m).get.size.should(===(3))
   }
 
 }

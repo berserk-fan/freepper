@@ -4,7 +4,7 @@ import cats.arrow.FunctionK
 import com.freepper.common.domain.crud
 import com.freepper.common.domain.crud.{Crud, Repository}
 
-import Crud._
+import Crud.*
 
 case class RepositoryK[F[_], G[_], C[_]] private (r: Repository[F, C], xa: FunctionK[F, G]) extends Repository[G, C] {
   override def create(createReq: C[Create]): G[C[EntityId]] = xa(r.create(createReq))

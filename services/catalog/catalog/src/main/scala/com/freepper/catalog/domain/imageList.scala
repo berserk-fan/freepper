@@ -1,10 +1,10 @@
 package com.freepper.catalog.domain
 
 import cats.data.NonEmptyList
-import derevo.cats.{eqv, show}
-import derevo.circe.magnolia.decoder
-import derevo.derive
-import io.estatico.newtype.macros.newtype
+
+
+
+
 import com.freepper.common.domain.crud.{Crud, EntityDisplayName, Query, RepoOps, Repository}
 import com.freepper.catalog.domain.image._
 
@@ -12,21 +12,21 @@ import java.util.UUID
 
 object imageList {
 
-  @derive(eqv, show, decoder)
-  @newtype
+
+
   case class ImageListId(uuid: UUID)
 
-  @derive(eqv, show, decoder)
-  @newtype
+
+
   case class ImageListDisplayName(value: String)
 
-  @derive(eqv, show, decoder)
+
   case class ImageList(id: ImageListId, displayName: ImageListDisplayName, images: List[Image])
 
-  @derive(eqv, show)
+
   case class CreateImageList(id: ImageListId, displayName: ImageListDisplayName, images: List[ImageId])
 
-  @derive(eqv, show)
+
   case class UpdateImageList(id: ImageListId, displayName: Option[ImageListDisplayName], images: Option[List[ImageId]])
 
   type ImageListQuery = Query[ImageListSelector]

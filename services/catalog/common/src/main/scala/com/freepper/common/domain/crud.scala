@@ -34,7 +34,7 @@ object crud {
     type Query = Query.type
   }
 
-  import Crud._
+  import Crud.*
 
   trait Repository[F[_], C[_]] {
     def create(createReq: C[Create]): F[C[EntityId]]
