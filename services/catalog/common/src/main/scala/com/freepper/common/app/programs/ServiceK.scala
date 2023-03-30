@@ -6,7 +6,7 @@ import com.freepper.common.domain.crud
 
 import Crud.*
 
-case class ServiceK[F[_], G[_], C[_]] private (s: Service[F, C], xa: F ~> G) extends Service[G, C] {
+case class ServiceK[F[_], G[_], C[_]](s: Service[F, C], xa: F ~> G) extends Service[G, C] {
   private def mapK[U](value: F[U]): G[U] = xa.apply(value)
 
   override def create(createCommand: C[Create]): G[C[Entity]] = mapK(s.create(createCommand))

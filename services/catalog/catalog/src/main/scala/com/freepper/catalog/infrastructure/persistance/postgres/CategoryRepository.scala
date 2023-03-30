@@ -1,23 +1,16 @@
 package com.freepper.catalog.infrastructure.persistance.postgres
 
 import cats.effect.{MonadCancelThrow, Ref, Sync}
-import cats.syntax.functor._
+import cats.syntax.functor.*
 import doobie.ConnectionIO
-import doobie.implicits._
-import doobie.postgres.implicits._
-import monocle.syntax.all._
-import shapeless.Generic
-import com.freepper.catalog.domain.category.{CategoryCrud, CategoryDescription, CategoryId, CategorySelector, _}
+import doobie.implicits.*
+import doobie.postgres.implicits.*
+import monocle.syntax.all.*
+import com.freepper.catalog.domain.category.*
 import com.freepper.common.domain.crud
 import com.freepper.common.domain.error.DbErr
 import com.freepper.common.infrastracture.persistance.inmemory.{AbstractInMemoryRepository, InMemoryUpdaterPoly}
-import com.freepper.common.infrastracture.persistance.postgres.{
-  AbstractPostgresRepository,
-  DbUpdaterPoly,
-  Queries,
-  QueryHelpers
-}
-
+import com.freepper.common.infrastracture.persistance.postgres.{AbstractPostgresRepository, Queries, QueryHelpers}
 import java.util.UUID
 
 object CategoryRepository {
@@ -60,19 +53,20 @@ object CategoryRepository {
           """
         .query[Category]
     }
+//
+//    object updaterObj extends DbUpdaterPoly {
+//      implicit val a1: Res[CategoryReadableId] = gen("readable_id")
+//      implicit val a2: Res[CategoryDisplayName] = gen("display_name")
+//      implicit val a3: Res[CategoryDescription] = gen("description")
+//    }
 
-    object updaterObj extends DbUpdaterPoly {
-      implicit val a1: Res[CategoryReadableId] = gen("readable_id")
-      implicit val a2: Res[CategoryDisplayName] = gen("display_name")
-      implicit val a3: Res[CategoryDescription] = gen("description")
-    }
-
-    override def update(cat: UpdateCategory): List[doobie.Update0] = {
-      QueryHelpers
-        .defaultUpdateRaw(Generic[UpdateCategory].to(cat), cat.id, updaterObj, "categories")
-        .map(_.update)
-        .toList
-    }
+    override def update(cat: UpdateCategory): List[doobie.Update0] = ???
+//    override def update(cat: UpdateCategory): List[doobie.Update0] = {
+//      QueryHelpers
+//        .defaultUpdateRaw(Generic[UpdateCategory].to(cat), cat.id, updaterObj, "categories")
+//        .map(_.update)
+//        .toList
+//    }
   }
 
   private case class CategoryInMemoryRepositoryImpl[F[_]: MonadCancelThrow](ref: Ref[F, Map[CategoryId, Category]])
@@ -92,16 +86,18 @@ object CategoryRepository {
       case CategorySelector.UidIs(uid) => (x: Category) => x.id == uid
       case CategorySelector.All        => (_: Category) => true
     }
+//
+//    private object updaterObj extends InMemoryUpdaterPoly[Category] {
+//      implicit val readableId: Res[CategoryReadableId] = gen(_.focus(_.readableId))
+//      implicit val displayName: Res[CategoryDisplayName] = gen(_.focus(_.displayName))
+//      implicit val description: Res[CategoryDescription] = gen(_.focus(_.description))
+//    }
 
-    private object updaterObj extends InMemoryUpdaterPoly[Category] {
-      implicit val readableId: Res[CategoryReadableId] = gen(_.focus(_.readableId))
-      implicit val displayName: Res[CategoryDisplayName] = gen(_.focus(_.displayName))
-      implicit val description: Res[CategoryDescription] = gen(_.focus(_.description))
-    }
+//    override def update(req: UpdateCategory): F[Int] = {
+//      updateHelper(req, updaterObj, Generic[UpdateCategory])
+//    }
 
-    override def update(req: UpdateCategory): F[Int] = {
-      updateHelper(req, updaterObj, Generic[UpdateCategory])
-    }
+    override def update(req: UpdateCategory): F[Int] = ???
   }
 
   private case class CategoryPostgresRepository() extends AbstractPostgresRepository[CategoryCrud](CategoryQueries) {

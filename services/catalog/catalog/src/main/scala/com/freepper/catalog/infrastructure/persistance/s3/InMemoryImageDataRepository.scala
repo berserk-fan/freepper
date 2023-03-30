@@ -3,7 +3,7 @@ package com.freepper.catalog.infrastructure.persistance.s3
 import cats.Functor
 import cats.effect.{IO, Ref}
 import cats.implicits.toFunctorOps
-import com.freepper.catalog.domain.image._
+import com.freepper.catalog.domain.image.*
 
 class InMemoryImageDataRepository[F[_]: Functor] private (state: Ref[F, Set[ImageSrc]]) extends ImageDataRepository[F] {
   override def create(image: CreateImageData): F[Unit] = state.update(_.+(image.src)).as(())

@@ -1,13 +1,13 @@
 package com.freepper.catalog.infrastructure.persistance.postgres
 
 import org.scalatest.matchers.should.Matchers
-import com.freepper.catalog.domain.category._
-import com.freepper.catalog.domain.image._
+import com.freepper.catalog.domain.category.*
+import com.freepper.catalog.domain.image.*
 import com.freepper.catalog.domain.imageList.ImageListCrud
 import com.freepper.catalog.domain.model.ModelCrud
 import com.freepper.catalog.domain.parameter.ParameterListCrud
 import com.freepper.catalog.domain.product.ProductCrud
-import com.freepper.catalog.domain._
+import com.freepper.catalog.domain.*
 import com.freepper.common.domain.Assertions
 import com.freepper.common.domain.registry.Registry
 

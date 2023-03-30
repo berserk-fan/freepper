@@ -1,8 +1,8 @@
 package com.freepper.auth.domain
 
 import cats.Id
-import com.freepper.common.domain.{TypeName, crud}
-import com.freepper.common.domain.crud.Crud
+import com.freepper.common.domain.crud
+import .Crud
 import com.freepper.common.infrastracture.persistance.{GenericSelector, ValueK}
 
 

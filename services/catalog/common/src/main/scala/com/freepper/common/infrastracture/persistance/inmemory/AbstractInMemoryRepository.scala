@@ -3,18 +3,14 @@ package com.freepper.common.infrastracture.persistance.inmemory
 import cats.MonadThrow
 import cats.effect.Ref
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
-import com.freepper.common.domain.TypeName
-import shapeless.*
-import shapeless.ops.hlist.{Drop, Mapper, ToTraversable}
 import com.freepper.common.domain.crud.*
 import com.freepper.common.domain.error.NotFound
 
 import Crud.*
+import com.freepper.common.domain.TypeName
 
 @Deprecated
 abstract class AbstractInMemoryRepository[F[_]: MonadThrow, C[_]](ref: Ref[F, Map[C[EntityId], C[Entity]]])(implicit
-    updateToEntityId: monocle.Getter[C[Update], C[EntityId]],
-    entityToEntityId: monocle.Getter[C[Entity], C[EntityId]],
     show: TypeName[C]
 ) extends Repository[F, C] {
 
@@ -42,7 +38,9 @@ abstract class AbstractInMemoryRepository[F[_]: MonadThrow, C[_]](ref: Ref[F, Ma
 //  )(implicit
 //      drop: Drop.Aux[U, Nats#_1, U2],
 //      mapper: Mapper.Aux[updater.type, U2, U3],
-//      toLister: ToTraversable.Aux[U3, List, Option[C[Entity] => C[Entity]]]
+//      toLister: ToTraversable.Aux[U3, List, Option[C[Entity] => C[Entity]]],
+//      updateToEntityId: monocle.Getter[C[Update], C[EntityId]]
+//      entityToEntityId: monocle.Getter[C[Entity], C[EntityId]]
 //  ): F[Int] =
 //    ref.modify { map =>
 //      val updates = (generic

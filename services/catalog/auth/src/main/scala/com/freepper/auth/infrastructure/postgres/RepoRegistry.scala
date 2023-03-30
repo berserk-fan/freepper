@@ -4,7 +4,6 @@ import cats.effect.Sync
 import doobie.ConnectionIO
 import com.freepper.common.domain.registry.Registry
 import com.freepper.auth.domain.RegistryHelper
-import com.freepper.common.domain.crud.{Crud, Repository}
 import cats.syntax.functor.toFunctorOps
 
 object RepoRegistry {

@@ -5,30 +5,26 @@ import com.google.protobuf.empty.Empty
 import io.grpc.{Metadata, Status}
 import org.typelevel.log4cats.LoggerFactory
 import scalapb.validate.{Failure, Success, Validator}
-import com.freepper.catalog.api._
+import com.freepper.catalog.api.*
 import com.freepper.catalog.app.programs.ServiceMonad
-import com.freepper.catalog.app.programs.modifiers.MessageModifier
-import com.freepper.common.domain.registry.Registry
 import com.freepper.common.domain.crud.{Crud, Service}
-import com.freepper.common.domain.error._
-import com.freepper.catalog.domain.RegistryHelper.implicits._
+import com.freepper.common.domain.error.*
 import com.freepper.common.domain.auth.CallContext
 import cats.syntax.flatMap.toFlatMapOps
 import cats.syntax.functor.toFunctorOps
+import com.freepper.catalog.domain.Registry
 
 import scala.util.Try
 
-case class CatalogImpl[F[_]: Async: LoggerFactory] private (
-    services: Registry[Lambda[`T <: Crud` => Service[ServiceMonad[F, *], T]]],
-    modifications: MessageModifier[F],
+case class CatalogImpl[F[_]: Async: LoggerFactory](
+    services: Registry[[C[_]] =>> Service[ServiceMonad[F, _], C]],
     converters: Converters[F]
 ) extends CatalogFs2Grpc[F, CallContext] {
-  import com.freepper.common.app.CommonServiceMethods._
+  import com.freepper.common.app.CommonServiceMethods.*
   // categories
 
   override def getCategory(request: GetCategoryRequest, ctx: CallContext): F[Category] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.category.get(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -36,7 +32,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def createCategory(request: CreateCategoryRequest, ctx: CallContext): F[Category] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.category.create(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -44,7 +39,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def deleteCategory(request: DeleteCategoryRequest, ctx: CallContext): F[Empty] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.category.delete(_).apply(ctx))
       .as(Empty())
@@ -52,7 +46,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def updateCategory(request: UpdateCategoryRequest, ctx: CallContext): F[Category] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.category.update(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -60,7 +53,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   def listCategories(request: ListCategoriesRequest, ctx: CallContext): F[ListCategoriesResponse] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.category.findAll(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -70,7 +62,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def getModel(request: GetModelRequest, ctx: CallContext): F[Model] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.model.get(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -78,7 +69,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def createModel(request: CreateModelRequest, ctx: CallContext): F[Model] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.model.create(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -86,7 +76,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def listModels(request: ListModelsRequest, ctx: CallContext): F[ListModelsResponse] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.model.findAll(_).apply(ctx))
       .flatMap(converters.toApiListModels)
@@ -94,7 +83,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def deleteModel(request: DeleteModelRequest, ctx: CallContext): F[Empty] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.model.delete(_).apply(ctx))
       .as(Empty())
@@ -102,7 +90,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def updateModel(request: UpdateModelRequest, ctx: CallContext): F[Model] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.model.update(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -112,7 +99,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def getProduct(request: GetProductRequest, ctx: CallContext): F[Product] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.product.get(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -120,7 +106,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def createProduct(request: CreateProductRequest, ctx: CallContext): F[Product] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.product.create(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -128,7 +113,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def listProducts(request: ListProductsRequest, ctx: CallContext): F[ListProductsResponse] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.product.findAll(_).apply(ctx))
       .flatMap(converters.toApiListProducts)
@@ -136,7 +120,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def deleteProduct(request: DeleteProductRequest, ctx: CallContext): F[Empty] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.product.delete(_).apply(ctx))
       .as(Empty())
@@ -146,7 +129,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def createImageList(request: CreateImageListRequest, ctx: CallContext): F[ImageList] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.imageList.create(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -154,7 +136,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def getImageList(request: GetImageListRequest, ctx: CallContext): F[ImageList] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.imageList.get(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -162,7 +143,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def updateImageList(request: UpdateImageListRequest, ctx: CallContext): F[ImageList] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.imageList.update(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -170,7 +150,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   override def deleteImageList(request: DeleteImageListRequest, ctx: CallContext): F[Empty] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.imageList.delete(_).apply(ctx))
       .as(Empty())
@@ -179,7 +158,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
   override def listImageLists(request: ListImageListsRequest, ctx: CallContext): F[ListImageListsResponse] =
     adaptError {
       validate(request)
-        .flatMap(_ => modifications.modify(request))
         .flatMap(converters.toDomain)
         .flatMap(services.imageList.findAll(_).apply(ctx))
         .flatMap(converters.toApiListImageLists)
@@ -187,7 +165,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   def createImage(request: CreateImageRequest, ctx: CallContext): F[Image] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.image.create(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -195,7 +172,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   def deleteImage(request: DeleteImageRequest, ctx: CallContext): F[Empty] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.image.delete(_).apply(ctx))
       .as(Empty())
@@ -203,7 +179,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   def getImage(request: GetImageRequest, ctx: CallContext): F[Image] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.image.get(_).apply(ctx))
       .flatMap(converters.toApi)
@@ -211,7 +186,6 @@ case class CatalogImpl[F[_]: Async: LoggerFactory] private (
 
   def listImages(request: ListImagesRequest, ctx: CallContext): F[ListImagesResponse] = adaptError {
     validate(request)
-      .flatMap(_ => modifications.modify(request))
       .flatMap(converters.toDomain)
       .flatMap(services.image.findAll(_).apply(ctx))
       .flatMap(converters.toApiListImages)

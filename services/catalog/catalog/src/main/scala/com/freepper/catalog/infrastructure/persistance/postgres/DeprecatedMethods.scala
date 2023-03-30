@@ -1,7 +1,7 @@
 package com.freepper.catalog.infrastructure.persistance.postgres
 
-import doobie._
-import doobie.implicits._
+import doobie.*
+import doobie.implicits.*
 
 object DeprecatedMethods {
   def jsonList(imageListId: String): Fragment = {

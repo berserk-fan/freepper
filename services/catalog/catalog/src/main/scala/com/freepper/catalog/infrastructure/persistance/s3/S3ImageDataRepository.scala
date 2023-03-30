@@ -1,17 +1,17 @@
 package com.freepper.catalog.infrastructure.persistance.s3
 
 import cats.effect.Async
-import cats.implicits._
-import org.typelevel.log4cats._
+import cats.implicits.*
+import org.typelevel.log4cats.*
 import software.amazon.awssdk.auth.credentials.{AwsBasicCredentials, StaticCredentialsProvider}
 import software.amazon.awssdk.core.async.AsyncRequestBody
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3AsyncClient
 import software.amazon.awssdk.services.s3.model.{DeleteObjectRequest, ListObjectsV2Request, PutObjectRequest}
 import com.freepper.catalog.AwsConfig
-import com.freepper.catalog.domain.image._
+import com.freepper.catalog.domain.image.*
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 class S3ImageDataRepository[F[_]: Async: LoggerFactory] private (s3: S3AsyncClient, bucketName: String)
     extends ImageDataRepository[F] {

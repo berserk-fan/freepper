@@ -3,8 +3,8 @@ package com.freepper.catalog.infrastructure.persistance.postgres
 import cats.MonadThrow
 import doobie.implicits.toSqlInterpolator
 import doobie.postgres.implicits.UuidType
-import doobie.{ConnectionIO, _}
-import com.freepper.catalog.domain.image._
+import doobie.*
+import com.freepper.catalog.domain.image.*
 import com.freepper.common.domain.error.DbErr
 import com.freepper.common.infrastracture.persistance.inmemory.AbstractInMemoryRepository
 import com.freepper.common.infrastracture.persistance.postgres.{AbstractPostgresRepository, Queries}
@@ -12,7 +12,6 @@ import cats.syntax.functor.toFunctorOps
 
 import java.util.UUID
 import cats.effect.{Ref, Sync}
-import com.freepper.common.domain.crud.{Crud}
 
 object ImageRepository {
   private object ImageRepositoryImpl extends AbstractPostgresRepository[ImageCrud](ImageQueries) {

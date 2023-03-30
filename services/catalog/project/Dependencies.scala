@@ -5,7 +5,7 @@ object Dependencies {
     val cats = "2.7.0"
     val catsEffect = "3.3.3"
     val catsRetry = "3.1.0"
-    val circe = "0.14.1"
+    val circe = "0.14.5"
     val derevo = "0.13.0"
     val javaxCrypto = "1.0.1"
     val fs2 = "3.1.3"
@@ -25,7 +25,7 @@ object Dependencies {
     val scalaCheck = "1.15.4"
     val scalaTestScalaCheck = "3.2.9.0"
 
-    val scalaPb = "2.5.0-2"
+    val scalaPb = "2.9.6-0"
     val scalaPbValidation = scalapb.validate.compiler.BuildInfo.version
     val doobie = "1.0.0-RC1"
     val flyway = "7.2.0"
@@ -38,6 +38,7 @@ object Dependencies {
     val jose4J = "0.9.2"
 
     val shapeless = "3.0.1"
+    val kittens = "3.0.0"
   }
 
   object Libraries {
@@ -89,11 +90,12 @@ object Dependencies {
     lazy val parserCombinators = "org.scala-lang.modules" %% "scala-parser-combinators" % V.parserCombinators
 
     lazy val circeCore = circe("core")
-    lazy val circeGeneric = circe("generic")
     lazy val circeParser = circe("parser")
-    lazy val circeRefined = circe("refined")
     lazy val awsS3Sdk = "software.amazon.awssdk" % "s3" % V.awsS3Sdk
     lazy val jose4JJwt = "org.bitbucket.b_c" % "jose4j" % V.jose4J
-    lazy val shapeless = "org.typelevel" %% "shapeless3-deriving" % "3.0.1"
+    lazy val shapeless = "org.typelevel" %% "shapeless3-deriving" % V.shapeless
+    lazy val kittens = "org.typelevel" %% "kittens" % V.kittens
+
+    lazy val monixNewType = "io.monix" %% "newtypes-core" %
   }
 }

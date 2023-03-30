@@ -2,7 +2,6 @@ package com.freepper.auth.infrastructure.postgres
 
 import cats.effect.IO
 import com.freepper.auth.domain.RegistryHelper
-import com.freepper.common.domain.crud.{Crud, RepoOps}
 import com.freepper.common.infrastructure.persistance.postgres.EntityTestsHelpers.AbstractEntityTestsRegistry
 import doobie.ConnectionIO
 import org.typelevel.log4cats.slf4j.loggerFactoryforSync

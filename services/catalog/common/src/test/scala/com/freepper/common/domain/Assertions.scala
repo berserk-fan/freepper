@@ -1,6 +1,6 @@
 package com.freepper.common.domain
 
-import com.freepper.common.domain.crud.Crud
+import .Crud
 import Crud.*
 
 trait Assertions[C[_]] {

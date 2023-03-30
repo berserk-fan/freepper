@@ -37,9 +37,9 @@ object CommonServiceMethods {
       }
   } yield res
 
-  def validate[F[_]: ApplicativeThrow, T: Validator](t: T): F[Unit] = Validator[T].validate(t) match {
-    case Success => ().pure[F]
+  def validate[F[_]: ApplicativeThrow, T: Validator](t: T): F[T] = Validator[T].validate(t) match {
+    case Success => t.pure[F]
     case Failure(violations) =>
-      ValidationErr(violations.mkString(",")).raiseError[F, Unit]
+      ValidationErr(violations.mkString(",")).raiseError[F, T]
   }
 }

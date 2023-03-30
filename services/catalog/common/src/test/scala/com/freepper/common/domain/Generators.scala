@@ -1,7 +1,7 @@
 package com.freepper.common.domain
 
 import org.scalacheck.Gen
-import com.freepper.common.domain.crud.Crud.*
+import .Crud.*
 
 trait Generators[C[_]] {
   def create: Gen[C[Create]]

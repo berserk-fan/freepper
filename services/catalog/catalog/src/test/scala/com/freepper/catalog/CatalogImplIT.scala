@@ -5,15 +5,15 @@ import cats.implicits.{catsSyntaxOptionId, toTraverseOps}
 import com.freepper.catalog.shared.Resources
 import com.google.protobuf.ByteString
 import com.google.protobuf.field_mask.FieldMask
-import doobie.implicits._
-import doobie.postgres.implicits._
+import doobie.implicits.*
+import doobie.postgres.implicits.*
 import doobie.{ConnectionIO, Transactor}
 import io.grpc.{Metadata, Status, StatusRuntimeException}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import org.typelevel.log4cats.LoggerFactory
 import org.typelevel.log4cats.slf4j.Slf4jFactory
-import com.freepper.catalog.api._
+import com.freepper.catalog.api.*
 import com.freepper.catalog.domain.image
 import com.freepper.catalog.domain.image.ImageDataRepository
 import com.freepper.catalog.infrastructure.persistance.s3.InMemoryImageDataRepository

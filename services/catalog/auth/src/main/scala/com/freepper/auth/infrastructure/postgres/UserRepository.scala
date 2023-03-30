@@ -3,24 +3,24 @@ package com.freepper.auth.infrastructure.postgres
 import cats.{Functor, Inject, MonadThrow}
 import com.freepper.auth.domain.user.Crud.{Create, Entity, EntityId, Selector, Update}
 import com.freepper.common.infrastracture.persistance.postgres.{AbstractPostgresRepository, DoobieInstances, Queries, QueryHelpers}
-import com.freepper.auth.domain.user._
+import com.freepper.auth.domain.user.*
 import com.freepper.common.domain.crud
-import com.freepper.common.domain.crud.Repository
+import .Repository
 import com.freepper.common.infrastracture.persistance.inmemory.{AbstractInMemoryRepositoryV2, InMemFieldDef, InMemoryQueryHelpers}
 import cats.effect.{Ref, Sync}
 import cats.syntax.functor.toFunctorOps
 import com.freepper.common.infrastracture.persistance.GenericSelector
 import doobie.{ConnectionIO, Get, Meta}
-import monocle.syntax.all._
+import monocle.syntax.all.*
 import doobie.implicits.toSqlInterpolator
 import monocle.Getter
-import shapeless._
+import shapeless.*
 
 object UserRepository {
 
   import DoobieInstances.timeInstances.UtcInstantMeta
-  import DoobieInstances.commonInstances._
-  import AuthReposFieldDefs._
+  import DoobieInstances.commonInstances.*
+  import AuthReposFieldDefs.*
   def postgres: Repository[ConnectionIO, UserCrud] = UserRepository
 
   def inmemory[F[_]: Sync]: F[Repository[F, UserCrud]] =
@@ -58,7 +58,7 @@ object UserRepository {
   }
 
   private class InMemoryUserRepository[F[_]: MonadThrow](ref: Ref[F, Map[UserCrud#EntityId, User]])
-      extends AbstractInMemoryRepositoryV2[F, UserCrud](ref, UpdateUserCommand.selector, User.id) {
+      extends AbstractInMemoryRepositoryV2[F, UserCrud](ref) {
     override protected def creator(c: Create): Entity = {
       User(UserUid(java.util.UUID.randomUUID()), c.id, c.displayName, c.email, None, c.imageSrc)
     }

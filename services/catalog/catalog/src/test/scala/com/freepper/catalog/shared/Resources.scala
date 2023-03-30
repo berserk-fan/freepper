@@ -1,14 +1,14 @@
 package com.freepper.catalog.shared
 
 import cats.effect.{IO, Resource}
-import doobie.implicits._
+import doobie.implicits.*
 import doobie.{Fragment, Transactor}
 import fs2.grpc.syntax.all.fs2GrpcSyntaxManagedChannelBuilder
 import io.grpc.Metadata
 import io.grpc.netty.NettyChannelBuilder
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
-import pureconfig.generic.auto._
+import pureconfig.generic.auto.*
 import com.freepper.catalog.api.CatalogFs2Grpc
 import com.freepper.catalog.{AppConfig, ServerConfig}
 import com.freepper.common.app.programs.GrpcMetadataParser

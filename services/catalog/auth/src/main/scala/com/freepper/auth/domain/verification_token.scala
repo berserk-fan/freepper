@@ -1,9 +1,5 @@
 package com.freepper.auth.domain
 
-import com.freepper.common.domain.crud.{Crud, Repository, Service}
-
-
-
 
 import java.time.Instant
 import java.util.UUID

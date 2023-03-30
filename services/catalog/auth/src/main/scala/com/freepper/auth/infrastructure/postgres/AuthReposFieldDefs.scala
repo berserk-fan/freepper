@@ -5,9 +5,9 @@ import doobie.postgres.implicits.UuidType
 import com.freepper.common.infrastracture.persistance.postgres.DoobieInstances
 
 object AuthReposFieldDefs {
-  import DoobieInstances.commonInstances._
-  import DoobieInstances.timeInstances._
-  import com.freepper.auth.domain.user._
+  import DoobieInstances.commonInstances.*
+  import DoobieInstances.timeInstances.*
+  import com.freepper.auth.domain.user.*
 
   def gen[T: doobie.Read: doobie.Write](
       fieldName: String,

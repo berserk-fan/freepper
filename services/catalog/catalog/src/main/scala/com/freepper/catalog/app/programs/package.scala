@@ -2,7 +2,6 @@ package com.freepper.catalog.app
 
 import cats.data.Kleisli
 import cats.{MonadThrow, ~>}
-import com.freepper.catalog.domain.RegistryHelper
 import org.typelevel.log4cats.LoggerFactory
 import com.freepper.catalog.domain.category.CategoryCrud
 import com.freepper.catalog.domain.image.{ImageCrud, ImageDataRepository}
@@ -12,43 +11,42 @@ import com.freepper.catalog.domain.parameter.ParameterListCrud
 import com.freepper.catalog.domain.product.ProductCrud
 import com.freepper.common.app.programs.{BasicService, SecuredService, ServiceK}
 import com.freepper.common.domain.auth.CallContext
-import com.freepper.common.domain.crud.{Crud, Repository, Service}
-import com.freepper.common.domain.registry._
+import com.freepper.catalog.domain.Registry
+import com.freepper.common.domain.crud.{Repository, Service}
+import com.freepper.catalog.knowledge.implicits.given
 
 package object programs {
   type ServiceMonad[F[_], T] = Kleisli[F, CallContext, T]
 
   def basicServiceRegistry[F[_]: MonadThrow, G[_]: MonadThrow: LoggerFactory](
-      r: Registry[Lambda[`T <: Crud` => Repository[F, T]]],
+      r: Registry[[C[_]] =>> Repository[F, C]],
       xa: F ~> G,
       imageDataRepository: ImageDataRepository[G]
-  ): Registry[Lambda[`T <: Crud` => Service[G, T]]] = {
-    RegistryHelper.createRegistry(
-      ServiceK(BasicService(r.apply[CategoryCrud]), xa),
-      ImageServiceImpl(r.apply[ImageCrud], imageDataRepository, xa),
-      ServiceK(BasicService(r.apply[ImageListCrud]), xa),
-      ServiceK(BasicService(r.apply[ModelCrud]), xa),
-      ServiceK(BasicService(r.apply[ProductCrud]), xa),
-      ServiceK(BasicService(r.apply[ParameterListCrud]), xa)
+  ): Registry[[C[_]] =>> Service[G, C]] = {
+    Registry(
+      ServiceK(BasicService(r.category), xa),
+      ImageServiceImpl(r.image, imageDataRepository, xa),
+      ServiceK(BasicService(r.imageList), xa),
+      ServiceK(BasicService(r.model), xa),
+      ServiceK(BasicService(r.product), xa),
+      ServiceK(BasicService(r.parameterList), xa)
     )
   }
 
   def serviceRegistry[F[_]: MonadThrow, G[_]: MonadThrow: LoggerFactory](
-      r: Registry[Lambda[`T <: Crud` => Repository[F, T]]],
+      r: Registry[[C[_]] =>> Repository[F, C]],
       xa: F ~> G,
       imageDataRepository: ImageDataRepository[G]
-  ): Registry[Lambda[`T <: Crud` => Service[ServiceMonad[G, *], T]]] = {
+  ): Registry[[C[_]] =>> Service[ServiceMonad[G, *], C]] = {
     val registry1 = basicServiceRegistry(r, xa, imageDataRepository)
 
-    val addCommonConcerns = new RegistryMapper[
-      Lambda[`T <: Crud` => Service[G, T]],
-      Lambda[`T <: Crud` => Service[ServiceMonad[G, *], T]]
-    ] {
-      override def apply[T <: Crud](f: Service[G, T]): Service[ServiceMonad[G, *], T] = {
-        SecuredService(f)
-      }
-    }
-
-    Registry.map1(registry1)(addCommonConcerns)
+    Registry.apply(
+      SecuredService(registry1.category),
+      SecuredService(registry1.image),
+      SecuredService(registry1.imageList),
+      SecuredService(registry1.model),
+      SecuredService(registry1.product),
+      SecuredService(registry1.parameterList)
+    )
   }
 }

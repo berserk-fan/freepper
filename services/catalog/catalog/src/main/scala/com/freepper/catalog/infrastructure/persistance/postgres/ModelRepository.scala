@@ -3,25 +3,19 @@ package com.freepper.catalog.infrastructure.persistance.postgres
 import cats.data.NonEmptyList
 import cats.effect.{Ref, Sync}
 import cats.implicits.toFunctorOps
-import doobie._
+import doobie.*
 import doobie.implicits.toSqlInterpolator
 import doobie.postgres.implicits.UuidType
-import monocle.syntax.all._
-import shapeless.Generic
+import monocle.syntax.all.*
 import squants.market.{Money, USD}
 import com.freepper.catalog.domain.category.{CategoryId, CategoryReadableId}
-import com.freepper.catalog.domain.imageList._
+import com.freepper.catalog.domain.imageList.*
 import com.freepper.catalog.domain.model
-import com.freepper.catalog.domain.model._
+import com.freepper.catalog.domain.model.*
 import com.freepper.catalog.domain.parameter.{ParamListDisplayName, ParameterList}
 import com.freepper.common.domain.error.DbErr
 import com.freepper.common.infrastracture.persistance.inmemory.{AbstractInMemoryRepository, InMemoryUpdaterPoly}
-import com.freepper.common.infrastracture.persistance.postgres.{
-  AbstractPostgresRepository,
-  DbUpdaterPoly,
-  Queries,
-  QueryHelpers
-}
+import com.freepper.common.infrastracture.persistance.postgres.{AbstractPostgresRepository, Queries, QueryHelpers}
 
 import java.util.UUID
 
@@ -38,7 +32,7 @@ object ModelRepository {
       )
   }
 
-  private class ModelRepositoryImpl() extends AbstractPostgresRepository[model.Crud.type](ModelQueries) {
+  private class ModelRepositoryImpl() extends AbstractPostgresRepository[ModelCrud](ModelQueries) {
     override def findQuery: ModelId => ModelSelector = (id: ModelId) => ModelSelector.IdIs(id)
   }
 
@@ -101,21 +95,19 @@ object ModelRepository {
         .query[Model]
     }
 
-    object updaterObj extends DbUpdaterPoly {
-      implicit val a1: Res[ModelReadableId] = gen("readable_id")
-      implicit val a2: Res[ModelDescription] = gen("description")
-      implicit val a3: Res[CategoryId] = gen("category_id")
-      implicit val a4: Res[ModelDisplayName] = gen("display_name")
-      implicit val a5: Res[ImageListId] = gen("image_list_id")
-    }
+//    object updaterObj extends DbUpdaterPoly {
+//      implicit val a1: Res[ModelReadableId] = gen("readable_id")
+//      implicit val a2: Res[ModelDescription] = gen("description")
+//      implicit val a3: Res[CategoryId] = gen("category_id")
+//      implicit val a4: Res[ModelDisplayName] = gen("display_name")
+//      implicit val a5: Res[ImageListId] = gen("image_list_id")
+//    }
 
-    override def update(req: UpdateModel): List[doobie.Update0] = {
-      QueryHelpers.defaultUpdateRaw(Generic[UpdateModel].to(req), req.id, updaterObj, "models").map(_.update).toList
-    }
+    override def update(req: UpdateModel): List[doobie.Update0] = ???
   }
 
   case class ModelInMemoryRepositoryImpl[F[_]: Sync] private[persistance] (ref: Ref[F, Map[ModelId, Model]])
-      extends AbstractInMemoryRepository[F, model.Crud.type](ref) {
+      extends AbstractInMemoryRepository[F, ModelCrud](ref) {
     override def creator: CreateModel => Model = (req: CreateModel) =>
       Model(
         ModelId(UUID.randomUUID()),
@@ -137,17 +129,15 @@ object ModelRepository {
       case ModelSelector.RidIs(id)        => _.readableId == id
     }
 
-    object updateObj extends InMemoryUpdaterPoly[Model] {
-      implicit val readableId: Res[ModelReadableId] = gen(_.focus(_.readableId))
-      implicit val categoryId: Res[CategoryId] = gen(_.focus(_.categoryUid))
-      implicit val displayName: Res[ModelDisplayName] = gen(_.focus(_.displayName))
-      implicit val description: Res[ModelDescription] = gen(_.focus(_.description))
-      implicit val imageListId: Res[ImageListId] = gen(_.focus(_.imageList.id))
-    }
+//    object updateObj extends InMemoryUpdaterPoly[Model] {
+//      implicit val readableId: Res[ModelReadableId] = gen(_.focus(_.readableId))
+//      implicit val categoryId: Res[CategoryId] = gen(_.focus(_.categoryUid))
+//      implicit val displayName: Res[ModelDisplayName] = gen(_.focus(_.displayName))
+//      implicit val description: Res[ModelDescription] = gen(_.focus(_.description))
+//      implicit val imageListId: Res[ImageListId] = gen(_.focus(_.imageList.id))
+//    }
 
-    override def update(req: UpdateModel): F[Int] = {
-      updateHelper(req, updateObj, Generic[UpdateModel])
-    }
+    override def update(req: UpdateModel): F[Int] = ???
   }
 
 }

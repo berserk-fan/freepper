@@ -8,47 +8,18 @@ import io.circe.{Decoder, Encoder, parser}
 import scalapb.{FieldMaskUtil, GeneratedMessage, GeneratedMessageCompanion}
 import squants.market.Money
 import com.freepper.catalog.api
-import com.freepper.catalog.api.{
-  CreateCategoryRequest,
-  CreateImageListRequest,
-  CreateImageRequest,
-  CreateModelRequest,
-  CreateProductRequest,
-  DeleteCategoryRequest,
-  DeleteImageListRequest,
-  DeleteImageRequest,
-  DeleteModelRequest,
-  DeleteProductRequest,
-  GetCategoryRequest,
-  GetImageListRequest,
-  GetImageRequest,
-  GetModelRequest,
-  GetProductRequest,
-  ListCategoriesRequest,
-  ListCategoriesResponse,
-  ListImageListsRequest,
-  ListImageListsResponse,
-  ListImagesRequest,
-  ListImagesResponse,
-  ListModelsRequest,
-  ListModelsResponse,
-  ListProductsRequest,
-  ListProductsResponse,
-  UpdateCategoryRequest,
-  UpdateImageListRequest,
-  UpdateModelRequest
-}
-import com.freepper.catalog.app.ApiName._
-import com.freepper.catalog.domain.category._
-import com.freepper.catalog.domain.image._
-import com.freepper.catalog.domain.imageList._
-import com.freepper.catalog.domain.model._
-import com.freepper.catalog.domain.parameter._
-import com.freepper.catalog.domain.product._
-import com.freepper.common.domain.crud.{ListResponse, PageToken, Query}
-import com.freepper.common.domain.error.{ValidationErr, NotFound}
+import com.freepper.catalog.app.ApiName.*
+import com.freepper.catalog.domain.category.*
+import com.freepper.catalog.domain.image.*
+import com.freepper.catalog.domain.imageList.*
+import com.freepper.catalog.domain.model.*
+import com.freepper.catalog.domain.parameter.*
+import com.freepper.catalog.domain.product.*
 import cats.syntax.flatMap.toFlatMapOps
 import cats.syntax.functor.toFunctorOps
+import com.freepper.common.domain.crud.Query
+import com.freepper.common.domain.crud.PageToken
+import com.freepper.common.domain.error.NotFound
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}

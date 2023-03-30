@@ -2,7 +2,7 @@ package com.freepper.auth.domain
 
 import com.freepper.auth.domain.user.UserCrud
 import com.freepper.common.domain.registry.Registry
-import com.freepper.common.domain.crud.Crud
+import .Crud
 
 object RegistryHelper {
   object implicits {

@@ -1,7 +1,7 @@
 package com.freepper.auth.infrastructure.postgres
 
 import com.freepper.common.infrastracture.persistance.postgres.{DoobieInstances, Queries, QueryHelpers}
-import com.freepper.auth.domain.verification_token._
+import com.freepper.auth.domain.verification_token.*
 import com.freepper.common.domain.crud
 import doobie.postgres.implicits.UuidType
 import doobie.implicits.toSqlInterpolator
@@ -9,8 +9,8 @@ import doobie.implicits.toSqlInterpolator
 object VerificationTokenRepository {
   private object VerificationTokenQueries extends Queries[VerificationTokenCrud] {
     import DoobieInstances.timeInstances.UtcInstantMeta
-    import DoobieInstances.commonInstances._
-    import AuthReposFieldDefs._
+    import DoobieInstances.commonInstances.*
+    import AuthReposFieldDefs.*
 
     private val tableName = "verification_tokens"
 

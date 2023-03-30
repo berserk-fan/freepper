@@ -3,16 +3,15 @@ package com.freepper.catalog.infrastructure.persistance.postgres
 import cats.MonadThrow
 import cats.data.NonEmptyList
 import cats.effect.{Ref, Sync}
-import doobie._
-import doobie.implicits._
+import doobie.*
+import doobie.implicits.*
 import doobie.postgres.implicits.UuidType
 import monocle.syntax.AppliedLens
-import monocle.syntax.all._
-import shapeless.{HNil, _}
-import com.freepper.catalog.domain.image.{Image, ImageId, _}
-import com.freepper.catalog.domain.imageList.{ImageListCrud, _}
+import monocle.syntax.all.*
+import com.freepper.catalog.domain.image.*
+import com.freepper.catalog.domain.imageList.*
 import com.freepper.common.infrastracture.persistance.inmemory.{AbstractInMemoryRepository, InMemoryUpdaterPoly}
-import com.freepper.common.infrastracture.persistance.postgres.{AbstractPostgresRepository, DbUpdaterPoly, Queries}
+import com.freepper.common.infrastracture.persistance.postgres.{AbstractPostgresRepository, Queries}
 
 import java.util.UUID
 
@@ -44,24 +43,7 @@ object ImageListRepository {
         .query[ImageList]
     }
 
-    private def updateImageList(req: UpdateImageList): Option[Fragment] = {
-      object update extends DbUpdaterPoly {
-        implicit val a1: Res[ImageListDisplayName] = gen("display_name")
-      }
-      val nel = (req.displayName :: HNil).map(update).toList.flatten
-      if (nel.isEmpty) {
-        None
-      } else {
-        val setFr = Fragments.set(nel: _*)
-        val res =
-          fr"""
-           update image_lists
-           $setFr
-           where id=${req.id}
-        """
-        Some(res)
-      }
-    }
+    private def updateImageList(req: UpdateImageList): Option[Fragment] = ???
 
     override def delete(id: ImageListId): List[Update0] = List({
       fr"""
@@ -133,19 +115,20 @@ object ImageListRepository {
       case ImageListSelector.All        => (_: ImageList) => true
     }
 
-    private object updateObj extends InMemoryUpdaterPoly[ImageList] {
-      implicit val a: Res[ImageListDisplayName] = gen(_.focus(_.displayName))
-      implicit val b: Res[List[ImageId]] = gen(x =>
-        AppliedLens[ImageList, List[ImageId]](
-          x,
-          monocle.Lens[ImageList, List[ImageId]](_.images.map(_.id))(value =>
-            imageList => imageList.copy(images = value.map(id => Image(id, ImageSrc(""), ImageAlt(""))))
-          )
-        )
-      )
-    }
+//    private object updateObj extends InMemoryUpdaterPoly[ImageList] {
+//      implicit val a: Res[ImageListDisplayName] = gen(_.focus(_.displayName))
+//      implicit val b: Res[List[ImageId]] = gen(x =>
+//        AppliedLens[ImageList, List[ImageId]](
+//          x,
+//          monocle.Lens[ImageList, List[ImageId]](_.images.map(_.id))(value =>
+//            imageList => imageList.copy(images = value.map(id => Image(id, ImageSrc(""), ImageAlt(""))))
+//          )
+//        )
+//      )
+//    }
 
-    override def update(req: UpdateImageList): F[Int] = updateHelper(req, updateObj, Generic[UpdateImageList])
+    // override def update(req: UpdateImageList): F[Int] = updateHelper(req, updateObj, Generic[UpdateImageList])
+    override def update(req: UpdateImageList): F[Int] = ???
   }
 
   def inmemory[F[_]: Sync]: F[ImageListRepository[F]] = {

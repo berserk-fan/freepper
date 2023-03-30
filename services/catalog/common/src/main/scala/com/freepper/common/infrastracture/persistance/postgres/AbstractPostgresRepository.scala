@@ -1,13 +1,12 @@
 package com.freepper.common.infrastracture.persistance.postgres
 
-import cats.Show
 import cats.data.OptionT
 import cats.effect.Sync
 import cats.implicits.{catsSyntaxApplicativeErrorId, toFunctorOps}
-import com.freepper.common.domain.TypeName
 import doobie.{ConnectionIO, Update0}
 import com.freepper.common.domain.crud.*
 import com.freepper.common.domain.error.NotFound
+import com.freepper.common.domain.TypeName
 
 import Crud.*
 

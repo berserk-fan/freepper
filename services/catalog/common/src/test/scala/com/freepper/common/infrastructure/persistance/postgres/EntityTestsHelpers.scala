@@ -7,8 +7,7 @@ import com.freepper.common.config.JdbcDatabaseConfig
 import doobie.implicits.toSqlInterpolator
 import doobie.{ConnectionIO, Fragment}
 import org.typelevel.log4cats.slf4j.Slf4jLogger
-import com.freepper.common.domain.crud.{Crud, Repository}
-import com.freepper.common.domain.{Assertions, EntityTest, Fixture, Generators, Schema, TypeName}
+import com.freepper.common.domain.{Assertions, EntityTest, Fixture, Generators, Schema}
 import com.freepper.common.{AppConfigLoader, DBMigrations, TransactorHelpers}
 import org.typelevel.log4cats.Logger
 

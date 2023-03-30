@@ -2,7 +2,7 @@ package com.freepper.app
 
 import cats.effect.Sync
 import com.freepper
-import pureconfig.generic.auto._
+import pureconfig.generic.auto.*
 import com.freepper.common.AppConfigLoader
 import com.freepper.common.config.JdbcDatabaseConfig
 

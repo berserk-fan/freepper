@@ -4,7 +4,6 @@ import cats.{Applicative, Monad, Traverse}
 import com.freepper.auth.domain.{RegistryHelper, user}
 import com.freepper.auth.domain.user.UserCrud
 import com.freepper.common.domain.Fixture
-import com.freepper.common.domain.crud.{Crud, Repository}
 import cats.syntax.functor.toFunctorOps
 import com.freepper.common.domain.registry.Registry
 import org.scalacheck.Gen

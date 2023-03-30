@@ -3,10 +3,10 @@ package com.freepper.catalog.app.programs
 import cats.implicits.{catsSyntaxApplicativeError, toFlatMapOps, toFunctorOps}
 import cats.{Monad, MonadThrow, ~>}
 import org.typelevel.log4cats.LoggerFactory
-import com.freepper.catalog.domain.image._
+import com.freepper.catalog.domain.image.*
 import com.freepper.common.domain.crud.{ListResponse, PageToken, Query, Service}
 
-case class ImageServiceImpl[DBIO[_]: Monad, F[_]: MonadThrow: LoggerFactory] private (
+case class ImageServiceImpl[DBIO[_]: Monad, F[_]: MonadThrow: LoggerFactory](
     repo: ImageRepository[DBIO],
     dataRepository: ImageDataRepository[F],
     xa: DBIO ~> F

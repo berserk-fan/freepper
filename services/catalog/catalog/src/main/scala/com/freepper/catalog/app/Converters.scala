@@ -1,13 +1,13 @@
 package com.freepper.catalog.app
 
 import cats.{ApplicativeError, Monad, MonadError, MonadThrow, Traverse}
-import cats.implicits.{catsSyntaxApplicativeError, toShow}
+import cats.implicits.catsSyntaxApplicativeError
 import com.google.protobuf.ByteString
 import com.google.protobuf.field_mask.FieldMask
 import io.circe.{Decoder, Encoder, parser}
 import scalapb.{FieldMaskUtil, GeneratedMessage, GeneratedMessageCompanion}
 import squants.market.Money
-import com.freepper.catalog.api
+import com.freepper.catalog.{CatalogApiConfig, api}
 import com.freepper.catalog.domain.product
 import com.freepper.catalog.api.{
   CreateCategoryRequest,
@@ -39,22 +39,26 @@ import com.freepper.catalog.api.{
   UpdateImageListRequest,
   UpdateModelRequest
 }
-import com.freepper.catalog.app.ApiName._
-import com.freepper.catalog.domain.category._
-import com.freepper.catalog.domain.image._
-import com.freepper.catalog.domain.imageList._
-import com.freepper.catalog.domain.model._
-import com.freepper.catalog.domain.parameter._
-import com.freepper.catalog.domain.product._
+import com.freepper.catalog.app.ApiName.*
+import com.freepper.catalog.domain.category.*
+import com.freepper.catalog.domain.image.*
+import com.freepper.catalog.domain.imageList.*
+import com.freepper.catalog.domain.model.*
+import com.freepper.catalog.domain.parameter.*
+import com.freepper.catalog.domain.product.*
 import com.freepper.common.domain.crud.{ListResponse, PageToken, Query}
-import com.freepper.common.domain.error.{ValidationErr, NotFound}
+import com.freepper.common.domain.error.{NotFound, ValidationErr}
 import cats.syntax.flatMap.toFlatMapOps
 import cats.syntax.functor.toFunctorOps
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}
 
-class Converters[F[_]: MonadThrow](uuidGenerator: UUIDGenerator[F], idResolver: ReadableIdsResolver[F]) {
+class Converters[F[_]: MonadThrow](
+    uuidGenerator: UUIDGenerator[F],
+    idResolver: ReadableIdsResolver[F],
+    config: CatalogApiConfig
+) {
   private def fromStringOrRandomIfEmpty(s: String): F[UUID] = if (s == "") {
     uuidGenerator.gen
   } else {
@@ -75,8 +79,11 @@ class Converters[F[_]: MonadThrow](uuidGenerator: UUIDGenerator[F], idResolver: 
   private def toApi(pageToken: PageToken): F[String] = Monad[F].pure {
     Base64.getEncoder.encodeToString {
       val res = pageToken match {
-        case PageToken.Empty              => ""
-        case x @ PageToken.NonEmpty(_, _) => Encoder[PageToken.NonEmpty].apply(x).show
+        case PageToken.Empty => ""
+        case x @ PageToken.NonEmpty(_, _) =>
+          cats
+            .Show[io.circe.Json]
+            .show(Encoder.forProduct2("size", "offset")((x: PageToken.NonEmpty) => (x.size, x.offset)).apply(x))
       }
       res.getBytes(utf8)
     }
@@ -139,11 +146,11 @@ class Converters[F[_]: MonadThrow](uuidGenerator: UUIDGenerator[F], idResolver: 
 
   def toApi(parameter: Parameter): F[api.Parameter] = for {
     images <- Traverse[Option].traverse(parameter.image)(toApi)
-  } yield api.Parameter(parameter.id.show, parameter.displayName.show, images)
+  } yield api.Parameter(parameter.id.value.toString, parameter.displayName.value, images)
 
   def toApi(parameterList: ParameterList): F[api.ParameterList] = for {
     parameters <- Traverse[List].traverse(parameterList.parameters)(toApi)
-  } yield api.ParameterList(parameterList.id.show, parameterList.displayName.show, parameters)
+  } yield api.ParameterList(parameterList.id.value.toString, parameterList.displayName.value, parameters)
 
   def toApi(resp: ListResponse[Category]): F[ListCategoriesResponse] = for {
     x <- Traverse[List].traverse(resp.entities)(toApi)
@@ -156,9 +163,9 @@ class Converters[F[_]: MonadThrow](uuidGenerator: UUIDGenerator[F], idResolver: 
     parameterLists <- Traverse[List].traverse(model.parameterLists)(toApi)
   } yield api.Model(
     ModelName(Right(model.categoryRid), Left(model.id)).toNameString,
-    model.id.show,
-    model.readableId.show,
-    model.displayName.show,
+    model.id.value.toString,
+    model.readableId.value,
+    model.displayName.value,
     model.description.value,
     Some(imageList),
     Some(minPrice),
@@ -169,8 +176,8 @@ class Converters[F[_]: MonadThrow](uuidGenerator: UUIDGenerator[F], idResolver: 
     images <- Traverse[List].traverse(imageList.images)(toApi)
   } yield api.ImageList(
     ImageListName(imageList.id).toNameString,
-    imageList.id.show,
-    imageList.displayName.show,
+    imageList.id.value.toString,
+    imageList.displayName.value,
     images
   )
 
@@ -178,12 +185,12 @@ class Converters[F[_]: MonadThrow](uuidGenerator: UUIDGenerator[F], idResolver: 
     il <- toApi(p.imageList)
   } yield api.Product(
     ProductName(Left(p.categoryId), Left(p.modelId), p.id).toNameString,
-    p.id.show,
-    p.displayName.show,
-    p.modelId.show,
+    p.id.value.toString,
+    p.displayName.value,
+    p.modelId.value.toString,
     Some(il),
     Some(api.Product.Price(Some(api.Money(p.price.standard.value.toFloat)))),
-    p.parameterIds.map(_.show)
+    p.parameterIds.map(_.value.toString)
   )
 
   def toDomain(category: api.Category): F[Category] = for {
@@ -231,9 +238,12 @@ class Converters[F[_]: MonadThrow](uuidGenerator: UUIDGenerator[F], idResolver: 
     CategoryDescription(category.description)
   )
 
-  def toDomain(req: ListCategoriesRequest): F[CategoryQuery] = for {
-    token <- parseToken(req.pageToken, req.pageSize)
-  } yield Query(CategorySelector.All, token)
+  def toDomain(req: ListCategoriesRequest): F[CategoryQuery] = {
+    val pageSize = if (req.pageSize == 0) config.defaultPageSize else req.pageSize
+    for {
+      token <- parseToken(req.pageToken, pageSize)
+    } yield Query(CategorySelector.All, token)
+  }
 
   def toDomain(request: UpdateImageListRequest): F[UpdateImageList] = for {
     imageList <- MonadThrow[F].fromOption(
@@ -365,9 +375,9 @@ class Converters[F[_]: MonadThrow](uuidGenerator: UUIDGenerator[F], idResolver: 
   def toApi(image: Image): F[api.Image] = Monad[F].pure {
     api.Image(
       ApiName.ImageName(image.id).toNameString,
-      image.id.show,
-      image.src.show,
-      image.alt.show,
+      image.id.value.toString,
+      image.src.value,
+      image.alt.value,
       ByteString.EMPTY
     )
   }

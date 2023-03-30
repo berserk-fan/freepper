@@ -3,11 +3,9 @@ package com.freepper.common.infrastracture.persistance.inmemory
 import cats.MonadThrow
 import cats.effect.Ref
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
-import com.freepper.common.domain.TypeName
-import shapeless.*
-import shapeless.ops.hlist.{Drop, MapFolder, Mapper, ToTraversable}
 import com.freepper.common.domain.crud.*
 import com.freepper.common.domain.error.NotFound
+import com.freepper.common.domain.TypeName
 
 import Crud.*
 

@@ -11,7 +11,6 @@ import com.freepper.catalog.domain.category.CategoryId
 import com.freepper.catalog.domain.model.ModelSelector
 import com.freepper.common.{HasResource, TestIORuntime}
 import com.freepper.common.domain.crud.{PageToken, Query}
-import com.freepper.catalog.domain.RegistryHelper.implicits._
 
 import java.nio.charset.StandardCharsets
 import java.util.{Base64, UUID}

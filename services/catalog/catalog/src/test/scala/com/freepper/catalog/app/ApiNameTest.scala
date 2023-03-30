@@ -3,8 +3,8 @@ package com.freepper.catalog.app
 import org.scalatest.EitherValues
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import com.freepper.catalog.app.ApiName._
-import com.freepper.catalog.domain.category._
+import com.freepper.catalog.app.ApiName.*
+import com.freepper.catalog.domain.category.*
 import com.freepper.catalog.domain.image.ImageId
 import com.freepper.catalog.domain.imageList.ImageListId
 import com.freepper.catalog.domain.model.ModelId

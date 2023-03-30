@@ -11,11 +11,9 @@ import com.freepper.catalog.domain.imageList.ImageListCrud
 import com.freepper.catalog.domain.model.{CreateModel, ModelCrud, ModelDescription, ModelDisplayName, ModelId, ModelReadableId}
 import com.freepper.catalog.domain.parameter.{CreateParameter, CreateParameterList, ParamListDisplayName, ParameterDescription, ParameterDisplayName, ParameterId, ParameterListCrud, ParameterListId}
 import com.freepper.catalog.domain.product.ProductCrud
-import com.freepper.catalog.domain.{RegistryHelper, image, imageList, parameter, product}
+import com.freepper.catalog.domain.{image, imageList, parameter, product}
 import com.freepper.common.domain.Fixture
-import com.freepper.common.domain.crud.{Crud, Repository}
 import com.freepper.common.domain.registry.Registry
-import RegistryHelper.implicits._
 
 import java.util.UUID
 

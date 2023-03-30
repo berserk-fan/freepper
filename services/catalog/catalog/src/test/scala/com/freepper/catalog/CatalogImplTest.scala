@@ -13,19 +13,18 @@ import org.scalatest.matchers.should.Matchers
 import org.typelevel.log4cats.LoggerFactory
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import com.freepper.catalog.api.{CatalogFs2Grpc, CreateCategoryRequest, CreateModelRequest, DeleteModelRequest, GetModelRequest, ImageList, ListModelsRequest, Money, ParameterList, UpdateModelRequest}
-import com.freepper.catalog.app.ApiName._
+import com.freepper.catalog.app.ApiName.*
 import com.freepper.catalog.app.programs.modifiers.PageDefaultsApplier
 import com.freepper.catalog.app.{CatalogImpl, Converters, ReadableIdsResolver, UUIDGenerator, programs}
-import com.freepper.catalog.domain.category._
+import com.freepper.catalog.domain.category.*
 import com.freepper.catalog.domain.imageList.ImageListId
-import com.freepper.catalog.domain.model._
-import com.freepper.catalog.infrastructure.persistance.postgres._
+import com.freepper.catalog.domain.model.*
+import com.freepper.catalog.infrastructure.persistance.postgres.*
 import com.freepper.catalog.infrastructure.persistance.s3.InMemoryImageDataRepository
 import Generators.ToLazyListOps
 import com.freepper.common.domain.crud.Service
 import com.freepper.common.domain.error.NotFound
 import com.freepper.common.{HasResource, TestIORuntime}
-import com.freepper.catalog.domain.RegistryHelper.implicits._
 import com.freepper.common.domain.auth.{CallContext, User, UserEmail, UserRole}
 
 import java.util.UUID

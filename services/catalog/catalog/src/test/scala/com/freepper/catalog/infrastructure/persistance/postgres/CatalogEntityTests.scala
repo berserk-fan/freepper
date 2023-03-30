@@ -1,9 +1,8 @@
 package com.freepper.catalog.infrastructure.persistance.postgres
 
 import cats.effect.IO
-import com.freepper.catalog.domain.RegistryHelper
 import com.freepper.catalog.shared.FixturesV2
-import com.freepper.common.domain.crud.RepoOps
+import .RepoOps
 import com.freepper.common.infrastructure.persistance.postgres.EntityTestsHelpers.AbstractEntityTestsRegistry
 import doobie.ConnectionIO
 import org.typelevel.log4cats.slf4j.loggerFactoryforSync

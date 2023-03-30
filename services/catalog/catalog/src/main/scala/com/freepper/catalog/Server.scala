@@ -5,7 +5,6 @@ import cats.effect.kernel.Resource
 import cats.kernel.Monoid
 import com.freepper.catalog.api.CatalogFs2Grpc
 import com.freepper.catalog.app.{CatalogImpl, Converters, ReadableIdsResolver, UUIDGenerator, programs}
-import com.freepper.catalog.app.programs.modifiers.{MessageModifier, PageDefaultsApplier}
 import com.freepper.catalog.domain.image.ImageDataRepository
 import com.freepper.catalog.infrastructure.persistance.s3.S3ImageDataRepository
 import doobie.ConnectionIO
@@ -13,13 +12,11 @@ import fs2.grpc.syntax.all.fs2GrpcSyntaxServerBuilder
 import io.grpc.ServerServiceDefinition
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder
 import org.typelevel.log4cats.LoggerFactory
-import com.freepper.catalog.domain.RegistryHelper.implicits._
 import com.freepper.catalog.domain.image.ImageDataRepository
 import com.freepper.catalog.infrastructure.persistance.postgres
 import com.freepper.common.TransactorHelpers
 import com.freepper.common.app.programs.{CookieParser, GrpcMetadataParser, GrpcMetadataTransformer}
 import com.freepper.common.domain.auth.{CallContext, CookieName}
-import com.freepper.common.domain.crud.{Crud, Repository, Service}
 import com.freepper.common.infrastracture.persistance.RepositoryK
 
 abstract class Server {
@@ -41,20 +38,19 @@ abstract class Server {
         transactor.trans,
         imageDataRepository
       )
-      pageDefaultsApplier = PageDefaultsApplier[IO](config.api.defaultPageSize)
-      modifier = Monoid[MessageModifier[IO]].combineAll(List(pageDefaultsApplier))
       converters = new Converters[IO](
         UUIDGenerator.fromApplicativeError[IO],
         ReadableIdsResolver.RepoBasedResolver[IO](
           RepositoryK(repos.category, transactor.trans),
           RepositoryK(repos.model, transactor.trans)
-        )
+        ),
+        config.api
       )
       cookieAuthExtractor <- Resource.eval(
         GrpcMetadataTransformer.cookieAuthExtractor[IO](config.auth.sessionCookieName)
       )
       catalogService <- CatalogFs2Grpc.serviceResource[IO, CallContext](
-        CatalogImpl(services, modifier, converters),
+        CatalogImpl(services, converters),
         metadata =>
           cookieAuthExtractor.transform(metadata).flatMap {
             new GrpcMetadataParser[IO](config.auth).extractCallContext(_)

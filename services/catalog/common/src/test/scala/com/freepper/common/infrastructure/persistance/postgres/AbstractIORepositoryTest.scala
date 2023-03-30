@@ -4,10 +4,10 @@ import cats.MonadThrow
 import cats.effect.{IO, Resource}
 import com.freepper.common.TestIORuntime
 import com.freepper.common.domain.EntityTest
-import com.freepper.common.domain.crud.Crud
+import .Crud
 import org.typelevel.log4cats.LoggerFactory
 import TestIORuntime.runtime
-import com.freepper.common.domain.crud.Crud.{EntityId, Update}
+import .Crud.{EntityId, Update}
 
 abstract class AbstractIORepositoryTest[F[_]: MonadThrow: LoggerFactory, C[_]](r: Resource[IO, EntityTest[F, IO, C]])(
     implicit updateId: monocle.Getter[C[Update], C[EntityId]]

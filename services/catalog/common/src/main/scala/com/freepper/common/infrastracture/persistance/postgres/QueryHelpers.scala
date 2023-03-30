@@ -5,8 +5,6 @@ import com.freepper.common.infrastracture.persistance.GenericSelector
 import doobie.implicits.toSqlInterpolator
 import doobie.util.update.Update0
 import doobie.{Fragment, Fragments, Get, Put}
-import shapeless.ops.hlist.{Drop, Mapper, ToTraversable}
-import shapeless.{HList, Nat, Poly1}
 import doobie.util.Write
 
 object QueryHelpers {

@@ -6,16 +6,15 @@ import com.freepper.catalog.domain.category.{CategoryId, CategoryReadableId}
 import com.freepper.catalog.domain.imageList.ImageListId
 import com.freepper.catalog.domain.product.ProductId
 
-
-import com.freepper.catalog.domain.category._
+import com.freepper.catalog.domain.category.*
 import com.freepper.catalog.domain.image.ImageId
-import com.freepper.catalog.domain.imageList._
-import com.freepper.catalog.domain.model._
+import com.freepper.catalog.domain.imageList.*
+import com.freepper.catalog.domain.model.*
 import com.freepper.catalog.domain.product.ProductId
 import com.freepper.common.domain.error.ValidationErr
 
 import java.util.UUID
-import scala.util.parsing.combinator._
+import scala.util.parsing.combinator.*
 
 sealed trait ApiName
 
@@ -104,13 +103,15 @@ object ApiName {
         case Right(value) => value.show
       }
 
-      private implicit val image: Show[ImageName] = t => s"$Images/${t.id.show}"
-      private implicit val category: Show[CategoryName] = t => s"$Categories/${showEither(t.categoryId)}"
+      private implicit val image: Show[ImageName] = t => s"$Images/${t.id.value.toString}"
+      private implicit val category: Show[CategoryName] = t =>
+        s"$Categories/${t.categoryId.fold(_.value.toString, _.value)}"
       private implicit val models: Show[ModelsName] = t => {
         s"${CategoryName(t.categoryId).show}/$Models"
       }
-      private implicit val model: Show[ModelName] = t => s"${ModelsName(t.categoryId).show}/${showEither(t.modelId)}"
-      private implicit val imageList: Show[ImageListName] = t => s"$ImageLists/${t.id.show}"
+      private implicit val model: Show[ModelName] = t =>
+        s"${ModelsName(t.categoryId).show}/${t.modelId.fold(_.value.toString, _.value)}"
+      private implicit val imageList: Show[ImageListName] = t => s"$ImageLists/${t.id.value.toString}"
       private implicit val products: Show[ProductsName] = t => s"${ModelName(t.categoryId, t.modelId).show}/$Products"
       private implicit val product: Show[ProductName] = t =>
         s"${ProductsName(t.categoryId, t.modelId).show}/${t.productId}"

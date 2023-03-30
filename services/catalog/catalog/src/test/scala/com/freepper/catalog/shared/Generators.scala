@@ -2,18 +2,18 @@ package com.freepper.catalog.shared
 
 import cats.Applicative
 import cats.data.NonEmptyList
-import cats.syntax.apply._
+import cats.syntax.apply.*
 import org.scalacheck.Gen
 import squants.market.{Money, USD}
-import com.freepper.catalog.domain.category._
-import com.freepper.catalog.domain.image._
-import com.freepper.catalog.domain.imageList._
-import com.freepper.catalog.domain.model._
-import com.freepper.catalog.domain.parameter._
-import com.freepper.catalog.domain.product._
+import com.freepper.catalog.domain.category.*
+import com.freepper.catalog.domain.image.*
+import com.freepper.catalog.domain.imageList.*
+import com.freepper.catalog.domain.model.*
+import com.freepper.catalog.domain.parameter.*
+import com.freepper.catalog.domain.product.*
 import com.freepper.catalog.domain.{category, image, imageList, model, parameter, product}
 import com.freepper.common.domain.crud
-import com.freepper.common.domain.crud.Query
+import .Query
 
 object Generators {
   implicit class ToLazyListOps[T](g: Gen[T]) {

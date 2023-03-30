@@ -2,14 +2,14 @@ package com.freepper.catalog.infrastructure.persistance.postgres
 
 import com.freepper.catalog.shared.Generators
 import org.scalacheck.Gen
-import com.freepper.catalog.domain._
-import com.freepper.catalog.domain.category._
-import com.freepper.catalog.domain.image._
-import com.freepper.catalog.domain.imageList._
+import com.freepper.catalog.domain.*
+import com.freepper.catalog.domain.category.*
+import com.freepper.catalog.domain.image.*
+import com.freepper.catalog.domain.imageList.*
 import com.freepper.catalog.domain.model.ModelCrud
-import com.freepper.catalog.domain.parameter._
+import com.freepper.catalog.domain.parameter.*
 import com.freepper.catalog.domain.product.ProductCrud
-import com.freepper.catalog.shared.FixturesV2._
+import com.freepper.catalog.shared.FixturesV2.*
 import com.freepper.common.domain.registry.Registry
 import com.freepper.common.domain.{Generators, crud}
 

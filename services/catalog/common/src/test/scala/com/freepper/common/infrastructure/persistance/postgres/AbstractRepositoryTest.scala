@@ -14,8 +14,8 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.{Assertion, EitherValues}
 import org.typelevel.log4cats.LoggerFactory
-import com.freepper.common.domain.crud.Crud
-import com.freepper.common.domain.error.NotFound
+import .Crud
+import .NotFound
 import com.freepper.common.domain.{EntityTest, UnsafeRun}
 import com.freepper.common.infrastructure.persistance.postgres.AbstractRepositoryTest.TestContract
 import com.freepper.common.{HasSuiteResource, ScalacheckEffectCheckers}

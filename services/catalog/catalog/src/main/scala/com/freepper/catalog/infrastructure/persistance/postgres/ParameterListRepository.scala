@@ -9,13 +9,12 @@ import doobie.postgres.implicits.UuidType
 import doobie.util.Get
 import doobie.{ConnectionIO, Fragment}
 import com.freepper.catalog.domain.image.{Image, ImageAlt, ImageSrc}
-import com.freepper.catalog.domain.parameter._
+import com.freepper.catalog.domain.parameter.*
 import com.freepper.common.domain.crud
 import com.freepper.common.domain.error.DbErr
 import com.freepper.common.infrastracture.persistance.inmemory.AbstractInMemoryRepository
 import com.freepper.common.infrastracture.persistance.postgres.{
   AbstractPostgresRepository,
-  DbUpdaterPoly,
   Queries,
   QueryHelpers
 }
@@ -75,13 +74,13 @@ object ParameterListRepository {
       """.query[ParameterList]
     }
 
-    object updateParamList extends DbUpdaterPoly {
-      implicit val a1: Res[ParamListDisplayName] = gen("display_name")
-    }
+//    object updateParamList extends DbUpdaterPoly {
+//      implicit val a1: Res[ParamListDisplayName] = gen("display_name")
+//    }
     def updateParameterList(update: UpdateParameterList): Option[Fragment] = {
-      import shapeless._
-      val fullUpd = Generic[UpdateParameterList].to(update).reverse.tail.reverse
-      QueryHelpers.defaultUpdateRaw(fullUpd, update.id, updateParamList, "parameter_lists")
+      // val fullUpd = Generic[UpdateParameterList].to(update).reverse.tail.reverse
+      // /QueryHelpers.defaultUpdateRaw(fullUpd, update.id, updateParamList, "parameter_lists")
+      ???
     }
 
     override def update(req: UpdateParameterList): List[doobie.Update0] = {

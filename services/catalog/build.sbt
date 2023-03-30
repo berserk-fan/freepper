@@ -43,11 +43,24 @@ lazy val testEvil = taskKey[Unit]("Test external services like communication to 
 
 ThisBuild / envFileName := (baseDirectory.value / ".env.local").toString
 
-lazy val commonLibs = Seq(
-  scalacOptions ~= (_.filterNot(Set("-explain", "-explain-types"))), // removes explain option
-  scalacOptions ++= List("-source:3.0-migration", "-language:adhocExtensions"),
+lazy val grpcLibs = Seq(
+  libraryDependencies ++= Seq(
+    Libraries.grpcNetty,
+    Libraries.grpcNettyShaded,
+    Libraries.scalaPbCommonProtosScala,
+    Libraries.gprcServerReflection,
+    Libraries.scalaPbValidationScala,
+    Libraries.scalaPbCommonProtosProtobuf,
+    Libraries.scalaPbValidationProto
+  )
+)
+
+lazy val commonLibs = grpcLibs ++ Seq(
+  scalacOptions ~= (_.filterNot(Set("-explain", "-explain-types", "-Ykind-projector"))), // removes explain option
+  scalacOptions ++= List("-source:future", "-language:adhocExtensions", "-Ykind-projector:underscores"),
   libraryDependencies ++= Seq(
     Libraries.shapeless,
+    Libraries.kittens,
     Libraries.scalaTest,
     Libraries.scalaTestHtml,
     Libraries.scalaCheck,
@@ -65,9 +78,7 @@ lazy val commonLibs = Seq(
     Libraries.catsEffect,
     Libraries.catsRetry,
     Libraries.circeCore,
-    Libraries.circeGeneric,
     Libraries.circeParser,
-    Libraries.circeRefined,
     Libraries.squants,
     Libraries.monocleCore,
     Libraries.monocleMacro,
@@ -79,11 +90,9 @@ lazy val commonLibs = Seq(
     // grpc
     Libraries.grpcNetty,
     Libraries.grpcNettyShaded,
-    Libraries.scalaPbCommonProtosProtobuf,
     Libraries.scalaPbCommonProtosScala,
-    Libraries.scalaPbValidationProto,
-    Libraries.scalaPbValidationScala,
     Libraries.gprcServerReflection,
+    Libraries.scalaPbValidationScala,
 
     // crypto
     Libraries.jose4JJwt
@@ -102,6 +111,22 @@ lazy val scalaFixSettings = Seq(
   )
 )
 
+lazy val grpcGenSettings = grpcLibs ++ Seq(
+  scalacOptions ++= List("-source:3.0-migration"),
+  scalapbCodeGeneratorOptions += CodeGeneratorOption.Fs2Grpc,
+  scalapbCodeGeneratorOptions += CodeGeneratorOption.FlatPackage,
+  // output into src_managed/main for intellij to see generated code
+  Compile / managedSourceDirectories := List(
+    (Compile / sourceManaged).value / "scala"
+  ),
+  Compile / PB.targets := scalapbCodeGenerators.value
+    .map(_.copy(outputPath = (Compile / sourceManaged).value / "scala"))
+    .:+(
+      scalapb.validate
+        .gen(GeneratorOption.FlatPackage) -> (Compile / sourceManaged).value / "scala": protocbridge.Target
+    )
+)
+
 lazy val grpcServiceSettings = commonLibs ++ scalaFixSettings ++ Seq(
   // RESOURCES
   Runtime / unmanagedResourceDirectories += globalResources,
@@ -118,24 +143,8 @@ lazy val grpcServiceSettings = commonLibs ++ scalaFixSettings ++ Seq(
     "-h",
     (baseDirectory.value.toPath / "test-results").toString,
     "-o"
-  ),
-
-  // GRPC
-  scalapbCodeGeneratorOptions += CodeGeneratorOption.Fs2Grpc,
-  scalapbCodeGeneratorOptions += CodeGeneratorOption.FlatPackage,
-  // output into src_managed/main for intellij to see generated code
-  Compile / managedSourceDirectories := List(
-    (Compile / sourceManaged).value / "scala"
-  ),
-  Compile / PB.targets := scalapbCodeGenerators.value
-    .map(_.copy(outputPath = (Compile / sourceManaged).value / "scala"))
-    .:+(
-      scalapb.validate
-        .gen(GeneratorOption.FlatPackage) -> (Compile / sourceManaged).value / "scala": protocbridge.Target
-    )
+  )
 )
-
-val commonServiceSettings = (p: Project) => p.enablePlugins(Fs2Grpc)
 
 //main project
 
@@ -145,7 +154,11 @@ lazy val common = (project in file("common"))
     name := "common"
   )
 
-lazy val catalog = commonServiceSettings(project in file("catalog"))
+lazy val catalogGrpc = (project in file("catalog-grpc"))
+  .enablePlugins(Fs2Grpc)
+  .settings(grpcGenSettings, name := "catalog-grpc")
+
+lazy val catalog = (project in file("catalog"))
   .settings(
     grpcServiceSettings,
     name := "catalog",
@@ -153,14 +166,18 @@ lazy val catalog = commonServiceSettings(project in file("catalog"))
       Libraries.awsS3Sdk
     )
   )
-  .dependsOn(common % "test->test;compile->compile")
+  .dependsOn(common % "test->test;compile->compile", catalogGrpc % "test->test;compile->compile")
 
-lazy val auth = commonServiceSettings(project in file("auth"))
+lazy val authGrpcDefs = (project in file("auth/src/main/protobuf"))
+  .enablePlugins(Fs2Grpc)
+  .settings(grpcGenSettings, name := "auth-grpc")
+
+lazy val auth = (project in file("auth"))
   .settings(
     grpcServiceSettings,
     name := "auth"
   )
-  .dependsOn(common % "test->test;compile->compile")
+  .dependsOn(common % "test->test;compile->compile", authGrpcDefs % "test->test;compile->compile")
 
 lazy val app = (project in file("app"))
   .settings(

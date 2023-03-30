@@ -38,15 +38,13 @@ import com.freepper.catalog.api.{
   UpdateImageListRequest,
   UpdateModelRequest
 }
-import com.freepper.catalog.app.ApiName._
-import com.freepper.catalog.domain.category._
-import com.freepper.catalog.domain.image._
-import com.freepper.catalog.domain.imageList._
-import com.freepper.catalog.domain.model._
-import com.freepper.catalog.domain.parameter._
-import com.freepper.catalog.domain.product._
-import com.freepper.common.domain.crud.{ListResponse, PageToken, Query}
-import com.freepper.common.domain.error.{NotFound, ValidationErr}
+import com.freepper.catalog.app.ApiName.*
+import com.freepper.catalog.domain.category.*
+import com.freepper.catalog.domain.image.*
+import com.freepper.catalog.domain.imageList.*
+import com.freepper.catalog.domain.model.*
+import com.freepper.catalog.domain.parameter.*
+import com.freepper.catalog.domain.product.*
 import cats.syntax.flatMap.toFlatMapOps
 import cats.syntax.functor.toFunctorOps
 
