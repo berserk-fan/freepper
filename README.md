@@ -19,3 +19,9 @@ backend service under /services/catalog
 authentication implementation is ongoing, for the most part it's next-auth integrated with our custom backend that allows to easily implement
 oauth2 for dozens of providers, implemenent email authentication and finally basic email based authentication. look and the pull request for some code. 
 this pull request also adds scala 3
+
+#api
+you may look at the protobuf files in the project for our apis
+
+#unit tests
+I implemented automated repository unit testing, also we have a lot of integration tests
