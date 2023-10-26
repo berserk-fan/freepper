@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package com.freepper.auth.api;
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "validate/validate.proto";
+
+message Session {
+  option (google.api.resource) = {
+    type: "api.freepper.com/Session"
+    pattern: "users/{user}/sessions/{session}"
+  };
+  string name = 1;
+  string uid = 2;
+  //a.k.a. session_token
+  string session_id = 3;
+  string user = 4 [(google.api.resource_reference) = {
+    type: "api.freepper.com/User"
+  }];
+  google.protobuf.Timestamp expire_time = 5;
+}
+
+message CreateSessionRequest {
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/Session"
+    }
+  ];
+  Session session = 2 [
+    (validate.rules).message.required = true
+  ];
+
+  // The ID to use for the session, which will become the final component of
+  // the book's resource name.
+  //
+  string session_id = 3;
+}
+
+message GetSessionRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/Session"
+    }];
+}
+
+message UpdateSessionRequest {
+  Session session = 1 [
+    (validate.rules).message.required = true
+  ];
+
+  // The list of fields to update.
+  google.protobuf.FieldMask update_mask = 2 [
+    (validate.rules).message.required = true
+  ];
+}
+
+message DeleteSessionRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/Session"
+    }
+  ];
+}

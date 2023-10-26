@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package com.freepper.catalog.api;
+
+import "google/api/client.proto";
+import "google/protobuf/empty.proto";
+
+import "image_list.proto";
+import "image.proto";
+import "category.proto";
+import "model.proto";
+import "product.proto";
+
+service Catalog {
+  rpc CreateCategory (CreateCategoryRequest) returns (Category);
+  rpc GetCategory (GetCategoryRequest) returns (Category);
+  rpc UpdateCategory (UpdateCategoryRequest) returns (Category);
+  rpc ListCategories (ListCategoriesRequest) returns (ListCategoriesResponse);
+  rpc DeleteCategory (DeleteCategoryRequest) returns (google.protobuf.Empty);
+
+  rpc CreateModel (CreateModelRequest) returns (Model);
+  rpc GetModel (GetModelRequest) returns (Model);
+  rpc UpdateModel (UpdateModelRequest) returns (Model);
+  rpc DeleteModel (DeleteModelRequest) returns (google.protobuf.Empty);
+  rpc ListModels (ListModelsRequest) returns (ListModelsResponse) {
+    option (google.api.method_signature) = "parent";
+  };
+
+  rpc CreateProduct (CreateProductRequest) returns (Product);
+  rpc GetProduct (GetProductRequest) returns (Product);
+  rpc DeleteProduct (DeleteProductRequest) returns (google.protobuf.Empty);
+  rpc ListProducts (ListProductsRequest) returns (ListProductsResponse) {
+    option (google.api.method_signature) = "parent";
+  };
+
+  rpc CreateImageList(CreateImageListRequest) returns (ImageList);
+  rpc GetImageList(GetImageListRequest) returns (ImageList);
+  rpc UpdateImageList(UpdateImageListRequest) returns (ImageList);
+  rpc DeleteImageList(DeleteImageListRequest) returns (google.protobuf.Empty);
+  rpc ListImageLists(ListImageListsRequest) returns (ListImageListsResponse) {
+    option (google.api.method_signature) = "parent";
+  };
+
+  rpc CreateImage(CreateImageRequest) returns (Image);
+  rpc GetImage(GetImageRequest) returns (Image);
+  rpc DeleteImage(DeleteImageRequest) returns (google.protobuf.Empty);
+  rpc ListImages(ListImagesRequest) returns (ListImagesResponse) {
+    option (google.api.method_signature) = "parent";
+  };
+}

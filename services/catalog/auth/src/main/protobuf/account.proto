@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package com.freepper.auth.api;
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "validate/validate.proto";
+
+message Account {
+  option (google.api.resource) = {
+    type: "api.freepper.com/Account"
+    pattern: "users/{user}/accounts/{account}"
+  };
+  string name = 1;
+  string uid = 2;
+  string account_id = 3;
+  string user = 4 [(google.api.resource_reference) = {
+    type: "api.freepper.com/User"
+  }];
+  string provider = 5;
+  string provider_account_id = 6;
+  string refresh_token = 7;
+  string access_token = 8;
+  string token_type = 9;
+  string scope = 10;
+  string id_token = 11;
+  string session_state = 12;
+  string oauth_token_secret = 13;
+  string oauth_token = 14;
+  google.protobuf.Timestamp expire_time = 15;
+}
+
+message CreateAccountRequest {
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/Account"
+    }
+  ];
+
+  Account account = 2 [
+    (validate.rules).message.required = true
+  ];
+
+  // The ID to use for the User, which will become the final component of
+  // the account's resource name.
+  //
+  // This value should be UUID_V4
+  string account_id = 3;
+}
+
+message GetAccountRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/Account"
+    }];
+}
+
+message UpdateAccountRequest {
+  Account account = 1 [
+    (validate.rules).message.required = true
+  ];
+
+  // The list of fields to update.
+  google.protobuf.FieldMask update_mask = 2 [
+    (validate.rules).message.required = true
+  ];
+}
+
+message DeleteAccountRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "api.freepper.com/Account"
+    }
+  ];
+}

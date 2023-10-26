@@ -10,16 +10,6 @@ import { useModel } from "../../commons/swrHooks";
 import ModelForm from "./ModelForm";
 import SwrFallback from "../Swr/SwrFallback";
 
-function onSubmit1(m: Model) {
-  grpcClient()
-    .updateModel({
-      model: m,
-      updateMask: ["*"],
-    })
-    .then((res) => alert(`model updated:${JSON.stringify(res)}`))
-    .catch((err) => alert(`model update failed: ${err}`));
-}
-
 interface DeleteDialogProps {
   displayName: string;
   open: boolean;
@@ -51,6 +41,16 @@ export default function ModelUpdater1({ modelName }: { modelName: string }) {
   const model = useModel(modelName);
   const { mutate } = useSWRConfig();
   const [deleteDialog, setDeleteDialog] = React.useState(false);
+
+  const onSubmit1 = React.useCallback((m: Model) => {
+    grpcClient()
+      .updateModel({
+        model: m,
+        updateMask: ["*"],
+      })
+      .then((res) => alert(`model updated buzz:${JSON.stringify(res)}`))
+      .catch((err) => alert(`model update failed: ${err}`));
+  }, []);
 
   const deleteModel = React.useCallback(async () => {
     try {

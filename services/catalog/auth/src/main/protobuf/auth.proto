@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package com.freepper.auth.api;
+
+import "user.proto";
+import "account.proto";
+import "session.proto";
+import "verification_token.proto";
+import "google/protobuf/empty.proto";
+
+service AuthService {
+  rpc CreateUser (CreateUserRequest) returns (User);
+  rpc GetUser (GetUserRequest) returns (User);
+  rpc UpdateUser (UpdateUserRequest) returns (User);
+  rpc ListUsers (ListUsersRequest) returns (ListUsersResponse);
+  rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty);
+
+  rpc CreateAccount (CreateAccountRequest) returns (Account);
+  rpc GetAccount (GetAccountRequest) returns (Account);
+  rpc UpdateAccount (UpdateAccountRequest) returns (Account);
+  rpc DeleteAccount (DeleteAccountRequest) returns (google.protobuf.Empty);
+
+  rpc CreateSession (CreateSessionRequest) returns (Session);
+  rpc GetSession (GetSessionRequest) returns (Session);
+  rpc UpdateSession (UpdateSessionRequest) returns (Session);
+  rpc DeleteSession (DeleteSessionRequest) returns (google.protobuf.Empty);
+
+  rpc CreateVerificationToken (CreateVerificationTokenRequest) returns (VerificationToken);
+  rpc GetVerificationToken (GetVerificationTokenRequest) returns (VerificationToken);
+  rpc DeleteVerificationToken (DeleteVerificationTokenRequest) returns (google.protobuf.Empty);
+}

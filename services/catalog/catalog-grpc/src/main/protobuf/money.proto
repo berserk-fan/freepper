@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package com.freepper.catalog.api;
+
+message Money {
+  float amount = 1;
+}

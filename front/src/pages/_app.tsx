@@ -10,22 +10,29 @@ import { ThemeProvider } from "@mui/material/styles";
 import dynamic from "next/dynamic";
 import { store } from "store";
 
+import { SessionProvider } from "next-auth/react";
 import theme from "../theme";
 
 dynamic(() => import("abortcontroller-polyfill/dist/polyfill-patch-fetch"));
+
+function isPreview() {
+  return process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
+}
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Погладить можно?</title>
+        <title>Freepper</title>
       </Head>
       <StyledEngineProvider>
         <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Provider store={store}>
-            <Component {...pageProps} />
-          </Provider>
+          <SessionProvider>
+            <CssBaseline />
+            <Provider store={store}>
+              <Component {...pageProps} />
+            </Provider>
+          </SessionProvider>
         </ThemeProvider>
       </StyledEngineProvider>
     </>

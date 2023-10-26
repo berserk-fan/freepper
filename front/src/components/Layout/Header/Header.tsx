@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Header() {
   const classes = useStyles();
+
   return (
     <CustomAppBar>
       <Toolbar className={classes.toolbar}>

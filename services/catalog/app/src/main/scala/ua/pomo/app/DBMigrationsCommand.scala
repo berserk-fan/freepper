@@ -1,10 +1,10 @@
-package ua.pomo.app
+package com.freepper.app
 
 import cats.effect.{Async, ExitCode, IO, IOApp}
 import cats.implicits.{catsSyntaxApplicativeErrorId, catsSyntaxApplicativeId, toFlatMapOps, toFunctorOps}
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import org.typelevel.log4cats.{Logger, SelfAwareStructuredLogger}
-import ua.pomo.common.DBMigrations
+import com.freepper.common.DBMigrations
 
 object DBMigrationsCommand extends IOApp {
   override def run(args: List[String]): IO[ExitCode] = for {
