@@ -4,11 +4,9 @@ it uses next.js for frontend and a scala+postgres for backend
 frontend communicate with backed using grpc-web and protobuf based apis
 envoy server handled grpc-web -> grpc transformation
 
-# how to run
- 
-  1. docker build . -t my-next-js-app
-  1. docker run -p 3000:3000 my-next-js-app
+# ci/cd
+we use github actions for backend and vercel for frontend
+we upload build outputs to the S3
 
-# TODO
-extract envoy deployment
-
+# deployment
+we use github action to deploy to EC2. we use bash scripts and systemd because it's cheaper and faster than docker
